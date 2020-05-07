@@ -21,19 +21,19 @@ const Player = {
 	container: null,
 	ui: {},
 	settings: settingsConfig.reduce((settings, settingConfig) => {
-		return _.set(settings, settingConfig.property, settingConfig.default);
+		return _set(settings, settingConfig.property, settingConfig.default);
 	}, {}),
 
 	$: (...args) => Player.container.querySelector(...args),
 
 	// The templates are setup at initialization.
 	templates: {},
-	_templates: {
-		css: /*%% templates/css.tpl %*/,
-		body: /*%% templates/body.tpl %*/,
-		header: /*%% templates/header.tpl %*/,
-		list: /*%% templates/list.tpl %*/,
-		settings: /*%% templates/settings.tpl %*/
+	templates: {
+		css: ({ data }) => /*% templates/css.tpl %*/,
+		body: ({ data }) => /*% templates/body.tpl %*/,
+		header: ({ data }) => /*% templates/header.tpl %*/,
+		list: ({ data }) => /*% templates/list.tpl %*/,
+		settings: ({ data }) => /*% templates/settings.tpl %*/
 	},
 
 	events: {
@@ -68,11 +68,6 @@ const Player = {
 			await Player.loadSettings();
 			Player.sounds = [ ];
 			Player.playOrder = [ ];
-
-			// Set up the template functions.
-			for (let name in Player._templates) {
-				Player.templates[name] = _.template(Player._templates[name]);
-			}
 
 			if (isChanX) {
 				Player.initChanX()
@@ -329,7 +324,7 @@ const Player = {
 			const input = e.eventTarget;
 			const property = input.getAttribute('data-property');
 			const settingConfig = settingsConfig.find(settingConfig => settingConfig.property === property);
-			const currentValue = _.get(Player.settings, property);
+			const currentValue = _get(Player.settings, property);
 			let newValue = input[input.getAttribute('type') === 'checkbox' ? 'checked' : 'value'];
 			if (settingConfig && settingConfig.split) {
 				newValue = newValue.split(decodeURIComponent(settingConfig.split));
@@ -337,7 +332,7 @@ const Player = {
 			// Not the most stringent check but enough to avoid some spamming.
 			if (currentValue !== newValue) {
 				// Update the setting.
-				_.set(Player.settings, property, newValue);
+				_set(Player.settings, property, newValue);
 
 				// Update the stylesheet reflect any changes.
 				Player.stylesheet.innerHTML = Player.templates.css(Player._tplOptions());
@@ -464,6 +459,7 @@ const Player = {
 		try {
 			Player.$(`.${ns}-image-link`).classList.add(ns + '-show-video');
 			Player.$(`.${ns}-video`).src = sound.image;
+			Player.$(`.${ns}-image-link`).href = sound.image;
 			Player.$(`.${ns}-video`).play();
 		} catch (err) {
 			_logError('There was an error display the sound player image. Please check the console for details.');
@@ -479,6 +475,7 @@ const Player = {
 			Player.settings.playlist = false;
 			Player.container.classList.add(`${ns}-expanded-view`);
 			Player.container.classList.remove(`${ns}-playlist-view`);
+			Player.renderHeader();
 			Player.saveSettings();
 		} catch (err) {
 			_logError('There was an error switching to image view. Please check the console for details.');
@@ -494,6 +491,7 @@ const Player = {
 			Player.settings.playlist = true;
 			Player.container.classList.remove(`${ns}-expanded-view`);
 			Player.container.classList.add(`${ns}-playlist-view`);
+			Player.renderHeader();
 			Player.saveSettings();
 		} catch (err) {
 			_logError('There was an error switching to playlist view. Please check the console for details.');

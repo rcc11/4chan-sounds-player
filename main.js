@@ -3,8 +3,6 @@
 
 	let isChanX;
 
-	const _ = self._;
-
 	const ns = 'fc-sounds';
 
 	function _logError(message, type = 'error') {
@@ -18,14 +16,22 @@
 		}));
 	}
 
+	function _set(object, path, value) {
+		const props = path.split('.');
+		const lastProp = props.pop(); 
+		const setOn = props.reduce((obj, k) => obj && obj[k], object);
+		setOn && (setOn[lastProp] = value);
+		return object;
+	}
+
+	function _get(object, path, dflt) {
+		const props = path.split('.');
+		return props.reduce((obj, k) => obj && obj[k], object) || dflt;
+	}
+
 	/*% settings.js %*/
 
 	/*% player.js %*/
-
-	_.templateSettings.imports.ns = ns;
-	_.templateSettings.imports.Player = Player;
-	_.templateSettings.imports.settingsConfig = settingsConfig;
-	_.templateSettings.imports.headerOptions = headerOptions;
 
 	document.addEventListener('DOMContentLoaded', async function() {
 		await Player.initialize();

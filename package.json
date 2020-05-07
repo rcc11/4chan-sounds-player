@@ -3,12 +3,10 @@
   "version": "0.2.0",
   "description": "Play that faggy music weeb boi",
   "main": "main.js",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "rcc11",
   "license": "ISC",
   "dependencies": {
-    "babel-minify": "0.5.1",
-    "lodash-cli": "4.17.5"
+    "babel-minify": "0.5.1"
   }
 }
