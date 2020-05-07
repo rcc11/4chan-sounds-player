@@ -64,66 +64,91 @@ const Player = {
 	},
 
 	initialize: async function () {
-		await Player.loadSettings();
-		Player.sounds = [ ];
-		Player.playOrder = [ ];
+		try {
+			await Player.loadSettings();
+			Player.sounds = [ ];
+			Player.playOrder = [ ];
 
-		// Set up the template functions.
-		for (let name in Player._templates) {
-			Player.templates[name] = _.template(Player._templates[name]);
-		}
-
-		if (isChanX) {
-			const shortcuts = document.getElementById('shortcuts');
-			const showIcon = document.createElement('span');
-			shortcuts.insertBefore(showIcon, document.getElementById('shortcut-settings'));
-
-			const attrs = { id: 'shortcut-sounds', class: 'shortcut brackets-wrap', 'data-index': 0 };
-			for (let attr in attrs) {
-				showIcon.setAttribute(attr, attrs[attr]);
+			// Set up the template functions.
+			for (let name in Player._templates) {
+				Player.templates[name] = _.template(Player._templates[name]);
 			}
-			showIcon.innerHTML = '<a href="javascript:;" title="Sounds" class="fa fa-play-circle">Sounds</a>';
-			showIcon.querySelector('a').addEventListener('click', Player.toggleDisplay);
-		} else {
-			document.querySelectorAll('#settingsWindowLink, #settingsWindowLinkBot').forEach(function (link) {
-				const bracket = document.createTextNode('] [');
-				const showLink = document.createElement('a');
-				showLink.innerHTML = 'Sounds';
-				showLink.href = 'javascript;';
-				link.parentNode.insertBefore(showLink, link);
-				link.parentNode.insertBefore(bracket, link);
-				showLink.addEventListener('click', Player.toggleDisplay);
-			});
-		}
 
-		Player.render();
+			if (isChanX) {
+				Player.initChanX()
+			} else {
+				document.querySelectorAll('#settingsWindowLink, #settingsWindowLinkBot').forEach(function (link) {
+					const bracket = document.createTextNode('] [');
+					const showLink = document.createElement('a');
+					showLink.innerHTML = 'Sounds';
+					showLink.href = 'javascript;';
+					link.parentNode.insertBefore(showLink, link);
+					link.parentNode.insertBefore(bracket, link);
+					showLink.addEventListener('click', Player.toggleDisplay);
+				});
+			}
+
+			Player.render();
+		} catch (err) {
+			_logError('There was an error intiaizing the sound player. Please check the console for details.');
+			console.error('[4chan sounds player]');
+			// Can't recover so throw this error.
+			throw err;
+		}
+	},
+
+	initChanX: function () {
+		if (Player._initedChanX) {
+			return;
+		}
+		Player._initedChanX = true;
+		const shortcuts = document.getElementById('shortcuts');
+		const showIcon = document.createElement('span');
+		shortcuts.insertBefore(showIcon, document.getElementById('shortcut-settings'));
+
+		const attrs = { id: 'shortcut-sounds', class: 'shortcut brackets-wrap', 'data-index': 0 };
+		for (let attr in attrs) {
+			showIcon.setAttribute(attr, attrs[attr]);
+		}
+		showIcon.innerHTML = '<a href="javascript:;" title="Sounds" class="fa fa-play-circle">Sounds</a>';
+		showIcon.querySelector('a').addEventListener('click', Player.toggleDisplay);
 	},
 
 	saveSettings: function () {
-		return GM.setValue(ns + '.settings', JSON.stringify(Player.settings));
+		try {
+			return GM.setValue(ns + '.settings', JSON.stringify(Player.settings));
+		} catch (err) {
+			_logError('There was an error saving the sound player settings. Please check the console for details.');
+			console.error('[4chan sounds player]', err);
+		}
 	},
 
 	loadSettings: async function () {
-		let settings = await GM.getValue(ns + '.settings');
-		if (!settings) {
-			return;
-		}
 		try {
-			settings = JSON.parse(settings);
-		} catch(e) {
-			return;
-		}
-		function _mix (to, from) {
-			for (let key in from) {
-				if (from[key] && typeof from[key] === 'object' && !Array.isArray(from[key])) {
-					to[key] || (to[key] = {});
-					_mix(to[key], from[key]);
-				} else {
-					to[key] = from[key];
+			let settings = await GM.getValue(ns + '.settings');
+			if (!settings) {
+				return;
+			}
+			try {
+				settings = JSON.parse(settings);
+			} catch(e) {
+				return;
+			}
+			function _mix (to, from) {
+				for (let key in from) {
+					if (from[key] && typeof from[key] === 'object' && !Array.isArray(from[key])) {
+						to[key] || (to[key] = {});
+						_mix(to[key], from[key]);
+					} else {
+						to[key] = from[key];
+					}
 				}
 			}
+			_mix(Player.settings, settings);
+		} catch (err) {
+			_logError('There was an error loading the sound player settings. Please check the console for details.');
+			console.error('[4chan sounds player]', err);
 		}
-		_mix(Player.settings, settings);
 	},
 
 	_tplOptions: function () {
@@ -131,50 +156,57 @@ const Player = {
 	},
 
 	render: async function () {
-		if (Player.container) {
-			document.body.removeChild(Player.container);
-			document.head.removeChild(Player.stylesheet);
-		}
+		try {
+			if (Player.container) {
+				document.body.removeChild(Player.container);
+				document.head.removeChild(Player.stylesheet);
+			}
 
-		// Insert the stylesheet
-		Player.stylesheet = document.createElement('style');
-		Player.stylesheet.innerHTML = Player.templates.css(Player._tplOptions());
-		document.head.appendChild(Player.stylesheet);
+			// Insert the stylesheet
+			Player.stylesheet = document.createElement('style');
+			Player.stylesheet.innerHTML = Player.templates.css(Player._tplOptions());
+			document.head.appendChild(Player.stylesheet);
 
-		// Create the main player
-		const el = document.createElement('div');
-		el.innerHTML = Player.templates.body(Player._tplOptions());
-		Player.container = el.querySelector(`#${ns}-container`);
-		document.body.appendChild(Player.container);
+			// Create the main player
+			const el = document.createElement('div');
+			el.innerHTML = Player.templates.body(Player._tplOptions());
+			Player.container = el.querySelector(`#${ns}-container`);
+			document.body.appendChild(Player.container);
 
-		// Keep track of the audio element
-		Player.audio = Player.$(`.${ns}-audio`);
+			// Keep track of the audio element
+			Player.audio = Player.$(`.${ns}-audio`);
 
-		// Wire up event listeners.
-		for (let evt in Player.events) {
-			Player.container.addEventListener(evt, function (e) {
-				for (let selector in Player.events[evt]) {
-					let handler = Player.events[evt][selector];
-					if (typeof handler === 'string') {
-						handler = Player[handler];
+			// Wire up event listeners.
+			for (let evt in Player.events) {
+				Player.container.addEventListener(evt, function (e) {
+					for (let selector in Player.events[evt]) {
+						let handler = Player.events[evt][selector];
+						if (typeof handler === 'string') {
+							handler = Player[handler];
+						}
+						const eventTarget = e.target.closest(selector);
+						if (eventTarget) {
+							e.eventTarget = eventTarget;
+							return handler(e);
+						}
 					}
-					const eventTarget = e.target.closest(selector);
-					if (eventTarget) {
-						e.eventTarget = eventTarget;
-						return handler(e);
-					}
-				}
+				});
+			}
+
+			// Add audio event listeners. They don't bubble so do them separately.
+			Player.audio.addEventListener('ended', Player.next);
+			Player.audio.addEventListener('pause', () => Player.$(`.${ns}-video`).pause());
+			Player.audio.addEventListener('play', () => {
+				Player.$(`.${ns}-video`).currentTime = Player.audio.currentTime;
+				Player.$(`.${ns}-video`).play();
 			});
+			Player.audio.addEventListener('seeked', () => Player.$(`.${ns}-video`).currentTime = Player.audio.currentTime);
+		} catch (err) {
+			_logError('There was an error rendering the sound player. Please check the console for details.');
+			console.error('[4chan sounds player]');
+			// Can't recover, throw.
+			throw err;
 		}
-
-		// Add audio event listeners. They don't bubble so do them separately.
-		Player.audio.addEventListener('ended', Player.next);
-		Player.audio.addEventListener('pause', () => Player.$(`.${ns}-video`).pause());
-		Player.audio.addEventListener('play', () => {
-			Player.$(`.${ns}-video`).currentTime = Player.audio.currentTime;
-			Player.$(`.${ns}-video`).play();
-		});
-		Player.audio.addEventListener('seeked', () => Player.$(`.${ns}-video`).currentTime = Player.audio.currentTime);
 	},
 
 	renderHeader: function () {
@@ -184,19 +216,6 @@ const Player = {
 	renderList: function () {
 		if (Player.$(`.${ns}-list`)) {
 			Player.$(`.${ns}-list`).innerHTML = Player.templates.list(Player._tplOptions());
-		}
-	},
-
-	renderSettings: function () {
-		if (Player.$(`.${ns}-settings`)) {
-			Player.$(`.${ns}-settings`).innerHTML = Player.templates.settings(Player._tplOptions());
-			return;
-			Player.$(`.${ns}-settings`).querySelectorAll('input, textarea').forEach(function (input) {
-				input.addEventListener('blur', Player.handleSettingChange);
-			});
-			Player.$(`.${ns}-settings`).querySelectorAll('input[type=checkbox]').forEach(function (input) {
-				input.addEventListener('change', Player.handleSettingChange);
-			});
 		}
 	},
 
@@ -210,78 +229,113 @@ const Player = {
 	},
 
 	hide: function (e) {
-		e && e.preventDefault();
-		Player.container.style.display = 'none';
+		try {
+			e && e.preventDefault();
+			Player.container.style.display = 'none';
+			if (Player.settings.pauseOnHide) {
+				Player.pause();
+			}
+		} catch (err) {
+			_logError('There was an error hiding the sound player. Please check the console for details.');
+			console.error('[4chan sounds player]', err);
+		}
 	},
 
 	show: async function (e) {
-		e && e.preventDefault();
-		if (!Player.container.style.display) {
-			return;
+		try {
+			e && e.preventDefault();
+			if (!Player.container.style.display) {
+				return;
+			}
+			Player.container.style.display = null;
+			// Apply the last position/size
+			const [ top, left ] = (await GM.getValue(ns + '.position') || '').split(':');
+			const [ width, height ] = (await GM.getValue(ns + '.size') || '').split(':');
+			+width && +height && Player.resizeTo(width, height);
+			+top && +left && Player.moveTo(top, left);
+		} catch (err) {
+			_logError('There was an error showing the sound player. Please check the console for details.');
+			console.error('[4chan sounds player]', err);
 		}
-		Player.container.style.display = null;
-		// Apply the last position/size
-		const [ top, left ] = (await GM.getValue(ns + '.position') || '').split(':');
-		const [ width, height ] = (await GM.getValue(ns + '.size') || '').split(':');
-		+width && +height && Player.resizeTo(width, height);
-		+top && +left && Player.moveTo(top, left);
 	},
 	
 	toggleRepeat: function (e) {
-		e.preventDefault();
-		const options = Object.keys(headerOptions.repeat);
-		const current = options.indexOf(Player.settings.repeat);
-		Player.settings.repeat = options[(current + 4) % 3];
-		Player.renderHeader();
-		Player.saveSettings();
+		try {
+			e.preventDefault();
+			const options = Object.keys(headerOptions.repeat);
+			const current = options.indexOf(Player.settings.repeat);
+			Player.settings.repeat = options[(current + 4) % 3];
+			Player.renderHeader();
+			Player.saveSettings();
+		} catch (err) {
+			_logError('There was an error changing the repeat setting. Please check the console for details.');
+			console.error('[4chan sounds player]', err);
+		}
 	},
 	
 	toggleShuffle: function (e) {
-		e.preventDefault();
-		Player.settings.shuffle = !Player.settings.shuffle;
-		Player.renderHeader();
+		try {
+			e.preventDefault();
+			Player.settings.shuffle = !Player.settings.shuffle;
+			Player.renderHeader();
 
-		// Update the play order.
-		if (!Player.settings.shuffle) {
-			Player.playOrder = [ ...Player.sounds ];
-		} else {
-			const playOrder = Player.playOrder;
-			for (let i = playOrder.length - 1; i > 0; i--) {
-				const j = Math.floor(Math.random() * (i + 1));
-				[playOrder[i], playOrder[j]] = [playOrder[j], playOrder[i]];
+			// Update the play order.
+			if (!Player.settings.shuffle) {
+				Player.playOrder = [ ...Player.sounds ];
+			} else {
+				const playOrder = Player.playOrder;
+				for (let i = playOrder.length - 1; i > 0; i--) {
+					const j = Math.floor(Math.random() * (i + 1));
+					[playOrder[i], playOrder[j]] = [playOrder[j], playOrder[i]];
+				}
 			}
+			Player.saveSettings();
+		} catch (err) {
+			_logError('There was an error changing the shuffle setting. Please check the console for details.');
+			console.error('[4chan sounds player]', err);
 		}
-		Player.saveSettings();
 	},
 
 	toggleSettings: function (e) {
-		e.preventDefault();
-		if (Player.container.classList.contains(ns + '-show-settings')) {
-			Player.container.classList.remove(ns + '-show-settings');
-		} else {
-			Player.container.classList.add(ns + '-show-settings');
+		try {
+			e.preventDefault();
+			if (Player.container.classList.contains(ns + '-show-settings')) {
+				Player.container.classList.remove(ns + '-show-settings');
+			} else {
+				Player.container.classList.add(ns + '-show-settings');
+			}
+		} catch (err) {
+			_logError('There was an error rendering the sound player settings. Please check the console for details.');
+			console.error('[4chan sounds player]');
+			// Can't recover, throw.
+			throw err;
 		}
 	},
 
 	handleSettingChange: function (e) {
-		const input = e.eventTarget;
-		const property = input.getAttribute('data-property');
-		const settingConfig = settingsConfig.find(settingConfig => settingConfig.property === property);
-		const currentValue = _.get(Player.settings, property);
-		let newValue = input[input.getAttribute('type') === 'checkbox' ? 'checked' : 'value'];
-		if (settingConfig && settingConfig.split) {
-			newValue = newValue.split(decodeURIComponent(settingConfig.split));
-		}
-		// Not the most stringent check but enough to avoid some spamming.
-		if (currentValue !== newValue) {
-			// Update the setting.
-			_.set(Player.settings, property, newValue);
+		try {
+			const input = e.eventTarget;
+			const property = input.getAttribute('data-property');
+			const settingConfig = settingsConfig.find(settingConfig => settingConfig.property === property);
+			const currentValue = _.get(Player.settings, property);
+			let newValue = input[input.getAttribute('type') === 'checkbox' ? 'checked' : 'value'];
+			if (settingConfig && settingConfig.split) {
+				newValue = newValue.split(decodeURIComponent(settingConfig.split));
+			}
+			// Not the most stringent check but enough to avoid some spamming.
+			if (currentValue !== newValue) {
+				// Update the setting.
+				_.set(Player.settings, property, newValue);
 
-			// Update the stylesheet reflect any changes.
-			Player.stylesheet.innerHTML = Player.templates.css(Player._tplOptions());
+				// Update the stylesheet reflect any changes.
+				Player.stylesheet.innerHTML = Player.templates.css(Player._tplOptions());
 
-			// Save the new settings.
-			Player.saveSettings();
+				// Save the new settings.
+				Player.saveSettings();
+			}
+		} catch (err) {
+			_logError('There was an updating the setting. Please check the console for details.');
+			console.error('[4chan sounds player]', err);
 		}
 	},
 
@@ -358,35 +412,60 @@ const Player = {
 	},
 
 	showThumb: function (sound) {
-		Player.$(`.${ns}-image-link`).classList.remove(ns + '-show-video');
-		Player.$(`.${ns}-image`).src = sound.thumb;
-		Player.$(`.${ns}-image-link`).href = sound.image;
+		try {
+			Player.$(`.${ns}-image-link`).classList.remove(ns + '-show-video');
+			Player.$(`.${ns}-image`).src = sound.thumb;
+			Player.$(`.${ns}-image-link`).href = sound.image;
+		} catch (err) {
+			_logError('There was an error displaying the sound player image. Please check the console for details.');
+			console.error('[4chan sounds player]', err);
+		}
 	},
 
 	showImage: function (sound) {
-		Player.$(`.${ns}-image-link`).classList.remove(ns + '-show-video');
-		Player.$(`.${ns}-image`).src = sound.image;
-		Player.$(`.${ns}-image-link`).href = sound.image;
+		try {
+			Player.$(`.${ns}-image-link`).classList.remove(ns + '-show-video');
+			Player.$(`.${ns}-image`).src = sound.image;
+			Player.$(`.${ns}-image-link`).href = sound.image;
+		} catch (err) {
+			_logError('There was an error display the sound player image. Please check the console for details.');
+			console.error('[4chan sounds player]', err);
+		}
 	},
 
 	playVideo: function (sound) {
-		Player.$(`.${ns}-image-link`).classList.add(ns + '-show-video');
-		Player.$(`.${ns}-video`).src = sound.image;
-		Player.$(`.${ns}-video`).play();
+		try {
+			Player.$(`.${ns}-image-link`).classList.add(ns + '-show-video');
+			Player.$(`.${ns}-video`).src = sound.image;
+			Player.$(`.${ns}-video`).play();
+		} catch (err) {
+			_logError('There was an error display the sound player image. Please check the console for details.');
+			console.error('[4chan sounds player]', err);
+		}
 	},
 
 	hidePlaylist: function () {
-		Player.settings.playlist = false;
-		Player.container.classList.add(`${ns}-expanded-view`);
-		Player.container.classList.remove(`${ns}-playlist-view`);
-		Player.saveSettings();
+		try {
+			Player.settings.playlist = false;
+			Player.container.classList.add(`${ns}-expanded-view`);
+			Player.container.classList.remove(`${ns}-playlist-view`);
+			Player.saveSettings();
+		} catch (err) {
+			_logError('There was an error switching to image view. Please check the console for details.');
+			console.error('[4chan sounds player]', err);
+		}
 	},
 
 	showPlaylist: function () {
-		Player.settings.playlist = true;
-		Player.container.classList.remove(`${ns}-expanded-view`);
-		Player.container.classList.add(`${ns}-playlist-view`);
-		Player.saveSettings();
+		try {
+			Player.settings.playlist = true;
+			Player.container.classList.remove(`${ns}-expanded-view`);
+			Player.container.classList.add(`${ns}-playlist-view`);
+			Player.saveSettings();
+		} catch (err) {
+			_logError('There was an error switching to playlist view. Please check the console for details.');
+			console.error('[4chan sounds player]', err);
+		}
 	},
 
 	togglePlaylist: function (e) {
@@ -399,50 +478,61 @@ const Player = {
 	},
 
 	add: function (title, id, src, thumb, image) {
-		// Avoid duplicate additions.
-		if (Player.sounds.find(sound => sound.id === id)) {
-			return;
-		}
-		const sound = { title, src, id, thumb, image };
-		Player.sounds.push(sound);
-
-		// Add the sound to the play order at the end, or someone random for shuffled.
-		const index = Player.settings.shuffle
-			? Math.floor(Math.random() * Player.sounds.length - 1)
-			: Player.sounds.length;
-		Player.playOrder.splice(index, 0, sound);
-
-		// Re-render the list.
-		Player.renderList();
-		Player.$(`.${ns}-count`).innerHTML = Player.sounds.length;
-
-		// If nothing else has been added yet show the image for this sound.
-		if (Player.playOrder.length === 1) {
-			// If we're on a thread with autoshow enabled then make sure the player is displayed
-			if (/\/thread\//.test(location.href) && Player.settings.autoshow) {
-				Player.show();
+		try {
+			// Avoid duplicate additions.
+			if (Player.sounds.find(sound => sound.id === id)) {
+				return;
 			}
-			Player.showThumb(sound);
+			const sound = { title, src, id, thumb, image };
+			Player.sounds.push(sound);
+
+			// Add the sound to the play order at the end, or someone random for shuffled.
+			const index = Player.settings.shuffle
+				? Math.floor(Math.random() * Player.sounds.length - 1)
+				: Player.sounds.length;
+			Player.playOrder.splice(index, 0, sound);
+
+			// Re-render the list.
+			Player.renderList();
+			Player.$(`.${ns}-count`).innerHTML = Player.sounds.length;
+
+			// If nothing else has been added yet show the image for this sound.
+			if (Player.playOrder.length === 1) {
+				// If we're on a thread with autoshow enabled then make sure the player is displayed
+				if (/\/thread\//.test(location.href) && Player.settings.autoshow) {
+					Player.show();
+				}
+				Player.showThumb(sound);
+			}
+		} catch (err) {
+			_logError('There was an error adding to the sound player. Please check the console for details.');
+			console.log('[4chan sounds player', title, id, src, thumg, image);
+			console.error('[4chan sounds player]', err);
 		}
 	},
 
 	play: function (sound) {
-		if (sound) {
-			if (Player.playing) {
-				Player.playing.playing = false;
+		try {
+			if (sound) {
+				if (Player.playing) {
+					Player.playing.playing = false;
+				}
+				sound.playing = true;
+				Player.playing = sound;
+				Player.renderHeader();
+				Player.audio.src = sound.src;
+				if (sound.image.endsWith('.webm')) {
+					Player.playVideo(sound);
+				} else {
+					Player.showImage(sound);
+				}
+				Player.renderList();
 			}
-			sound.playing = true;
-			Player.playing = sound;
-			Player.renderHeader();
-			Player.audio.src = sound.src;
-			if (sound.image.endsWith('.webm')) {
-				Player.playVideo(sound);
-			} else {
-				Player.showImage(sound);
-			}
-			Player.renderList();
+			Player.audio.play();
+		} catch (err) {
+			_logError('There was an error playing the sound. Please check the console for details.');
+			console.error('[4chan sounds player]', err);
 		}
-		Player.audio.play();
 	},
 
 	pause: function () {
@@ -458,22 +548,27 @@ const Player = {
 	},
 
 	_movePlaying: function (direction) {
-		// If there's no sound fall out.
-		if (!Player.playOrder.length) {
-			return;
+		try {
+			// If there's no sound fall out.
+			if (!Player.playOrder.length) {
+				return;
+			}
+			// If there's no sound currently playing or it's not in the list then just play the first sound.
+			const currentIndex = Player.playOrder.indexOf(Player.playing);
+			if (currentIndex === -1) {
+				return Player.playSound(Player.playOrder[0]);
+			}
+			// Get the next index, either repeating the same, wrapping round to repeat all or just moving the index.
+			const nextIndex = Player.settings.repeat === 'one'
+				? currentIndex
+				: Player.settings.repeat === 'all'
+					? ((currentIndex + direction) + Player.playOrder.length) % Player.playOrder.length
+					: currentIndex + direction;
+			const nextSound = Player.playOrder[nextIndex];
+			nextSound && Player.play(nextSound);
+		} catch (err) {
+			_logError(`There was an error selecting the ${direction > 0 ? 'next': 'previous'} track. Please check the console for details.`);
+			console.error('[4chan sounds player]', err);
 		}
-		// If there's no sound currently playing or it's not in the list then just play the first sound.
-		const currentIndex = Player.playOrder.indexOf(Player.playing);
-		if (currentIndex === -1) {
-			return Player.playSound(Player.playOrder[0]);
-		}
-		// Get the next index, either repeating the same, wrapping round to repeat all or just moving the index.
-		const nextIndex = Player.settings.repeat === 'one'
-			? currentIndex
-			: Player.settings.repeat === 'all'
-				? ((currentIndex + direction) + Player.playOrder.length) % Player.playOrder.length
-				: currentIndex + direction;
-		const nextSound = Player.playOrder[nextIndex];
-		nextSound && Player.play(nextSound);
 	}
 };

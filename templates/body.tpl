@@ -8,8 +8,10 @@
 			<video class="<%= ns %>-video"></video>
 		</a>
 		<div class="<%= ns %>-controls">
-			<div class="<%= ns %>-play-pause"></div>
-			<div class="<%= ns %>-play-pause"></div>
+			<div class="<%= ns %>-play-pause <%=ns %>-<%= !Player.audio || Player.audio.paused ? 'play' : 'pause' %>>"></div>
+			<div class="<%= ns %>-seekbar"></div>
+			<div class="<%= ns %>-duration"></div>
+			<div class="<%= ns %>-volume"></div>
 		</div>
 		<audio class="<%= ns %>-audio" controls="true"></audio>
 		<div class="<%= ns %>-list-container" style="height: 100px">
