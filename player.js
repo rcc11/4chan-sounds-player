@@ -210,10 +210,16 @@ const Player = {
 	},
 
 	renderHeader: function () {
+		if (!Player.container) {
+			return;
+		}
 		Player.$(`.${ns}-title`).innerHTML = Player.templates.header(Player._tplOptions());
 	},
 
 	renderList: function () {
+		if (!Player.container) {
+			return;
+		}
 		if (Player.$(`.${ns}-list`)) {
 			Player.$(`.${ns}-list`).innerHTML = Player.templates.list(Player._tplOptions());
 		}
@@ -229,6 +235,9 @@ const Player = {
 	},
 
 	hide: function (e) {
+		if (!Player.container) {
+			return;
+		}
 		try {
 			e && e.preventDefault();
 			Player.container.style.display = 'none';
@@ -242,6 +251,9 @@ const Player = {
 	},
 
 	show: async function (e) {
+		if (!Player.container) {
+			return;
+		}
 		try {
 			e && e.preventDefault();
 			if (!Player.container.style.display) {
@@ -354,6 +366,9 @@ const Player = {
 	},
 
 	resizeTo: function (width, height) {
+		if (!Player.container) {
+			return;
+		}
 		// Make sure the player isn't going off screen. 40 to give a bit of spacing for the 4chanX header.
 		height = Math.min(height, document.documentElement.clientHeight - 40);
 
@@ -396,6 +411,9 @@ const Player = {
 	},
 
 	moveTo: function (x, y) {
+		if (!Player.container) {
+			return;
+		}
 		const style = document.defaultView.getComputedStyle(Player.container);
 		const maxX = document.documentElement.clientWidth - parseInt(style.width, 10);
 		const maxY = document.documentElement.clientHeight - parseInt(style.height, 10);
@@ -412,6 +430,9 @@ const Player = {
 	},
 
 	showThumb: function (sound) {
+		if (!Player.container) {
+			return;
+		}
 		try {
 			Player.$(`.${ns}-image-link`).classList.remove(ns + '-show-video');
 			Player.$(`.${ns}-image`).src = sound.thumb;
@@ -423,6 +444,9 @@ const Player = {
 	},
 
 	showImage: function (sound) {
+		if (!Player.container) {
+			return;
+		}
 		try {
 			Player.$(`.${ns}-image-link`).classList.remove(ns + '-show-video');
 			Player.$(`.${ns}-image`).src = sound.image;
@@ -434,6 +458,9 @@ const Player = {
 	},
 
 	playVideo: function (sound) {
+		if (!Player.container) {
+			return;
+		}
 		try {
 			Player.$(`.${ns}-image-link`).classList.add(ns + '-show-video');
 			Player.$(`.${ns}-video`).src = sound.image;
@@ -445,6 +472,9 @@ const Player = {
 	},
 
 	hidePlaylist: function () {
+		if (!Player.container) {
+			return;
+		}
 		try {
 			Player.settings.playlist = false;
 			Player.container.classList.add(`${ns}-expanded-view`);
@@ -457,6 +487,9 @@ const Player = {
 	},
 
 	showPlaylist: function () {
+		if (!Player.container) {
+			return;
+		}
 		try {
 			Player.settings.playlist = true;
 			Player.container.classList.remove(`${ns}-expanded-view`);
@@ -469,6 +502,9 @@ const Player = {
 	},
 
 	togglePlaylist: function (e) {
+		if (!Player.container) {
+			return;
+		}
 		e && e.preventDefault();
 		if (Player.settings.playlist) {
 			Player.hidePlaylist();
@@ -492,26 +528,32 @@ const Player = {
 				: Player.sounds.length;
 			Player.playOrder.splice(index, 0, sound);
 
-			// Re-render the list.
-			Player.renderList();
-			Player.$(`.${ns}-count`).innerHTML = Player.sounds.length;
+			if (Player.container) {
+				// Re-render the list.
+				Player.renderList();
+				Player.$(`.${ns}-count`).innerHTML = Player.sounds.length;
 
-			// If nothing else has been added yet show the image for this sound.
-			if (Player.playOrder.length === 1) {
-				// If we're on a thread with autoshow enabled then make sure the player is displayed
-				if (/\/thread\//.test(location.href) && Player.settings.autoshow) {
-					Player.show();
+				// If nothing else has been added yet show the image for this sound.
+				if (Player.playOrder.length === 1) {
+					// If we're on a thread with autoshow enabled then make sure the player is displayed
+					if (/\/thread\//.test(location.href) && Player.settings.autoshow) {
+						Player.show();
+					}
+					Player.showThumb(sound);
 				}
-				Player.showThumb(sound);
 			}
 		} catch (err) {
 			_logError('There was an error adding to the sound player. Please check the console for details.');
-			console.log('[4chan sounds player', title, id, src, thumg, image);
+			console.log('[4chan sounds player', title, id, src, thumb, image);
 			console.error('[4chan sounds player]', err);
 		}
 	},
 
 	play: function (sound) {
+		if (!Player.audio) {
+			return;
+		}
+
 		try {
 			if (sound) {
 				if (Player.playing) {
@@ -536,7 +578,7 @@ const Player = {
 	},
 
 	pause: function () {
-		Player.audio.pause();
+		Player.audio && Player.audio.pause();
 	},
 
 	next: function () {
@@ -548,6 +590,9 @@ const Player = {
 	},
 
 	_movePlaying: function (direction) {
+		if (!Player.audio) {
+			return;
+		}
 		try {
 			// If there's no sound fall out.
 			if (!Player.playOrder.length) {
