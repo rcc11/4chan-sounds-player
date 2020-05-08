@@ -5,12 +5,12 @@ const headerOptions = {
 		none: { title: 'No Repeat', text: '[R0]', class: 'fa-repeat disabled' }
 	},
 	shuffle: {
-		true: { title: 'Shuffle', text: '[S]', class: 'fa-random' },
-		false: { title: 'Ordered', text: '[S]', class: 'fa-random disabled' },
+		true: { title: 'Shuffled', text: '[S]', class: 'fa-random' },
+		false: { title: 'Ordered', text: '[O]', class: 'fa-random disabled' },
 	},
 	playlist: {
 		true: { title: 'Hide Playlist', text: '[+]', class: 'fa-expand' },
-		false: { title: 'Show Playlist', text: '[+]', class: 'fa-compress' }
+		false: { title: 'Show Playlist', text: '[-]', class: 'fa-compress' }
 	}
 }
 
@@ -86,7 +86,7 @@ const Player = {
 			Player.render();
 		} catch (err) {
 			_logError('There was an error intiaizing the sound player. Please check the console for details.');
-			console.error('[4chan sounds player]');
+			console.error('[4chan sounds player]', err);
 			// Can't recover so throw this error.
 			throw err;
 		}
@@ -198,7 +198,7 @@ const Player = {
 			Player.audio.addEventListener('seeked', () => Player.$(`.${ns}-video`).currentTime = Player.audio.currentTime);
 		} catch (err) {
 			_logError('There was an error rendering the sound player. Please check the console for details.');
-			console.error('[4chan sounds player]');
+			console.error('[4chan sounds player]', err);
 			// Can't recover, throw.
 			throw err;
 		}
@@ -313,7 +313,7 @@ const Player = {
 			}
 		} catch (err) {
 			_logError('There was an error rendering the sound player settings. Please check the console for details.');
-			console.error('[4chan sounds player]');
+			console.error('[4chan sounds player]', err);
 			// Can't recover, throw.
 			throw err;
 		}

@@ -6,6 +6,7 @@
 	const ns = 'fc-sounds';
 
 	function _logError(message, type = 'error') {
+		console.error(message);
 		document.dispatchEvent(new CustomEvent("CreateNotification", {
 			bubbles: true,
 			detail: {
@@ -19,7 +20,7 @@
 	function _set(object, path, value) {
 		const props = path.split('.');
 		const lastProp = props.pop(); 
-		const setOn = props.reduce((obj, k) => obj && obj[k], object);
+		const setOn = props.reduce((obj, k) => obj[k] || (obj[k] = {}), object);
 		setOn && (setOn[lastProp] = value);
 		return object;
 	}
