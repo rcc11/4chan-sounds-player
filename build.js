@@ -2,8 +2,20 @@
 const fs = require('fs');
 
 const minify = require('babel-minify');
+const sass = require('node-sass');
 
+const isDev = process.argv.includes('--development') || process.argv.includes('-d');
 let outputPath = './4chan-sounds-player.user.js';
+
+// Build the stylesheet
+if (!process.argv.includes('--skip-css')) {
+	const result = sass.renderSync({
+		file: './scss/style.scss',
+		outputStyle: isDev ? 'expanded' : 'compressed'
+	});
+	const css = result.css.toString().replace(/__ns__/g, '${ns}');
+	fs.writeFileSync('./templates/css.tpl', '`' + css + '`');
+}
 
 function processFile (path, file) {
 	console.log(path);
@@ -15,7 +27,7 @@ function processFile (path, file) {
 
 let output = processFile('main.js', fs.readFileSync('./main.js'));
 
-if (!process.argv.includes('--development')) {
+if (!isDev) {
 	console.log('Minify');
 	output = minify(output).code;
 	outputPath = './4chan-sounds-player.user.min.js';

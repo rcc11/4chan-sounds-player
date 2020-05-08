@@ -1,0 +1,24 @@
+##{$ns}-container {
+	position: fixed;
+	background: #{map-get($colors, background)};
+	border: 1px solid #{map-get($colors, border)};
+	display: relative;
+	min-height: 200px;
+	min-width: 100px;
+}
+.#{$ns}-row {
+	display: flex;
+	flex-wrap: wrap;
+}
+.#{$ns}-col-auto {
+	flex: 0 0 auto;
+	width: auto;
+	max-width: 100%;
+	margin-left: 0.25rem;
+}
+.#{$ns}-col {
+	flex-basis: 0;
+	flex-grow: 1;
+	max-width: 100%;
+	width: 100%;
+}

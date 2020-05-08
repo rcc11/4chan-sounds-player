@@ -1,0 +1,4 @@
+.#{$ns}-footer {
+	padding: .15rem .25rem;
+	border-top: solid 1px #{map-get($colors, border)};
+}

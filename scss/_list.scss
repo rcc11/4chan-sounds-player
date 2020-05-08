@@ -1,0 +1,23 @@
+.#{$ns}-list-container {
+	overflow: auto;
+}
+.#{$ns}-list {
+	display: grid;
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+.#{$ns}-list-item {
+	list-style-type: none;
+	padding: 0.15rem 0.25rem;
+	white-space: nowrap;
+	cursor: pointer;
+	background: #{map-get($colors, odd_row)};
+
+	&.playing {
+		background: #{map-get($colors, playing)} !important;
+	}
+	&:nth-child(2n) {
+		background: #{map-get($colors, even_row)};
+	}
+}
