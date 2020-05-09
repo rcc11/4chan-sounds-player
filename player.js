@@ -54,7 +54,7 @@ const Player = {
 			[`.${ns}-volume-bar`]: 'handleVolume',
 
 			// View settings
-			[`.${ns}-playlist-button`]: 'togglePlaylist',
+			[`.${ns}-playlist-button`]: 'togglePlayerView',
 			[`.${ns}-config-button`]: 'toggleSettings',
 
 			// Playlist controls
@@ -438,6 +438,15 @@ const Player = {
 	},
 
 	/**
+	 * Change what view is being shown
+	 * @param {Chagn} e 
+	 */
+	setViewStyle: function (style) {
+		Player.settings.viewStyle = style;
+		Player.container.setAttribute('data-view-style', style);
+	},
+
+	/**
 	 * Togle the display status of the player.
 	 */
 	toggleDisplay: function (e) {
@@ -547,10 +556,11 @@ const Player = {
 	toggleSettings: function (e) {
 		try {
 			e.preventDefault();
-			if (Player.container.classList.contains(ns + '-show-settings')) {
-				Player.container.classList.remove(ns + '-show-settings');
+			if (Player.settings.viewStyle === 'settings') {
+				Player.setViewStyle(Player._preSettingsView);
 			} else {
-				Player.container.classList.add(ns + '-show-settings');
+				Player._preSettingsView = Player.settings.viewStyle;
+				Player.setViewStyle('settings');
 			}
 		} catch (err) {
 			_logError('There was an error rendering the sound player settings. Please check the console for details.');
@@ -634,8 +644,8 @@ const Player = {
 
 		Player.container.style.width = width + 'px';
 
-		// Change the height of the playlist of image.
-		const heightElement = Player.settings.playlist
+		// Change the height of the playlist or image.
+		const heightElement = Player.settings.viewStyle === 'playlist'
 			? Player.$(`.${ns}-list-container`)
 			: Player.$(`.${ns}-image-link`);
 
@@ -729,55 +739,22 @@ const Player = {
 	},
 
 	/**
-	 * Switch from playlist view to the image view.
-	 */
-	hidePlaylist: function () {
-		if (!Player.container) {
-			return;
-		}
-		try {
-			Player.settings.playlist = false;
-			Player.container.classList.add(`${ns}-expanded-view`);
-			Player.container.classList.remove(`${ns}-playlist-view`);
-			Player.renderHeader();
-			Player.saveSettings();
-		} catch (err) {
-			_logError('There was an error switching to image view. Please check the console for details.');
-			console.error('[4chan sounds player]', err);
-		}
-	},
-
-	/**
-	 * Switch from image view to the playlist view.
-	 */
-	showPlaylist: function () {
-		if (!Player.container) {
-			return;
-		}
-		try {
-			Player.settings.playlist = true;
-			Player.container.classList.remove(`${ns}-expanded-view`);
-			Player.container.classList.add(`${ns}-playlist-view`);
-			Player.renderHeader();
-			Player.saveSettings();
-		} catch (err) {
-			_logError('There was an error switching to playlist view. Please check the console for details.');
-			console.error('[4chan sounds player]', err);
-		}
-	},
-
-	/**
 	 * Switch between playlist and image view.
 	 */
-	togglePlaylist: function (e) {
+	togglePlayerView: function (e) {
+		e.preventDefault()
 		if (!Player.container) {
 			return;
 		}
 		e && e.preventDefault();
-		if (Player.settings.playlist) {
-			Player.hidePlaylist();
-		} else {
-			Player.showPlaylist();
+		let style = Player.settings.viewStyle === 'playlist' ? 'image' : 'playlist';
+		try {
+			Player.setViewStyle(style);
+			Player.renderHeader();
+			Player.saveSettings();
+		} catch (err) {
+			_logError('There was an error switching the view style. Please check the console for details.', 'warning');
+			console.error('[4chan sounds player]', err);
 		}
 	},
 

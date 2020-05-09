@@ -1,4 +1,4 @@
-`<div id="${ns}-container" class="${ns}-${data.playlist ? 'playlist' : 'extended'}-view" style="top: 100px; left: 100px; width: 350px; display: none;">
+`<div id="${ns}-container" data-view-style="${data.viewStyle}" style="top: 100px; left: 100px; width: 350px; display: none;">
 	<div class="${ns}-title ${ns}-row" style="justify-content: between;">
 		${Player.templates.header({ data })}
 	</div>

@@ -8,8 +8,8 @@ const settingsConfig = [
 		default: 'all'
 	},
 	{
-		property: 'playlist',
-		default: true
+		property: 'viewStyle',
+		default: 'playlist'
 	},
 	{
 		property: 'autoshow',
