@@ -5,7 +5,7 @@
 	<div class="${ns}-media-control ${ns}-play-button">
 		<div class="${ns}-play-button-display ${!Player.audio || Player.audio.paused ? `${ns}-play` : ''}"></div>
 	</div>
-	<div class="${ns}-media-control ${ns}-previous-button">
+	<div class="${ns}-media-control ${ns}-next-button">
 		<div class="${ns}-next-button-display"></div>
 	</div>
 </div>
