@@ -712,7 +712,7 @@ const Player = {
 			return;
 		}
 		try {
-			Player.$(`.${ns}-image`).src = thumb ? sound.image : sound.thumb;
+			Player.$(`.${ns}-image`).src = thumb ? sound.thumb : sound.image;
 			Player.$(`.${ns}-image-link`).href = sound.image;
 			Player.$(`.${ns}-image-link`).classList.remove(ns + '-show-video');
 		} catch (err) {
