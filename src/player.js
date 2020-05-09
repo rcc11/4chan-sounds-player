@@ -8,9 +8,9 @@ const headerOptions = {
 		true: { title: 'Shuffled', text: '[S]', class: 'fa-random' },
 		false: { title: 'Ordered', text: '[O]', class: 'fa-random disabled' },
 	},
-	playlist: {
-		true: { title: 'Hide Playlist', text: '[+]', class: 'fa-expand' },
-		false: { title: 'Show Playlist', text: '[-]', class: 'fa-compress' }
+	viewStyle: {
+		playlist: { title: 'Hide Playlist', text: '[+]', class: 'fa-compress' },
+		image: { title: 'Show Playlist', text: '[-]', class: 'fa-expand' }
 	}
 }
 
@@ -54,7 +54,7 @@ const Player = {
 			[`.${ns}-volume-bar`]: 'handleVolume',
 
 			// View settings
-			[`.${ns}-playlist-button`]: 'togglePlayerView',
+			[`.${ns}-viewStyle-button`]: 'togglePlayerView',
 			[`.${ns}-config-button`]: 'toggleSettings',
 
 			// Playlist controls
