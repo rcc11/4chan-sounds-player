@@ -5,15 +5,10 @@
 	justify-content: center;
 	border-bottom: solid 1px #{map-get($colors, border)};
 }
-.#{$ns}-playlist-view .#{$ns}-image-link {
-	height: 125px !important;
-}
-.#{$ns}-expanded-view .#{$ns}-image-link {
-	height: auto ;
-	min-height: 125px;
-}
 .#{$ns}-image-link .#{$ns}-video {
 	display: none;
+}
+.#{$ns}-image, .#{$ns}-video {
 	height: 100%;
 	width: 100%;
 	object-fit: contain;

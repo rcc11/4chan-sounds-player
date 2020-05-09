@@ -75,11 +75,5 @@ const settingsConfig = [
 		default: '#808bbf',
 		title: 'Expander Color',
 		showInSettings: true
-	},
-	{
-		property: 'colors.expander_hover',
-		default: '#9aa6e1',
-		title: 'Expander Hover Color',
-		showInSettings: true
 	}
 ]

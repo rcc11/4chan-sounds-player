@@ -1,11 +1,20 @@
-.#{$ns}-expanded-view .#{$ns}-list-container {
-	display: none;
-}
-
 .#{$ns}-show-settings .#{$ns}-player {
 	display: none;
 }
 
 .#{$ns}-show-settings .#{$ns}-settings {
 	display: block;
+}
+
+.#{$ns}-expanded-view .#{$ns}-list-container {
+	display: none;
+}
+
+.#{$ns}-playlist-view .#{$ns}-image-link {
+	height: 125px !important;
+}
+
+.#{$ns}-expanded-view .#{$ns}-image-link {
+	height: auto;
+	min-height: 125px;
 }

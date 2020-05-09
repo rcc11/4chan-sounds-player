@@ -1,0 +1,108 @@
+audio { width: 100% }
+
+.#{$ns}-controls {
+	align-items: center;
+	padding: .5rem;
+	border-bottom: solid 1px #{map-get($colors, border)};
+
+	background: #3f3f44;
+}
+
+.#{$ns}-media-control {
+	height: 1.5rem;
+	width: 1.5rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	& > div {
+		height: 1rem;
+		width: .8rem;
+		background: white; //#{map-get($colors, media_controls)};
+	}
+
+	&:hover > div {
+		//filter: brightness(180%);
+		background: #00b6f0;
+	}
+}
+
+.#{$ns}-play-button-display {
+	// Paused state
+	clip-path: polygon(10% 10%, 10% 90%, 35% 90%, 35% 10%, 65% 10%, 65% 90%, 90% 90%, 90% 10%, 10% 10%);
+  
+	// Play state
+	&.#{$ns}-play {
+		clip-path: polygon(0 0, 0 100%, 100% 50%, 0 0);
+	}
+}
+
+.#{$ns}-previous-button-display, .#{$ns}-next-button-display {
+	clip-path: polygon(10% 10%, 10% 90%, 30% 90%, 30% 50%, 90% 90%, 90% 10%, 30% 50%, 30% 10%, 10% 10%);
+}
+.#{$ns}-next-button-display {
+	transform: scale(-1, 1);
+}
+
+.#{$ns}-current-time {
+	color: white;
+}
+.#{$ns}-duration {
+	color: #909090;
+}
+
+.#{$ns}-progress-bar {
+	height: 1.5rem;
+	display: flex;
+	align-items:center;
+	margin: 0 1rem;
+
+	& .#{$ns}-full-bar {
+		height: .3rem;
+		width: 100%;
+		background: #131314;
+		border-radius: 1rem;
+		position: relative;
+
+		& > div {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			border-radius: 1rem;
+		}
+
+		& .#{$ns}-loaded-bar {
+			background: #5a5a5b;
+		}
+
+		& .#{$ns}-current-bar {
+			display: flex;
+			justify-content: end;
+			align-items: center;
+
+			&:after {
+				content: '';
+				background: white;
+				height: .8rem;
+				min-width: .8rem;
+				border-radius: 1rem;
+				box-shadow: rgba(0, 0, 0, 0.76) 0 0 3px 0;
+			}
+		}
+	}
+
+	&:hover .#{$ns}-current-bar:after {
+		background: #00b6f0;
+	}
+}
+
+.#{$ns}-seek-bar .#{$ns}-current-bar {
+	background: #00b6f0;
+}
+.#{$ns}-volume-bar .#{$ns}-current-bar {
+	background: white;
+}
+
+.#{$ns}-volume-bar {
+	width: 3.5rem;
+}

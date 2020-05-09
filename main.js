@@ -29,6 +29,15 @@
 		const props = path.split('.');
 		return props.reduce((obj, k) => obj && obj[k], object) || dflt;
 	}
+	
+	function toDuration(number) {
+		number = Math.floor(number || 0);
+		let seconds = number % 60;
+		const minutes = Math.floor(number / 60) % 60;
+		const hours = Math.floor(number / 60 / 60);
+		seconds < 10 && (seconds = '0' + seconds);
+		return (hours ? hours + ':' : '') + minutes + ':' + seconds;
+	}
 
 	/*% settings.js %*/
 

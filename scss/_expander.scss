@@ -7,6 +7,3 @@
 	cursor: se-resize;
 	background: linear-gradient(to bottom right, rgba(0,0,0,0), rgba(0,0,0,0) 50%, #{map-get($colors, expander)} 55%, #{map-get($colors, expander)} 100%)
 }
-.#{$ns}-expander:hover {
-	background: linear-gradient(to bottom right, rgba(0,0,0,0), rgba(0,0,0,0) 50%, #{map-get($colors, expander_hover)} 55%, #{map-get($colors, expander_hover)} 100%)
-}
