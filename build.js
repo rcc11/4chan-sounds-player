@@ -10,22 +10,22 @@ let outputPath = './4chan-sounds-player.user.js';
 // Build the stylesheet
 if (!process.argv.includes('--skip-css')) {
 	const result = sass.renderSync({
-		file: './scss/style.scss',
+		file: './src/scss/style.scss',
 		outputStyle: isDev ? 'expanded' : 'compressed'
 	});
 	const css = result.css.toString().replace(/__ns__/g, '${ns}');
-	fs.writeFileSync('./templates/css.tpl', '`' + css + '`');
+	fs.writeFileSync('./src/templates/css.tpl', '`' + css + '`');
 }
 
 function processFile (path, file) {
 	console.log(path);
 	return file.toString().replace(/\/\*%(%?) ([^\n%]+) %\*\//g, function(match, stringify, path) {
-		const contents = fs.readFileSync('./' + path).toString();
+		const contents = fs.readFileSync('./src/' + path).toString();
 		return processFile(path, stringify ? JSON.stringify(contents) : contents);
 	});
 };
 
-let output = processFile('main.js', fs.readFileSync('./main.js'));
+let output = processFile('main.js', fs.readFileSync('./src/main.js'));
 
 if (!isDev) {
 	console.log('Minify');
@@ -34,6 +34,6 @@ if (!isDev) {
 }
 
 // Add the header
-output = fs.readFileSync('./header.js') + '\n' + output;
+output = fs.readFileSync('./src/header.js') + '\n' + output;
 
 fs.writeFileSync(outputPath, output)
