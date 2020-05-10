@@ -39,8 +39,8 @@
 		try {
 			e.preventDefault();
 			const options = Object.keys(Player.header.options.repeat);
-			const current = options.indexOf(Player.settings.repeat);
-			Player.settings.repeat = options[(current + 4) % 3];
+			const current = options.indexOf(Player.config.repeat);
+			Player.config.repeat = options[(current + 4) % 3];
 			Player.header.render();
 			Player.settings.save();
 		} catch (err) {
@@ -55,11 +55,11 @@
 	toggleShuffle: function (e) {
 		try {
 			e.preventDefault();
-			Player.settings.shuffle = !Player.settings.shuffle;
+			Player.config.shuffle = !Player.config.shuffle;
 			Player.header.render();
 
 			// Update the play order.
-			if (!Player.settings.shuffle) {
+			if (!Player.config.shuffle) {
 				Player.playOrder = [ ...Player.sounds ];
 			} else {
 				const playOrder = Player.playOrder;

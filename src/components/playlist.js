@@ -64,7 +64,7 @@
 			return;
 		}
 		e && e.preventDefault();
-		let style = Player.settings.viewStyle === 'playlist' ? 'image' : 'playlist';
+		let style = Player.config.viewStyle === 'playlist' ? 'image' : 'playlist';
 		try {
 			Player.display.setViewStyle(style);
 			Player.header.render();
@@ -88,7 +88,7 @@
 			Player.sounds.push(sound);
 
 			// Add the sound to the play order at the end, or someone random for shuffled.
-			const index = Player.settings.shuffle
+			const index = Player.config.shuffle
 				? Math.floor(Math.random() * Player.sounds.length - 1)
 				: Player.sounds.length;
 			Player.playOrder.splice(index, 0, sound);
@@ -101,7 +101,7 @@
 				// If nothing else has been added yet show the image for this sound.
 				if (Player.playOrder.length === 1) {
 					// If we're on a thread with autoshow enabled then make sure the player is displayed
-					if (/\/thread\//.test(location.href) && Player.settings.autoshow) {
+					if (/\/thread\//.test(location.href) && Player.config.autoshow) {
 						Player.show();
 					}
 					Player.playlist.showImage(sound);

@@ -132,9 +132,9 @@
 				return Player.play(Player.playOrder[0]);
 			}
 			// Get the next index, either repeating the same, wrapping round to repeat all or just moving the index.
-			const nextIndex = Player.settings.repeat === 'one'
+			const nextIndex = Player.config.repeat === 'one'
 				? currentIndex
-				: Player.settings.repeat === 'all'
+				: Player.config.repeat === 'all'
 					? ((currentIndex + direction) + Player.playOrder.length) % Player.playOrder.length
 					: currentIndex + direction;
 			const nextSound = Player.playOrder[nextIndex];

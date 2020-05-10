@@ -19,7 +19,7 @@
 	 */
 	save: function () {
 		try {
-			return GM.setValue(ns + '.settings', JSON.stringify(Player.settings));
+			return GM.setValue(ns + '.settings', JSON.stringify(Player.config));
 		} catch (err) {
 			_logError('There was an error saving the sound player settings. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
@@ -40,7 +40,7 @@
 			} catch(e) {
 				return;
 			}
-			_mix(Player.settings, settings);
+			_mix(Player.config, settings);
 		} catch (err) {
 			_logError('There was an error loading the sound player settings. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
@@ -53,10 +53,10 @@
 	toggle: function (e) {
 		try {
 			e.preventDefault();
-			if (Player.settings.viewStyle === 'settings') {
+			if (Player.config.viewStyle === 'settings') {
 				Player.display.setViewStyle(Player._preSettingsView || 'playlist');
 			} else {
-				Player._preSettingsView = Player.settings.viewStyle;
+				Player._preSettingsView = Player.config.viewStyle;
 				Player.display.setViewStyle('settings');
 			}
 		} catch (err) {
@@ -87,7 +87,7 @@
 			});
 
 			// Get the new value of the setting.
-			const currentValue = _get(Player.settings, property);
+			const currentValue = _get(Player.config, property);
 			let newValue = input[input.getAttribute('type') === 'checkbox' ? 'checked' : 'value'];
 
 			if (settingConfig.parse) {
@@ -100,7 +100,7 @@
 			// Not the most stringent check but enough to avoid some spamming.
 			if (currentValue !== newValue) {
 				// Update the setting.
-				_set(Player.settings, property, newValue);
+				_set(Player.config, property, newValue);
 
 				// Update the stylesheet reflect any changes.
 				Player.stylesheet.innerHTML = Player.templates.css(Player.display._tplOptions());

@@ -31,7 +31,7 @@
 	 * Generate the data passed to the templates.
 	 */
 	_tplOptions: function () {
-		return { data: Player.settings };
+		return { data: Player.config };
 	},
 
 	/**
@@ -81,7 +81,7 @@
 	 * @param {Chagn} e 
 	 */
 	setViewStyle: function (style) {
-		Player.settings.viewStyle = style;
+		Player.config.viewStyle = style;
 		Player.container.setAttribute('data-view-style', style);
 	},
 
@@ -113,7 +113,7 @@
 			Player.isHidden = true;
 			Player.trigger('hide');
 
-			if (Player.settings.pauseOnHide) {
+			if (Player.config.pauseOnHide) {
 				Player.pause();
 			}
 		} catch (err) {

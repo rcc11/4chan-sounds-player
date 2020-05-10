@@ -50,9 +50,9 @@
 		Player.container.style.width = width + 'px';
 
 		// Change the height of the playlist or image.
-		const heightElement = Player.settings.viewStyle === 'playlist' ? Player.$(`.${ns}-list-container`)
-			: Player.settings.viewStyle === 'image' ? Player.$(`.${ns}-image-link`)
-			: Player.settings.viewStyle === 'settings' ? Player.$(`.${ns}-settings`) : null;
+		const heightElement = Player.config.viewStyle === 'playlist' ? Player.$(`.${ns}-list-container`)
+			: Player.config.viewStyle === 'image' ? Player.$(`.${ns}-image-link`)
+			: Player.config.viewStyle === 'settings' ? Player.$(`.${ns}-settings`) : null;
 
 		const containerHeight = parseInt(document.defaultView.getComputedStyle(Player.container).height, 10);
 		const offset = containerHeight - (parseInt(heightElement.style.height, 10) || 0);

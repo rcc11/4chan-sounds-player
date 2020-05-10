@@ -1,3 +1,5 @@
+const Player = {};
+
 const components = {
 	controls: /*% components/controls.js %*/,
 	display: /*% components/display.js %*/,
@@ -9,7 +11,13 @@ const components = {
 	settings: /*% components/settings.js %*/,
 };
 
-const Player = {
+// Add each of the components to the player.
+for (let name in components) {
+	Player[name] = components[name];
+	(Player[name].atRoot || []).forEach(k => Player[k] = Player[name][k]);
+}
+
+Object.assign(Player, {
 	ns,
 
 	audio: new Audio(),
@@ -19,11 +27,11 @@ const Player = {
 	ui: {},
 	_progressBarStyleSheets: {},
 
-	settings: settingsConfig.reduce(function reduceSettings(settings, settingConfig) {
+	config: settingsConfig.reduce(function reduceSettings(config, settingConfig) {
 		if (settingConfig.settings) {
-			return settingConfig.settings.reduce(reduceSettings, settings);
+			return settingConfig.settings.reduce(reduceSettings, config);
 		}
-		return _set(settings, settingConfig.property, settingConfig.default);
+		return _set(config, settingConfig.property, settingConfig.default);
 	}, {}),
 
 	$: (...args) => Player.container && Player.container.querySelector(...args),
@@ -45,12 +53,6 @@ const Player = {
 		try {
 			Player.sounds = [ ];
 			Player.playOrder = [ ];
-
-			// Add each of the components to the player.
-			for (let name in components) {
-				Player[name] = components[name];
-				(Player[name].atRoot || []).forEach(k => Player[k] = Player[name][k]);
-			}
 
 			// Load the user settings.
 			await Player.settings.load();
@@ -79,10 +81,10 @@ const Player = {
 			// Render the player, but not neccessarily show it.
 			Player.display.render();
 		} catch (err) {
-			_logError('There was an error intiaizing the sound player. Please check the console for details.');
+			_logError('There was an error initialzing the sound player. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
 			// Can't recover so throw this error.
 			throw err;
 		}
 	}
-};
+});

@@ -79,7 +79,7 @@
 
 	document.addEventListener('4chanXInitFinished', function () {
 		isChanX = true;
-		Player.display.iniChanX();
+		Player.display.initChanX();
 	});
 
 	function parseFiles (target) {
@@ -166,7 +166,7 @@
 				return;
 			}
 
-			for (let item of Player.settings.allow) {
+			for (let item of Player.config.allow) {
 				if (link.hostname.toLowerCase() === item || link.hostname.toLowerCase().endsWith('.' + item)) {
 					return Player.add(name, id, link.href, thumbSrc, fullSrc);
 				}

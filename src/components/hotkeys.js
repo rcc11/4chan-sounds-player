@@ -18,7 +18,7 @@
 	 * Apply the selecting hotkeys option
 	 */
 	apply: function () {
-		const type = Player.settings.hotkeys;
+		const type = Player.config.hotkeys;
 		Player.hotkeys.removeHandler();
 		Player.off('hide', Player.hotkeys.addHandler);
 		Player.off('show', Player.hotkeys.removeHandler);
@@ -32,8 +32,8 @@
 			if (!Player.isHidden) {
 				Player.hotkeys.addHandler();
 			}
-			Player.on('hide', Player.hotkeys.addHandler);
-			Player.on('show', Player.hotkeys.removeHandler);
+			Player.on('show', Player.hotkeys.addHandler);
+			Player.on('hide', Player.hotkeys.removeHandler);
 		}
 	},
 
@@ -43,11 +43,11 @@
 	handle: function (e) {
 		// Ignore events on inputs so you can still type.
 		const ignoreFor = [ 'INPUT', 'SELECT', 'TEXTAREA', 'INPUT' ];
-		if (ignoreFor.includes(e.target.nodeName) || Player.settings.hotkeys === 'open' && Player.isHidden) {
+		if (ignoreFor.includes(e.target.nodeName) || Player.config.hotkeys === 'open' && Player.isHidden) {
 			return;
 		}
 		const k = e.key.toLowerCase();
-		const bindings = Player.settings.hotkey_bindings || {};
+		const bindings = Player.config.hotkey_bindings || {};
 
 		// Look for a matching hotkey binding
 		for (let key in bindings) {
