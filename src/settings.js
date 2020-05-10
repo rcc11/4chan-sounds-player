@@ -29,13 +29,56 @@ const settingsConfig = [
 		property: 'hotkeys',
 		default: 'open',
 		title: 'Hotkeys',
-		description: 'Enable hot ekys for controlling the player playback.',
+		description: 'Enable hot keys for controlling the player playback.',
 		showInSettings: true,
 		handler: 'hotkeys.apply',
 		options: [
 			[ 'always', 'Always' ],
 			[ 'open', 'Only with the player open' ],
 			[ 'never', 'Never' ]
+		]
+	},
+	{
+		title: 'Hotkey Bindings',
+		showInSettings: true,
+		format: 'hotkeys.stringifyKey',
+		parse: 'hotkeys.parseKey',
+		class: `${ns}-key-input`,
+		property: 'hotkey_bindings',
+		settings: [
+			{
+				property: 'hotkey_bindings.playPause',
+				title: 'Play/Pause',
+				keyHandler: 'togglePlay',
+				ignoreRepeat: true,
+				default: { key: ' ' }
+			},
+			{
+				property: 'hotkey_bindings.previous',
+				title: 'Previous',
+				keyHandler: 'previous',
+				ignoreRepeat: true,
+				default: { key: 'left' }
+			},
+			{
+				property: 'hotkey_bindings.next',
+				title: 'Next',
+				keyHandler: 'next',
+				ignoreRepeat: true,
+				default: { key: 'right' }
+			},
+			{
+				property: 'hotkey_bindings.volumeUp',
+				title: 'Volume Up',
+				keyHandler: 'hotkeys.volumeUp',
+				default: { shiftKey: true, key: 'up' }
+			},
+			{
+				property: 'hotkey_bindings.volumeDown',
+				title: 'Volume Down',
+				keyHandler: 'hotkeys.volumeDown',
+				default: { shiftKey: true, key: 'down' }
+			}
 		]
 	},
 	{

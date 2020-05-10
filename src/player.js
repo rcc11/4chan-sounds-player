@@ -23,7 +23,10 @@ const Player = {
 	container: null,
 	ui: {},
 	_progressBarStyleSheets: {},
-	settings: settingsConfig.reduce((settings, settingConfig) => {
+	settings: settingsConfig.reduce(function reduceSettings(settings, settingConfig) {
+		if (settingConfig.settings) {
+			return settingConfig.settings.reduce(reduceSettings, settings);
+		}
 		return _set(settings, settingConfig.property, settingConfig.default);
 	}, {}),
 
@@ -94,6 +97,15 @@ Object.assign(Player, {
 		},
 		change: {
 			[`.${ns}-settings input[type=checkbox], .${ns}-settings select`]: 'handleSettingChange'
+		},
+		keydown: {
+			[`.${ns}-key-input`]: function (e) {
+				e.preventDefault();
+				if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Meta') {
+					return;
+				}
+				e.eventTarget.value = Player.hotkeys.stringifyKey(e);
+			}
 		}
 	},
 
@@ -111,7 +123,6 @@ Object.assign(Player, {
 		play: { [`.${ns}-video`]: 'syncVideo' },
 		playing: { [`.${ns}-video`]: 'syncVideo' },
 		pause: { [`.${ns}-video`]: 'syncVideo' },
-		seeked: { [`.${ns}-video`]: 'syncVideo' },
 		loadeddata: { [`.${ns}-video`]: 'syncVideo' }
 	},
 
@@ -604,11 +615,25 @@ Object.assign(Player, {
 		try {
 			const input = e.eventTarget;
 			const property = input.getAttribute('data-property');
-			const settingConfig = settingsConfig.find(settingConfig => settingConfig.property === property);
+			let settingConfig;
+			settingsConfig.find(function searchConfig(setting) {
+				if (setting.property === property) {
+					return settingConfig = setting;
+				}
+				if (setting.settings) {
+					let subSetting = setting.settings.find(_setting => _setting.property === property);
+					return subSetting && (settingConfig = { ...setting, settings: null, ...subSetting });
+				}
+				return false;
+			});
 
 			// Get the new value of the setting.
 			const currentValue = _get(Player.settings, property);
 			let newValue = input[input.getAttribute('type') === 'checkbox' ? 'checked' : 'value'];
+
+			if (settingConfig.parse) {
+				newValue = _get(Player, settingConfig.parse)(newValue);
+			}
 			if (settingConfig && settingConfig.split) {
 				newValue = newValue.split(decodeURIComponent(settingConfig.split));
 			}
@@ -626,7 +651,7 @@ Object.assign(Player, {
 			}
 
 			// Run any handler required by the value changing
-			settingConfig.handler && _get(Player, settingConfig.handler, () => null)(newValue);
+			settingConfig && settingConfig.handler && _get(Player, settingConfig.handler, () => null)(newValue);
 		} catch (err) {
 			_logError('There was an error updating the setting. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
@@ -677,12 +702,12 @@ Object.assign(Player, {
 		Player.container.style.width = width + 'px';
 
 		// Change the height of the playlist or image.
-		const heightElement = Player.settings.viewStyle === 'playlist'
-			? Player.$(`.${ns}-list-container`)
-			: Player.$(`.${ns}-image-link`);
+		const heightElement = Player.settings.viewStyle === 'playlist' ? Player.$(`.${ns}-list-container`)
+			: Player.settings.viewStyle === 'image' ? Player.$(`.${ns}-image-link`)
+			: Player.settings.viewStyle === 'settings' ? Player.$(`.${ns}-settings`) : null;
 
 		const containerHeight = parseInt(document.defaultView.getComputedStyle(Player.container).height, 10);
-		const offset = containerHeight - parseInt(heightElement.style.height, 10);
+		const offset = containerHeight - (parseInt(heightElement.style.height, 10) || 0);
 		heightElement.style.height = Math.max(10, height - offset) + 'px';
 	},
 

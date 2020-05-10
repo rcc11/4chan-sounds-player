@@ -3,25 +3,37 @@
 		Player.on('rendered', Player.hotkeys.apply);
 	},
 
+	_keyMap: {
+		' ': 'space',
+		'arrowleft': 'left',
+		'arrowright': 'right',
+		'arrowup': 'up',
+		'arrowdown': 'down'
+	},
+
+	addHandler: () => document.body.addEventListener('keydown', Player.hotkeys.handle),
+	removeHandler: () => document.body.removeEventListener('keydown', Player.hotkeys.handle),
+
 	/**
 	 * Apply the selecting hotkeys option
 	 */
 	apply: function () {
 		const type = Player.settings.hotkeys;
-		const handler = Player.hotkeys.handle;
-		document.body.removeEventListener('keydown', handler);
+		Player.hotkeys.removeHandler();
+		Player.off('hide', Player.hotkeys.addHandler);
+		Player.off('show', Player.hotkeys.removeHandler);
 
 		if (type === 'always') {
 			// If hotkeys are always enabled then just set the handler.
-			document.body.addEventListener('keydown', handler)
+			Player.hotkeys.addHandler();
 		} else if (type === 'open') {
 			// If hotkeys are only enabled with the player toggle the handler as the player opens/closes.
 			// If the player is already open set the handler now.
 			if (!Player.isHidden) {
-				document.body.addEventListener('keydown', handler)
+				Player.hotkeys.addHandler();
 			}
-			Player.on('hide', () => document.body.removeEventListener('keydown', handler));
-			Player.on('show', () => document.body.addEventListener('keydown', handler));
+			Player.on('hide', Player.hotkeys.addHandler);
+			Player.on('show', Player.hotkeys.removeHandler);
 		}
 	},
 
@@ -29,26 +41,56 @@
 	 * Handle a keydown even on the body
 	 */
 	handle: function (e) {
-		const ignoreFor = [ 'INPUT', 'SELECT', 'TEXTAREA', 'INPUT' ];
 		// Ignore events on inputs so you can still type.
+		const ignoreFor = [ 'INPUT', 'SELECT', 'TEXTAREA', 'INPUT' ];
 		if (ignoreFor.includes(e.target.nodeName) || Player.settings.hotkeys === 'open' && Player.isHidden) {
 			return;
 		}
+		const k = e.key.toLowerCase();
+		const bindings = Player.settings.hotkey_bindings || {}
 
-		// Prev, play/pause, and next can be ignored if the player is empty.
-		if (Player.playOrder.length) {
-			switch (e.which) {
-				case 37: e.preventDefault(); Player.previous(); return;
-				case 39: e.preventDefault(); Player.next(); return;
-				case 32: e.preventDefault(); Player.togglePlay(); return;
+		// Look for a matching hotkey binding
+		for (let key in bindings) {
+			const keyDef = bindings[key];
+			const bindingConfig = k === keyDef.key
+				&& (!keyDef.shiftKey || e.shiftKey) && (!keyDef.ctrlKey || e.ctrlKey) && (!keyDef.metaKey || e.metaKey)
+				&& (!keyDef.ignoreRepeat || !e.repeat)
+				&& settingsConfig.find(s => s.property === 'hotkey_bindings').settings.find(s => s.property === 'hotkey_bindings.' + key);
+			
+			if (bindingConfig) {
+				e.preventDefault();
+				return _get(Player, bindingConfig.keyHandler)();
 			}
 		}
+	},
 
-		if (e.shiftKey) {
-			switch (e.which) {
-				case 38: e.preventDefault(); Player.audio.volume = Math.min(Player.audio.volume + .05, 1); return;
-				case 40: e.preventDefault(); Player.audio.volume = Math.max(Player.audio.volume - .05, 0); return;
-			}
-		}
+	/**
+	 * Turn a hotkey definition or key event into an input string.
+	 */
+	stringifyKey: function (key) {
+		let k = key.key.toLowerCase();
+		Player.hotkeys._keyMap[k] && (k = Player.hotkeys._keyMap[k])
+		return (key.ctrlKey ? 'Ctrl+' : '') + (key.shiftKey ? 'Shift+' : '') + (key.metaKey ? 'Meta+' : '') + k;
+	},
+
+
+	/**
+	 * Turn an input string into a hotkey definition object.
+	 */
+	parseKey: function (str) {
+		const keys = str.split('+');
+		let key = keys.pop();
+		Object.keys(Player.hotkeys._keyMap).find(k => Player.hotkeys._keyMap[k] === key && (key = k));
+		const newValue = { key };
+		keys.forEach(key => newValue[key + 'Key'] = true);
+		return newValue;
+	},
+
+	volumeUp: function () {
+		Player.audio.volume = Math.min(Player.audio.volume + .05, 1);
+	},
+
+	volumeUp: function () {
+		Player.audio.volume = Math.max(Player.audio.volume - .05, 0);
 	}
 }

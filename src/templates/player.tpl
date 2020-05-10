@@ -9,8 +9,4 @@
 	<ul class="${ns}-list">
 		${Player.templates.list({ data })}
 	</ul>
-</div>
-<div class="${ns}-footer">
-	<span class="${ns}-count">0</span> sounds
-	<div class="${ns}-expander"></div>
 </div>`

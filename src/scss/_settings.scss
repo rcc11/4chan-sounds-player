@@ -1,11 +1,18 @@
 .#{$ns}-settings {
 	display: none;
-	padding: .25rem;
+	padding: 0 .25rem;
+	height: 100%;
+	overflow: auto;
 
 	.#{$ns}-setting-header {
 		font-weight: 600;
-		margin-top: 0.25rem;
+		margin-top: .5rem;
 	}
+
+	.#{$ns}-sub-settings {
+		margin-top: .25rem;
+	}
+
 	textarea {
 		border: solid 1px #{map-get($colors, border)};
 		min-width: 100%;
