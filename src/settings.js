@@ -58,26 +58,26 @@ const settingsConfig = [
 				title: 'Previous',
 				keyHandler: 'previous',
 				ignoreRepeat: true,
-				default: { key: 'left' }
+				default: { key: 'arrowleft' }
 			},
 			{
 				property: 'hotkey_bindings.next',
 				title: 'Next',
 				keyHandler: 'next',
 				ignoreRepeat: true,
-				default: { key: 'right' }
+				default: { key: 'arrowright' }
 			},
 			{
 				property: 'hotkey_bindings.volumeUp',
 				title: 'Volume Up',
 				keyHandler: 'hotkeys.volumeUp',
-				default: { shiftKey: true, key: 'up' }
+				default: { shiftKey: true, key: 'arrowup' }
 			},
 			{
 				property: 'hotkey_bindings.volumeDown',
 				title: 'Volume Down',
 				keyHandler: 'hotkeys.volumeDown',
-				default: { shiftKey: true, key: 'down' }
+				default: { shiftKey: true, key: 'arrowdown' }
 			}
 		]
 	},
@@ -97,39 +97,40 @@ const settingsConfig = [
 		split: '\n'
 	},
 	{
-		property: 'colors.background',
-		default: '#d6daf0',
-		title: 'Background Color',
-		showInSettings: true
-	},
-	{
-		property: 'colors.border',
-		default: '#b7c5d9',
-		title: 'Border Color',
-		showInSettings: true
-	},
-	{
-		property: 'colors.odd_row',
-		default: '#d6daf0',
-		title: 'Odd Row Color',
-		showInSettings: true
-	},
-	{
-		property: 'colors.even_row',
-		default: '#b7c5d9',
-		title: 'Even Row Color',
-		showInSettings: true
-	},
-	{
-		property: 'colors.playing',
-		default: '#98bff7',
-		title: 'Playing Row Color',
-		showInSettings: true
-	},
-	{
-		property: 'colors.expander',
-		default: '#808bbf',
-		title: 'Expander Color',
-		showInSettings: true
+		title: 'Colors',
+		showInSettings: true,
+		property: 'colors',
+		settings: [
+			{
+				property: 'colors.background',
+				default: '#d6daf0',
+				title: 'Background Color'
+			},
+			{
+				property: 'colors.border',
+				default: '#b7c5d9',
+				title: 'Border Color'
+			},
+			{
+				property: 'colors.odd_row',
+				default: '#d6daf0',
+				title: 'Odd Row Color',
+			},
+			{
+				property: 'colors.even_row',
+				default: '#b7c5d9',
+				title: 'Even Row Color'
+			},
+			{
+				property: 'colors.playing',
+				default: '#98bff7',
+				title: 'Playing Row Color'
+			},
+			{
+				property: 'colors.expander',
+				default: '#808bbf',
+				title: 'Expander Color'
+			}
+		]
 	}
 ]

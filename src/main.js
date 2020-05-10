@@ -39,6 +39,17 @@
 		return (hours ? hours + ':' : '') + minutes + ':' + seconds;
 	}
 
+	function _mix (to, from) {
+		for (let key in from || {}) {
+			if (from[key] && typeof from[key] === 'object' && !Array.isArray(from[key])) {
+				to[key] || (to[key] = {});
+				_mix(to[key], from[key]);
+			} else {
+				to[key] = from[key];
+			}
+		}
+	}
+
 	/*% settings.js %*/
 
 	/*% player.js %*/
@@ -68,7 +79,7 @@
 
 	document.addEventListener('4chanXInitFinished', function () {
 		isChanX = true;
-		Player.initChanX();
+		Player.display.iniChanX();
 	});
 
 	function parseFiles (target) {

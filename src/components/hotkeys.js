@@ -47,7 +47,7 @@
 			return;
 		}
 		const k = e.key.toLowerCase();
-		const bindings = Player.settings.hotkey_bindings || {}
+		const bindings = Player.settings.hotkey_bindings || {};
 
 		// Look for a matching hotkey binding
 		for (let key in bindings) {
@@ -90,7 +90,7 @@
 		Player.audio.volume = Math.min(Player.audio.volume + .05, 1);
 	},
 
-	volumeUp: function () {
+	volumeDown: function () {
 		Player.audio.volume = Math.max(Player.audio.volume - .05, 0);
 	}
 }
