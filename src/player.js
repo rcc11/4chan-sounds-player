@@ -19,6 +19,7 @@ const Player = {
 
 	audio: new Audio(),
 	sounds: [],
+	isHidden: true,
 	container: null,
 	ui: {},
 	_progressBarStyleSheets: {},
@@ -26,8 +27,20 @@ const Player = {
 		return _set(settings, settingConfig.property, settingConfig.default);
 	}, {}),
 
-	$: (...args) => Player.container.querySelector(...args),
+	$: (...args) => Player.container && Player.container.querySelector(...args),
 
+	.../*% components/events.js %*/
+};
+
+const components = {
+	hotkeys: /*% components/hotkeys.js %*/
+};
+
+for (let name in components) {
+	Player[name] = components[name];
+}
+
+Object.assign(Player, {
 	templates: {
 		css: ({ data }) => /*% templates/css.tpl %*/,
 		body: ({ data }) => /*% templates/body.tpl %*/,
@@ -80,7 +93,7 @@ const Player = {
 			[`.${ns}-settings input, .${ns}-settings textarea`]: 'handleSettingChange'
 		},
 		change: {
-			[`.${ns}-settings input[type=checkbox]`]: 'handleSettingChange'
+			[`.${ns}-settings input[type=checkbox], .${ns}-settings select`]: 'handleSettingChange'
 		}
 	},
 
@@ -131,7 +144,7 @@ const Player = {
 			await Player.loadSettings();
 			Player.sounds = [ ];
 			Player.playOrder = [ ];
- 
+
 			// If it's already known that 4chan X is running then setup the button for it.
 			// If not add the the [Sounds] link in the top and bottom nav.
 			if (isChanX) {
@@ -146,6 +159,10 @@ const Player = {
 					link.parentNode.insertBefore(bracket, link);
 					showLink.addEventListener('click', Player.toggleDisplay);
 				});
+			}
+
+			for (let name in components) {
+				components[name].initialize && components[name].initialize();
 			}
 
 			// Render the player, but not neccessarily show it.
@@ -248,6 +265,8 @@ const Player = {
 			el.innerHTML = Player.templates.body(Player._tplOptions());
 			Player.container = el.querySelector(`#${ns}-container`);
 			document.body.appendChild(Player.container);
+
+			Player.trigger('rendered');
 
 			// Keep track of heavily updated elements.
 			Player.ui.currentTime = Player.$(`.${ns}-current-time`);
@@ -470,6 +489,10 @@ const Player = {
 			Player._hiddenWhilePolling = !!Player._loadingPoll;
 			Player.stopPollingForLoading();
 			Player.container.style.display = 'none';
+
+			Player.isHidden = true;
+			Player.trigger('hide');
+
 			if (Player.settings.pauseOnHide) {
 				Player.pause();
 			}
@@ -494,17 +517,23 @@ const Player = {
 			}
 			Player._hiddenWhilePolling && Player.pollForLoading();
 			Player.container.style.display = null;
+
+			Player.isHidden = false;
+			Player.trigger('show');
+
 			// Apply the last position/size
 			const [ top, left ] = (await GM.getValue(ns + '.position') || '').split(':');
 			const [ width, height ] = (await GM.getValue(ns + '.size') || '').split(':');
 			+width && +height && Player.resizeTo(width, height);
 			+top && +left && Player.moveTo(top, left);
+
+			Player.container.focus();
 		} catch (err) {
 			_logError('There was an error showing the sound player. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
 		}
 	},
-	
+
 	/**
 	 * Toggle the repeat style.
 	 */
@@ -517,12 +546,11 @@ const Player = {
 			Player.renderHeader();
 			Player.saveSettings();
 		} catch (err) {
-			_logError('There was an error changing the repeat setting. Please check the console for details.');
+			_logError('There was an error changing the repeat setting. Please check the console for details.', 'warning');
 			console.error('[4chan sounds player]', err);
 		}
 	},
-	
-	
+
 	/**
 	 * Toggle the shuffle style.
 	 */
@@ -544,12 +572,11 @@ const Player = {
 			}
 			Player.saveSettings();
 		} catch (err) {
-			_logError('There was an error changing the shuffle setting. Please check the console for details.');
+			_logError('There was an error changing the shuffle setting. Please check the console for details.', 'warning');
 			console.error('[4chan sounds player]', err);
 		}
 	},
 
-	
 	/**
 	 * Toggle whether the player or settings are displayed.
 	 */
@@ -557,7 +584,7 @@ const Player = {
 		try {
 			e.preventDefault();
 			if (Player.settings.viewStyle === 'settings') {
-				Player.setViewStyle(Player._preSettingsView);
+				Player.setViewStyle(Player._preSettingsView || 'playlist');
 			} else {
 				Player._preSettingsView = Player.settings.viewStyle;
 				Player.setViewStyle('settings');
@@ -578,11 +605,14 @@ const Player = {
 			const input = e.eventTarget;
 			const property = input.getAttribute('data-property');
 			const settingConfig = settingsConfig.find(settingConfig => settingConfig.property === property);
+
+			// Get the new value of the setting.
 			const currentValue = _get(Player.settings, property);
 			let newValue = input[input.getAttribute('type') === 'checkbox' ? 'checked' : 'value'];
 			if (settingConfig && settingConfig.split) {
 				newValue = newValue.split(decodeURIComponent(settingConfig.split));
 			}
+
 			// Not the most stringent check but enough to avoid some spamming.
 			if (currentValue !== newValue) {
 				// Update the setting.
@@ -594,8 +624,11 @@ const Player = {
 				// Save the new settings.
 				Player.saveSettings();
 			}
+
+			// Run any handler required by the value changing
+			settingConfig.handler && _get(Player, settingConfig.handler, () => null)(newValue);
 		} catch (err) {
-			_logError('There was an updating the setting. Please check the console for details.');
+			_logError('There was an error updating the setting. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
 		}
 	},
@@ -604,7 +637,7 @@ const Player = {
 	 * Handle the user grabbing the expander.
 	 */
 	initResize: function initDrag(e) {
-		disableUserSelect();
+		e.preventDefault();
 		Player._startX = e.clientX;
 		Player._startY = e.clientY;
 		Player._startWidth = parseInt(document.defaultView.getComputedStyle(Player.container).width, 10);
@@ -628,7 +661,6 @@ const Player = {
 		const style = document.defaultView.getComputedStyle(Player.container);
 		document.documentElement.removeEventListener('mousemove', Player.doResize, false);
 		document.documentElement.removeEventListener('mouseup', Player.stopResize, false);
-		enableUserSelect();
 		GM.setValue(ns + '.size', parseInt(style.width, 10) + ':' + parseInt(style.height, 10));
 	},
 
@@ -658,7 +690,7 @@ const Player = {
 	 * Handle the user grabbing the header.
 	 */
 	initMove: function (e) {
-		disableUserSelect();
+		e.preventDefault();
 		Player.$(`.${ns}-title`).style.cursor = 'grabbing';
 
 		// Try to reapply the current sizing to fix oversized winows.
@@ -686,7 +718,6 @@ const Player = {
 		document.documentElement.removeEventListener('mousemove', Player.doMove, false);
 		document.documentElement.removeEventListener('mouseup', Player.stopMove, false);
 		Player.$(`.${ns}-title`).style.cursor = null;
-		enableUserSelect();
 		GM.setValue(ns + '.position', parseInt(Player.container.style.left, 10) + ':' + parseInt(Player.container.style.top, 10));
 	},
 
@@ -698,8 +729,8 @@ const Player = {
 			return;
 		}
 		const style = document.defaultView.getComputedStyle(Player.container);
-		const maxX = document.documentElement.clientWidth - parseInt(style.width, 10);
-		const maxY = document.documentElement.clientHeight - parseInt(style.height, 10);
+		const maxX = document.documentElement.clientWidth; - parseInt(style.width, 10);
+		const maxY = document.documentElement.clientHeight; - parseInt(style.height, 10);
 		Player.container.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
 		Player.container.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
 	},
@@ -806,6 +837,10 @@ const Player = {
 		}
 
 		try {
+			// If nothing is currently selected to play start playing the first sound.
+			if (!sound && !Player.playing && Player.playOrder.length) {
+				sound = Player.playOrder[0];
+			}
 			// If a new sound is being played update the display.
 			if (sound) {
 				if (Player.playing) {
@@ -888,4 +923,4 @@ const Player = {
 			console.error('[4chan sounds player]', err);
 		}
 	}
-};
+});

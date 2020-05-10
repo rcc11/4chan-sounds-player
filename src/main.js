@@ -29,7 +29,7 @@
 		const props = path.split('.');
 		return props.reduce((obj, k) => obj && obj[k], object) || dflt;
 	}
-	
+
 	function toDuration(number) {
 		number = Math.floor(number || 0);
 		let seconds = number % 60;
@@ -166,14 +166,4 @@
 			console.error(err);
 		}
 	};
-
-	function disableUserSelect () {
-		document.body.style.userSelect = 'none';
-		document.body.style.MozUserSelect = 'none';
-	}
-
-	function enableUserSelect () {
-		document.body.style.userSelect = null;
-		document.body.style.MozUserSelect = null;
-	}
 })();

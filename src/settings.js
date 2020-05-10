@@ -26,6 +26,19 @@ const settingsConfig = [
 		showInSettings: true
 	},
 	{
+		property: 'hotkeys',
+		default: 'open',
+		title: 'Hotkeys',
+		description: 'Enable hot ekys for controlling the player playback.',
+		showInSettings: true,
+		handler: 'hotkeys.apply',
+		options: [
+			[ 'always', 'Always' ],
+			[ 'open', 'Only with the player open' ],
+			[ 'never', 'Never' ]
+		]
+	},
+	{
 		property: 'allow',
 		default: [
 			'4cdn.org',
