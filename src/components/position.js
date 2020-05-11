@@ -13,8 +13,9 @@
 		e.preventDefault();
 		Player._startX = e.clientX;
 		Player._startY = e.clientY;
-		Player._startWidth = parseInt(document.defaultView.getComputedStyle(Player.container).width, 10);
-		Player._startHeight = parseInt(document.defaultView.getComputedStyle(Player.container).height, 10);
+		let { width, height } = Player.container.getBoundingClientRect();
+		Player._startWidth = width;
+		Player._startHeight = height;
 		document.documentElement.addEventListener('mousemove', Player.position.doResize, false);
 		document.documentElement.addEventListener('mouseup', Player.position.stopResize, false);
 	},
@@ -31,10 +32,10 @@
 	 * Handle the user releasing the expander.
 	 */
 	stopResize: function() {
-		const style = document.defaultView.getComputedStyle(Player.container);
+		const { width, height } = Player.container.getBoundingClientRect();
 		document.documentElement.removeEventListener('mousemove', Player.position.doResize, false);
 		document.documentElement.removeEventListener('mouseup', Player.position.stopResize, false);
-		GM.setValue(ns + '.size', parseInt(style.width, 10) + ':' + parseInt(style.height, 10));
+		GM.setValue(ns + '.size', width + ':' + height);
 	},
 
 	/**
@@ -56,8 +57,7 @@
 			: Player.config.viewStyle === 'image' ? Player.$(`.${ns}-image-link`)
 			: Player.config.viewStyle === 'settings' ? Player.$(`.${ns}-settings`) : null;
 
-		const containerHeight = parseInt(document.defaultView.getComputedStyle(Player.container).height, 10);
-		const offset = containerHeight - (parseInt(heightElement.style.height, 10) || 0);
+		const offset = Player.container.getBoundingClientRect().height - heightElement.getBoundingClientRect().height;
 		heightElement.style.height = Math.max(10, height - offset) + 'px';
 	},
 
@@ -69,8 +69,8 @@
 		Player.$(`.${ns}-title`).style.cursor = 'grabbing';
 
 		// Try to reapply the current sizing to fix oversized winows.
-		const style = document.defaultView.getComputedStyle(Player.container);
-		Player.position.resize(parseInt(style.width, 10), parseInt(style.height, 10));
+		const { width, height } = Player.container.getBoundingClientRect();
+		Player.position.resize(width, height);
 
 		Player._offsetX = e.clientX - Player.container.offsetLeft;
 		Player._offsetY = e.clientY - Player.container.offsetTop;
@@ -107,9 +107,9 @@
 		const { top, bottom } = Player.position.getHeaderOffset();
 
 		// Ensure the player stays fully within the window.
-		const style = document.defaultView.getComputedStyle(Player.container);
-		const maxX = document.documentElement.clientWidth - parseInt(style.width, 10);
-		const maxY = document.documentElement.clientHeight - parseInt(style.height, 10) - bottom;
+		const { width, height } = Player.container.getBoundingClientRect();
+		const maxX = document.documentElement.clientWidth - width;
+		const maxY = document.documentElement.clientHeight - height - bottom;
 
 		// Move the window.
 		Player.container.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
