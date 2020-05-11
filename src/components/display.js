@@ -81,8 +81,15 @@
 	 * @param {Chagn} e 
 	 */
 	setViewStyle: function (style) {
+		// Get the size prior to switching.
+		const { width, height } = document.defaultView.getComputedStyle(Player.container);
+
+		// Change the style.
 		Player.config.viewStyle = style;
 		Player.container.setAttribute('data-view-style', style);
+
+		// Try to reapply the pre change sizing.
+		Player.position.resize(parseInt(width, 10), parseInt(height, 10));
 	},
 
 	/**
