@@ -27,29 +27,16 @@
 		if (!Player.container) {
 			return;
 		}
-		Player.playlist.isVideo = false;
+		let isVideo = Player.playlist.isVideo = !thumb && sound.image.endsWith('.webm');
 		try {
-			Player.$(`.${ns}-image`).src = thumb ? sound.thumb : sound.image;
-			Player.$(`.${ns}-image-link`).href = sound.image;
-			Player.$(`.${ns}-image-link`).classList.remove(ns + '-show-video');
-		} catch (err) {
-			_logError('There was an error display the sound player image. Please check the console for details.');
-			console.error('[4chan sounds player]', err);
-		}
-	},
-
-	/**
-	 * Play the video for a sound in place of an image.
-	 */
-	playVideo: function (sound) {
-		if (!Player.container) {
-			return;
-		}
-		Player.playlist.isVideo = true;
-		try {
-			Player.$(`.${ns}-video`).src = sound.image;
-			Player.$(`.${ns}-image-link`).href = sound.image;
-			Player.$(`.${ns}-image-link`).classList.add(ns + '-show-video');
+			Player.$(`.${ns}-image`).src = isVideo || thumb ? sound.thumb : sound.image;
+			if (isVideo) {
+				Player.$(`.${ns}-video`).src = sound.image;
+				Player.$(`.${ns}-image-link`).classList.add(ns + '-show-video');
+			} else {
+				Player.$(`.${ns}-image-link`).href = sound.image;
+				Player.$(`.${ns}-image-link`).classList.remove(ns + '-show-video');
+			}
 		} catch (err) {
 			_logError('There was an error display the sound player image. Please check the console for details.');
 			console.error('[4chan sounds player]', err);

@@ -82,11 +82,7 @@
 				Player.playing = sound;
 				Player.header.render();
 				Player.audio.src = sound.src;
-				if (sound.image.endsWith('.webm')) {
-					Player.playlist.playVideo(sound);
-				} else {
-					Player.playlist.showImage(sound);
-				}
+				Player.playlist.showImage(sound);
 				Player.playlist.render();
 			}
 			Player.audio.play();
