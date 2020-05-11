@@ -44,8 +44,10 @@
 		if (!Player.container) {
 			return;
 		}
+		const { bottom } = Player.position.getHeaderOffset();
 		// Make sure the player isn't going off screen. 40 to give a bit of spacing for the 4chanX header.
-		height = Math.min(height, document.documentElement.clientHeight - 40);
+		height = Math.min(height, document.documentElement.clientHeight - Player.container.offsetTop - bottom);
+		width = Math.min(width, document.documentElement.clientWidth - Player.container.offsetLeft)
 
 		Player.container.style.width = width + 'px';
 
@@ -101,10 +103,29 @@
 		if (!Player.container) {
 			return;
 		}
+
+		const { top, bottom } = Player.position.getHeaderOffset();
+
+		// Ensure the player stays fully within the window.
 		const style = document.defaultView.getComputedStyle(Player.container);
-		const maxX = document.documentElement.clientWidth; - parseInt(style.width, 10);
-		const maxY = document.documentElement.clientHeight; - parseInt(style.height, 10);
+		const maxX = document.documentElement.clientWidth - parseInt(style.width, 10);
+		const maxY = document.documentElement.clientHeight - parseInt(style.height, 10) - bottom;
+
+		// Move the window.
 		Player.container.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
-		Player.container.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+		Player.container.style.top = Math.max(top, Math.min(y, maxY)) + 'px';
+	},
+
+	/**
+	 * Get the offset from the top or bottom required for the 4chan X header.
+	 */
+	getHeaderOffset: function () {
+		const docClasses = document.documentElement.classList;
+		const hasChanXHeader = docClasses.contains('fixed');
+		const headerHeight = hasChanXHeader ? document.querySelector('#header-bar').getBoundingClientRect().height : 0;
+		const top = hasChanXHeader && docClasses.contains('top-header') ? headerHeight : 0;
+		const bottom = hasChanXHeader && docClasses.contains('bottom-header') ? headerHeight : 0;
+
+		return { top, bottom };
 	}
 }
