@@ -44,6 +44,7 @@ const Player = window.Player = module.exports = {
 		player: require('./templates/player.tpl'),
 		controls: require('./templates/controls.tpl'),
 		list: require('./templates/list.tpl'),
+		itemMenu: require('./templates/item_menu.tpl'),
 		settings: require('./templates/settings.tpl')
 	},
 

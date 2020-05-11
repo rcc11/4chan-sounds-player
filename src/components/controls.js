@@ -95,25 +95,25 @@ module.exports = {
 	/**
 	 * Pause playback.
 	 */
-	pause: function () {
+	pause: function (force) {
 		Player.audio && Player.audio.pause();
 	},
 
 	/**
 	 * Play the next sound.
 	 */
-	next: function () {
-		Player.controls._movePlaying(1);
+	next: function (force) {
+		Player.controls._movePlaying(1, force);
 	},
 
 	/**
 	 * Play the previous sound.
 	 */
-	previous: function () {
-		Player.controls._movePlaying(-1);
+	previous: function (force) {
+		Player.controls._movePlaying(-1, force);
 	},
 
-	_movePlaying: function (direction) {
+	_movePlaying: function (direction, force) {
 		if (!Player.audio) {
 			return;
 		}
@@ -128,7 +128,7 @@ module.exports = {
 				return Player.play(Player.playOrder[0]);
 			}
 			// Get the next index, either repeating the same, wrapping round to repeat all or just moving the index.
-			const nextIndex = Player.config.repeat === 'one'
+			const nextIndex = !force && Player.config.repeat === 'one'
 				? currentIndex
 				: Player.config.repeat === 'all'
 					? ((currentIndex + direction) + Player.playOrder.length) % Player.playOrder.length
@@ -158,10 +158,11 @@ module.exports = {
 			const paused = Player.audio.paused;
 			const video = Player.$(`.${ns}-video`);
 			if (video) {
-				video.currentTime = Player.audio.currentTime;
 				if (paused) {
+					video.currentTime = Math.min(Player.audio.currentTime, video.duration);
 					video.pause();
-				} else {
+				} else if (Player.audio.currentTime < video.duration) {
+					video.currentTime = Player.audio.currentTime;
 					video.play();
 				}
 			}

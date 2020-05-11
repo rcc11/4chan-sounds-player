@@ -6,6 +6,7 @@
 	list-style-type: none;
 	padding: 0;
 	margin: 0;
+	position: relative
 }
 .#{$ns}-list-item {
 	list-style-type: none;
@@ -19,5 +20,14 @@
 	}
 	&:nth-child(2n) {
 		background: #{map-get($colors, even_row)};
+	}
+
+	.#{$ns}-item-menu-button {
+		position: absolute;
+		right: .25rem;
+		display: none;
+	}
+	&:hover .#{$ns}-item-menu-button {
+		display: inline-block;
 	}
 }

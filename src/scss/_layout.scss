@@ -22,3 +22,9 @@
 	max-width: 100%;
 	width: 100%;
 }
+// Hide the text with 4chan X since the icons will show
+html.fourchan-x ##{$ns}-container .fa {
+	font-size: 0;
+	visibility: hidden;
+	margin: 0 0.15rem;
+}

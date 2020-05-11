@@ -1,11 +1,21 @@
 module.exports = {
-	atRoot: [ 'add' ],
+	atRoot: [ 'add', 'remove' ],
 
 	delegatedEvents: {
 		click: {
 			[`.${ns}-viewStyle-button`]: 'playlist.toggleView',
-			[`.${ns}-list`]: 'playlist.handleSelect'
+			[`.${ns}-remove-link`]: 'playlist.handleRemove',
+			[`.${ns}-list-item`]: 'playlist.handleSelect'
+		}
+	},
+
+	undelegatedEvents: {
+		click: {
+			body: 'playlist.closeMenus'
 		},
+		keydown: {
+			body: e => e.key === 'Escape' && Player.playlist.closeMenus()
+		}
 	},
 
 	/**
@@ -101,11 +111,118 @@ module.exports = {
 		}
 	},
 
-	handleSelect: function (e) {
-		const id = e.target.getAttribute('data-id');
-		const sound = id && Player.sounds.find(function (sound) {
-			return sound.id === '' + id;
+	/**
+	 * Remove a sound
+	 */
+	remove: function (sound) {
+		const index = Player.sounds.indexOf(sound);
+		const orderIndex = Player.playOrder.indexOf(sound);
+
+		// If the playing sound is being removed then play the next sound.
+		if (Player.playing === sound) {
+			Player.pause();
+			Player.next(true);
+		}
+		// Remove the sound from the the list and play order.
+		index > -1 && Player.sounds.splice(index, 1);
+		orderIndex > -1 && Player.playOrder.splice(orderIndex, 1);
+
+		// Re-render the list.
+		Player.playlist.render();
+		Player.$(`.${ns}-count`).innerHTML = Player.sounds.length;
+	},
+
+	/**
+	 * Handle a click on the remove link
+	 */
+	handleRemove: function (e) {
+		const id = e.eventTarget.closest(`.${ns}-list-item`).getAttribute('data-id');
+		const sound = id && Player.sounds.find(sound => sound.id === '' + id);
+		sound && Player.remove(sound);
+	},
+
+	/**
+	 * Close any open menus, except for one belonging to an item that was clicked.
+	 */
+	closeMenus: function (e) {
+		const clickedListItem = e && e.target.closest(`.${ns}-list-item`);
+
+		document.querySelectorAll(`.${ns}-item-menu`).forEach(menu => {
+			const row = menu.parentNode;
+			// Ignore for a list item that was clicked. The handleSelect below will deal with it.
+			if (row === clickedListItem) {
+				return;
+			}
+			row.removeChild(menu);
+			row.classList.remove(`.${ns}-has-menu`);
 		});
+	},
+
+	/**
+	 * Handle an playlist item being clicked. Either open/close the menu or play the sound.
+	 */
+	handleSelect: function (e) {
+		const clickedMenu = e.target.closest(`.${ns}-item-menu`);
+		const menu = clickedMenu || e.eventTarget.querySelector(`.${ns}-item-menu`);
+
+		const id = e.eventTarget.getAttribute('data-id');
+		const clickedMenuButton = e.target.closest(`.${ns}-item-menu-button`);
+		const sound = id && Player.sounds.find(sound => sound.id === '' + id);
+
+		// Remove the menu.
+		if (menu) {
+			e.eventTarget.removeChild(menu);
+			e.eventTarget.classList.remove(`.${ns}-has-menu`);
+
+		// If the manu wasn't showing and menu button was clicked go ahead and show the menu.
+		} else if (clickedMenuButton) {
+			e.preventDefault();
+			// Create the menu.
+			const container = document.createElement('div');
+			container.innerHTML = Player.templates.itemMenu({
+				top: e.clientY,
+				left: e.clientX,
+				sound
+			});
+			const dialog = container.children[0];
+
+			// Update the row with it.
+			e.eventTarget.appendChild(dialog);
+			e.eventTarget.classList.remove(`.${ns}-has-menu`);
+
+			// Make sure it's within the page.
+			const style = document.defaultView.getComputedStyle(dialog);
+			const width = parseInt(style.width, 10);
+			const height = parseInt(style.height, 10);
+			// Show the dialog to the left of the cursor, if there's room.
+			if (e.clientX - width > 0) {
+				dialog.style.left = e.clientX - width + 'px';
+			}
+			// Move the dialog above the cursor if it's off screen.
+			if (e.clientY + height > document.documentElement.clientHeight - 40) {
+				dialog.style.top = e.clientY - height + 'px';
+			}
+			// Add the focused class handler
+			dialog.querySelectorAll('.entry').forEach(el => {
+				el.addEventListener('mouseenter', Player.playlist.setFocusedMenuItem);
+				el.addEventListener('mouseleave', Player.playlist.unsetFocusedMenuItem);
+			});
+		}
+
+		// If the menu or menu button was clicked don't play the sound.
+		if (clickedMenuButton || clickedMenu) {
+			return;
+		}
+
+		e.preventDefault();
 		sound && Player.play(sound);
+	},
+
+	setFocusedMenuItem: function (e) {
+		e.currentTarget.classList.add('focused');
+	},
+
+	unsetFocusedMenuItem: function (e) {
+		e.currentTarget.classList.remove('focused');
 	}
-}
+};

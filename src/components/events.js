@@ -30,14 +30,20 @@ module.exports = {
 			// Wire up delegated events on the container.
 			for (let evt in delegated) {
 				Player.container.addEventListener(evt, function (e) {
-					for (let eventList of delegated[evt]) {
-						for (let selector in eventList) {
-							const eventTarget = e.target.closest(selector);
-							if (eventTarget) {
-								e.eventTarget = eventTarget;
-								let handler = Player.events.getHandler(eventList[selector]);
-								if (handler) {
-									return handler(e);
+					let nodes = [ e.target ];
+					while (nodes[nodes.length - 1] !== Player.container) {
+						nodes.push(nodes[nodes.length - 1].parentNode);
+					}
+					for (let node of nodes) {
+						for (let eventList of delegated[evt]) {
+							for (let selector in eventList) {
+								if (node.matches(selector)) {
+									e.eventTarget = node;
+									let handler = Player.events.getHandler(eventList[selector]);
+									// If the handler returns false stop propogation
+									if (handler && handler(e) === false) {
+										return;
+									}
 								}
 							}
 						}

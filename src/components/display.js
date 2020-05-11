@@ -81,7 +81,6 @@ module.exports = {
 
 	/**
 	 * Change what view is being shown
-	 * @param {Chagn} e 
 	 */
 	setViewStyle: function (style) {
 		// Get the size prior to switching.

@@ -45,7 +45,7 @@ module.exports = {
 	handle: function (e) {
 		// Ignore events on inputs so you can still type.
 		const ignoreFor = [ 'INPUT', 'SELECT', 'TEXTAREA', 'INPUT' ];
-		if (ignoreFor.includes(e.target.nodeName) || Player.config.hotkeys === 'open' && Player.isHidden) {
+		if (ignoreFor.includes(e.target.nodeName) || Player.isHidden && !(Player.config.hotkeys !== 'always' && Player.sounds.length)) {
 			return;
 		}
 		const k = e.key.toLowerCase();
