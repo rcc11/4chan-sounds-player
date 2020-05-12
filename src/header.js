@@ -9,7 +9,7 @@
 // @grant        GM.getValue
 // @grant        GM.setValue
 // @run-at       document-start
-// @updateURL    https://github.com/rcc11/4chan-sounds-player/blob/master/dist/4chan-sounds-player.meta.js
-// @downloadURL  https://github.com/rcc11/4chan-sounds-player/blob/master/dist/4chan-sounds-player.user.min.js
+// @updateURL    https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player.meta.js
+// @downloadURL  https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player.user.min.js
 // ==/UserScript==
 
