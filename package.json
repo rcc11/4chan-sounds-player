@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "build": "./build.sh",
-    "build-dev": "npx webpack --config webpack.config.js --mode development && cat dist/4chan-sounds-player.user.js | pbcopy"
+    "build-dev": "npx webpack --config webpack.config.js --mode development && cat dist/4chan-sounds-player.user.dev.js | pbcopy"
   },
   "author": "rcc11",
   "license": "ISC",

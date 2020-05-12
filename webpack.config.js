@@ -14,8 +14,8 @@ module.exports = (env, argv) => ({
 	devtool: 'none',
 	output: {
 		filename: argv.mode === 'production'
-			? '4chan-sounds-player.user.min.js'
-			: '4chan-sounds-player.user.js',
+			? '4chan-sounds-player.user.js'
+			: '4chan-sounds-player.user.dev.js',
 		path: path.resolve(__dirname, 'dist'),
 	},
 	resolve: {

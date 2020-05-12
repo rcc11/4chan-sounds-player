@@ -5,4 +5,4 @@
 cp src/header.js dist/4chan-sounds-player.meta.js
 
 # Prepend the header
-cat src/header.js | cat - dist/4chan-sounds-player.user.min.js > tmp.build.js && mv tmp.build.js dist/4chan-sounds-player.user.min.js
+cat src/header.js | cat - dist/4chan-sounds-player.user.js > tmp.build.js && mv tmp.build.js dist/4chan-sounds-player.user.js
