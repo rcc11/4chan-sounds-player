@@ -29,7 +29,7 @@ module.exports = {
 		if (!Player.container) {
 			return;
 		}
-		Player.$(`.${ns}-title`).innerHTML = Player.templates.header(Player.display._tplOptions());
+		Player.$(`.${ns}-title`).innerHTML = Player.templates.header();
 	},
 
 	/**

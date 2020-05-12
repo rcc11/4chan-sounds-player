@@ -26,7 +26,7 @@ module.exports = {
 			return;
 		}
 		if (Player.$(`.${ns}-list`)) {
-			Player.$(`.${ns}-list`).innerHTML = Player.templates.list(Player.display._tplOptions());
+			Player.$(`.${ns}-list`).innerHTML = Player.templates.list();
 		}
 	},
 

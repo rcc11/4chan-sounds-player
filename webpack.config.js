@@ -1,20 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 
-const webpack = require("webpack");
+const webpack = require('webpack');
 
-const templateLoader = path.resolve(__dirname, './src/loaders/template');
-const sassTemplateLoader = path.resolve(__dirname, './src/loaders/sass-template');
+const tplLoader = path.resolve(__dirname, './src/loaders/tpl');
+const tplStringLoader = path.resolve(__dirname, './src/loaders/tpl-string');
+const replaceLoader = path.resolve(__dirname, './src/loaders/replace');
 
 const header = fs.readFileSync(path.resolve(__dirname, './src/header.js'));
 
-const ns = 'fc-sounds';
-
-module.exports = {
+module.exports = (env, argv) => ({
 	entry: './src/main.js',
 	devtool: 'none',
 	output: {
-		filename: '4chan-sounds-player.user.js',
+		filename: argv.mode === 'production'
+			? '4chan-sounds-player.user.min.js'
+			: '4chan-sounds-player.user.js',
 		path: path.resolve(__dirname, 'dist'),
 	},
 	resolve: {
@@ -27,21 +28,15 @@ module.exports = {
 			{
 				test: /\.tpl$/i,
 				use: [
-					templateLoader
+					tplLoader
 				]
 			},
 			{
 				test: /\.s[ac]ss$/i,
 				use: [
-					templateLoader,
-					{
-						loader: sassTemplateLoader,
-						options: {
-							replacements: [
-								[ /__ns__/g, '${ns}' ]
-							]
-						}
-					},
+					tplLoader,
+					tplStringLoader,
+					replaceLoader + '?from=__ns__&to=${ns}',
 					'sass-loader'
 				]
 			}
@@ -50,4 +45,4 @@ module.exports = {
 	plugins: [
 		new webpack.BannerPlugin({ banner: header.toString(), raw: true })
 	]
-};
+});

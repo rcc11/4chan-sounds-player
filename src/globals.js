@@ -4,7 +4,7 @@
 
 window.isChanX = document.documentElement.classList.contains('fourchan-x');
 
-window.ns = 'fc-sounds',
+window.ns = 'fc-sounds';
 
 window._logError = function (message, type = 'error') {
 	console.error(message);

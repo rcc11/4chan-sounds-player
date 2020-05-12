@@ -31,13 +31,6 @@ module.exports = {
 	},
 
 	/**
-	 * Generate the data passed to the templates.
-	 */
-	_tplOptions: function () {
-		return { data: Player.config };
-	},
-
-	/**
 	 * Render the player.
 	 */
 	render: async function () {
@@ -49,12 +42,12 @@ module.exports = {
 
 			// Insert the stylesheet.
 			Player.stylesheet = document.createElement('style');
-			Player.stylesheet.innerHTML = Player.templates.css(Player.display._tplOptions());
+			Player.stylesheet.innerHTML = Player.templates.css();
 			document.head.appendChild(Player.stylesheet);
 
 			// Create the main player.
 			const el = document.createElement('div');
-			el.innerHTML = Player.templates.body(Player.display._tplOptions());
+			el.innerHTML = Player.templates.body();
 			Player.container = el.querySelector(`#${ns}-container`);
 			document.body.appendChild(Player.container);
 

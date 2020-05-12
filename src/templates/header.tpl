@@ -1,6 +1,6 @@
 `<div class="${ns}-col-auto" style="margin-left: 0.25rem;">`
 	+ Object.keys(Player.header.options).map(key => {
-		let option = Player.header.options[key][data[key]] || Player.header.options[key][Object.keys(Player.header.options[key])[0]];
+		let option = Player.header.options[key][Player.config[key]] || Player.header.options[key][Object.keys(Player.header.options[key])[0]];
 		return `<a class="${ns}-${key}-button fa ${option.class}" title="${option.title}" href="javascript;">
 			${option.text}
 		</a>`

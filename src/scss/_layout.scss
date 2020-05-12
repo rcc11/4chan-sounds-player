@@ -3,7 +3,6 @@
 	background: #{map-get($colors, background)};
 	border: 1px solid #{map-get($colors, border)};
 	min-height: 200px;
-	max-height: calc(100% - 40px);
 	min-width: 100px;
 }
 .#{$ns}-row {

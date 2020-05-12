@@ -3,10 +3,10 @@
 	<video class="${ns}-video"></video>
 </a>
 <div class="${ns}-controls ${ns}-row">
-	${Player.templates.controls({ data })}
+	${Player.templates.controls(data)}
 </div>
 <div class="${ns}-list-container" style="height: 100px">
 	<ul class="${ns}-list">
-		${Player.templates.list({ data })}
+		${Player.templates.list(data)}
 	</ul>
 </div>`

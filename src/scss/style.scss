@@ -1,11 +1,11 @@
 $ns : "__ns__";
 $colors: (
-	background: '${data.colors.background}',
-	border: '${data.colors.border}',
-	odd_row: '${data.colors.odd_row}',
-	even_row: '${data.colors.even_row}',
-	playing: '${data.colors.playing}',
-	expander: '${data.colors.expander}'
+	background: '${Player.config.colors.background}',
+	border: '${Player.config.colors.border}',
+	odd_row: '${Player.config.colors.odd_row}',
+	even_row: '${Player.config.colors.even_row}',
+	playing: '${Player.config.colors.playing}',
+	expander: '${Player.config.colors.expander}'
 );
 
 @import "_controls.scss";

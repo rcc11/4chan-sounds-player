@@ -3,7 +3,10 @@
   "version": "1.2.0",
   "description": "Play that faggy music weeb boi",
   "main": "main.js",
-  "scripts": {},
+  "scripts": {
+    "build": "./build.sh",
+    "build-dev": "npx webpack --config webpack.config.js --mode development && cat dist/4chan-sounds-player.user.js | pbcopy"
+  },
   "author": "rcc11",
   "license": "ISC",
   "devDependencies": {

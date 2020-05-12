@@ -30,4 +30,11 @@
 	&:hover .#{$ns}-item-menu-button {
 		display: inline-block;
 	}
+
+	.#{$ns}-item-menu {
+		text-align: right;
+	}
+	.#{$ns}-item-menu a.entry {
+		margin: .25rem;
+	}
 }

@@ -105,7 +105,7 @@ module.exports = {
 				_set(Player.config, property, newValue);
 
 				// Update the stylesheet reflect any changes.
-				Player.stylesheet.innerHTML = Player.templates.css(Player.display._tplOptions());
+				Player.stylesheet.innerHTML = Player.templates.css();
 
 				// Save the new settings.
 				Player.settings.save();
