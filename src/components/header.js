@@ -1,4 +1,4 @@
-{
+module.exports = {
 	options: {
 		repeat: {
 			all: { title: 'Repeat All', text: '[RA]', class: 'fa-repeat' },

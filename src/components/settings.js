@@ -1,4 +1,6 @@
-{
+const settingsConfig = require('settings');
+
+module.exports = {
 	delegatedEvents: {
 		click: {
 			[`.${ns}-config-button`]: 'settings.toggle'

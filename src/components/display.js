@@ -1,4 +1,4 @@
-{
+module.exports = {
 	atRoot: [ 'show', 'hide' ],
 
 	delegatedEvents: {
@@ -14,8 +14,11 @@
 		if (Player.display._initedChanX) {
 			return;
 		}
-		Player.display._initedChanX = true;
 		const shortcuts = document.getElementById('shortcuts');
+		if (!shortcuts) {
+			return;
+		}
+		Player.display._initedChanX = true;
 		const showIcon = document.createElement('span');
 		shortcuts.insertBefore(showIcon, document.getElementById('shortcut-settings'));
 
@@ -82,7 +85,7 @@
 	 */
 	setViewStyle: function (style) {
 		// Get the size prior to switching.
-		const { width, height } = document.defaultView.getComputedStyle(Player.container);
+		const { width, height } = Player.container.getBoundingClientRect();
 
 		// Change the style.
 		Player.config.viewStyle = style;
@@ -151,8 +154,8 @@
 			// Apply the last position/size
 			const [ top, left ] = (await GM.getValue(ns + '.position') || '').split(':');
 			const [ width, height ] = (await GM.getValue(ns + '.size') || '').split(':');
+			+top && +left && Player.position.move(top, left, true);
 			+width && +height && Player.position.resize(width, height);
-			+top && +left && Player.position.move(top, left);
 
 			Player.container.focus();
 		} catch (err) {

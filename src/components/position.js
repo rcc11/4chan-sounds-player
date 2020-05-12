@@ -1,4 +1,4 @@
-{
+module.exports = {
 	delegatedEvents: {
 		mousedown: {
 			[`.${ns}-title`]: 'position.initMove',
@@ -48,7 +48,7 @@
 		const { bottom } = Player.position.getHeaderOffset();
 		// Make sure the player isn't going off screen. 40 to give a bit of spacing for the 4chanX header.
 		height = Math.min(height, document.documentElement.clientHeight - Player.container.offsetTop - bottom);
-		width = Math.min(width, document.documentElement.clientWidth - Player.container.offsetLeft)
+		width = Math.min(width - 2, document.documentElement.clientWidth - Player.container.offsetLeft);
 
 		Player.container.style.width = width + 'px';
 
@@ -99,7 +99,7 @@
 	/**
 	 * Move the player.
 	 */
-	move: function (x, y) {
+	move: function (x, y, allowOffscreen) {
 		if (!Player.container) {
 			return;
 		}
@@ -108,8 +108,8 @@
 
 		// Ensure the player stays fully within the window.
 		const { width, height } = Player.container.getBoundingClientRect();
-		const maxX = document.documentElement.clientWidth - width;
-		const maxY = document.documentElement.clientHeight - height - bottom;
+		const maxX = allowOffscreen ? Infinity : document.documentElement.clientWidth - width;
+		const maxY = allowOffscreen ? Infinity : document.documentElement.clientHeight - height - bottom;
 
 		// Move the window.
 		Player.container.style.left = Math.max(0, Math.min(x, maxX)) + 'px';

@@ -1,4 +1,4 @@
-const settingsConfig = [
+module.exports = [
 	{
 		property: 'shuffle',
 		default: false

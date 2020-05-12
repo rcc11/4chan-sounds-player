@@ -1,4 +1,3 @@
-
 settingsConfig.filter(setting => setting.showInSettings).map(function addSetting(setting) {
 	let out = `<div class="${setting.isSubSetting ? `${ns}-col` : `${ns}-setting-header`}" ${setting.description ? `title="${setting.description}"` : ''}>
 		${setting.title}

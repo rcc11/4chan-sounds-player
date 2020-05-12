@@ -1,4 +1,4 @@
-{
+module.exports = {
 	atRoot: [ 'on', 'off', 'trigger' ],
 
 	// Holder of event handlers.
@@ -8,7 +8,7 @@
 	_audioEvents: [ ],
 
 	initialize: function () {
-		const eventLocations = { Player, ...components };
+		const eventLocations = { Player, ...Player.components };
 		const delegated = Player.events._delegatedEvents;
 		const undelegated = Player.events._undelegatedEvents;
 		const audio = Player.events._audioEvents;

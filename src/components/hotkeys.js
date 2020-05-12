@@ -1,4 +1,6 @@
-{
+const settingsConfig = require('../settings');
+
+module.exports = {
 	initialize: function () {
 		Player.on('rendered', Player.hotkeys.apply);
 	},
@@ -93,4 +95,4 @@
 	volumeDown: function () {
 		Player.audio.volume = Math.max(Player.audio.volume - .05, 0);
 	}
-}
+};

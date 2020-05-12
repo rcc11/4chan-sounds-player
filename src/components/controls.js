@@ -1,4 +1,4 @@
-{
+module.exports = {
 	atRoot: [ 'togglePlay', 'play', 'pause', 'next', 'previous' ],
 
 	delegatedEvents: {

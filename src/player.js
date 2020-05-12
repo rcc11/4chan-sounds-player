@@ -1,23 +1,18 @@
-const Player = {};
+const defaultConfig = require('./settings');
 
 const components = {
-	controls: /*% components/controls.js %*/,
-	display: /*% components/display.js %*/,
-	events: /*% components/events.js %*/,
-	header: /*% components/header.js %*/,
-	hotkeys: /*% components/hotkeys.js %*/,
-	playlist: /*% components/playlist.js %*/,
-	position: /*% components/position.js %*/,
-	settings: /*% components/settings.js %*/,
+	controls: require('./components/controls'),
+	display: require('./components/display'),
+	events: require('./components/events'),
+	header: require('./components/header'),
+	hotkeys: require('./components/hotkeys'),
+	playlist: require('./components/playlist'),
+	position: require('./components/position'),
+	settings: require('./components/settings')
 };
 
-// Add each of the components to the player.
-for (let name in components) {
-	Player[name] = components[name];
-	(Player[name].atRoot || []).forEach(k => Player[k] = Player[name][k]);
-}
-
-Object.assign(Player, {
+// Create a global ref to the player.
+const Player = window.Player = module.exports = {
 	ns,
 
 	audio: new Audio(),
@@ -27,29 +22,35 @@ Object.assign(Player, {
 	ui: {},
 	_progressBarStyleSheets: {},
 
-	config: settingsConfig.reduce(function reduceSettings(config, settingConfig) {
+	// Build the config from the default
+	config: defaultConfig.reduce(function reduceSettings(config, settingConfig) {
 		if (settingConfig.settings) {
 			return settingConfig.settings.reduce(reduceSettings, config);
 		}
 		return _set(config, settingConfig.property, settingConfig.default);
 	}, {}),
 
+	// Helper function to query elements in the player.
 	$: (...args) => Player.container && Player.container.querySelector(...args),
 
+	// Store a ref to the components so they can be iterated.
+	components,
+
+	// Get all the templates.
 	templates: {
-		css: ({ data }) => /*% templates/css.tpl %*/,
-		body: ({ data }) => /*% templates/body.tpl %*/,
-		header: ({ data }) => /*% templates/header.tpl %*/,
-		player: ({ data }) => /*% templates/player.tpl %*/,
-		controls: ({ data }) => /*% templates/controls.tpl %*/,
-		list: ({ data }) => /*% templates/list.tpl %*/,
-		settings: ({ data }) => /*% templates/settings.tpl %*/
+		css: require('./scss/style.scss'),
+		body: require('./templates/body.tpl'),
+		header: require('./templates/header.tpl'),
+		player: require('./templates/player.tpl'),
+		controls: require('./templates/controls.tpl'),
+		list: require('./templates/list.tpl'),
+		settings: require('./templates/settings.tpl')
 	},
 
 	/**
 	 * Set up the player.
 	 */
-	initialize: async function () {
+	initialize: async function initialize() {
 		try {
 			Player.sounds = [ ];
 			Player.playOrder = [ ];
@@ -87,4 +88,10 @@ Object.assign(Player, {
 			throw err;
 		}
 	}
-});
+};
+
+// Add each of the components to the player.
+for (let name in components) {
+	Player[name] = components[name];
+	(Player[name].atRoot || []).forEach(k => Player[k] = Player[name][k]);
+}
