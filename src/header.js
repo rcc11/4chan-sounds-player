@@ -9,6 +9,7 @@
 // @grant        GM.getValue
 // @grant        GM.setValue
 // @run-at       document-start
-// @updateURL    https://greasyfork.org/scripts/402682-4chan-sounds/code/4chan%20sounds.user.js
-// @downloadURL  https://greasyfork.org/scripts/402682-4chan-sounds/code/4chan%20sounds.user.js
+// @updateURL    https://github.com/rcc11/4chan-sounds-player/blob/master/dist/4chan-sounds-player.meta.js
+// @downloadURL  https://github.com/rcc11/4chan-sounds-player/blob/master/dist/4chan-sounds-player.user.min.js
 // ==/UserScript==
+
