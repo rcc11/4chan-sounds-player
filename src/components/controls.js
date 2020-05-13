@@ -3,9 +3,9 @@ module.exports = {
 
 	delegatedEvents: {
 		click: {
-			[`.${ns}-previous-button`]: 'previous',
+			[`.${ns}-previous-button`]: () => Player.previous(),
 			[`.${ns}-play-button`]: 'togglePlay',
-			[`.${ns}-next-button`]: 'next',
+			[`.${ns}-next-button`]: () => Player.next(),
 			[`.${ns}-seek-bar`]: 'controls.handleSeek',
 			[`.${ns}-volume-bar`]: 'controls.handleVolume',
 		},
@@ -37,7 +37,7 @@ module.exports = {
 	},
 
 	audioEvents: {
-		ended: 'next',
+		ended: () => Player.next(),
 		pause: 'controls.handleAudioEvent',
 		play: 'controls.handleAudioEvent',
 		seeked: 'controls.handleAudioEvent',
