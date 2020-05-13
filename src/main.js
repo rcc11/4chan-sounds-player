@@ -4,7 +4,7 @@ import './globals';
 
 import Player from './player';
 
-document.addEventListener('DOMContentLoaded', async function() {
+async function doInit () {
 	await Player.initialize();
 
 	parseFiles(document.body);
@@ -25,12 +25,19 @@ document.addEventListener('DOMContentLoaded', async function() {
 		childList: true,
 		subtree: true
 	});
-});
+}
 
 document.addEventListener('4chanXInitFinished', function () {
+	if (isChanX) {
+		doInit();
+	}
 	isChanX = true;
 	Player.display.initChanX();
 });
+
+if (!isChanX) {
+	document.addEventListener('DOMContentLoaded', doInit);
+}
 
 function parseFiles (target) {
 	target.querySelectorAll('.post').forEach(function (post) {
