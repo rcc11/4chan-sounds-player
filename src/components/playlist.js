@@ -1,3 +1,5 @@
+var { parseFiles } = require('../file_parser');
+
 module.exports = {
 	atRoot: [ 'add', 'remove' ],
 
@@ -224,5 +226,9 @@ module.exports = {
 
 	unsetFocusedMenuItem: function (e) {
 		e.currentTarget.classList.remove('focused');
+	},
+
+	refresh: function () {
+		parseFiles(document.body);
 	}
 };

@@ -19,6 +19,7 @@ module.exports = {
 		click: {
 			[`.${ns}-shuffle-button`]: 'header.toggleShuffle',
 			[`.${ns}-repeat-button`]: 'header.toggleRepeat',
+			[`.${ns}-reload-button`]: e => { e.preventDefault(); Player.playlist.refresh() }
 		}
 	},
 
