@@ -9,6 +9,7 @@
 	${Player.playing ? Player.playing.title : '4chan Sounds'}
 </div>
 <div class=".${ns}-col-auto" style="margin-right: 0.25rem;">
-	<a class="${ns}-config-button fa fa-wrench" title="Settings" href="javascript;">Settings</a>
+	<a class="${ns}-reload-button fa fa-refresh" title="Reload the playlist" href="javascript;">[R]</a>
+	<a class="${ns}-config-button fa fa-wrench" title="Settings" href="javascript;">[S]</a>
 	<a class="${ns}-close-button fa fa-times" href="javascript;">X</a>
 </div>`
