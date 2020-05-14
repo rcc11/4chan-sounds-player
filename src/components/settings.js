@@ -117,6 +117,8 @@ module.exports = {
 
 				// Save the new settings.
 				Player.settings.save();
+
+				Player.trigger('config', property, newValue, currentValue);
 			}
 
 			// Run any handler required by the value changing

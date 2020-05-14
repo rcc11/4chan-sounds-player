@@ -30,6 +30,13 @@ module.exports = {
 		}
 	},
 
+	initialize: function () {
+		Player.on('playsound', sound => {
+			Player.playlist.showImage(sound);
+			Player.playlist.render();
+		});
+	},
+
 	/**
 	 * Render the playlist.
 	 */
@@ -109,7 +116,6 @@ module.exports = {
 			if (Player.container) {
 				// Re-render the list.
 				Player.playlist.render();
-				Player.$(`.${ns}-count`).innerHTML = Player.sounds.length;
 
 				// If nothing else has been added yet show the image for this sound.
 				if (Player.playOrder.length === 1) {
@@ -119,6 +125,7 @@ module.exports = {
 					}
 					Player.playlist.showImage(sound);
 				}
+				Player.trigger('add', sound);
 			}
 		} catch (err) {
 			_logError('There was an error adding to the sound player. Please check the console for details.');

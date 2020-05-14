@@ -27,6 +27,10 @@ module.exports = {
 		}
 	},
 
+	initialize: function () {
+		Player.on('playsoud', Player.header.render)
+	},
+
 	/**
 	 * Render the player header.
 	 */

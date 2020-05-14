@@ -4,6 +4,7 @@ const components = {
 	controls: require('./components/controls'),
 	display: require('./components/display'),
 	events: require('./components/events'),
+	footer: require('./components/footer'),
 	header: require('./components/header'),
 	hotkeys: require('./components/hotkeys'),
 	playlist: require('./components/playlist'),
@@ -18,6 +19,7 @@ const Player = window.Player = module.exports = {
 	audio: new Audio(),
 	sounds: [],
 	isHidden: true,
+	currentIndex: 0,
 	container: null,
 	ui: {},
 	_progressBarStyleSheets: {},
@@ -45,7 +47,8 @@ const Player = window.Player = module.exports = {
 		controls: require('./templates/controls.tpl'),
 		list: require('./templates/list.tpl'),
 		itemMenu: require('./templates/item_menu.tpl'),
-		settings: require('./templates/settings.tpl')
+		settings: require('./templates/settings.tpl'),
+		footer: require('./templates/footer.tpl')
 	},
 
 	/**

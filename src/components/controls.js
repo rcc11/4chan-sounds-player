@@ -88,10 +88,9 @@ module.exports = {
 				}
 				sound.playing = true;
 				Player.playing = sound;
-				Player.header.render();
 				Player.audio.src = sound.src;
-				Player.playlist.showImage(sound);
-				Player.playlist.render();
+				Player.currentIndex = Player.sounds.indexOf(sound);
+				Player.trigger('playsound', sound);
 			}
 			Player.audio.play();
 		} catch (err) {

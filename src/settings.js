@@ -86,6 +86,13 @@ module.exports = [
 		]
 	},
 	{
+		property: 'footerTemplate',
+		title: 'Footer Contents',
+		default: '%p / %t sounds\npostlink:"Post"\nimagelink:"Image"\nsoundlink:"Sound"',
+		description: 'What the footer displays. %p is the playing index. %t is the total sound count. postlink, imagelink, soundlink are links.',
+		showInSettings: 'textarea'
+	},
+	{
 		property: 'allow',
 		default: [
 			'4cdn.org',

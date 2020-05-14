@@ -11,7 +11,6 @@
 		</div>
 	</div>
 	<div class="${ns}-footer">
-		<span class="${ns}-count">0</span> sounds
-		<div class="${ns}-expander"></div>
+		${Player.templates.footer(data)}
 	</div>
 </div>`
