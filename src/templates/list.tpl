@@ -1,6 +1,10 @@
 Player.sounds.map(sound =>
-	`<li class="${ns}-list-item ${sound.playing ? 'playing' : ''}" data-id="${sound.id}">
-		<i class="${ns}-item-menu-button fa fa-angle-down">▼</i>
-		${sound.title}
-	</li>`
+	`<div class="${ns}-list-item ${ns}-row ${sound.playing ? 'playing' : ''}" data-id="${sound.id}">
+		<div class="${ns}-col ${ns}-truncate-text">
+			<span title="${sound.title}">${sound.title}</span>
+		</div>
+		<div class="${ns}-col-auto ${ns}-item-menu-button">
+			<i class="fa fa-angle-down">▼</i>
+		</div>
+	</div>`
 ).join('')

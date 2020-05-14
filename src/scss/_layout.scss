@@ -13,7 +13,6 @@
 	flex: 0 0 auto;
 	width: auto;
 	max-width: 100%;
-	margin-left: 0.25rem;
 }
 .#{$ns}-col {
 	flex-basis: 0;
@@ -26,4 +25,10 @@ html.fourchan-x ##{$ns}-container .fa {
 	font-size: 0;
 	visibility: hidden;
 	margin: 0 0.15rem;
+}
+
+.#{$ns}-truncate-text {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }

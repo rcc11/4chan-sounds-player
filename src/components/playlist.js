@@ -37,8 +37,8 @@ module.exports = {
 		if (!Player.container) {
 			return;
 		}
-		if (Player.$(`.${ns}-list`)) {
-			Player.$(`.${ns}-list`).innerHTML = Player.templates.list();
+		if (Player.$(`.${ns}-list-container`)) {
+			Player.$(`.${ns}-list-container`).innerHTML = Player.templates.list();
 		}
 		Player.events.addUndelegatedListeners({
 			mouseenter: Player.playlist.undelegatedEvents.mouseenter,

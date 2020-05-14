@@ -6,7 +6,5 @@
 	${Player.templates.controls(data)}
 </div>
 <div class="${ns}-list-container" style="height: 100px">
-	<ul class="${ns}-list">
-		${Player.templates.list(data)}
-	</ul>
+	${Player.templates.list(data)}
 </div>`

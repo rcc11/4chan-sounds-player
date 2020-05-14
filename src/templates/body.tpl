@@ -1,5 +1,5 @@
 `<div id="${ns}-container" data-view-style="${Player.config.viewStyle}" style="top: 30px; left: 0px; width: 350px; display: none;">
-	<div class="${ns}-title ${ns}-row" style="justify-content: between;">
+	<div class="${ns}-title ${ns}-row">
 		${Player.templates.header(data)}
 	</div>
 	<div class="${ns}-view-container">

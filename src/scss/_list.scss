@@ -1,46 +1,53 @@
 .#{$ns}-list-container {
-	overflow: auto;
-}
-.#{$ns}-list {
-	display: grid;
-	list-style-type: none;
-	padding: 0;
-	margin: 0;
-	position: relative;
+	overflow-y: auto;
 
-	.#{$ns}-hover-image {
+	& .#{$ns}-hover-image {
 		position: fixed;
 		max-height: 125px;
 		max-width: 125px;
 	}
-}
-.#{$ns}-list-item {
-	list-style-type: none;
-	padding: 0.15rem 0.25rem;
-	white-space: nowrap;
-	cursor: pointer;
-	background: #{map-get($colors, odd_row)};
 
-	&.playing {
-		background: #{map-get($colors, playing)} !important;
-	}
-	&:nth-child(2n) {
-		background: #{map-get($colors, even_row)};
-	}
+	& .#{$ns}-list-item {
+		list-style-type: none;
+		padding: 0.15rem 0.25rem;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		cursor: pointer;
+		background: #{map-get($colors, odd_row)};
 
-	.#{$ns}-item-menu-button {
-		position: absolute;
-		right: .25rem;
-		display: none;
-	}
-	&:hover .#{$ns}-item-menu-button {
-		display: inline-block;
-	}
+		overflow-y: visible;
+		overflow-x: hidden;
+		height: 1rem;
 
-	.#{$ns}-item-menu {
-		text-align: right;
-	}
-	.#{$ns}-item-menu a.entry {
-		margin: .25rem;
+		&.playing {
+			background: #{map-get($colors, playing)} !important;
+		}
+		&:nth-child(2n) {
+			background: #{map-get($colors, even_row)};
+		}
+
+		& .#{$ns}-item-menu-button {
+			right: .25rem;
+			display: none;
+		}
+		&:hover .#{$ns}-item-menu-button {
+			display: inline-block;
+		}
+
+		& .#{$ns}-item-menu {
+			position: fixed;
+			background: #{map-get($colors, background)};
+			background: #{map-get($colors, background)};
+			border-color: #{map-get($colors, border)};
+			box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
+			border-radius: 3px;
+			padding-top: 1px;
+			padding-bottom: 3px;
+
+			& a.entry {
+				margin: .25rem;
+				display: block;
+			}
+		}
 	}
 }
