@@ -26,7 +26,7 @@ module.exports = {
 			comp.audioEvents && (audio.push(comp.audioEvents));
 		}
 	
-		this.on('rendered', function () {
+		Player.on('rendered', function () {
 			// Wire up delegated events on the container.
 			for (let evt in delegated) {
 				Player.container.addEventListener(evt, function (e) {

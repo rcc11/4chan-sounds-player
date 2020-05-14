@@ -49,6 +49,14 @@ module.exports = {
 		loadstart: 'controls.pollForLoading'
 	},
 
+	initialize: function () {
+		Player.on('show', () => Player._hiddenWhilePolling && Player.controls.pollForLoading());
+		Player.on('hide', () => {
+			Player._hiddenWhilePolling = !!Player._loadingPoll;
+			Player.controls.stopPollingForLoading();
+		});
+	},
+
 	/**
 	 * Switching being playing and paused.
 	 */

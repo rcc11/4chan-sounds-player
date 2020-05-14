@@ -108,16 +108,10 @@ module.exports = {
 		}
 		try {
 			e && e.preventDefault();
-			Player._hiddenWhilePolling = !!Player._loadingPoll;
-			Player.controls.stopPollingForLoading();
 			Player.container.style.display = 'none';
 
 			Player.isHidden = true;
 			Player.trigger('hide');
-
-			if (Player.config.pauseOnHide) {
-				Player.pause();
-			}
 		} catch (err) {
 			_logError('There was an error hiding the sound player. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
@@ -137,19 +131,10 @@ module.exports = {
 			if (!Player.container.style.display) {
 				return;
 			}
-			Player._hiddenWhilePolling && Player.controls.pollForLoading();
 			Player.container.style.display = null;
 
 			Player.isHidden = false;
 			Player.trigger('show');
-
-			// Apply the last position/size
-			const [ top, left ] = (await GM.getValue(ns + '.position') || '').split(':');
-			const [ width, height ] = (await GM.getValue(ns + '.size') || '').split(':');
-			+top && +left && Player.position.move(top, left, true);
-			+width && +height && Player.position.resize(width, height);
-
-			Player.container.focus();
 		} catch (err) {
 			_logError('There was an error showing the sound player. Please check the console for details.');
 			console.error('[4chan sounds player]', err);

@@ -6,6 +6,16 @@ module.exports = {
 		}
 	},
 
+	initialize: function () {
+		// Apply the last position/size when the player is shown.
+		Player.on('show', async function () {
+			const [ top, left ] = (await GM.getValue(ns + '.position') || '').split(':');
+			const [ width, height ] = (await GM.getValue(ns + '.size') || '').split(':');
+			+top && +left && Player.position.move(top, left, true);
+			+width && +height && Player.position.resize(width, height);
+		});
+	},
+
 	/**
 	 * Handle the user grabbing the expander.
 	 */

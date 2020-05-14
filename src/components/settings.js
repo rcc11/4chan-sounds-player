@@ -16,6 +16,14 @@ module.exports = {
 		}
 	},
 
+	initialize: function () {
+		Player.on('hide', function () {
+			if (Player.config.pauseOnHide) {
+				Player.pause();
+			}
+		});
+	},
+
 	/**
 	 * Persist the player settings.
 	 */
