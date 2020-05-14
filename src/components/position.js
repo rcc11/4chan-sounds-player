@@ -46,7 +46,7 @@ module.exports = {
 			return;
 		}
 		const { bottom } = Player.position.getHeaderOffset();
-		// Make sure the player isn't going off screen. 40 to give a bit of spacing for the 4chanX header.
+		// Make sure the player isn't going off screen.
 		height = Math.min(height, document.documentElement.clientHeight - Player.container.offsetTop - bottom);
 		width = Math.min(width - 2, document.documentElement.clientWidth - Player.container.offsetLeft);
 

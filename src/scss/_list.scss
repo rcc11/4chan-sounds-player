@@ -6,7 +6,13 @@
 	list-style-type: none;
 	padding: 0;
 	margin: 0;
-	position: relative
+	position: relative;
+
+	.#{$ns}-hover-image {
+		position: fixed;
+		max-height: 125px;
+		max-width: 125px;
+	}
 }
 .#{$ns}-list-item {
 	list-style-type: none;

@@ -12,6 +12,10 @@ module.exports = [
 		default: 'playlist'
 	},
 	{
+		property: 'hoverImages',
+		default: false
+	},
+	{
 		property: 'autoshow',
 		default: true,
 		title: 'Autoshow',

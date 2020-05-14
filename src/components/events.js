@@ -52,7 +52,7 @@ module.exports = {
 			}
 
 			// Wire up undelegated events.
-			Player.events.wireUpUndelegated();
+			Player.events.addUndelegatedListeners(Player.events._undelegatedEvents);
 
 			// Wire up audio events.
 			for (let eventList of audio) {
@@ -66,10 +66,9 @@ module.exports = {
 	/**
 	 * Set, or reset, directly bound events.
 	 */
-	wireUpUndelegated: function () {
-		const undelegated = Player.events._undelegatedEvents;
-		for (let evt in undelegated) {
-			for (let eventList of undelegated[evt]) {
+	addUndelegatedListeners: function (events) {
+		for (let evt in events) {
+			for (let eventList of [].concat(events[evt])) {
 				for (let selector in eventList) {
 					document.querySelectorAll(selector).forEach(element => {
 						const handler = Player.events.getHandler(eventList[selector]);

@@ -12,6 +12,10 @@ module.exports = {
 		viewStyle: {
 			playlist: { title: 'Hide Playlist', text: '[+]', class: 'fa-compress' },
 			image: { title: 'Show Playlist', text: '[-]', class: 'fa-expand' }
+		},
+		hoverImages: {
+			true: { title: 'Hover Images Enabled', text: '[H]', class: 'fa-picture-o' },
+			false: { title: 'Hover Images Disabled', text: '[-]', class: 'fa-picture-o disabled' },
 		}
 	},
 

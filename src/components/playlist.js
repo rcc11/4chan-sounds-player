@@ -6,8 +6,12 @@ module.exports = {
 	delegatedEvents: {
 		click: {
 			[`.${ns}-viewStyle-button`]: 'playlist.toggleView',
+			[`.${ns}-hoverImages-button`]: 'playlist.toggleHoverImages',
 			[`.${ns}-remove-link`]: 'playlist.handleRemove',
 			[`.${ns}-list-item`]: 'playlist.handleSelect'
+		},
+		mousemove: {
+			[`.${ns}-list-item`]: 'playlist.moveHoverImage'
 		}
 	},
 
@@ -17,6 +21,12 @@ module.exports = {
 		},
 		keydown: {
 			body: e => e.key === 'Escape' && Player.playlist.closeMenus()
+		},
+		mouseenter: {
+			[`.${ns}-list-item`]: 'playlist.showHoverImage'
+		},
+		mouseleave: {
+			[`.${ns}-list-item`]: 'playlist.removeHoverImage'
 		}
 	},
 
@@ -30,6 +40,10 @@ module.exports = {
 		if (Player.$(`.${ns}-list`)) {
 			Player.$(`.${ns}-list`).innerHTML = Player.templates.list();
 		}
+		Player.events.addUndelegatedListeners({
+			mouseenter: Player.playlist.undelegatedEvents.mouseenter,
+			mouseleave:  Player.playlist.undelegatedEvents.mouseleave
+		});
 	},
 
 	/**
@@ -179,6 +193,10 @@ module.exports = {
 		// If the manu wasn't showing and menu button was clicked go ahead and show the menu.
 		} else if (clickedMenuButton) {
 			e.preventDefault();
+			if (e.eventTarget.hoverImage) {
+				e.eventTarget.hoverImage.parentNode.removeChild(e.eventTarget.hoverImage);
+				delete e.eventTarget.hoverImage;
+			}
 			// Create the menu.
 			const container = document.createElement('div');
 			container.innerHTML = Player.templates.itemMenu({
@@ -230,5 +248,47 @@ module.exports = {
 
 	refresh: function () {
 		parseFiles(document.body);
+	},
+
+	toggleHoverImages: function (e) {
+		e.preventDefault();
+		Player.config.hoverImages = !Player.config.hoverImages;
+		Player.header.render();
+		Player.settings.save();
+	},
+
+	showHoverImage: function (e) {
+		// Make sure there isn't already an image, hover images are enabled, and there isn't an open menu.
+		if (e.currentTarget.hoverImage || !Player.config.hoverImages || Player.$(`.${ns}-item-menu`)) {
+			return;
+		}
+		const id = e.currentTarget.getAttribute('data-id');
+		const sound = Player.sounds.find(sound => sound.id === '' + id);
+		const hoverImage = document.createElement('img');
+
+		// Add it to the list so the mouseleave triggers properly
+		e.currentTarget.parentNode.appendChild(hoverImage);
+		e.currentTarget.hoverImage = hoverImage;
+		hoverImage.setAttribute('class', `${ns}-hover-image`);
+		hoverImage.setAttribute('src', sound.thumb);
+		Player.playlist.positionHoverImage(e, hoverImage);
+	},
+
+	moveHoverImage: function (e) {
+		if (e.eventTarget.hoverImage) {
+			Player.playlist.positionHoverImage(e, e.eventTarget.hoverImage);
+		}
+	},
+
+	positionHoverImage: function(e, image) {
+		const { width, height } = image.getBoundingClientRect();
+		const maxX = document.documentElement.clientWidth - width - 5;
+		image.style.left = (Math.min(e.clientX, maxX) + 5) + 'px';
+		image.style.top = (e.clientY - height - 10) + 'px';
+	},
+
+	removeHoverImage: function (e) {
+		e.currentTarget.hoverImage && (e.currentTarget.parentNode.removeChild(e.currentTarget.hoverImage));
+		delete e.currentTarget.hoverImage;
 	}
 };
