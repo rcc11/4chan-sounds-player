@@ -28,7 +28,7 @@ module.exports = {
 	},
 
 	initialize: function () {
-		Player.on('playsoud', Player.header.render)
+		Player.on('playsound', Player.header.render);
 	},
 
 	/**
