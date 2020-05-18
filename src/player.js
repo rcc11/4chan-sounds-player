@@ -57,7 +57,6 @@ const Player = window.Player = module.exports = {
 	initialize: async function initialize() {
 		try {
 			Player.sounds = [ ];
-			Player.playOrder = [ ];
 
 			// Load the user settings.
 			await Player.settings.load();

@@ -50,6 +50,7 @@ module.exports = {
 	},
 
 	initialize: function () {
+		Player.on('order', () => Player.currentIndex = Player.sounds.indexOf(Player.playing) + 1);
 		Player.on('show', () => Player._hiddenWhilePolling && Player.controls.pollForLoading());
 		Player.on('hide', () => {
 			Player._hiddenWhilePolling = !!Player._loadingPoll;
@@ -78,8 +79,8 @@ module.exports = {
 
 		try {
 			// If nothing is currently selected to play start playing the first sound.
-			if (!sound && !Player.playing && Player.playOrder.length) {
-				sound = Player.playOrder[0];
+			if (!sound && !Player.playing && Player.sounds.length) {
+				sound = Player.sounds[0];
 			}
 			// If a new sound is being played update the display.
 			if (sound) {
@@ -89,7 +90,7 @@ module.exports = {
 				sound.playing = true;
 				Player.playing = sound;
 				Player.audio.src = sound.src;
-				Player.currentIndex = Player.sounds.indexOf(sound);
+				Player.currentIndex = Player.sounds.indexOf(sound) + 1;
 				Player.trigger('playsound', sound);
 			}
 			Player.audio.play();
@@ -126,21 +127,21 @@ module.exports = {
 		}
 		try {
 			// If there's no sound fall out.
-			if (!Player.playOrder.length) {
+			if (!Player.sounds.length) {
 				return;
 			}
 			// If there's no sound currently playing or it's not in the list then just play the first sound.
-			const currentIndex = Player.playOrder.indexOf(Player.playing);
+			const currentIndex = Player.sounds.indexOf(Player.playing);
 			if (currentIndex === -1) {
-				return Player.play(Player.playOrder[0]);
+				return Player.play(Player.sounds[0]);
 			}
 			// Get the next index, either repeating the same, wrapping round to repeat all or just moving the index.
 			const nextIndex = !force && Player.config.repeat === 'one'
 				? currentIndex
 				: Player.config.repeat === 'all'
-					? ((currentIndex + direction) + Player.playOrder.length) % Player.playOrder.length
+					? ((currentIndex + direction) + Player.sounds.length) % Player.sounds.length
 					: currentIndex + direction;
-			const nextSound = Player.playOrder[nextIndex];
+			const nextSound = Player.sounds[nextIndex];
 			nextSound && Player.play(nextSound);
 		} catch (err) {
 			_logError(`There was an error selecting the ${direction > 0 ? 'next': 'previous'} track. Please check the console for details.`);

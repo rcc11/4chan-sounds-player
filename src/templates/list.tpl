@@ -1,5 +1,5 @@
 Player.sounds.map(sound =>
-	`<div class="${ns}-list-item ${ns}-row ${sound.playing ? 'playing' : ''}" data-id="${sound.id}">
+	`<div class="${ns}-list-item ${ns}-row ${sound.playing ? 'playing' : ''}" data-id="${sound.id}" draggable="true">
 		<div class="${ns}-col ${ns}-truncate-text">
 			<span title="${sound.title}">${sound.title}</span>
 		</div>

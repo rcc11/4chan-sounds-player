@@ -138,6 +138,11 @@ module.exports = [
 				title: 'Playing Row Color'
 			},
 			{
+				property: 'colors.dragging',
+				default: '#c396c8',
+				title: 'Dragging Row Color'
+			},
+			{
 				property: 'colors.expander',
 				default: '#808bbf',
 				title: 'Expander Color'

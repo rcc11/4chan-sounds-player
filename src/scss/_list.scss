@@ -49,5 +49,9 @@
 				display: block;
 			}
 		}
+
+		&.#{$ns}-dragging {
+			background: #{map-get($colors, dragging)}
+		}
 	}
 }

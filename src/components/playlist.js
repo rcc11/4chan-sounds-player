@@ -10,9 +10,12 @@ module.exports = {
 			[`.${ns}-remove-link`]: 'playlist.handleRemove',
 			[`.${ns}-list-item`]: 'playlist.handleSelect'
 		},
-		mousemove: {
-			[`.${ns}-list-item`]: 'playlist.moveHoverImage'
-		}
+		mousemove: { [`.${ns}-list-item`]: 'playlist.moveHoverImage' },
+		dragstart: { [`.${ns}-list-item`]: 'playlist.handleDragStart' },
+		dragenter: { [`.${ns}-list-item`]: 'playlist.handleDragEnter' },
+		dragend: { [`.${ns}-list-item`]: 'playlist.handleDragEnd' },
+		dragover: { [`.${ns}-list-item`]: e => e.preventDefault() },
+		drop: { [`.${ns}-list-item`]: e => e.preventDefault() }
 	},
 
 	undelegatedEvents: {
@@ -105,20 +108,20 @@ module.exports = {
 				return;
 			}
 			const sound = { title, src, id, thumb, image };
-			Player.sounds.push(sound);
 
-			// Add the sound to the play order at the end, or someone random for shuffled.
-			const index = Player.config.shuffle
+			// Add the sound with the location based on the shuffle settings.
+			let index = Player.config.shuffle
 				? Math.floor(Math.random() * Player.sounds.length - 1)
-				: Player.sounds.length;
-			Player.playOrder.splice(index, 0, sound);
+				: Player.sounds.findIndex(s => s.id > id);
+			index < 0 && (index = Player.sounds.length);
+			Player.sounds.splice(index, 0, sound);
 
 			if (Player.container) {
 				// Re-render the list.
 				Player.playlist.render();
 
 				// If nothing else has been added yet show the image for this sound.
-				if (Player.playOrder.length === 1) {
+				if (Player.sounds.length === 1) {
 					// If we're on a thread with autoshow enabled then make sure the player is displayed
 					if (/\/thread\//.test(location.href) && Player.config.autoshow) {
 						Player.show();
@@ -139,7 +142,6 @@ module.exports = {
 	 */
 	remove: function (sound) {
 		const index = Player.sounds.indexOf(sound);
-		const orderIndex = Player.playOrder.indexOf(sound);
 
 		// If the playing sound is being removed then play the next sound.
 		if (Player.playing === sound) {
@@ -148,7 +150,6 @@ module.exports = {
 		}
 		// Remove the sound from the the list and play order.
 		index > -1 && Player.sounds.splice(index, 1);
-		orderIndex > -1 && Player.playOrder.splice(orderIndex, 1);
 
 		// Re-render the list.
 		Player.playlist.render();
@@ -297,5 +298,53 @@ module.exports = {
 	removeHoverImage: function (e) {
 		e.currentTarget.hoverImage && (e.currentTarget.parentNode.removeChild(e.currentTarget.hoverImage));
 		delete e.currentTarget.hoverImage;
-	}
+	},
+
+	handleDragStart: function (e) {
+		Player._hoverImages = Player.config.hoverImages;
+		Player.config.hoverImages = false;
+		e.eventTarget.classList.add(`${ns}-dragging`);
+		e.dataTransfer.setDragImage(new Image(), 0, 0);
+		e.dataTransfer.setData('text/plain', e.eventTarget.getAttribute('data-id'));
+		e.dataTransfer.dropEffect = 'move';
+	},
+
+	handleDragEnter: function (e) {
+		e.preventDefault();
+		const id = e.dataTransfer.getData('text/plain');
+		const moving = Player.$(`.${ns}-list-item[data-id="${id}"]`);
+		let before = e.target.closest && e.target.closest(`.${ns}-list-item`);
+		if (!before || moving === before) {
+			return;
+		}
+		const movingIdx = Player.sounds.findIndex(s => s.id === id);
+		const list = moving.parentNode;
+
+		// If the item is being moved down it need inserting before the node after the one it's dropped on.
+		const position = moving.compareDocumentPosition(before);
+		if (position & 0x04) {
+			before = before.nextSibling;
+		}
+
+		// Move the element and sound.
+		// If there's nothing to go before then append.
+		if (before) {
+			const beforeId = before.getAttribute('data-id');
+			const beforeIdx = Player.sounds.findIndex(s => s.id === beforeId);
+			const insertIdx = movingIdx < beforeIdx ? beforeIdx - 1 : beforeIdx;
+			list.insertBefore(moving, before);
+			Player.sounds.splice(insertIdx, 0, Player.sounds.splice(movingIdx, 1)[0]);
+		} else {
+			Player.sounds.push(Player.sounds.splice(movingIdx, 1)[0]);
+			list.appendChild(moving);
+		}
+		Player.trigger('order');
+	},
+
+	handleDragEnd: function (e) {
+		e.preventDefault();
+		e.eventTarget.classList.remove(`${ns}-dragging`);
+		Player.config.hoverImages = Player._hoverImages;
+		Player.playlist.render();
+	},
 };

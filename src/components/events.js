@@ -37,7 +37,7 @@ module.exports = {
 					for (let node of nodes) {
 						for (let eventList of delegated[evt]) {
 							for (let selector in eventList) {
-								if (node.matches(selector)) {
+								if (node.matches && node.matches(selector)) {
 									e.eventTarget = node;
 									let handler = Player.events.getHandler(eventList[selector]);
 									// If the handler returns false stop propogation

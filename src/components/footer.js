@@ -3,6 +3,7 @@ module.exports = {
 		Player.on('playsound', Player.footer.render);
 		Player.on('add', Player.footer.render);
 		Player.on('config', property => property === 'footerTemplate' && Player.footer.render());
+		Player.on('order', () => setTimeout(Player.footer.render, 0));
 	},
 
 	render: function () {

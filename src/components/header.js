@@ -69,15 +69,17 @@ module.exports = {
 
 			// Update the play order.
 			if (!Player.config.shuffle) {
-				Player.playOrder = [ ...Player.sounds ];
+				Player.sounds.sort((a, b) => a.id - b.id);
 			} else {
-				const playOrder = Player.playOrder;
-				for (let i = playOrder.length - 1; i > 0; i--) {
+				const sounds = Player.sounds;
+				for (let i = sounds.length - 1; i > 0; i--) {
 					const j = Math.floor(Math.random() * (i + 1));
-					[playOrder[i], playOrder[j]] = [playOrder[j], playOrder[i]];
+					[sounds[i], sounds[j]] = [sounds[j], sounds[i]];
 				}
 			}
+			Player.playlist.render();
 			Player.settings.save();
+			Player.trigger('order');
 		} catch (err) {
 			_logError('There was an error changing the shuffle setting. Please check the console for details.', 'warning');
 			console.error('[4chan sounds player]', err);
