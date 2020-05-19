@@ -66,11 +66,11 @@ module.exports = {
 		let isVideo = Player.playlist.isVideo = !thumb && sound.image.endsWith('.webm');
 		try {
 			Player.$(`.${ns}-image`).src = isVideo || thumb ? sound.thumb : sound.image;
+			Player.$(`.${ns}-image-link`).href = sound.image;
 			if (isVideo) {
 				Player.$(`.${ns}-video`).src = sound.image;
 				Player.$(`.${ns}-image-link`).classList.add(ns + '-show-video');
 			} else {
-				Player.$(`.${ns}-image-link`).href = sound.image;
 				Player.$(`.${ns}-image-link`).classList.remove(ns + '-show-video');
 			}
 		} catch (err) {
