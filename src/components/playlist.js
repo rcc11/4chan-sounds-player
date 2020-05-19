@@ -301,18 +301,18 @@ module.exports = {
 	},
 
 	handleDragStart: function (e) {
+		Player.playlist._dragging = e.eventTarget;
 		Player._hoverImages = Player.config.hoverImages;
 		Player.config.hoverImages = false;
 		e.eventTarget.classList.add(`${ns}-dragging`);
 		e.dataTransfer.setDragImage(new Image(), 0, 0);
-		e.dataTransfer.setData('text/plain', e.eventTarget.getAttribute('data-id'));
-		e.dataTransfer.dropEffect = 'move';
+		//e.dataTransfer.dropEffect = 'move';
 	},
 
 	handleDragEnter: function (e) {
 		e.preventDefault();
-		const id = e.dataTransfer.getData('text/plain');
-		const moving = Player.$(`.${ns}-list-item[data-id="${id}"]`);
+		const moving = Player.playlist._dragging;
+		const id = moving.getAttribute('data-id');
 		let before = e.target.closest && e.target.closest(`.${ns}-list-item`);
 		if (!before || moving === before) {
 			return;
@@ -343,8 +343,9 @@ module.exports = {
 
 	handleDragEnd: function (e) {
 		e.preventDefault();
+		delete Player.playlist._dragging;
 		e.eventTarget.classList.remove(`${ns}-dragging`);
 		Player.config.hoverImages = Player._hoverImages;
 		Player.playlist.render();
-	},
+	}
 };
