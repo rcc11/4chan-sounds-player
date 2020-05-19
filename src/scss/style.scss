@@ -1,5 +1,6 @@
 $ns : "__ns__";
 $colors: (
+	text: '${Player.config.colors.text}',
 	background: '${Player.config.colors.background}',
 	border: '${Player.config.colors.border}',
 	odd_row: '${Player.config.colors.odd_row}',

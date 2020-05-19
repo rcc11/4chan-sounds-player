@@ -113,6 +113,11 @@ module.exports = [
 		property: 'colors',
 		settings: [
 			{
+				property: 'colors.text',
+				default: '#000000',
+				title: 'Text Color'
+			},
+			{
 				property: 'colors.background',
 				default: '#d6daf0',
 				title: 'Background Color'

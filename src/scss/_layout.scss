@@ -4,6 +4,7 @@
 	border: 1px solid #{map-get($colors, border)};
 	min-height: 200px;
 	min-width: 100px;
+	color: #{map-get($colors, text)}
 }
 .#{$ns}-row {
 	display: flex;
