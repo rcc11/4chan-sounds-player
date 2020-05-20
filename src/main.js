@@ -5,26 +5,30 @@ import Player from './player';
 import { parseFiles } from './file_parser';
 
 async function doInit () {
-	await Player.initialize();
+	// The player tends to be all black without this timeout.
+	// Something with the timing of the stylesheet loading and applying the board theme.
+	setTimeout(async function () {
+		await Player.initialize();
 
-	parseFiles(document.body);
+		parseFiles(document.body);
 
-	const observer = new MutationObserver(function (mutations) {
-		mutations.forEach(function (mutation) {
-			if (mutation.type === 'childList') {
-				mutation.addedNodes.forEach(function (node) {
-					if (node.nodeType === Node.ELEMENT_NODE) {
-						parseFiles(node);
-					}
-				});
-			}
+		const observer = new MutationObserver(function (mutations) {
+			mutations.forEach(function (mutation) {
+				if (mutation.type === 'childList') {
+					mutation.addedNodes.forEach(function (node) {
+						if (node.nodeType === Node.ELEMENT_NODE) {
+							parseFiles(node);
+						}
+					});
+				}
+			});
 		});
-	});
 
-	observer.observe(document.body, {
-		childList: true,
-		subtree: true
-	});
+		observer.observe(document.body, {
+			childList: true,
+			subtree: true
+		});
+	}, 0);
 }
 
 document.addEventListener('4chanXInitFinished', function () {

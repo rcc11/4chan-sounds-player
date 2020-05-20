@@ -1,5 +1,3 @@
-const defaultConfig = require('./settings');
-
 const components = {
 	controls: require('./components/controls'),
 	display: require('./components/display'),
@@ -25,12 +23,7 @@ const Player = window.Player = module.exports = {
 	_progressBarStyleSheets: {},
 
 	// Build the config from the default
-	config: defaultConfig.reduce(function reduceSettings(config, settingConfig) {
-		if (settingConfig.settings) {
-			return settingConfig.settings.reduce(reduceSettings, config);
-		}
-		return _set(config, settingConfig.property, settingConfig.default);
-	}, {}),
+	config: {},
 
 	// Helper function to query elements in the player.
 	$: (...args) => Player.container && Player.container.querySelector(...args),
@@ -40,6 +33,8 @@ const Player = window.Player = module.exports = {
 
 	// Get all the templates.
 	templates: {
+		// Settings must be first.
+		settings: require('./templates/settings.tpl'),
 		css: require('./scss/style.scss'),
 		body: require('./templates/body.tpl'),
 		header: require('./templates/header.tpl'),
@@ -47,7 +42,6 @@ const Player = window.Player = module.exports = {
 		controls: require('./templates/controls.tpl'),
 		list: require('./templates/list.tpl'),
 		itemMenu: require('./templates/item_menu.tpl'),
-		settings: require('./templates/settings.tpl'),
 		footer: require('./templates/footer.tpl')
 	},
 
@@ -55,15 +49,15 @@ const Player = window.Player = module.exports = {
 	 * Set up the player.
 	 */
 	initialize: async function initialize() {
+		if (Player.initialized) {
+			return;
+		}
+		Player.initialized = true;
 		try {
 			Player.sounds = [ ];
-
-			// Load the user settings.
-			await Player.settings.load();
-
 			// Run the initialisation for each component.
 			for (let name in components) {
-				components[name].initialize && components[name].initialize();
+				components[name].initialize && await components[name].initialize();
 			}
 
 			// If it's already known that 4chan X is running then setup the button for it.

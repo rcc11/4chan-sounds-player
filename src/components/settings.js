@@ -3,7 +3,8 @@ const settingsConfig = require('settings');
 module.exports = {
 	delegatedEvents: {
 		click: {
-			[`.${ns}-config-button`]: 'settings.toggle'
+			[`.${ns}-config-button`]: 'settings.toggle',
+			[`.${ns}-setting-action`]: 'settings.handleAction',
 		},
 		focusout: {
 			[`.${ns}-settings input, .${ns}-settings textarea`]: 'settings.handleChange'
@@ -16,7 +17,22 @@ module.exports = {
 		}
 	},
 
-	initialize: function () {
+	initialize: async function () {
+		// Apply the default board theme as default.
+		Player.settings.applyBoardTheme();
+
+		// Apply the default config.
+		Player.config = settingsConfig.reduce(function reduceSettings(config, settingConfig) {
+			if (settingConfig.settings) {
+				return settingConfig.settings.reduce(reduceSettings, config);
+			}
+			return _set(config, settingConfig.property, settingConfig.default);
+		}, {});
+
+		// Load the user config.
+		await Player.settings.load();
+
+		// Listen for the player closing to apply the pause on hide setting.
 		Player.on('hide', function () {
 			if (Player.config.pauseOnHide) {
 				Player.pause();
@@ -24,12 +40,66 @@ module.exports = {
 		});
 	},
 
+	render: function () {
+		Player.$(`.${ns}-settings`).innerHTML = Player.templates.settings();
+	},
+
+	forceBoardTheme: function () {
+		Player.settings.applyBoardTheme(true);
+		Player.settings.save();
+	},
+
+	applyBoardTheme: function (force) {
+		// Create a reply element to gather the style from
+		const div = document.createElement('div');
+		div.setAttribute('class', 'post reply');
+		document.body.appendChild(div);
+		const style = document.defaultView.getComputedStyle(div);
+
+		// Apply the computed style to the color config.
+		const colorSettingMap = {
+			'colors.text': 'color',
+			'colors.background': 'backgroundColor',
+			'colors.odd_row': 'backgroundColor',
+			'colors.border': 'borderBottomColor',
+			// If the border is the same color as the text don't use it as a background color.
+			'colors.even_row': style.borderBottomColor === style.color ? 'backgroundColor' : 'borderBottomColor'
+		}
+		settingsConfig.find(s => s.property === 'colors').settings.forEach(setting => {
+			const updateConfig = force || (setting.default === _get(Player.config, setting.property));
+			colorSettingMap[setting.property] && (setting.default = style[colorSettingMap[setting.property]]);
+			updateConfig && _set(Player.config, setting.property, setting.default);
+		});
+
+		// Clean up the element.
+		document.body.removeChild(div);
+		delete div;
+
+		// Updated the stylesheet if it exists.
+		Player.stylesheet && Player.display.updateStylesheet();
+
+		// Re-render the settings if needed.
+		Player.container && Player.settings.render();
+	},
+
 	/**
 	 * Persist the player settings.
 	 */
 	save: function () {
 		try {
-			return GM.setValue(ns + '.settings', JSON.stringify(Player.config));
+			// Filter settings that have been modified from the default.
+			const settings = settingsConfig.reduce(function _handleSetting(settings, setting) {
+				if (setting.settings) {
+					return setting.settings.reduce(_handleSetting, settings);
+				}
+				const userVal = _get(Player.config, setting.property);
+				if (userVal !== undefined && userVal !== setting.default) {
+					_set(settings, setting.property, userVal);
+				}
+				return settings;
+			}, {});
+			// Save the settings.
+			return GM.setValue(ns + '.settings', JSON.stringify(settings));
 		} catch (err) {
 			_logError('There was an error saving the sound player settings. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
@@ -48,6 +118,7 @@ module.exports = {
 			try {
 				settings = JSON.parse(settings);
 			} catch(e) {
+				console.error(e);
 				return;
 			}
 			_mix(Player.config, settings);
@@ -135,5 +206,12 @@ module.exports = {
 			return;
 		}
 		e.eventTarget.value = Player.hotkeys.stringifyKey(e);
+	},
+
+	handleAction: function (e) {
+		e.preventDefault();
+		const handlerName = e.eventTarget.getAttribute('data-handler');
+		const handler = _get(Player, handlerName);
+		handler && handler();
 	}
 }

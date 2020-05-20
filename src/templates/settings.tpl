@@ -4,12 +4,13 @@
 	return settingsConfig.filter(setting => setting.showInSettings).map(function addSetting(setting) {
 		let out = `<div class="${setting.isSubSetting ? `${ns}-col` : `${ns}-setting-header`}" ${setting.description ? `title="${setting.description}"` : ''}>
 			${setting.title}
+			${(setting.actions || []).map(action => `<a href="javascript;" class="${ns}-setting-action" data-handler="${action.handler}">${action.title}</a>`)}
 		</div>`;
 
 		if (setting.settings) {
 			out += `<div class="${ns}-row ${ns}-sub-settings">`
 				+ setting.settings.map(subSetting => {
-					return addSetting({ ...setting, settings: null, ...subSetting, isSubSetting: true })
+					return addSetting({ ...setting, actions: null, settings: null, ...subSetting, isSubSetting: true })
 				}).join('')
 			+ `</div>`;
 

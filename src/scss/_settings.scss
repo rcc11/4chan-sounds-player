@@ -4,12 +4,18 @@
 	height: 100%;
 	overflow: auto;
 
-	.#{$ns}-setting-header {
+	& .#{$ns}-setting-header {
 		font-weight: 600;
 		margin: .5rem 0;
 	}
 
-	textarea {
+	& .#{$ns}-setting-action {
+		font-weight: normal;
+		text-decoration: underline;
+		margin-left: .25rem;
+	}
+
+	& textarea {
 		border: solid 1px #{map-get($colors, border)};
 		min-width: 100%;
 		min-height: 4rem;

@@ -111,6 +111,10 @@ module.exports = [
 		title: 'Colors',
 		showInSettings: true,
 		property: 'colors',
+		actions: [
+			{ title: 'Match Theme', handler: 'settings.forceBoardTheme' }
+		],
+		// These colors will be overriden with the theme defaults at initialization.
 		settings: [
 			{
 				property: 'colors.text',
@@ -154,4 +158,4 @@ module.exports = [
 			}
 		]
 	}
-]
+];

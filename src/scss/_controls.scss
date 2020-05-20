@@ -18,11 +18,10 @@ audio { width: 100% }
 	& > div {
 		height: 1rem;
 		width: .8rem;
-		background: white; //#{map-get($colors, media_controls)};
+		background: white;
 	}
 
 	&:hover > div {
-		//filter: brightness(180%);
 		background: #00b6f0;
 	}
 }

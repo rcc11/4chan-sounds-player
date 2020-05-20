@@ -40,10 +40,7 @@ module.exports = {
 				document.head.removeChild(Player.stylesheet);
 			}
 
-			// Insert the stylesheet.
-			Player.stylesheet = document.createElement('style');
-			Player.stylesheet.innerHTML = Player.templates.css();
-			document.head.appendChild(Player.stylesheet);
+			Player.display.updateStylesheet();
 
 			// Create the main player.
 			const el = document.createElement('div');
@@ -70,6 +67,16 @@ module.exports = {
 			// Can't recover, throw.
 			throw err;
 		}
+	},
+
+	updateStylesheet: function () {
+		// Insert the stylesheet if it doesn't exist.
+		if (!Player.stylesheet) {
+			Player.stylesheet = document.createElement('style');
+			document.head.appendChild(Player.stylesheet);
+		}
+
+		Player.stylesheet.innerHTML = Player.templates.css();
 	},
 
 	/**

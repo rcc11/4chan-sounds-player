@@ -15,8 +15,7 @@
 		cursor: pointer;
 		background: #{map-get($colors, odd_row)};
 
-		overflow-y: visible;
-		overflow-x: hidden;
+		overflow: hidden;
 		height: 1rem;
 
 		&.playing {

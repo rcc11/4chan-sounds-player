@@ -306,7 +306,8 @@ module.exports = {
 		Player.config.hoverImages = false;
 		e.eventTarget.classList.add(`${ns}-dragging`);
 		e.dataTransfer.setDragImage(new Image(), 0, 0);
-		//e.dataTransfer.dropEffect = 'move';
+		e.dataTransfer.dropEffect = 'move';
+		e.dataTransfer.setData('text/plain', e.eventTarget.getAttribute('data-id'));
 	},
 
 	handleDragEnter: function (e) {
