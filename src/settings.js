@@ -82,6 +82,12 @@ module.exports = [
 				title: 'Volume Down',
 				keyHandler: 'hotkeys.volumeDown',
 				default: { shiftKey: true, key: 'arrowdown' }
+			},
+			{
+				property: 'hotkey_bindings.togglePlayer',
+				title: 'Show/Hide',
+				keyHandler: 'display.toggle',
+				default: { key: 'h' }
 			}
 		]
 	},

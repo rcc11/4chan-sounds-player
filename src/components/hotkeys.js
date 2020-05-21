@@ -13,8 +13,13 @@ module.exports = {
 		'arrowdown': 'down'
 	},
 
-	addHandler: () => document.body.addEventListener('keydown', Player.hotkeys.handle),
-	removeHandler: () => document.body.removeEventListener('keydown', Player.hotkeys.handle),
+	addHandler: () => {
+		Player.hotkeys.removeHandler();
+		document.body.addEventListener('keydown', Player.hotkeys.handle);
+	},
+	removeHandler: () => {
+		document.body.removeEventListener('keydown', Player.hotkeys.handle)
+	},
 
 	/**
 	 * Apply the selecting hotkeys option
@@ -22,8 +27,8 @@ module.exports = {
 	apply: function () {
 		const type = Player.config.hotkeys;
 		Player.hotkeys.removeHandler();
-		Player.off('hide', Player.hotkeys.addHandler);
-		Player.off('show', Player.hotkeys.removeHandler);
+		Player.off('show', Player.hotkeys.addHandler);
+		Player.off('hide', Player.hotkeys.removeHandler);
 
 		if (type === 'always') {
 			// If hotkeys are always enabled then just set the handler.
@@ -45,7 +50,7 @@ module.exports = {
 	handle: function (e) {
 		// Ignore events on inputs so you can still type.
 		const ignoreFor = [ 'INPUT', 'SELECT', 'TEXTAREA', 'INPUT' ];
-		if (ignoreFor.includes(e.target.nodeName) || Player.isHidden && !(Player.config.hotkeys !== 'always' && Player.sounds.length)) {
+		if (ignoreFor.includes(e.target.nodeName) || Player.isHidden && (Player.config.hotkeys !== 'always' || !Player.sounds.length)) {
 			return;
 		}
 		const k = e.key.toLowerCase();
