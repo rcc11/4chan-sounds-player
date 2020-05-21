@@ -88,6 +88,18 @@ module.exports = [
 				title: 'Show/Hide',
 				keyHandler: 'display.toggle',
 				default: { key: 'h' }
+			},
+			{
+				property: 'hotkey_bindings.togglePlaylist',
+				title: 'Toggle Playlist',
+				keyHandler: 'playlist.toggleView',
+				default: { key: '' }
+			},
+			{
+				property: 'hotkey_bindings.toggleHoverImages',
+				title: 'Toggle Hover Images',
+				keyHandler: 'playlist.toggleHoverImages',
+				default: { key: '' }
 			}
 		]
 	},

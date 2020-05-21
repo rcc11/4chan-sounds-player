@@ -259,7 +259,7 @@ module.exports = {
 	},
 
 	toggleHoverImages: function (e) {
-		e.preventDefault();
+		e && e.preventDefault();
 		Player.config.hoverImages = !Player.config.hoverImages;
 		Player.header.render();
 		Player.settings.save();

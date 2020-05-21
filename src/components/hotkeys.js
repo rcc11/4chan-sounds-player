@@ -60,10 +60,10 @@ module.exports = {
 		for (let key in bindings) {
 			const keyDef = bindings[key];
 			const bindingConfig = k === keyDef.key
-				&& (!keyDef.shiftKey || e.shiftKey) && (!keyDef.ctrlKey || e.ctrlKey) && (!keyDef.metaKey || e.metaKey)
+				&& (!!keyDef.shiftKey === !!e.shiftKey) && (!!keyDef.ctrlKey === !!e.ctrlKey) && (!!keyDef.metaKey === !!e.metaKey)
 				&& (!keyDef.ignoreRepeat || !e.repeat)
 				&& settingsConfig.find(s => s.property === 'hotkey_bindings').settings.find(s => s.property === 'hotkey_bindings.' + key);
-			
+
 			if (bindingConfig) {
 				e.preventDefault();
 				return _get(Player, bindingConfig.keyHandler)();
@@ -89,7 +89,7 @@ module.exports = {
 		let key = keys.pop();
 		Object.keys(Player.hotkeys._keyMap).find(k => Player.hotkeys._keyMap[k] === key && (key = k));
 		const newValue = { key };
-		keys.forEach(key => newValue[key + 'Key'] = true);
+		keys.forEach(key => newValue[key.toLowerCase() + 'Key'] = true);
 		return newValue;
 	},
 
