@@ -60,11 +60,21 @@ const Player = window.Player = module.exports = {
 				components[name].initialize && await components[name].initialize();
 			}
 
-			// If it's already known that 4chan X is running then setup the button for it.
-			// If not add the the [Sounds] link in the top and bottom nav.
-			if (isChanX) {
+			if (!is4chan) {
+				// Add a sounds link in the nav for archives
+				const nav = document.querySelector('.navbar-inner .nav:nth-child(2)');
+				const li = document.createElement('li');
+				const showLink = document.createElement('a');
+				showLink.innerHTML = 'Sounds';
+				showLink.href = 'javascript;'
+				li.appendChild(showLink);
+				nav.appendChild(li);
+				showLink.addEventListener('click', Player.display.toggle);
+			} else if (isChanX) {
+				// If it's already known that 4chan X is running then setup the button for it.
 				Player.display.initChanX()
 			} else {
+				// Add the [Sounds] link in the top and bottom nav.
 				document.querySelectorAll('#settingsWindowLink, #settingsWindowLinkBot').forEach(function (link) {
 					const bracket = document.createTextNode('] [');
 					const showLink = document.createElement('a');

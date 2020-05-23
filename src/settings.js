@@ -120,7 +120,7 @@ module.exports = [
 			'pomf.cat',
 			'zz.ht'
 		],
-		title: 'Allow',
+		title: 'Allowed Hosts',
 		description: 'Which domains sources are allowed to be loaded from.',
 		showInSettings: true,
 		split: '\n'
