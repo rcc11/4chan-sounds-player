@@ -1,11 +1,14 @@
 // ==UserScript==
 // @name         4chan sounds player
-// @version      1.5.1
+// @version      1.5.2
 // @namespace    rccom
 // @description  Play that faggy music weeb boi
 // @author       RCC
 // @match        *://boards.4chan.org/*
 // @match        *://boards.4channel.org/*
+// @match        *://desuarchive.org/*
+// @match        *://arch.b4k.co/*
+// @match        *://archived.moe/*
 // @grant        GM.getValue
 // @grant        GM.setValue
 // @run-at       document-start
