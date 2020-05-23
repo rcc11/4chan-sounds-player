@@ -52,7 +52,7 @@ module.exports = {
 	applyBoardTheme: function (force) {
 		// Create a reply element to gather the style from
 		const div = document.createElement('div');
-		div.setAttribute('class', 'post reply');
+		div.setAttribute('class', is4chan ? 'post reply' : 'post_wrapper');
 		document.body.appendChild(div);
 		const style = document.defaultView.getComputedStyle(div);
 

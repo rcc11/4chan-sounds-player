@@ -2,10 +2,14 @@
  * Global variables and helpers.
  */
 
-window.isChanX = document.documentElement.classList.contains('fourchan-x');
-
 window.ns = 'fc-sounds';
 
+window.is4chan = location.hostname.includes('4chan.org') || location.hostname.includes('4channel.org');
+window.isChanX = document.documentElement.classList.contains('fourchan-x');
+
+/**
+ * Send an error notification event
+ */
 window._logError = function (message, type = 'error') {
 	console.error(message);
 	document.dispatchEvent(new CustomEvent("CreateNotification", {

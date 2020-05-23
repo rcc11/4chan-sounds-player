@@ -6,6 +6,9 @@
 // @author       RCC
 // @match        *://boards.4chan.org/*
 // @match        *://boards.4channel.org/*
+// @match        *://desuarchive.org/*
+// @match        *://arch.b4k.co/*
+// @match        *://archived.moe/*
 // @grant        GM.getValue
 // @grant        GM.setValue
 // @run-at       document-start

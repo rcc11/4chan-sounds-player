@@ -1,50 +1,34 @@
 module.exports = {
 	parseFiles,
-	parseFile
+	parsePost
 }
 
 function parseFiles (target) {
-	target.querySelectorAll('.post').forEach(function (post) {
-		if (post.parentElement.parentElement.id === 'qp' || post.parentElement.classList.contains('noFile')) {
-			return;
-		}
-		post.querySelectorAll('.file').forEach(function (file) {
-			parseFile(file, post);
-		});
-	});
+	target.querySelectorAll('.post').forEach(parsePost);
 };
 
-function parseFile(file, post) {
+function parsePost(post) {
 	try {
-		if (!file.classList.contains('file')) {
-			return;
-		}
-
-		const fileLink = isChanX
-			? file.querySelector('.fileText .file-info > a')
-			: file.querySelector('.fileText > a');
-
-		if (!fileLink) {
-			return;
-		}
-
-		if (!fileLink.href) {
+		if (post.parentElement.parentElement.id === 'qp' || post.parentElement.classList.contains('noFile')) {
 			return;
 		}
 
 		let fileName = null;
 
-		if (isChanX) {
+		if (!is4chan) {
+			const fileLink = post.querySelector('.post_file_filename');
+			fileName = fileLink && fileLink.title;
+		} else if (isChanX) {
 			[
-				file.querySelector('.fileText .file-info .fnfull'),
-				file.querySelector('.fileText .file-info > a')
+				post.querySelector('.fileText .file-info .fnfull'),
+				post.querySelector('.fileText .file-info > a')
 			].some(function (node) {
 				return node && (fileName = node.textContent);
 			});
 		} else {
 			[
-				file.querySelector('.fileText'),
-				file.querySelector('.fileText > a')
+				post.querySelector('.fileText'),
+				post.querySelector('.fileText > a')
 			].some(function (node) {
 				return node && (fileName = node.title || node.tagName === 'A' && node.textContent);
 			});
@@ -62,9 +46,9 @@ function parseFile(file, post) {
 			return;
 		}
 
-		const id = post.id.slice(1);
+		const id = post.id.slice(is4chan ? 1 : 0);
 		const name = match[1] || id;
-		const fileThumb = post.querySelector('.fileThumb');
+		const fileThumb = post.querySelector(is4chan ? '.fileThumb' : '.thread_image_link');
 		const fullSrc = fileThumb && fileThumb.href;
 		const thumbSrc = fileThumb && fileThumb.querySelector('img').src;
 		let link = match[2];
