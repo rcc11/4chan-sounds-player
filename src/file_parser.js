@@ -9,7 +9,8 @@ function parseFiles (target) {
 
 function parsePost(post) {
 	try {
-		if (post.parentElement.parentElement.id === 'qp' || post.parentElement.classList.contains('noFile')) {
+		const parentParent = post.parentElement.parentElement;
+		if (parentParent.id === 'qp' || parentParent.classList.contains('inline') || post.parentElement.classList.contains('noFile')) {
 			return;
 		}
 

@@ -18,7 +18,7 @@ module.exports = {
 		document.body.addEventListener('keydown', Player.hotkeys.handle);
 	},
 	removeHandler: () => {
-		document.body.removeEventListener('keydown', Player.hotkeys.handle)
+		document.body.removeEventListener('keydown', Player.hotkeys.handle);
 	},
 
 	/**
