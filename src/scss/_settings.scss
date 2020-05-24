@@ -7,6 +7,10 @@
 	& .#{$ns}-setting-header {
 		font-weight: 600;
 		margin: .5rem 0;
+
+		&.#{$ns}-has-description {
+			cursor: help;
+		}
 	}
 
 	& .#{$ns}-setting-action {

@@ -113,9 +113,7 @@ module.exports = {
 	trigger: async function (evt, ...data) {
 		const events = Player.events._events[evt] || [];
 		for (let handler of events) {
-			if (await handler(...data) === false) {
-				return;
-			}
+			await handler(...data);
 		}
 	},
 

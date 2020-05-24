@@ -22,11 +22,12 @@ module.exports = {
 		Player.settings.applyBoardTheme();
 
 		// Apply the default config.
-		Player.config = settingsConfig.reduce(function reduceSettings(config, settingConfig) {
-			if (settingConfig.settings) {
-				return settingConfig.settings.reduce(reduceSettings, config);
+		Player.config = settingsConfig.reduce(function reduceSettings(config, setting) {
+			if (setting.settings) {
+				setting.settings.forEach(subSetting => _set(config, subSetting.property || setting.property, subSetting.default || setting.default));
+				return config;
 			}
-			return _set(config, settingConfig.property, settingConfig.default);
+			return _set(config, setting.property, setting.default);
 		}, {});
 
 		// Load the user config.
@@ -90,11 +91,16 @@ module.exports = {
 			// Filter settings that have been modified from the default.
 			const settings = settingsConfig.reduce(function _handleSetting(settings, setting) {
 				if (setting.settings) {
-					return setting.settings.reduce(_handleSetting, settings);
-				}
-				const userVal = _get(Player.config, setting.property);
-				if (userVal !== undefined && userVal !== setting.default) {
-					_set(settings, setting.property, userVal);
+					setting.settings.forEach(subSetting => _handleSetting(settings, {
+						property: setting.property,
+						default: setting.default,
+						...subSetting
+					}));
+				} else {
+					const userVal = _get(Player.config, setting.property);
+					if (userVal !== undefined && userVal !== setting.default) {
+						_set(settings, setting.property, userVal);
+					}
 				}
 				return settings;
 			}, {});

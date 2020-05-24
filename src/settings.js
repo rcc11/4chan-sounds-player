@@ -20,36 +20,58 @@ module.exports = [
 		default: true,
 		title: 'Autoshow',
 		description: 'Automatically show the player when the thread contains sounds.',
-		showInSettings: true
+		showInSettings: true,
+		settings: [ { title: 'Enabled' } ]
 	},
 	{
 		property: 'pauseOnHide',
 		default: true,
 		title: 'Pause on hide',
 		description: 'Pause the player when it\'s hidden.',
-		showInSettings: true
+		showInSettings: true,
+		settings: [ { title: 'Enabled' } ]
 	},
 	{
-		property: 'hotkeys',
-		default: 'open',
-		title: 'Hotkeys',
-		description: 'Enable hot keys for controlling the player playback.',
+		property: 'limitPostWidths',
+		title: 'Limit Post Width',
+		description: 'Limit the width of posts so they aren\'t hidden under the player.',
 		showInSettings: true,
-		handler: 'hotkeys.apply',
-		options: [
-			[ 'always', 'Always' ],
-			[ 'open', 'Only with the player open' ],
-			[ 'never', 'Never' ]
+		settings: [
+			{
+				property: 'limitPostWidths',
+				title: 'Enabled',
+				default: false
+			},
+			{
+				property: 'minPostWidth',
+				title: 'Minimum Width',
+				default: '50%'
+			}
 		]
 	},
 	{
-		title: 'Hotkey Bindings',
+		title: 'Keybinds',
 		showInSettings: true,
+		description: 'Enable keyboard shortcuts.',
 		format: 'hotkeys.stringifyKey',
 		parse: 'hotkeys.parseKey',
 		class: `${ns}-key-input`,
 		property: 'hotkey_bindings',
 		settings: [
+			{
+				property: 'hotkeys',
+				default: 'open',
+				handler: 'hotkeys.apply',
+				title: 'Enable',
+				format: null,
+				parse: null,
+				class: null,
+				options: {
+					always: 'Always',
+					open: 'Only with the player open',
+					never: 'Never'
+				}
+			},
 			{
 				property: 'hotkey_bindings.playPause',
 				title: 'Play/Pause',
@@ -168,11 +190,6 @@ module.exports = [
 				property: 'colors.dragging',
 				default: '#c396c8',
 				title: 'Dragging Row Color'
-			},
-			{
-				property: 'colors.expander',
-				default: '#808bbf',
-				title: 'Expander Color'
 			}
 		]
 	}

@@ -2,7 +2,8 @@
 	const settingsConfig = require('settings');
 
 	return settingsConfig.filter(setting => setting.showInSettings).map(function addSetting(setting) {
-		let out = `<div class="${setting.isSubSetting ? `${ns}-col` : `${ns}-setting-header`}" ${setting.description ? `title="${setting.description}"` : ''}>
+		const desc = setting.description;
+		let out = `<div class="${setting.isSubSetting ? `${ns}-col` : `${ns}-setting-header`} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc}"` : ''}>
 			${setting.title}
 			${(setting.actions || []).map(action => `<a href="javascript;" class="${ns}-setting-action" data-handler="${action.handler}">${action.title}</a>`)}
 		</div>`;
@@ -10,7 +11,14 @@
 		if (setting.settings) {
 			out += `<div class="${ns}-row ${ns}-sub-settings">`
 				+ setting.settings.map(subSetting => {
-					return addSetting({ ...setting, actions: null, settings: null, ...subSetting, isSubSetting: true })
+					return addSetting({
+						...setting,
+						actions: null,
+						settings: null,
+						description: null,
+						...subSetting,
+						isSubSetting: true
+					})
 				}).join('')
 			+ `</div>`;
 
@@ -29,7 +37,7 @@
 		setting.isSubSetting && (out += `<div class="${ns}-col">`);
 
 		if (type === 'boolean') {
-			out += `<input type="checkbox" ${clss} data-property="${setting.property}" ${value ? 'checked' : ''}></input>`;
+			out += `<input type="checkbox" ${clss} data-property="${setting.property}" ${value ? 'checked' : ''} style="margin-bottom: .25rem"></input>`;
 		} else if (setting.showInSettings === 'textarea' || type === 'object') {
 			if (setting.split) {
 				value = value.join(setting.split);
@@ -38,8 +46,8 @@
 			}
 			out += `<textarea ${clss} data-property="${setting.property}">${value}</textarea>`;
 		} else if (setting.options) {
-			out += `<select ${clss} data-property="${setting.property}">`
-				+ setting.options.map(option => `<option value="${option[0]}" ${value === option[0] ? 'selected' : ''}>${option[1]}</option>`)
+			out += `<select ${clss} data-property="${setting.property}" style="margin-bottom: .25rem">`
+				+ Object.keys(setting.options).map(k => `<option value="${k}" ${value === k ? 'selected' : ''}>${setting.options[k]}</option>`).join('')
 			+ '</select>';
 		} else {
 			out += `<input type="text" ${clss} data-property="${setting.property}" value="${value}"></input>`;

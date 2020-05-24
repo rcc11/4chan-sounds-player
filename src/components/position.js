@@ -7,13 +7,53 @@ module.exports = {
 	},
 
 	initialize: function () {
-		// Apply the last position/size when the player is shown.
+		// Apply the last position/size, and post width limiting, when the player is shown.
 		Player.on('show', async function () {
 			const [ top, left ] = (await GM.getValue(ns + '.position') || '').split(':');
 			const [ width, height ] = (await GM.getValue(ns + '.size') || '').split(':');
 			+top && +left && Player.position.move(top, left, true);
 			+width && +height && Player.position.resize(width, height);
+
+			if (Player.config.limitPostWidths) {
+				Player.position.setPostWidths();
+				window.addEventListener('scroll', Player.position.setPostWidths);
+			}
 		});
+
+		// Remove post width limiting when the player is hidden.
+		Player.on('hide', function () {
+			Player.position.setPostWidths();
+			window.removeEventListener('scroll', Player.position.setPostWidths);
+		});
+
+		// Reapply the post width limiting config values when they're changed.
+		Player.on('config', prop => {
+			if (prop === 'limitPostWidths' || prop === 'minPostWidth') {
+				window.removeEventListener('scroll', Player.position.setPostWidths);
+				Player.position.setPostWidths();
+				if (Player.config.limitPostWidths) {
+					window.addEventListener('scroll', Player.position.setPostWidths);
+				}
+			}
+		})
+	},
+
+	/**
+	 * Applies a max width to posts next to the player so they don't get hidden behind it.
+	 */
+	setPostWidths: function () {
+		const offset = (document.documentElement.clientWidth - Player.container.offsetLeft) + 10;
+		const selector = is4chan ? '.thread > .postContainer' : '.posts > article.post';
+		const enabled = !Player.isHidden && Player.config.limitPostWidths;
+		const startY = Player.container.offsetTop;
+		const endY = Player.container.getBoundingClientRect().height + startY;
+
+		document.querySelectorAll(selector).forEach(post => { 
+			const rect = enabled && post.getBoundingClientRect();
+			const limitWidth = enabled && rect.top + rect.height > startY && rect.top < endY;
+			post.style.maxWidth = limitWidth ? `calc(100% - ${offset}px)` : null;
+			post.style.minWidth = limitWidth ? `${Player.config.minPostWidth}` : null;
+		})
 	},
 
 	/**
@@ -124,6 +164,8 @@ module.exports = {
 		// Move the window.
 		Player.container.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
 		Player.container.style.top = Math.max(top, Math.min(y, maxY)) + 'px';
+
+		Player.position.setPostWidths();
 	},
 
 	/**
