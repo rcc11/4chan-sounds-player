@@ -66,15 +66,12 @@ module.exports = {
 		let isVideo = Player.playlist.isVideo = !thumb && sound.image.endsWith('.webm');
 		try {
 			const img = Player.$(`.${ns}-image`);
+			const video = Player.$(`.${ns}-video`);
 			img.src = '';
 			img.src = isVideo || thumb ? sound.thumb : sound.image;
+			video.src = isVideo ? sound.image : null;
 			Player.$(`.${ns}-image-link`).href = sound.image;
-			if (isVideo) {
-				Player.$(`.${ns}-video`).src = sound.image;
-				Player.$(`.${ns}-image-link`).classList.add(ns + '-show-video');
-			} else {
-				Player.$(`.${ns}-image-link`).classList.remove(ns + '-show-video');
-			}
+			Player.$(`.${ns}-image-link`).classList[isVideo ? 'add' : 'remove'](ns + '-show-video');
 		} catch (err) {
 			_logError('There was an error display the sound player image. Please check the console for details.');
 			console.error('[4chan sounds player]', err);

@@ -95,7 +95,7 @@ module.exports = {
 				Player.currentIndex = Player.sounds.indexOf(sound) + 1;
 				await Player.trigger('playsound', sound);
 			}
-			
+
 			// If there's a video wait for it and the sound to load before playing.
 			if (Player.playlist.isVideo && (video.readyState < 3 || Player.audio.readyState < 3)) {
 				video.addEventListener('loadeddata', Player.controls._playOnceLoaded);
