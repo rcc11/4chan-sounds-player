@@ -31,9 +31,7 @@ module.exports = {
 			}
 		},
 		play: { [`.${ns}-video`]: 'controls.syncVideo' },
-		playing: { [`.${ns}-video`]: 'controls.syncVideo' },
-		pause: { [`.${ns}-video`]: 'controls.syncVideo' },
-		loadeddata: { [`.${ns}-video`]: 'controls.syncVideo' }
+		pause: { [`.${ns}-video`]: 'controls.syncVideo' }
 	},
 
 	audioEvents: {
@@ -72,7 +70,7 @@ module.exports = {
 	/**
 	 * Start playback.
 	 */
-	play: function (sound) {
+	play: async function (sound) {
 		if (!Player.audio) {
 			return;
 		}
@@ -82,6 +80,10 @@ module.exports = {
 			if (!sound && !Player.playing && Player.sounds.length) {
 				sound = Player.sounds[0];
 			}
+
+			const video = Player.$(`.${ns}-video`);
+			video.removeEventListener('loadeddata', Player.controls.playOnceLoaded);
+
 			// If a new sound is being played update the display.
 			if (sound) {
 				if (Player.playing) {
@@ -91,9 +93,16 @@ module.exports = {
 				Player.playing = sound;
 				Player.audio.src = sound.src;
 				Player.currentIndex = Player.sounds.indexOf(sound) + 1;
-				Player.trigger('playsound', sound);
+				await Player.trigger('playsound', sound);
 			}
-			Player.audio.play();
+			
+			// If there's a video wait for it and the sound to load before playing.
+			if (Player.playlist.isVideo && (video.readyState < 3 || Player.audio.readyState < 3)) {
+				video.addEventListener('loadeddata', Player.controls._playOnceLoaded);
+				Player.audio.addEventListener('loadeddata', Player.controls._playOnceLoaded);
+			} else {
+				Player.audio.play();
+			}
 		} catch (err) {
 			_logError('There was an error playing the sound. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
@@ -101,9 +110,21 @@ module.exports = {
 	},
 
 	/**
+	 * Handler to start playback once the video and audio are both loaded.
+	 */
+	_playOnceLoaded: function () {
+		const video = Player.$(`.${ns}-video`);
+		if (video.readyState > 2 && Player.audio.readyState > 2) {
+			video.removeEventListener('loadeddata', Player.controls._playOnceLoaded);
+			Player.audio.removeEventListener('loadeddata', Player.controls._playOnceLoaded);
+			Player.audio.play();
+		}
+	},
+
+	/**
 	 * Pause playback.
 	 */
-	pause: function (force) {
+	pause: function () {
 		Player.audio && Player.audio.pause();
 	},
 
@@ -166,11 +187,12 @@ module.exports = {
 			const paused = Player.audio.paused;
 			const video = Player.$(`.${ns}-video`);
 			if (video) {
-				if (paused) {
-					video.currentTime = Math.min(Player.audio.currentTime, video.duration);
-					video.pause();
-				} else if (Player.audio.currentTime < video.duration) {
+				if (Player.audio.currentTime < video.duration) {
 					video.currentTime = Player.audio.currentTime;
+				}
+				if (paused) {
+					video.pause();
+				} else {
 					video.play();
 				}
 			}
