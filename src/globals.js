@@ -43,14 +43,3 @@ window.toDuration = function(number) {
 	seconds < 10 && (seconds = '0' + seconds);
 	return (hours ? hours + ':' : '') + minutes + ':' + seconds;
 };
-
-window._mix = function _mix(to, from) {
-	for (let key in from || {}) {
-		if (from[key] && typeof from[key] === 'object' && !Array.isArray(from[key])) {
-			to[key] || (to[key] = {});
-			_mix(to[key], from[key]);
-		} else {
-			to[key] = from[key];
-		}
-	}
-};

@@ -123,11 +123,23 @@ module.exports = {
 			}
 			try {
 				settings = JSON.parse(settings);
+				settingsConfig.forEach(function _handleSetting(setting) {
+					if (setting.settings) {
+						return setting.settings.forEach(subSetting => _handleSetting({
+							property: setting.property,
+							default: setting.default,
+							...subSetting
+						}));
+					}
+					const userVal = _get(settings, setting.property);
+					if (userVal && userVal !== undefined) {
+						_set(Player.config, setting.property, userVal);
+					}
+				});
 			} catch(e) {
 				console.error(e);
 				return;
 			}
-			_mix(Player.config, settings);
 		} catch (err) {
 			_logError('There was an error loading the sound player settings. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
