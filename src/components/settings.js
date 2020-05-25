@@ -24,7 +24,10 @@ module.exports = {
 		// Apply the default config.
 		Player.config = settingsConfig.reduce(function reduceSettings(config, setting) {
 			if (setting.settings) {
-				setting.settings.forEach(subSetting => _set(config, subSetting.property || setting.property, subSetting.default || setting.default));
+				setting.settings.forEach(subSetting => {
+					let _setting = { ...setting, ...subSetting };
+					_set(config, _setting.property, _setting.default);
+				});
 				return config;
 			}
 			return _set(config, setting.property, setting.default);
@@ -132,7 +135,7 @@ module.exports = {
 						}));
 					}
 					const userVal = _get(settings, setting.property);
-					if (userVal && userVal !== undefined) {
+					if (userVal !== undefined) {
 						_set(Player.config, setting.property, userVal);
 					}
 				});

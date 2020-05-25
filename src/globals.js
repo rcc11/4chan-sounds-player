@@ -32,7 +32,11 @@ window._set = function(object, path, value) {
 
 window._get = function(object, path, dflt) {
 	const props = path.split('.');
-	return props.reduce((obj, k) => obj && obj[k], object) || dflt;
+	const lastProp = props.pop();
+	const parent = props.reduce((obj, k) => obj && obj[k], object);
+	return parent && Object.prototype.hasOwnProperty.call(parent, lastProp)
+		? parent[lastProp]
+		: dflt;
 };
 
 window.toDuration = function(number) {
