@@ -25,12 +25,15 @@
 
 ##{$ns}-container[data-view-style="fullscreen"] {
 	& .#{$ns}-image-link {
-		height: calc(100% - 2.6rem) !important;
+		height: calc(100% - .4rem) !important;
 	}
 	& .#{$ns}-controls {
 		position: absolute;
 		left: 0;
 		right: 0;
+		bottom: calc(-2.5rem + .4rem)
+	}
+	& .#{$ns}-controls:hover {
 		bottom: 0;
 	}
 }
