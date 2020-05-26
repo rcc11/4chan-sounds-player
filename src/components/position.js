@@ -35,7 +35,18 @@ module.exports = {
 					window.addEventListener('scroll', Player.position.setPostWidths);
 				}
 			}
-		})
+		});
+
+		// Remove post width limit from inline quotes
+		new MutationObserver(function () {
+			document.querySelectorAll('#hoverUI .postContainer, .inline .postContainer').forEach(post => {
+				post.style.maxWidth = null;
+				post.style.minWidth = null;
+			})
+		}).observe(document.body, {
+			childList: true,
+			subtree: true
+		});
 	},
 
 	/**
