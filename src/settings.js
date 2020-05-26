@@ -118,6 +118,12 @@ module.exports = [
 				default: { key: '' }
 			},
 			{
+				property: 'hotkey_bindings.scrollToPlaying',
+				title: 'Jump To Playing',
+				keyHandler: 'playlist.scrollToPlaying',
+				default: { key: '' }
+			},
+			{
 				property: 'hotkey_bindings.toggleHoverImages',
 				title: 'Toggle Hover Images',
 				keyHandler: 'playlist.toggleHoverImages',
@@ -128,8 +134,14 @@ module.exports = [
 	{
 		property: 'footerTemplate',
 		title: 'Footer Contents',
-		default: '%p / %t sounds\npostlink:"Post"\nimagelink:"Image"\nsoundlink:"Sound"',
-		description: 'What the footer displays. %p is the playing index. %t is the total sound count. postlink, imagelink, soundlink are links.',
+		default: '%p / %t sounds\n<div style="float: right; margin-right: .5rem">\n\tplayinglink\n\tpostlink:"Post"\n\timagelink:"Image"\n\tsoundlink:"Sound"\n</div>',
+		description: 'What the footer displays, with the following replacements. The text for links can be set using the format postlink:"text".\n'
+			+ '%p - Playing index.\n'
+			+ '%t - Total sound count.\n'
+			+ 'playinglink - Jump to the current sound in the playlist.\n'
+			+ 'postlink - Jump to the current sounds post in the thread.\n'
+			+ 'imagelink - Open the current sounds image in a new tab.\n'
+			+ 'soundlink - Open the current sounds source in a new tab.',
 		showInSettings: 'textarea'
 	},
 	{

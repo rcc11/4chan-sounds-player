@@ -3,7 +3,7 @@
 
 	return settingsConfig.filter(setting => setting.showInSettings).map(function addSetting(setting) {
 		const desc = setting.description;
-		let out = `<div class="${setting.isSubSetting ? `${ns}-col` : `${ns}-setting-header`} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc}"` : ''}>
+		let out = `<div class="${setting.isSubSetting ? `${ns}-col` : `${ns}-setting-header`} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc.replace(/"/g, '&quot;')}"` : ''}>
 			${setting.title}
 			${(setting.actions || []).map(action => `<a href="javascript;" class="${ns}-setting-action" data-handler="${action.handler}">${action.title}</a>`)}
 		</div>`;

@@ -1,4 +1,10 @@
 module.exports = {
+	delegatedEvents: {
+		click: {
+			[`.${ns}-playing-jump-link`]: () => Player.playlist.scrollToPlaying('center')
+		}
+	},
+
 	initialize: function () {
 		Player.on('playsound', Player.footer.render);
 		Player.on('add', Player.footer.render);

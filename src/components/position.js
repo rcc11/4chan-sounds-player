@@ -52,7 +52,7 @@ module.exports = {
 			const rect = enabled && post.getBoundingClientRect();
 			const limitWidth = enabled && rect.top + rect.height > startY && rect.top < endY;
 			post.style.maxWidth = limitWidth ? `calc(100% - ${offset}px)` : null;
-			post.style.minWidth = limitWidth ? `${Player.config.minPostWidth}` : null;
+			post.style.minWidth = limitWidth && Player.config.minPostWidth ? `${Player.config.minPostWidth}` : null;
 		})
 	},
 
@@ -165,7 +165,9 @@ module.exports = {
 		Player.container.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
 		Player.container.style.top = Math.max(top, Math.min(y, maxY)) + 'px';
 
-		Player.position.setPostWidths();
+		if (Player.config.limitPostWidths) {
+			Player.position.setPostWidths();
+		}
 	},
 
 	/**

@@ -27,6 +27,7 @@ const Player = window.Player = module.exports = {
 
 	// Helper function to query elements in the player.
 	$: (...args) => Player.container && Player.container.querySelector(...args),
+	$all: (...args) => Player.container && Player.container.querySelectorAll(...args),
 
 	// Store a ref to the components so they can be iterated.
 	components,

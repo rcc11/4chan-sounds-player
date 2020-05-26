@@ -35,8 +35,13 @@ module.exports = {
 
 	initialize: function () {
 		Player.on('playsound', sound => {
+			// Update the image.
 			Player.playlist.showImage(sound);
-			Player.playlist.render();
+			// Update the playing attribute.
+			Player.$all(`.${ns}-list-item.playing`).forEach(el => el.classList.remove('playing'));
+			Player.$(`.${ns}-list-item[data-id="${Player.playing.id}"]`).classList.add('playing');
+			// Scroll to the sound.
+			Player.playlist.scrollToPlaying('nearest');
 		});
 	},
 
@@ -346,6 +351,14 @@ module.exports = {
 		delete Player.playlist._dragging;
 		e.eventTarget.classList.remove(`${ns}-dragging`);
 		Player.config.hoverImages = Player._hoverImages;
-		Player.playlist.render();
+	},
+
+	scrollToPlaying: function (type = 'center') {
+		// Avoid scrolling if there's a menu open. That would be quite rude.
+		if (Player.$(`.${ns}-item-menu`)) {
+			return;
+		}
+		const playing = Player.$(`.${ns}-list-item.playing`);
+		playing && playing.scrollIntoView({ block: type });
 	}
 };
