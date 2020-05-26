@@ -1,7 +1,6 @@
 .#{$ns}-controls {
 	align-items: center;
 	padding: .5rem;
-	border-bottom: solid 1px #{map-get($colors, border)};
 
 	background: #3f3f44;
 }
@@ -27,18 +26,21 @@
 .#{$ns}-play-button-display {
 	// Paused state
 	clip-path: polygon(10% 10%, 10% 90%, 35% 90%, 35% 10%, 65% 10%, 65% 90%, 90% 90%, 90% 10%, 10% 10%);
-  
+
 	// Play state
 	&.#{$ns}-play {
 		clip-path: polygon(0 0, 0 100%, 100% 50%, 0 0);
 	}
 }
-
 .#{$ns}-previous-button-display, .#{$ns}-next-button-display {
 	clip-path: polygon(10% 10%, 10% 90%, 30% 90%, 30% 50%, 90% 90%, 90% 10%, 30% 50%, 30% 10%, 10% 10%);
 }
 .#{$ns}-next-button-display {
 	transform: scale(-1, 1);
+}
+.#{$ns}-fullscreen-button-display {
+	width: 1rem !important;
+	clip-path: polygon(0% 35%, 0% 0%, 35% 0%, 35% 15%, 15% 15%, 15% 35%, 0% 35%, 0% 100%, 35% 100%, 35% 85%, 15% 85%, 15% 65%, 0% 65%, 100% 65%, 100% 100%, 65% 100%, 65% 85%, 85% 85%, 85% 15%, 65% 15%, 65% 0%, 100% 0%, 100% 35%, 85% 35%, 85% 65%, 0% 65%);
 }
 
 .#{$ns}-current-time {

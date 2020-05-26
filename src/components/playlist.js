@@ -74,8 +74,10 @@ module.exports = {
 			const video = Player.$(`.${ns}-video`);
 			img.src = '';
 			img.src = isVideo || thumb ? sound.thumb : sound.image;
-			video.src = isVideo ? sound.image : null;
-			Player.$(`.${ns}-image-link`).href = sound.image;
+			video.src = isVideo ? sound.image : undefined;
+			if (Player.config.viewStyle !== 'fullscreen') {
+				Player.$(`.${ns}-image-link`).href = sound.image;
+			}
 			Player.$(`.${ns}-image-link`).classList[isVideo ? 'add' : 'remove'](ns + '-show-video');
 		} catch (err) {
 			_logError('There was an error display the sound player image. Please check the console for details.');

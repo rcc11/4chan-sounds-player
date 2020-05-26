@@ -24,7 +24,7 @@ window._logError = function (message, type = 'error') {
 
 window._set = function(object, path, value) {
 	const props = path.split('.');
-	const lastProp = props.pop(); 
+	const lastProp = props.pop();
 	const setOn = props.reduce((obj, k) => obj[k] || (obj[k] = {}), object);
 	setOn && (setOn[lastProp] = value);
 	return object;

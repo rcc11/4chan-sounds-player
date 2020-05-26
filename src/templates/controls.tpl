@@ -26,4 +26,9 @@
 			<div class="${ns}-current-bar" style="width: ${Player.audio.volume * 100}%"></div>
 		</div>
 	</div>
+</div>
+<div class="${ns}-col-auto">
+	<div class="${ns}-media-control ${ns}-fullscreen-button">
+		<div class="${ns}-fullscreen-button-display"></div>
+	</div>
 </div>`

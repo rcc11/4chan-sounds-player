@@ -83,15 +83,18 @@ module.exports = {
 	 * Change what view is being shown
 	 */
 	setViewStyle: function (style) {
-		// Get the size prior to switching.
+		// Get the size and style prior to switching.
+		const previousStyle = Player.config.style;
 		const { width, height } = Player.container.getBoundingClientRect();
 
 		// Change the style.
 		Player.config.viewStyle = style;
 		Player.container.setAttribute('data-view-style', style);
 
-		// Try to reapply the pre change sizing.
-		Player.position.resize(parseInt(width, 10), parseInt(height, 10));
+		// Try to reapply the pre change sizing unless it was fullscreen.
+		if (previousStyle !== 'fullscreen') {
+			Player.position.resize(parseInt(width, 10), parseInt(height, 10));
+		}
 	},
 
 	/**

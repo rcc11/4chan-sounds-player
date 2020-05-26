@@ -107,6 +107,10 @@ module.exports = {
 				}
 				return settings;
 			}, {});
+			// Don't save "fullscreen" view style;
+			if (settings.viewStyle === 'fullscreen') {
+				delete settings.viewStyle;
+			}
 			// Save the settings.
 			return GM.setValue(ns + '.settings', JSON.stringify(settings));
 		} catch (err) {
@@ -156,9 +160,9 @@ module.exports = {
 		try {
 			e.preventDefault();
 			if (Player.config.viewStyle === 'settings') {
-				Player.display.setViewStyle(Player._preSettingsView || 'playlist');
+				Player.display.setViewStyle(Player._restoreView || 'playlist');
 			} else {
-				Player._preSettingsView = Player.config.viewStyle;
+				Player._restoreView = Player.config.viewStyle;
 				Player.display.setViewStyle('settings');
 			}
 		} catch (err) {

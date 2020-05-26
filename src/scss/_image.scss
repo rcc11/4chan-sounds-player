@@ -3,7 +3,6 @@
 	display: flex;
 	justify-items: center;
 	justify-content: center;
-	border-bottom: solid 1px #{map-get($colors, border)};
 }
 .#{$ns}-image-link .#{$ns}-video {
 	display: none;

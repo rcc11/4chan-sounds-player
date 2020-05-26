@@ -59,7 +59,7 @@ module.exports = {
 		const startY = Player.container.offsetTop;
 		const endY = Player.container.getBoundingClientRect().height + startY;
 
-		document.querySelectorAll(selector).forEach(post => { 
+		document.querySelectorAll(selector).forEach(post => {
 			const rect = enabled && post.getBoundingClientRect();
 			const limitWidth = enabled && rect.top + rect.height > startY && rect.top < endY;
 			post.style.maxWidth = limitWidth ? `calc(100% - ${offset}px)` : null;
@@ -103,7 +103,7 @@ module.exports = {
 	 * Resize the player.
 	 */
 	resize: function (width, height) {
-		if (!Player.container) {
+		if (!Player.container || Player.config.viewStyle === 'fullscreen') {
 			return;
 		}
 		const { bottom } = Player.position.getHeaderOffset();

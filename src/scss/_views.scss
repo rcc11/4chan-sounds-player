@@ -1,20 +1,36 @@
-##{$ns}-container[data-view-style="settings"] .#{$ns}-player {
-	display: none;
+##{$ns}-container[data-view-style="settings"] {
+	& .#{$ns}-player {
+		display: none;
+	}
+	& .#{$ns}-settings {
+		display: block;
+	}
 }
 
-##{$ns}-container[data-view-style="settings"] .#{$ns}-settings {
-	display: block;
+##{$ns}-container[data-view-style="image"] {
+	& .#{$ns}-list-container {
+		display: none;
+	}
+	& .#{$ns}-image-link {
+		height: auto;
+		min-height: 125px;
+	}
 }
 
-##{$ns}-container[data-view-style="image"] .#{$ns}-list-container {
-	display: none;
+##{$ns}-container[data-view-style="playlist"] {
+	& .#{$ns}-image-link {
+		height: 125px !important;
+	}
 }
 
-##{$ns}-container[data-view-style="playlist"] .#{$ns}-image-link {
-	height: 125px !important;
-}
-
-##{$ns}-container[data-view-style="image"] .#{$ns}-image-link {
-	height: auto;
-	min-height: 125px;
+##{$ns}-container[data-view-style="fullscreen"] {
+	& .#{$ns}-image-link {
+		height: calc(100% - 2.6rem) !important;
+	}
+	& .#{$ns}-controls {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
 }
