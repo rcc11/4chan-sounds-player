@@ -51,6 +51,7 @@
 }
 
 .#{$ns}-progress-bar {
+	min-width: 3.5rem;
 	height: 1.5rem;
 	display: flex;
 	align-items:center;
@@ -100,8 +101,4 @@
 }
 .#{$ns}-volume-bar .#{$ns}-current-bar {
 	background: white;
-}
-
-.#{$ns}-volume-bar {
-	width: 3.5rem;
 }
