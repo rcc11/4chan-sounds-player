@@ -4,6 +4,9 @@ module.exports = {
 	delegatedEvents: {
 		click: {
 			[`.${ns}-close-button`]: 'hide'
+		},
+		fullscreenchange: {
+			[`.${ns}-fullscreen-contents`]: 'display._handleFullScreenChange'
 		}
 	},
 
@@ -148,6 +151,33 @@ module.exports = {
 		} catch (err) {
 			_logError('There was an error showing the sound player. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
+		}
+	},
+
+	/**
+	 * Toggle the video/image and controls fullscreen state
+	 */
+	toggleFullScreen: function () {
+		const fullscreenContents = Player.$(`.${ns}-fullscreen-contents`);
+		if (!document.fullscreenElement) {
+			Player._preFullscreenView = Player.config.viewStyle;
+			Player._preFullscreenView === 'fullscreen' && (Player._preFullscreenView = 'playlist');
+			Player.display.setViewStyle('fullscreen');
+			Player.$(`.${ns}-image-link`).removeAttribute('href');
+			fullscreenContents.requestFullscreen();
+		} else {
+			if (document.exitFullscreen) {
+				document.exitFullscreen();
+			}
+		}
+	},
+
+	_handleFullScreenChange: function () {
+		if (!document.fullscreenElement) {
+			if (Player.playing) {
+				Player.$(`.${ns}-image-link`).href = Player.playing.image;
+			}
+			Player.display.setViewStyle(Player._preFullscreenView || 'playlist');
 		}
 	}
 }

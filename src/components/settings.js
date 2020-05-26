@@ -160,9 +160,10 @@ module.exports = {
 		try {
 			e.preventDefault();
 			if (Player.config.viewStyle === 'settings') {
-				Player.display.setViewStyle(Player._restoreView || 'playlist');
+				Player.display.setViewStyle(Player._preSettingsView || 'playlist');
 			} else {
-				Player._restoreView = Player.config.viewStyle;
+				Player._preSettingsView = Player.config.viewStyle;
+				Player._preSettingsView === 'fullscreen' && (Player._preSettingsView = 'playlist');
 				Player.display.setViewStyle('settings');
 			}
 		} catch (err) {

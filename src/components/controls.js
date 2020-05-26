@@ -8,7 +8,7 @@ module.exports = {
 			[`.${ns}-next-button`]: () => Player.next(),
 			[`.${ns}-seek-bar`]: 'controls.handleSeek',
 			[`.${ns}-volume-bar`]: 'controls.handleVolume',
-			[`.${ns}-fullscreen-button`]: 'controls.toggleFullScreen'
+			[`.${ns}-fullscreen-button`]: 'display.toggleFullScreen'
 		},
 		mousedown: {
 			[`.${ns}-seek-bar`]: () => Player._seekBarDown = true,
@@ -17,9 +17,6 @@ module.exports = {
 		mousemove: {
 			[`.${ns}-seek-bar`]: e => Player._seekBarDown && Player.controls.handleSeek(e),
 			[`.${ns}-volume-bar`]: e => Player._volumeBarDown && Player.controls.handleVolume(e)
-		},
-		fullscreenchange: {
-			[`.${ns}-fullscreen-contents`]: 'controls._handleFullScreenChange'
 		}
 	},
 
@@ -287,32 +284,5 @@ module.exports = {
 		const ratio = e.offsetX / parseInt(document.defaultView.getComputedStyle(e.eventTarget || e.target).width, 10);
 		Player.audio.volume = Math.max(0, Math.min(ratio, 1));
 		Player.controls.updateVolume();
-	},
-
-	/**
-	 * Toggle the video/image and controls fullscreen state
-	 */
-	toggleFullScreen: function () {
-		const fullscreenContents = Player.$(`.${ns}-fullscreen-contents`);
-		if (!document.fullscreenElement) {
-			Player._restoreView = Player.config.viewStyle;
-			Player._restoreView === 'fullscreen' && (Player._restoreView = 'playlist');
-			Player.display.setViewStyle('fullscreen');
-			Player.$(`.${ns}-image-link`).removeAttribute('href');
-			fullscreenContents.requestFullscreen();
-		} else {
-			if (document.exitFullscreen) {
-				document.exitFullscreen();
-			}
-		}
-	},
-
-	_handleFullScreenChange: function () {
-		if (!document.fullscreenElement) {
-			if (Player.playing) {
-				Player.$(`.${ns}-image-link`).href = Player.playing.image;
-			}
-			Player.display.setViewStyle(Player._restoreView || 'playlist');
-		}
 	}
 }
