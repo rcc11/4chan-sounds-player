@@ -39,7 +39,7 @@ module.exports = {
 
 		// Remove post width limit from inline quotes
 		new MutationObserver(function () {
-			document.querySelectorAll('#hoverUI .postContainer, .inline .postContainer').forEach(post => {
+			document.querySelectorAll('#hoverUI .postContainer, .inline .postContainer, .backlink_container article').forEach(post => {
 				post.style.maxWidth = null;
 				post.style.minWidth = null;
 			})
