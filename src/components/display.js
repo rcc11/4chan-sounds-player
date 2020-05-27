@@ -6,7 +6,7 @@ module.exports = {
 			[`.${ns}-close-button`]: 'hide'
 		},
 		fullscreenchange: {
-			[`.${ns}-fullscreen-contents`]: 'display._handleFullScreenChange'
+			[`.${ns}-media`]: 'display._handleFullScreenChange'
 		}
 	},
 
@@ -87,7 +87,7 @@ module.exports = {
 	 */
 	setViewStyle: function (style) {
 		// Get the size and style prior to switching.
-		const previousStyle = Player.config.style;
+		const previousStyle = Player.config.viewStyle;
 		const { width, height } = Player.container.getBoundingClientRect();
 
 		// Change the style.
@@ -95,7 +95,7 @@ module.exports = {
 		Player.container.setAttribute('data-view-style', style);
 
 		// Try to reapply the pre change sizing unless it was fullscreen.
-		if (previousStyle !== 'fullscreen') {
+		if (previousStyle !== 'fullscreen' || style === 'fullscreen') {
 			Player.position.resize(parseInt(width, 10), parseInt(height, 10));
 		}
 	},
@@ -158,7 +158,7 @@ module.exports = {
 	 * Toggle the video/image and controls fullscreen state
 	 */
 	toggleFullScreen: function () {
-		const fullscreenContents = Player.$(`.${ns}-fullscreen-contents`);
+		const fullscreenContents = Player.$(`.${ns}-media`);
 		if (!document.fullscreenElement) {
 			Player._preFullscreenView = Player.config.viewStyle;
 			Player._preFullscreenView === 'fullscreen' && (Player._preFullscreenView = 'playlist');

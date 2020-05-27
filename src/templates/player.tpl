@@ -1,5 +1,5 @@
-`<div class="${ns}-fullscreen-contents">
-	<a class="${ns}-image-link" style="height: 128px" target="_blank">
+`<div class="${ns}-media">
+	<a class="${ns}-image-link" target="_blank">
 		<img class="${ns}-image"></img>
 		<video class="${ns}-video"></video>
 	</a>
