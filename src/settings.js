@@ -40,7 +40,7 @@ module.exports = [
 			{
 				property: 'limitPostWidths',
 				title: 'Enabled',
-				default: false
+				default: true
 			},
 			{
 				property: 'minPostWidth',
