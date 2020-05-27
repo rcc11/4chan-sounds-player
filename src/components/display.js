@@ -158,13 +158,8 @@ module.exports = {
 	 * Toggle the video/image and controls fullscreen state
 	 */
 	toggleFullScreen: function () {
-		const fullscreenContents = Player.$(`.${ns}-media`);
 		if (!document.fullscreenElement) {
-			Player._preFullscreenView = Player.config.viewStyle;
-			Player._preFullscreenView === 'fullscreen' && (Player._preFullscreenView = 'playlist');
-			Player.display.setViewStyle('fullscreen');
-			Player.$(`.${ns}-image-link`).removeAttribute('href');
-			fullscreenContents.requestFullscreen();
+			Player.$(`.${ns}-media`).requestFullscreen();
 		} else {
 			if (document.exitFullscreen) {
 				document.exitFullscreen();
@@ -173,7 +168,12 @@ module.exports = {
 	},
 
 	_handleFullScreenChange: function () {
-		if (!document.fullscreenElement) {
+		if (document.fullscreenElement) {
+			Player._preFullscreenView = Player.config.viewStyle;
+			Player._preFullscreenView === 'fullscreen' && (Player._preFullscreenView = 'playlist');
+			Player.display.setViewStyle('fullscreen');
+			Player.$(`.${ns}-image-link`).removeAttribute('href');
+		} else {
 			if (Player.playing) {
 				Player.$(`.${ns}-image-link`).href = Player.playing.image;
 			}
