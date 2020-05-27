@@ -1,4 +1,4 @@
-var { parseFiles } = require('../file_parser');
+const { parseFiles } = require('../file_parser');
 
 module.exports = {
 	atRoot: [ 'add', 'remove' ],
@@ -34,6 +34,7 @@ module.exports = {
 	},
 
 	initialize: function () {
+		Player.on('order', () => Player.currentIndex = Player.sounds.indexOf(Player.playing) + 1);
 		Player.on('playsound', sound => {
 			// Update the image.
 			Player.playlist.showImage(sound);

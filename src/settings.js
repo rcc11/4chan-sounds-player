@@ -140,7 +140,7 @@ module.exports = [
 	{
 		property: 'footerTemplate',
 		title: 'Footer Contents',
-		default: '%p / %t sounds\n<div style="float: right; margin-right: .5rem">\n\tplayinglink\n\tpostlink:"Post"\n\timagelink:"Image"\n\tsoundlink:"Sound"\n</div>',
+		default: '%p / %t sounds\n<div style="float: right; margin-right: .5rem">\n\tplayinglink\n\tpostlink:"Post"\n\timagelink:"Image"\n\tsoundlink:"Sound"\n\t<a href="https://github.com/rcc11/4chan-sounds-player/releases/tag/%v" target="_blank">v%v</a>\n</div>',
 		description: 'What the footer displays, with the following replacements. The text for links can be set using the format postlink:"text".\n'
 			+ '%p - Playing index.\n'
 			+ '%t - Total sound count.\n'

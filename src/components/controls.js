@@ -49,7 +49,6 @@ module.exports = {
 	},
 
 	initialize: function () {
-		Player.on('order', () => Player.currentIndex = Player.sounds.indexOf(Player.playing) + 1);
 		Player.on('show', () => Player._hiddenWhilePolling && Player.controls.pollForLoading());
 		Player.on('hide', () => {
 			Player._hiddenWhilePolling = !!Player._loadingPoll;
