@@ -50,11 +50,12 @@ function parsePost(post, skipRender) {
 		const thumbSrc = fileThumb && fileThumb.querySelector('img').src;
 
 		const matches = [ ...fileName.matchAll(/(.*?)[\[\(\{](?:audio|sound)[ \=\:\|\$](.*?)[\]\)\}]/g) ];
+		const defaultName = matches[0] && matches[0][1] || postID;
 
 		matches.forEach(function (match, i) {
 			let link = match[2];
 			let id = postID + ':' + i;
-			const name = match[1] || (matches.length > 1 ? id : postID);
+			const name = match[1] || defaultName + (matches.length > 1 ? ` (${i + 1})` : '');
 
 			if (link.includes('%')) {
 				try {
