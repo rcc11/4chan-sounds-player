@@ -98,6 +98,7 @@ module.exports = {
 		if (previousStyle !== 'fullscreen' || style === 'fullscreen') {
 			Player.position.resize(parseInt(width, 10), parseInt(height, 10));
 		}
+		Player.trigger('view', style, previousStyle);
 	},
 
 	/**

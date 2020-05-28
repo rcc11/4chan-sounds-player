@@ -34,13 +34,13 @@ module.exports = {
 	},
 
 	initialize: function () {
+		// Focus the playing song when switching to the playlist.
+		Player.on('view', style => style === 'playlist' && Player.playlist.scrollToPlaying());
+		// Update the UI when a new sound plays, and scroll to it.
 		Player.on('playsound', sound => {
-			// Update the image.
 			Player.playlist.showImage(sound);
-			// Update the playing attribute.
 			Player.$all(`.${ns}-list-item.playing`).forEach(el => el.classList.remove('playing'));
 			Player.$(`.${ns}-list-item[data-id="${Player.playing.id}"]`).classList.add('playing');
-			// Scroll to the sound.
 			Player.playlist.scrollToPlaying('nearest');
 		});
 	},
