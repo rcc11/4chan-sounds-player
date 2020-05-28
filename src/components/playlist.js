@@ -34,7 +34,6 @@ module.exports = {
 	},
 
 	initialize: function () {
-		Player.on('order', () => Player.currentIndex = Player.sounds.indexOf(Player.playing) + 1);
 		Player.on('playsound', sound => {
 			// Update the image.
 			Player.playlist.showImage(sound);
@@ -108,7 +107,7 @@ module.exports = {
 	/**
 	 * Add a new sound from the thread to the player.
 	 */
-	add: function (title, id, src, thumb, image) {
+	add: function (title, id, src, thumb, image, skipRender) {
 		try {
 			// Avoid duplicate additions.
 			if (Player.sounds.find(sound => sound.id === id)) {
@@ -124,8 +123,20 @@ module.exports = {
 			Player.sounds.splice(index, 0, sound);
 
 			if (Player.container) {
-				// Re-render the list.
-				Player.playlist.render();
+				if (!skipRender) {
+					// Add the sound to the playlist.
+					const list = Player.$(`.${ns}-list-container`);
+					let rowContainer = document.createElement('div');
+					rowContainer.innerHTML = Player.templates.list({ sounds: [ sound ] });
+					Player.events.addUndelegatedListeners(Player.playlist.undelegatedEvents, rowContainer);
+					let row = rowContainer.children[0];
+					if (index < Player.sounds.length - 1) {
+						const before = Player.$(`.${ns}-list-item[data-id="${Player.sounds[index + 1].id}"]`);
+						list.insertBefore(row, before);
+					} else {
+						list.appendChild(row);
+					}
+				}
 
 				// If nothing else has been added yet show the image for this sound.
 				if (Player.sounds.length === 1) {
@@ -158,9 +169,9 @@ module.exports = {
 		// Remove the sound from the the list and play order.
 		index > -1 && Player.sounds.splice(index, 1);
 
-		// Re-render the list.
-		Player.playlist.render();
-		Player.$(`.${ns}-count`).innerHTML = Player.sounds.length;
+		// Remove the item from the list.
+		Player.$(`.${ns}-list-container`).removeChild(Player.$(`.${ns}-list-item[data-id="${sound.id}"]`))
+		Player.trigger('remove', sound);
 	},
 
 	/**

@@ -66,11 +66,11 @@ module.exports = {
 	/**
 	 * Set, or reset, directly bound events.
 	 */
-	addUndelegatedListeners: function (events) {
+	addUndelegatedListeners: function (events, target = document) {
 		for (let evt in events) {
 			for (let eventList of [].concat(events[evt])) {
 				for (let selector in eventList) {
-					document.querySelectorAll(selector).forEach(element => {
+					target.querySelectorAll(selector).forEach(element => {
 						const handler = Player.events.getHandler(eventList[selector]);
 						element.removeEventListener(evt, handler);
 						element.addEventListener(evt, handler);

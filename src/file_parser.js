@@ -3,11 +3,15 @@ module.exports = {
 	parsePost
 }
 
-function parseFiles (target) {
-	target.querySelectorAll('.post').forEach(parsePost);
+function parseFiles (target, postRender) {
+	target.querySelectorAll('.post').forEach(post => parsePost(post, postRender));
+	if (postRender && Player.container) {
+		console.log('render now');
+		Player.playlist.render();
+	}
 };
 
-function parsePost(post) {
+function parsePost(post, skipRender) {
 	try {
 		const parentParent = post.parentElement.parentElement;
 		if (parentParent.id === 'qp' || parentParent.classList.contains('inline') || post.parentElement.classList.contains('noFile')) {
@@ -74,7 +78,7 @@ function parsePost(post) {
 
 		for (let item of Player.config.allow) {
 			if (link.hostname.toLowerCase() === item || link.hostname.toLowerCase().endsWith('.' + item)) {
-				return Player.add(name, id, link.href, thumbSrc, fullSrc);
+				return Player.add(name, id, link.href, thumbSrc, fullSrc, skipRender);
 			}
 		}
 	} catch (err) {

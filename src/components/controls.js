@@ -92,7 +92,6 @@ module.exports = {
 				sound.playing = true;
 				Player.playing = sound;
 				Player.audio.src = sound.src;
-				Player.currentIndex = Player.sounds.indexOf(sound) + 1;
 				await Player.trigger('playsound', sound);
 			}
 

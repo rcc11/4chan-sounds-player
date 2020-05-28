@@ -1,6 +1,6 @@
 Player.config.footerTemplate
 	.replace(/%v/g, VERSION)
-	.replace(/%p/g, Player.currentIndex || 0)
+	.replace(/%p/g, Player.playing ? Player.sounds.indexOf(Player.playing) + 1 : 0)
 	.replace(/%t/g, Player.sounds.length)
 	.replace(/(playing|post|image|sound)link(?:\:"([^"]+)")?/g, function (full, type, text) {
 		if (!Player.playing) {

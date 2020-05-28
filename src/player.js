@@ -17,7 +17,6 @@ const Player = window.Player = module.exports = {
 	audio: new Audio(),
 	sounds: [],
 	isHidden: true,
-	currentIndex: 0,
 	container: null,
 	ui: {},
 	_progressBarStyleSheets: {},

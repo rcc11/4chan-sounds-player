@@ -10,7 +10,7 @@ async function doInit () {
 	setTimeout(async function () {
 		await Player.initialize();
 
-		parseFiles(document.body);
+		parseFiles(document.body, true);
 
 		const observer = new MutationObserver(function (mutations) {
 			mutations.forEach(function (mutation) {
