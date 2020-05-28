@@ -8,7 +8,8 @@ module.exports = {
 			[`.${ns}-viewStyle-button`]: 'playlist.toggleView',
 			[`.${ns}-hoverImages-button`]: 'playlist.toggleHoverImages',
 			[`.${ns}-remove-link`]: 'playlist.handleRemove',
-			[`.${ns}-list-item`]: 'playlist.handleSelect'
+			[`.${ns}-list-item`]: 'playlist.handleSelect',
+			[`.${ns}-filter-link`]: 'playlist.handleFilter'
 		},
 		mousemove: { [`.${ns}-list-item`]: 'playlist.moveHoverImage' },
 		dragstart: { [`.${ns}-list-item`]: 'playlist.handleDragStart' },
@@ -43,6 +44,8 @@ module.exports = {
 			Player.$(`.${ns}-list-item[data-id="${Player.playing.id}"]`).classList.add('playing');
 			Player.playlist.scrollToPlaying('nearest');
 		});
+		// Reapply filters when they change
+		Player.on('config', property => property === 'filters' && Player.playlist.applyFilters());
 	},
 
 	/**
@@ -107,13 +110,13 @@ module.exports = {
 	/**
 	 * Add a new sound from the thread to the player.
 	 */
-	add: function (title, id, src, thumb, image, post, skipRender) {
+	add: function (title, id, src, thumb, image, post, imageMD5, skipRender) {
 		try {
-			// Avoid duplicate additions.
-			if (Player.sounds.find(sound => sound.id === id)) {
+			const sound = { title, src, id, thumb, image, post, imageMD5 };
+			// Make sure the sound is an allowed host, not filtered, and not a duplicate.
+			if (!Player.acceptedSound(sound) || Player.sounds.find(sound => sound.id === id)) {
 				return;
 			}
-			const sound = { title, src, id, thumb, image, post };
 
 			// Add the sound with the location based on the shuffle settings.
 			let index = Player.config.shuffle
@@ -374,5 +377,20 @@ module.exports = {
 		}
 		const playing = Player.$(`.${ns}-list-item.playing`);
 		playing && playing.scrollIntoView({ block: type });
+	},
+
+	handleFilter: function (e) {
+		e.preventDefault();
+		let filter = e.eventTarget.getAttribute('data-filter');
+		if (filter) {
+			Player.config.filters.push(filter);
+			Player.playlist.applyFilters();
+			Player.settings.render();
+			Player.settings.save();
+		}
+	},
+
+	applyFilters: function () {
+		Player.sounds.filter(sound => !Player.acceptedSound(sound)).forEach(Player.playlist.remove);
 	}
 };

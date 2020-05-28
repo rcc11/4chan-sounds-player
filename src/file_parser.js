@@ -1,3 +1,6 @@
+const protocolRE = /^(https?\:)?\/\//;
+const filenameRE = /(.*?)[\[\(\{](?:audio|sound)[ \=\:\|\$](.*?)[\]\)\}]/g;
+
 module.exports = {
 	parseFiles,
 	parsePost
@@ -47,9 +50,16 @@ function parsePost(post, skipRender) {
 		const postID = post.id.slice(is4chan ? 1 : 0);
 		const fileThumb = post.querySelector(is4chan ? '.fileThumb' : '.thread_image_link');
 		const fullSrc = fileThumb && fileThumb.href;
-		const thumbSrc = fileThumb && fileThumb.querySelector('img').src;
+		const thumbImg = fileThumb && fileThumb.querySelector('img')
+		const thumbSrc = thumbImg && thumbImg.src;
+		const md5 = thumbImg && thumbImg.getAttribute('data-md5');
 
-		const matches = [ ...fileName.matchAll(/(.*?)[\[\(\{](?:audio|sound)[ \=\:\|\$](.*?)[\]\)\}]/g) ];
+		// Make sure the image isn't filtered.
+		if (Player.config.filters.includes(md5)) {
+			return;
+		}
+
+		const matches = [ ...fileName.matchAll(filenameRE) ];
 		const defaultName = matches[0] && matches[0][1] || postID;
 
 		matches.forEach(function (match, i) {
@@ -57,29 +67,19 @@ function parsePost(post, skipRender) {
 			let id = postID + ':' + i;
 			const name = match[1] || defaultName + (matches.length > 1 ? ` (${i + 1})` : '');
 
-			if (link.includes('%')) {
-				try {
-					link = decodeURIComponent(link);
-				} catch (error) {
-					return;
-				}
-			}
-
-			if (link.match(/^(https?\:)?\/\//) === null) {
-				link = (location.protocol + '//' + link);
-			}
-
 			try {
-				link = new URL(link);
+				if (link.includes('%')) {
+					link = decodeURIComponent(link);
+				}
+
+				if (link.match(protocolRE) === null) {
+					link = (location.protocol + '//' + link);
+				}
 			} catch (error) {
 				return;
 			}
 
-			for (let item of Player.config.allow) {
-				if (link.hostname.toLowerCase() === item || link.hostname.toLowerCase().endsWith('.' + item)) {
-					return Player.add(name, id, link.href, thumbSrc, fullSrc, postID, skipRender);
-				}
-			}
+			return Player.add(name, id, link, thumbSrc, fullSrc, postID, md5, skipRender);
 		});
 	} catch (err) {
 		_logError('There was an issue parsing the files. Please check the console for details.');

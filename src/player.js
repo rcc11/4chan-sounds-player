@@ -98,14 +98,26 @@ const Player = window.Player = module.exports = {
 
 	/**
 	 * Compare two ids for sorting.
-	 * @param {String} a Identifier A
-	 * @param {String} b Identifier B
 	 */
 	compareIds: function (a, b) {
 		const [ aPID, aSID ] = a.split(':');
 		const [ bPID, bSID ] = b.split(':');
 		const postDiff = aPID - bPID;
 		return postDiff !== 0 ? postDiff : aSID - bSID;
+	},
+
+	/**
+	 * Check whether a sound src and image are allowed and not filtered.
+	 */
+	acceptedSound: function ({ src, imageMD5 }) {
+		try {
+			const link = new URL(src);
+			const host = link.hostname.toLowerCase();
+			return !Player.config.filters.find(v => v === imageMD5 || v === host + link.pathname)
+				&& Player.config.allow.find(h => host === h || host.endsWith('.' + h))
+		} catch (err) {
+			return false;
+		}
 	}
 };
 

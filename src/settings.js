@@ -152,6 +152,8 @@ module.exports = [
 	},
 	{
 		property: 'allow',
+		title: 'Allowed Hosts',
+		description: 'Which domains sources are allowed to be loaded from.',
 		default: [
 			'4cdn.org',
 			'catbox.moe',
@@ -160,8 +162,14 @@ module.exports = [
 			'pomf.cat',
 			'zz.ht'
 		],
-		title: 'Allowed Hosts',
-		description: 'Which domains sources are allowed to be loaded from.',
+		showInSettings: true,
+		split: '\n'
+	},
+	{
+		property: 'filters',
+		default: [ '# Image MD5 or sound URL' ],
+		title: 'Filters',
+		description: 'List of URLs or image MD5s to filter, one per line.\nLines starting with a # will be ignored.',
 		showInSettings: true,
 		split: '\n'
 	},
