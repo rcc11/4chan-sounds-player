@@ -94,6 +94,18 @@ const Player = window.Player = module.exports = {
 			// Can't recover so throw this error.
 			throw err;
 		}
+	},
+
+	/**
+	 * Compare two ids for sorting.
+	 * @param {String} a Identifier A
+	 * @param {String} b Identifier B
+	 */
+	compareIds: function (a, b) {
+		const [ aPID, aSID ] = a.split(':');
+		const [ bPID, bSID ] = b.split(':');
+		const postDiff = aPID - bPID;
+		return postDiff !== 0 ? postDiff : aSID - bSID;
 	}
 };
 

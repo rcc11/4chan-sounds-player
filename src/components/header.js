@@ -69,7 +69,7 @@ module.exports = {
 
 			// Update the play order.
 			if (!Player.config.shuffle) {
-				Player.sounds.sort((a, b) => a.id - b.id);
+				Player.sounds.sort((a, b) => Player.compareIds(a.id, b.id));
 			} else {
 				const sounds = Player.sounds;
 				for (let i = sounds.length - 1; i > 0; i--) {

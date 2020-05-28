@@ -107,18 +107,18 @@ module.exports = {
 	/**
 	 * Add a new sound from the thread to the player.
 	 */
-	add: function (title, id, src, thumb, image, skipRender) {
+	add: function (title, id, src, thumb, image, post, skipRender) {
 		try {
 			// Avoid duplicate additions.
 			if (Player.sounds.find(sound => sound.id === id)) {
 				return;
 			}
-			const sound = { title, src, id, thumb, image };
+			const sound = { title, src, id, thumb, image, post };
 
 			// Add the sound with the location based on the shuffle settings.
 			let index = Player.config.shuffle
 				? Math.floor(Math.random() * Player.sounds.length - 1)
-				: Player.sounds.findIndex(s => s.id > id);
+				: Player.sounds.findIndex(s => Player.compareIds(s.id, id) > 1);
 			index < 0 && (index = Player.sounds.length);
 			Player.sounds.splice(index, 0, sound);
 
@@ -209,7 +209,7 @@ module.exports = {
 
 		const id = e.eventTarget.getAttribute('data-id');
 		const clickedMenuButton = e.target.closest(`.${ns}-item-menu-button`);
-		const sound = id && Player.sounds.find(sound => sound.id === '' + id);
+		const sound = id && Player.sounds.find(sound => sound.id === id);
 
 		// Remove the menu.
 		if (menu) {
@@ -289,7 +289,7 @@ module.exports = {
 			return;
 		}
 		const id = e.currentTarget.getAttribute('data-id');
-		const sound = Player.sounds.find(sound => sound.id === '' + id);
+		const sound = Player.sounds.find(sound => sound.id === id);
 		const hoverImage = document.createElement('img');
 
 		// Add it to the list so the mouseleave triggers properly

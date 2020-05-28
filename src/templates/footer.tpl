@@ -8,7 +8,7 @@ Player.config.footerTemplate
 		}
 		const href = {
 			playing: 'javascript:;',
-			post: '#' + (is4chan ? 'p' : '') + Player.playing.id,
+			post: '#' + (is4chan ? 'p' : '') + Player.playing.post,
 			image: Player.playing.image,
 			sound: Player.playing.src
 		}[type];
