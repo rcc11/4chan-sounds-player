@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         4chan sounds player
-// @version      1.5.6
+// @version      1.6.0
 // @namespace    rccom
 // @description  Play that faggy music weeb boi
 // @author       RCC
