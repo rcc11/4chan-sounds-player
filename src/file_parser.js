@@ -54,12 +54,12 @@ function parsePost(post, skipRender) {
 		const thumbSrc = thumbImg && thumbImg.src;
 		const md5 = thumbImg && thumbImg.getAttribute('data-md5');
 
-		// Make sure the image isn't filtered.
-		if (Player.config.filters.includes(md5)) {
-			return;
+		const matches = [];
+		let match;
+		while ((match = filenameRE.exec(fileName)) !== null) {
+			matches.push(match);
 		}
 
-		const matches = [ ...fileName.matchAll(filenameRE) ];
 		const defaultName = matches[0] && matches[0][1] || postID;
 
 		matches.forEach(function (match, i) {
