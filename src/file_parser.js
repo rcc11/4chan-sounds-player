@@ -65,7 +65,7 @@ function parsePost(post, skipRender) {
 		matches.forEach(function (match, i) {
 			let link = match[2];
 			let id = postID + ':' + i;
-			const name = match[1] || defaultName + (matches.length > 1 ? ` (${i + 1})` : '');
+			const name = match[1].trim() || defaultName + (matches.length > 1 ? ` (${i + 1})` : '');
 
 			try {
 				if (link.includes('%')) {
@@ -78,7 +78,6 @@ function parsePost(post, skipRender) {
 			} catch (error) {
 				return;
 			}
-
 			return Player.add(name, id, link, thumbSrc, fullSrc, postID, md5, skipRender);
 		});
 	} catch (err) {
