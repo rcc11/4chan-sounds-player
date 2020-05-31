@@ -89,7 +89,7 @@ function parseFileName (filename, image, post, thumb, imageMD5) {
 				src = (location.protocol + '//' + src);
 			}
 		} catch (error) {
-			return;
+			return sounds;
 		}
 
 		return sounds.concat({ src, id, title, post, image, filename, thumb, imageMD5 });
