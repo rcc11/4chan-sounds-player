@@ -72,7 +72,7 @@ module.exports = {
 		if (!Player.container) {
 			return;
 		}
-		let isVideo = Player.playlist.isVideo = !thumb && sound.image.endsWith('.webm');
+		let isVideo = Player.playlist.isVideo = !thumb && sound.image.endsWith('.webm') || sound.type === 'video/webm';
 		try {
 			const img = Player.$(`.${ns}-image`);
 			const video = Player.$(`.${ns}-video`);
@@ -111,9 +111,9 @@ module.exports = {
 	/**
 	 * Add a new sound from the thread to the player.
 	 */
-	add: function ({ title, id, src, thumb, image, post, imageMD5, filename }, skipRender) {
+	add: function (sound, skipRender) {
 		try {
-			const sound = { title, id, src, thumb, image, post, imageMD5, filename };
+			const id = sound.id;
 			// Make sure the sound is an allowed host, not filtered, and not a duplicate.
 			if (!Player.acceptedSound(sound) || Player.sounds.find(sound => sound.id === id)) {
 				return;

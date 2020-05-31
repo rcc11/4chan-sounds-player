@@ -10,7 +10,17 @@
 	${Player.playing ? Player.playing.title : '4chan Sounds'}
 </div>
 <div class="${ns}-col-auto" style="margin-right: 0.25rem;">
-	<a class="${ns}-reload-button fa fa-refresh" title="Reload the playlist" href="javascript;">[R]</a>
-	<a class="${ns}-config-button fa fa-wrench" title="Settings" href="javascript;">[S]</a>
-	<a class="${ns}-close-button fa fa-times" href="javascript;">X</a>
+	<input class="${ns}-file-input" type="file" style="display: none" accept="image/*,.webm" multiple>
+	<a class="${ns}-add-button fa fa-plus" title="Add a local file" href="javascript;">
+		+
+	</a>
+	<a class="${ns}-reload-button fa fa-refresh" title="Reload the playlist" href="javascript;">
+		[R]
+	</a>
+	<a class="${ns}-config-button fa fa-wrench" title="Settings" href="javascript;">
+		[S]
+	</a>
+	<a class="${ns}-close-button fa fa-times" href="javascript;">
+		X
+	</a>
 </div>`

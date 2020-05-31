@@ -4,7 +4,7 @@ Player.config.footerTemplate
 	.replace(/%t/g, Player.sounds.length)
 	.replace(/playing:"([^"]*)"/g, Player.playing ? '$1' : '')
 	.replace(/(playing|post|image|sound|dlimage|dlsound)link(?:\:"([^"]+)")?/g, function (full, type, userText) {
-		if (!Player.playing) {
+		if (!Player.playing || type === 'post' && !Player.playing.post) {
 			return '';
 		}
 		const attrs = {

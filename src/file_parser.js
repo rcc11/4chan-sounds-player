@@ -1,9 +1,12 @@
 const protocolRE = /^(https?\:)?\/\//;
 const filenameRE = /(.*?)[\[\(\{](?:audio|sound)[ \=\:\|\$](.*?)[\]\)\}]/g;
 
+let localCounter = 0;
+
 module.exports = {
 	parseFiles,
-	parsePost
+	parsePost,
+	parseFileName
 }
 
 function parseFiles (target, postRender) {
@@ -45,44 +48,50 @@ function parsePost(post, skipRender) {
 			return;
 		}
 
-		filename = filename.replace(/\-/, '/');
 
 		const postID = post.id.slice(is4chan ? 1 : 0);
 		const fileThumb = post.querySelector(is4chan ? '.fileThumb' : '.thread_image_link');
-		const image = fileThumb && fileThumb.href;
+		const imageSrc = fileThumb && fileThumb.href;
 		const thumbImg = fileThumb && fileThumb.querySelector('img')
-		const thumb = thumbImg && thumbImg.src;
+		const thumbSrc = thumbImg && thumbImg.src;
 		const imageMD5 = thumbImg && thumbImg.getAttribute('data-md5');
 
-		const matches = [];
-		let match;
-		while ((match = filenameRE.exec(filename)) !== null) {
-			matches.push(match);
-		}
+		const sounds = parseFileName(filename, imageSrc, postID, thumbSrc, imageMD5);
 
-		const defaultName = matches[0] && matches[0][1] || postID;
-
-		matches.forEach(function (match, i) {
-			let src = match[2];
-			let id = postID + ':' + i;
-			const title = match[1].trim() || defaultName + (matches.length > 1 ? ` (${i + 1})` : '');
-
-			try {
-				if (src.includes('%')) {
-					src = decodeURIComponent(src);
-				}
-
-				if (src.match(protocolRE) === null) {
-					src = (location.protocol + '//' + src);
-				}
-			} catch (error) {
-				return;
-			}
-			return Player.add({ title, id, src, thumb, image, post: postID, imageMD5, filename }, skipRender);
-		});
+		sounds.forEach(sound => Player.add(sound, skipRender));
 	} catch (err) {
 		_logError('There was an issue parsing the files. Please check the console for details.');
 		console.log('[4chan sounds player]', post)
 		console.error(err);
 	}
 };
+
+function parseFileName (filename, image, post, thumb, imageMD5) {
+	filename = filename.replace(/\-/, '/');
+	const matches = [];
+	let match;
+	while ((match = filenameRE.exec(filename)) !== null) {
+		matches.push(match);
+	}
+	const defaultName = matches[0] && matches[0][1] || post;
+
+	return matches.reduce((sounds, match, i) => {
+		let src = match[2];
+		const id = (post || 'local' + localCounter++) + ':' + i;
+		const title = match[1].trim() || defaultName + (matches.length > 1 ? ` (${i + 1})` : '');
+
+		try {
+			if (src.includes('%')) {
+				src = decodeURIComponent(src);
+			}
+
+			if (src.match(protocolRE) === null) {
+				src = (location.protocol + '//' + src);
+			}
+		} catch (error) {
+			return;
+		}
+
+		return sounds.concat({ src, id, title, post, image, filename, thumb, imageMD5 });
+	}, []);
+}
