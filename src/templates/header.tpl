@@ -11,7 +11,7 @@
 </div>
 <div class="${ns}-col-auto" style="margin-right: 0.25rem;">
 	<input class="${ns}-file-input" type="file" style="display: none" accept="image/*,.webm" multiple>
-	<a class="${ns}-add-button fa fa-plus" title="Add a local file" href="javascript;">
+	<a class="${ns}-add-button fa fa-plus" title="Add local files" href="javascript;">
 		+
 	</a>
 	<a class="${ns}-reload-button fa fa-refresh" title="Reload the playlist" href="javascript;">

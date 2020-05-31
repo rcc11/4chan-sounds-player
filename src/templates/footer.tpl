@@ -1,8 +1,5 @@
 Player.config.footerTemplate
-	.replace(/%v/g, VERSION)
-	.replace(/%p/g, Player.playing ? Player.sounds.indexOf(Player.playing) + 1 : 0)
-	.replace(/%t/g, Player.sounds.length)
-	.replace(/playing:"([^"]*)"/g, Player.playing ? '$1' : '')
+	.replace(/p:"([^"]*)"/g, Player.playing ? '$1' : '')
 	.replace(/(playing|post|image|sound|dlimage|dlsound)link(?:\:"([^"]+)")?/g, function (full, type, userText) {
 		if (!Player.playing || type === 'post' && !Player.playing.post) {
 			return '';
@@ -20,4 +17,7 @@ Player.config.footerTemplate
 			|| type[0].toUpperCase() + type.slice(1);
 		return `<a ${attrs || ''}>${text}</a>`;
 	})
+	.replace(/%v/g, VERSION)
+	.replace(/%p/g, Player.playing ? Player.sounds.indexOf(Player.playing) + 1 : 0)
+	.replace(/%t/g, Player.sounds.length)
 + `<div class="${ns}-expander"></div>`
