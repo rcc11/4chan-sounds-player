@@ -138,19 +138,6 @@ module.exports = [
 		]
 	},
 	{
-		property: 'footerTemplate',
-		title: 'Footer Contents',
-		default: '%p / %t sounds\n<div style="float: right; margin-right: .5rem">\n\tplayinglink\n\tpostlink:"Post"\n\timagelink:"Image"\n\tsoundlink:"Sound"\n\t<a href="https://github.com/rcc11/4chan-sounds-player/releases/tag/%v" target="_blank">v%v</a>\n</div>',
-		description: 'What the footer displays, with the following replacements. The text for links can be set using the format postlink:"text".\n'
-			+ '%p - Playing index.\n'
-			+ '%t - Total sound count.\n'
-			+ 'playinglink - Jump to the current sound in the playlist.\n'
-			+ 'postlink - Jump to the current sounds post in the thread.\n'
-			+ 'imagelink - Open the current sounds image in a new tab.\n'
-			+ 'soundlink - Open the current sounds source in a new tab.',
-		showInSettings: 'textarea'
-	},
-	{
 		property: 'allow',
 		title: 'Allowed Hosts',
 		description: 'Which domains sources are allowed to be loaded from.',
@@ -172,6 +159,30 @@ module.exports = [
 		description: 'List of URLs or image MD5s to filter, one per line.\nLines starting with a # will be ignored.',
 		showInSettings: true,
 		split: '\n'
+	},
+	{
+		property: 'footerTemplate',
+		title: 'Footer Contents',
+		default: '%p / %t sounds\n'
+			+ '<div style="float: right; margin-right: .5rem">\n'
+			+ `\tplayinglink:"<span class=\'fa fa-list\'>Playing</span>" ${isChanX ? '' : 'playing:"|"'}\n`
+			+ `\timagelink:"<span class=\'fa fa-image\'>Image</span>" ${isChanX ? '' : 'playing:"|"'}\n`
+			+ `\tsoundlink:"<span class=\'fa fa-volume-up\'>Sound</span>" ${isChanX ? '' : 'playing:"|"'}\n`
+			+ `\tpostlink:"<span class=\'fa fa-comment-o\'>Post</span>" ${isChanX ? '' : 'playing:"|"'}\n`
+			+ `\tdlimagelink:"<span class=\'fa fa-file-image-o\'>DL Image</span>" ${isChanX ? '' : 'playing:"|"'}\n`
+			+ `\tdlsoundlink:"<span class=\'fa fa-file-sound-o\'>DL Sound</span>"\n`
+			+ '</div>\n',
+		description: 'What the footer displays, with the following replacements. The text for links can be set using the format postlink:"text".\n'
+			+ '%p - Playing index.\n'
+			+ '%t - Total sound count.\n'
+			+ 'playinglink - Jump to the current sound in the playlist.\n'
+			+ 'postlink - Jump to the current sounds post in the thread.\n'
+			+ 'imagelink - Open the current sounds image in a new tab.\n'
+			+ 'soundlink - Open the current sounds source in a new tab.\n'
+			+ 'dlimagelink - Download the image with the original filename.\n'
+			+ 'dlsoundlink - Download the sound.\n'
+			+ 'playing:"text" - Shows the the text only if there is a sound selected.',
+		showInSettings: 'textarea'
 	},
 	{
 		title: 'Colors',
