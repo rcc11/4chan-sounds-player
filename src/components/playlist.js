@@ -9,7 +9,8 @@ module.exports = {
 			[`.${ns}-hoverImages-button`]: 'playlist.toggleHoverImages',
 			[`.${ns}-remove-link`]: 'playlist.handleRemove',
 			[`.${ns}-list-item`]: 'playlist.handleSelect',
-			[`.${ns}-filter-link`]: 'playlist.handleFilter'
+			[`.${ns}-filter-link`]: 'playlist.handleFilter',
+			[`.${ns}-download-link`]: 'playlist.handleDownload'
 		},
 		mousemove: { [`.${ns}-list-item`]: 'playlist.moveHoverImage' },
 		dragstart: { [`.${ns}-list-item`]: 'playlist.handleDragStart' },
@@ -110,9 +111,9 @@ module.exports = {
 	/**
 	 * Add a new sound from the thread to the player.
 	 */
-	add: function (title, id, src, thumb, image, post, imageMD5, skipRender) {
+	add: function ({ title, id, src, thumb, image, post, imageMD5, filename }, skipRender) {
 		try {
-			const sound = { title, src, id, thumb, image, post, imageMD5 };
+			const sound = { title, id, src, thumb, image, post, imageMD5, filename };
 			// Make sure the sound is an allowed host, not filtered, and not a duplicate.
 			if (!Player.acceptedSound(sound) || Player.sounds.find(sound => sound.id === id)) {
 				return;
@@ -153,7 +154,7 @@ module.exports = {
 			}
 		} catch (err) {
 			_logError('There was an error adding to the sound player. Please check the console for details.');
-			console.log('[4chan sounds player]', title, id, src, thumb, image);
+			console.log('[4chan sounds player]', sound);
 			console.error('[4chan sounds player]', err);
 		}
 	},
@@ -269,6 +270,11 @@ module.exports = {
 
 	setFocusedMenuItem: function (e) {
 		e.currentTarget.classList.add('focused');
+		const submenu = e.currentTarget.querySelector('.submenu');
+		// Move the menu to the other side if there isn't room.
+		if (submenu && submenu.getBoundingClientRect().right > document.documentElement.clientWidth) {
+			submenu.style.inset = '0px auto auto -100%';
+		}
 	},
 
 	unsetFocusedMenuItem: function (e) {
@@ -392,5 +398,26 @@ module.exports = {
 
 	applyFilters: function () {
 		Player.sounds.filter(sound => !Player.acceptedSound(sound)).forEach(Player.playlist.remove);
+	},
+
+	handleDownload: function (e) {
+		const src = e.eventTarget.getAttribute('data-src');
+		const name = e.eventTarget.getAttribute('data-name') || new URL(src).pathname.split('/').pop();
+
+		GM.xmlHttpRequest({
+			method: 'GET',
+			url: src,
+			responseType: 'blob',
+			onload: response => {
+				const a = document.createElement('a');
+				a.href = URL.createObjectURL(response.response);
+				a.download = name;
+				a.rel = 'noopener';
+				a.target = '_blank';
+				a.click();
+				URL.revokeObjectURL(a.href);
+			},
+			onerror: () => _logError('There was an error downloading.', 'warning')
+		});
 	}
 };

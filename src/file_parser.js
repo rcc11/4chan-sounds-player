@@ -20,65 +20,65 @@ function parsePost(post, skipRender) {
 			return;
 		}
 
-		let fileName = null;
+		let filename = null;
 
 		if (!is4chan) {
 			const fileLink = post.querySelector('.post_file_filename');
-			fileName = fileLink && fileLink.title;
+			filename = fileLink && fileLink.title;
 		} else if (isChanX) {
 			[
 				post.querySelector('.fileText .file-info .fnfull'),
 				post.querySelector('.fileText .file-info > a')
 			].some(function (node) {
-				return node && (fileName = node.textContent);
+				return node && (filename = node.textContent);
 			});
 		} else {
 			[
 				post.querySelector('.fileText'),
 				post.querySelector('.fileText > a')
 			].some(function (node) {
-				return node && (fileName = node.title || node.tagName === 'A' && node.textContent);
+				return node && (filename = node.title || node.tagName === 'A' && node.textContent);
 			});
 		}
 
-		if (!fileName) {
+		if (!filename) {
 			return;
 		}
 
-		fileName = fileName.replace(/\-/, '/');
+		filename = filename.replace(/\-/, '/');
 
 		const postID = post.id.slice(is4chan ? 1 : 0);
 		const fileThumb = post.querySelector(is4chan ? '.fileThumb' : '.thread_image_link');
-		const fullSrc = fileThumb && fileThumb.href;
+		const image = fileThumb && fileThumb.href;
 		const thumbImg = fileThumb && fileThumb.querySelector('img')
-		const thumbSrc = thumbImg && thumbImg.src;
-		const md5 = thumbImg && thumbImg.getAttribute('data-md5');
+		const thumb = thumbImg && thumbImg.src;
+		const imageMD5 = thumbImg && thumbImg.getAttribute('data-md5');
 
 		const matches = [];
 		let match;
-		while ((match = filenameRE.exec(fileName)) !== null) {
+		while ((match = filenameRE.exec(filename)) !== null) {
 			matches.push(match);
 		}
 
 		const defaultName = matches[0] && matches[0][1] || postID;
 
 		matches.forEach(function (match, i) {
-			let link = match[2];
+			let src = match[2];
 			let id = postID + ':' + i;
-			const name = match[1].trim() || defaultName + (matches.length > 1 ? ` (${i + 1})` : '');
+			const title = match[1].trim() || defaultName + (matches.length > 1 ? ` (${i + 1})` : '');
 
 			try {
-				if (link.includes('%')) {
-					link = decodeURIComponent(link);
+				if (src.includes('%')) {
+					src = decodeURIComponent(src);
 				}
 
-				if (link.match(protocolRE) === null) {
-					link = (location.protocol + '//' + link);
+				if (src.match(protocolRE) === null) {
+					src = (location.protocol + '//' + src);
 				}
 			} catch (error) {
 				return;
 			}
-			return Player.add(name, id, link, thumbSrc, fullSrc, postID, md5, skipRender);
+			return Player.add({ title, id, src, thumb, image, post: postID, imageMD5, filename }, skipRender);
 		});
 	} catch (err) {
 		_logError('There was an issue parsing the files. Please check the console for details.');
