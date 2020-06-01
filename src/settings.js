@@ -149,6 +149,7 @@ module.exports = [
 			'pomf.cat',
 			'zz.ht'
 		],
+		actions: [ { title: 'Reset', handler: 'settings.handleReset' } ],
 		showInSettings: true,
 		split: '\n'
 	},
@@ -157,12 +158,14 @@ module.exports = [
 		default: [ '# Image MD5 or sound URL' ],
 		title: 'Filters',
 		description: 'List of URLs or image MD5s to filter, one per line.\nLines starting with a # will be ignored.',
+		actions: [ { title: 'Reset', handler: 'settings.handleReset' } ],
 		showInSettings: true,
 		split: '\n'
 	},
 	{
 		property: 'footerTemplate',
 		title: 'Footer Contents',
+		actions: [ { title: 'Reset', handler: 'settings.handleReset' } ],
 		default: 'playinglink:"%p /" %t sounds\n'
 			+ '<div style="float: right; margin-right: .5rem">\n'
 				+ '\tpostlink:"<span class=\'fa fa-comment-o\'>Post</span>"\n'
@@ -183,8 +186,9 @@ module.exports = [
 			+ 'soundlink - Open the current sounds source in a new tab.\n'
 			+ 'dlimagelink - Download the image with the original filename.\n'
 			+ 'dlsoundlink - Download the sound.\n'
-			+ 'p:"text" - Shows the the text only if there is a sound selected.',
-		showInSettings: 'textarea'
+			+ 'p:{text} - Shows the the text only if there is a sound selected.',
+		showInSettings: 'textarea',
+		attrs: 'style="height:120px;"'
 	},
 	{
 		title: 'Colors',

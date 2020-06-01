@@ -175,23 +175,31 @@ module.exports = {
 	},
 
 	/**
+	 * Find a setting in the default configuration.
+	 */
+	findDefault: function (property) {
+		let settingConfig;
+		settingsConfig.find(function (setting) {
+			if (setting.property === property) {
+				return settingConfig = setting;
+			}
+			if (setting.settings) {
+				let subSetting = setting.settings.find(_setting => _setting.property === property);
+				return subSetting && (settingConfig = { ...setting, settings: null, ...subSetting });
+			}
+			return false;
+		});
+		return settingConfig;
+	},
+
+	/**
 	 * Handle the user making a change in the settings view.
 	 */
 	handleChange: function (e) {
 		try {
 			const input = e.eventTarget;
 			const property = input.getAttribute('data-property');
-			let settingConfig;
-			settingsConfig.find(function searchConfig(setting) {
-				if (setting.property === property) {
-					return settingConfig = setting;
-				}
-				if (setting.settings) {
-					let subSetting = setting.settings.find(_setting => _setting.property === property);
-					return subSetting && (settingConfig = { ...setting, settings: null, ...subSetting });
-				}
-				return false;
-			});
+			let settingConfig = Player.settings.findDefault(property);
 
 			// Get the new value of the setting.
 			const currentValue = _get(Player.config, property);
@@ -236,8 +244,16 @@ module.exports = {
 
 	handleAction: function (e) {
 		e.preventDefault();
+		const property = e.eventTarget.getAttribute('data-property');
 		const handlerName = e.eventTarget.getAttribute('data-handler');
 		const handler = _get(Player, handlerName);
-		handler && handler();
+		handler && handler(property);
+	},
+
+	handleReset: function (property) {
+		let settingConfig = Player.settings.findDefault(property);
+		_set(Player.config, property, settingConfig.default);
+		Player.settings.save();
+		Player.settings.render();
 	}
 }
