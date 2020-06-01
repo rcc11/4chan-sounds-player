@@ -163,17 +163,17 @@ module.exports = [
 	{
 		property: 'footerTemplate',
 		title: 'Footer Contents',
-		default: 'playinglink:"%p /" %t sounds\n' +
-			'<div style="float: right; margin-right: .5rem">\n' +
-				'\tpostlink:"<span class=\'fa fa-comment-o\'>Post</span>"\n' +
-				'\tp:"Open ["\n' +
-				'\timagelink:"<span class=\'fa fa-image\'>i</span>"\n' +
-				'\tsoundlink:"<span class=\'fa fa-volume-up\'>s</span>"\n' +
-				'\tp:"] Download ["\n' +
-				'\tdlimagelink:"<span class=\'fa fa-file-image-o\'>i</span>"\n' +
-				'\tdlsoundlink:"<span class=\'fa fa-file-sound-o\'>s</span>"\n' +
-				'\tp:"]"\n' +
-			'</div>',
+		default: 'playinglink:"%p /" %t sounds\n'
+			+ '<div style="float: right; margin-right: .5rem">\n'
+				+ '\tpostlink:"<span class=\'fa fa-comment-o\'>Post</span>"\n'
+				+ '\tp:"Open ["\n'
+				+ '\timagelink:"<span class=\'fa fa-image\'>i</span>"\n'
+				+ '\tsoundlink:"<span class=\'fa fa-volume-up\'>s</span>"\n'
+				+ '\tp:"] Download ["\n'
+				+ '\tdlimagelink:"<span class=\'fa fa-file-image-o\'>i</span>"\n'
+				+ '\tdlsoundlink:"<span class=\'fa fa-file-sound-o\'>s</span>"\n'
+				+ '\tp:"]"\n' +
+			+ '</div>',
 		description: 'What the footer displays, with the following replacements. The text for links can be set using the format postlink:"text".\n'
 			+ '%p - Playing index.\n'
 			+ '%t - Total sound count.\n'
