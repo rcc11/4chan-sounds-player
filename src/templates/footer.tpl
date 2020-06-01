@@ -1,6 +1,6 @@
 Player.config.footerTemplate
-	.replace(/p:"([^"]*)"/g, Player.playing ? '$1' : '')
-	.replace(/(playing|post|image|sound|dlimage|dlsound)link(?:\:"([^"]+)")?/g, function (full, type, userText) {
+	.replace(/p: ?{([^}]*)}/g, Player.playing ? '$1' : '')
+	.replace(/(playing|post|image|sound|dlimage|dlsound)link(?:\:"([^"]+?)")?/g, function (full, type, userText) {
 		if (!Player.playing || type === 'post' && !Player.playing.post) {
 			return '';
 		}

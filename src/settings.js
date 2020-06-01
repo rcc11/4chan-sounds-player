@@ -168,15 +168,18 @@ module.exports = [
 		actions: [ { title: 'Reset', handler: 'settings.handleReset' } ],
 		default: 'playinglink:"%p /" %t sounds\n'
 			+ '<div style="float: right; margin-right: .5rem">\n'
-				+ '\tpostlink:"<span class=\'fa fa-comment-o\'>Post</span>"\n'
-				+ '\tp:"Open ["\n'
-				+ '\timagelink:"<span class=\'fa fa-image\'>i</span>"\n'
-				+ '\tsoundlink:"<span class=\'fa fa-volume-up\'>s</span>"\n'
-				+ '\tp:"] Download ["\n'
-				+ '\tdlimagelink:"<span class=\'fa fa-file-image-o\'>i</span>"\n'
-				+ '\tdlsoundlink:"<span class=\'fa fa-file-sound-o\'>s</span>"\n'
-				+ '\tp:"]"\n' +
-			+ '</div>',
+			+ '	p:{\n'
+			+ '		postlink:"<span class=\'fa fa-comment-o\'>Post</span>"\n'
+			+ '		Open [\n'
+			+ '			imagelink:"<span class=\'fa fa-image\'>i</span>"\n'
+			+ '			soundlink:"<span class=\'fa fa-volume-up\'>s</span>"\n'
+			+ '		]\n'
+			+ '		Download [\n'
+			+ '			dlimagelink:"<span class=\'fa fa-file-image-o\'>i</span>"\n'
+			+ '			dlsoundlink:"<span class=\'fa fa-file-sound-o\'>s</span>"\n'
+			+ '		]\n'
+			+ '	}\n'
+			+ '</div>\n',
 		description: 'What the footer displays, with the following replacements. The text for links can be set using the format postlink:"text".\n'
 			+ '%p - Playing index.\n'
 			+ '%t - Total sound count.\n'
