@@ -191,6 +191,9 @@ module.exports = {
 	toggle: function (e) {
 		try {
 			e && e.preventDefault();
+			// Blur anything focused so the change is applied.
+			let focused = Player.$(`.${ns}-settings :focus`);
+			focused && focused.blur();
 			if (Player.config.viewStyle === 'settings') {
 				Player.display.setViewStyle(Player._preSettingsView || 'playlist');
 			} else {
@@ -230,12 +233,10 @@ module.exports = {
 			// Not the most stringent check but enough to avoid some spamming.
 			if (currentValue !== newValue) {
 				// Update the setting.
-				Player.set(property, newValue);
+				Player.set(property, newValue, { bypassRender: true });
 
 				// Update the stylesheet reflect any changes.
 				Player.stylesheet.innerHTML = Player.templates.css();
-
-				Player.trigger('config', property, newValue, currentValue);
 			}
 
 			// Run any handler required by the value changing
