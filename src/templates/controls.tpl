@@ -1,4 +1,4 @@
-`<div class="${ns}-col-auto ${ns}-row" href="javascript;">
+`<div class="${ns}-col-auto ${ns}-row">
 	<div class="${ns}-media-control ${ns}-previous-button">
 		<div class="${ns}-previous-button-display"></div>
 	</div>

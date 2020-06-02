@@ -62,7 +62,7 @@ module.exports = [
 				property: 'hotkeys',
 				default: 'open',
 				handler: 'hotkeys.apply',
-				title: 'Enable',
+				title: 'Enabled',
 				format: null,
 				parse: null,
 				class: null,
@@ -163,33 +163,32 @@ module.exports = [
 		split: '\n'
 	},
 	{
+		property: 'headerTemplate',
+		title: 'Header Contents',
+		actions: [ { title: 'Reset', handler: 'settings.handleReset' } ],
+		default: 'repeat-button shuffle-button playlist-button hover-images-button\nsound-name\nadd-button reload-button settings-button close-button',
+		showInSettings: 'textarea',
+	},
+	{
+		property: 'rowTemplate',
+		title: 'Row Contents',
+		actions: [ { title: 'Reset', handler: 'settings.handleReset' } ],
+		default: `sound-name h:{menu-button}`,
+		showInSettings: 'textarea'
+	},
+	{
 		property: 'footerTemplate',
 		title: 'Footer Contents',
 		actions: [ { title: 'Reset', handler: 'settings.handleReset' } ],
-		default: 'playinglink:"%p /" %t sounds\n'
-			+ '<div style="float: right; margin-right: .5rem">\n'
-			+ '	p:{\n'
-			+ '		postlink:"<span class=\'fa fa-comment-o\'>Post</span>"\n'
-			+ '		Open [\n'
-			+ '			imagelink:"<span class=\'fa fa-image\'>i</span>"\n'
-			+ '			soundlink:"<span class=\'fa fa-volume-up\'>s</span>"\n'
-			+ '		]\n'
-			+ '		Download [\n'
-			+ '			dlimagelink:"<span class=\'fa fa-file-image-o\'>i</span>"\n'
-			+ '			dlsoundlink:"<span class=\'fa fa-file-sound-o\'>s</span>"\n'
-			+ '		]\n'
-			+ '	}\n'
-			+ '</div>\n',
-		description: 'What the footer displays, with the following replacements. The text for links can be set using the format postlink:"text".\n'
-			+ '%p - Playing index.\n'
-			+ '%t - Total sound count.\n'
-			+ 'playinglink - Jump to the current sound in the playlist.\n'
-			+ 'postlink - Jump to the current sounds post in the thread.\n'
-			+ 'imagelink - Open the current sounds image in a new tab.\n'
-			+ 'soundlink - Open the current sounds source in a new tab.\n'
-			+ 'dlimagelink - Download the image with the original filename.\n'
-			+ 'dlsoundlink - Download the sound.\n'
-			+ 'p:{text} - Shows the the text only if there is a sound selected.',
+		default: 'playing-button:"sound-index /" sound-count sounds\n'
+			+ 'p:{\n'
+			+ '	<div style="float: right; margin-right: .5rem">\n'
+			+ '		post-link\n'
+			+ '		Open [ image-link sound-link ]\n'
+			+ '		Download [ dl-image-button dl-sound-button ]\n'
+			+ '	</div>\n'
+			+ '}',
+		description: 'Template for the footer contents',
 		showInSettings: 'textarea',
 		attrs: 'style="height:120px;"'
 	},

@@ -91,7 +91,7 @@ module.exports = {
 		const { width, height } = Player.container.getBoundingClientRect();
 
 		// Change the style.
-		Player.config.viewStyle = style;
+		Player.set('viewStyle', style);
 		Player.container.setAttribute('data-view-style', style);
 
 		// Try to reapply the pre change sizing unless it was fullscreen.

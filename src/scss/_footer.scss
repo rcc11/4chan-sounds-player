@@ -11,4 +11,7 @@
 		cursor: se-resize;
 		background: linear-gradient(to bottom right, rgba(0,0,0,0), rgba(0,0,0,0) 50%, #{map-get($colors, border)} 55%, #{map-get($colors, border)} 100%)
 	}
+	&:hover .#{$ns}-hover-display {
+		display: inline-block;
+	}
 }

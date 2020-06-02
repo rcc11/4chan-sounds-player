@@ -13,7 +13,7 @@ module.exports = {
 		const undelegated = Player.events._undelegatedEvents;
 		const audio = Player.events._audioEvents;
 
-		for (name in eventLocations) {
+		for (let name in eventLocations) {
 			const comp = eventLocations[name];
 			for (let evt in comp.delegatedEvents || {}) {
 				delegated[evt] || (delegated[evt] = [])

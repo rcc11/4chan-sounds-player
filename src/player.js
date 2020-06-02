@@ -1,4 +1,6 @@
 const components = {
+	// Settings must be first.
+	settings: require('./components/settings'),
 	controls: require('./components/controls'),
 	display: require('./components/display'),
 	events: require('./components/events'),
@@ -7,7 +9,7 @@ const components = {
 	hotkeys: require('./components/hotkeys'),
 	playlist: require('./components/playlist'),
 	position: require('./components/position'),
-	settings: require('./components/settings')
+	userTemplate: require('./components/user-template')
 };
 
 // Create a global ref to the player.
@@ -33,16 +35,15 @@ const Player = window.Player = module.exports = {
 
 	// Get all the templates.
 	templates: {
-		// Settings must be first.
-		settings: require('./templates/settings.tpl'),
-		css: require('./scss/style.scss'),
 		body: require('./templates/body.tpl'),
-		header: require('./templates/header.tpl'),
-		player: require('./templates/player.tpl'),
 		controls: require('./templates/controls.tpl'),
-		list: require('./templates/list.tpl'),
+		css: require('./scss/style.scss'),
+		footer: require('./templates/footer.tpl'),
+		header: require('./templates/header.tpl'),
 		itemMenu: require('./templates/item_menu.tpl'),
-		footer: require('./templates/footer.tpl')
+		list: require('./templates/list.tpl'),
+		player: require('./templates/player.tpl'),
+		settings: require('./templates/settings.tpl')
 	},
 
 	/**
@@ -66,7 +67,7 @@ const Player = window.Player = module.exports = {
 				const li = document.createElement('li');
 				const showLink = document.createElement('a');
 				showLink.innerHTML = 'Sounds';
-				showLink.href = 'javascript;'
+				showLink.href = 'javascript:;'
 				li.appendChild(showLink);
 				nav.appendChild(li);
 				showLink.addEventListener('click', Player.display.toggle);
@@ -79,7 +80,7 @@ const Player = window.Player = module.exports = {
 					const bracket = document.createTextNode('] [');
 					const showLink = document.createElement('a');
 					showLink.innerHTML = 'Sounds';
-					showLink.href = 'javascript;';
+					showLink.href = 'javascript:;';
 					link.parentNode.insertBefore(showLink, link);
 					link.parentNode.insertBefore(bracket, link);
 					showLink.addEventListener('click', Player.display.toggle);

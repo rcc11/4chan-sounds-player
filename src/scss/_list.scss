@@ -27,10 +27,9 @@
 
 		& .#{$ns}-item-menu-button {
 			right: .25rem;
-			display: none;
 		}
-		&:hover .#{$ns}-item-menu-button {
-			display: inline-block;
+		&:hover .#{$ns}-hover-display {
+			display: flex;
 		}
 
 		&.#{$ns}-dragging {
@@ -39,7 +38,7 @@
 	}
 }
 
-html:not(.fourchan-x) .#{$ns}-list-item {
+html:not(.fourchan-x) {
 	& .dialog {
 		background: #{map-get($colors, background)};
 		background: #{map-get($colors, background)};

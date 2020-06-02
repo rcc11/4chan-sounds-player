@@ -8,7 +8,7 @@
 		const desc = setting.description;
 		let out = `<div class="${setting.isSubSetting ? `${ns}-col` : `${ns}-setting-header`} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc.replace(/"/g, '&quot;')}"` : ''}>
 			${setting.title}
-			${(setting.actions || []).map(action => `<a href="javascript;" class="${ns}-setting-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`)}
+			${(setting.actions || []).map(action => `<a href="javascript:;" class="${ns}-setting-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`)}
 		</div>`;
 
 		if (setting.settings) {

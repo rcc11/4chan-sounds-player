@@ -4,14 +4,7 @@ module.exports = {
 	atRoot: [ 'add', 'remove' ],
 
 	delegatedEvents: {
-		click: {
-			[`.${ns}-viewStyle-button`]: 'playlist.toggleView',
-			[`.${ns}-hoverImages-button`]: 'playlist.toggleHoverImages',
-			[`.${ns}-remove-link`]: 'playlist.handleRemove',
-			[`.${ns}-list-item`]: 'playlist.handleSelect',
-			[`.${ns}-filter-link`]: 'playlist.handleFilter',
-			[`.${ns}-download-link`]: 'playlist.handleDownload'
-		},
+		click: { [`.${ns}-list-item`]: 'playlist.handleSelect' },
 		mousemove: { [`.${ns}-list-item`]: 'playlist.moveHoverImage' },
 		dragstart: { [`.${ns}-list-item`]: 'playlist.handleDragStart' },
 		dragenter: { [`.${ns}-list-item`]: 'playlist.handleDragEnter' },
@@ -21,12 +14,6 @@ module.exports = {
 	},
 
 	undelegatedEvents: {
-		click: {
-			body: 'playlist.closeMenus'
-		},
-		keydown: {
-			body: e => e.key === 'Escape' && Player.playlist.closeMenus()
-		},
 		mouseenter: {
 			[`.${ns}-list-item`]: 'playlist.showHoverImage'
 		},
@@ -47,6 +34,7 @@ module.exports = {
 		});
 		// Reapply filters when they change
 		Player.on('config', property => property === 'filters' && Player.playlist.applyFilters());
+		Player.userTemplate.maintain(Player.playlist, 'rowTemplate', [ 'shuffle' ]);
 	},
 
 	/**
@@ -56,13 +44,8 @@ module.exports = {
 		if (!Player.container) {
 			return;
 		}
-		if (Player.$(`.${ns}-list-container`)) {
-			Player.$(`.${ns}-list-container`).innerHTML = Player.templates.list();
-		}
-		Player.events.addUndelegatedListeners({
-			mouseenter: Player.playlist.undelegatedEvents.mouseenter,
-			mouseleave:  Player.playlist.undelegatedEvents.mouseleave
-		});
+		Player.$(`.${ns}-list-container`).innerHTML = Player.templates.list();
+		Player.events.addUndelegatedListeners(Player.playlist.undelegatedEvents);
 	},
 
 	/**
@@ -72,7 +55,7 @@ module.exports = {
 		if (!Player.container) {
 			return;
 		}
-		let isVideo = Player.playlist.isVideo = !thumb && sound.image.endsWith('.webm') || sound.type === 'video/webm';
+		let isVideo = Player.playlist.isVideo = !thumb && (sound.image.endsWith('.webm') || sound.type === 'video/webm');
 		try {
 			const img = Player.$(`.${ns}-image`);
 			const video = Player.$(`.${ns}-video`);
@@ -100,8 +83,6 @@ module.exports = {
 		let style = Player.config.viewStyle === 'playlist' ? 'image' : 'playlist';
 		try {
 			Player.display.setViewStyle(style);
-			Player.header.render();
-			Player.settings.save();
 		} catch (err) {
 			_logError('There was an error switching the view style. Please check the console for details.', 'warning');
 			console.error('[4chan sounds player]', err);
@@ -179,106 +160,13 @@ module.exports = {
 	},
 
 	/**
-	 * Handle a click on the remove link
-	 */
-	handleRemove: function (e) {
-		const id = e.eventTarget.closest(`.${ns}-list-item`).getAttribute('data-id');
-		const sound = id && Player.sounds.find(sound => sound.id === '' + id);
-		sound && Player.remove(sound);
-	},
-
-	/**
-	 * Close any open menus, except for one belonging to an item that was clicked.
-	 */
-	closeMenus: function (e) {
-		const clickedListItem = e && e.target.closest(`.${ns}-list-item`);
-
-		document.querySelectorAll(`.${ns}-item-menu`).forEach(menu => {
-			const row = menu.parentNode;
-			// Ignore for a list item that was clicked. The handleSelect below will deal with it.
-			if (row === clickedListItem) {
-				return;
-			}
-			row.removeChild(menu);
-			row.classList.remove(`.${ns}-has-menu`);
-		});
-	},
-
-	/**
 	 * Handle an playlist item being clicked. Either open/close the menu or play the sound.
 	 */
 	handleSelect: function (e) {
-		const clickedMenu = e.target.closest(`.${ns}-item-menu`);
-		const menu = clickedMenu || e.eventTarget.querySelector(`.${ns}-item-menu`);
-
-		const id = e.eventTarget.getAttribute('data-id');
-		const clickedMenuButton = e.target.closest(`.${ns}-item-menu-button`);
-		const sound = id && Player.sounds.find(sound => sound.id === id);
-
-		// Remove the menu.
-		if (menu) {
-			e.eventTarget.removeChild(menu);
-			e.eventTarget.classList.remove(`.${ns}-has-menu`);
-
-		// If the manu wasn't showing and menu button was clicked go ahead and show the menu.
-		} else if (clickedMenuButton) {
-			e.preventDefault();
-			if (e.eventTarget.hoverImage) {
-				e.eventTarget.hoverImage.parentNode.removeChild(e.eventTarget.hoverImage);
-				delete e.eventTarget.hoverImage;
-			}
-			// Create the menu.
-			const container = document.createElement('div');
-			container.innerHTML = Player.templates.itemMenu({
-				top: e.clientY,
-				left: e.clientX,
-				sound
-			});
-			const dialog = container.children[0];
-
-			// Update the row with it.
-			e.eventTarget.appendChild(dialog);
-			e.eventTarget.classList.remove(`.${ns}-has-menu`);
-
-			// Make sure it's within the page.
-			const style = document.defaultView.getComputedStyle(dialog);
-			const width = parseInt(style.width, 10);
-			const height = parseInt(style.height, 10);
-			// Show the dialog to the left of the cursor, if there's room.
-			if (e.clientX - width > 0) {
-				dialog.style.left = e.clientX - width + 'px';
-			}
-			// Move the dialog above the cursor if it's off screen.
-			if (e.clientY + height > document.documentElement.clientHeight - 40) {
-				dialog.style.top = e.clientY - height + 'px';
-			}
-			// Add the focused class handler
-			dialog.querySelectorAll('.entry').forEach(el => {
-				el.addEventListener('mouseenter', Player.playlist.setFocusedMenuItem);
-				el.addEventListener('mouseleave', Player.playlist.unsetFocusedMenuItem);
-			});
-		}
-
-		// If the menu or menu button was clicked don't play the sound.
-		if (clickedMenuButton || clickedMenu) {
-			return;
-		}
-
 		e.preventDefault();
+		const id = e.eventTarget.getAttribute('data-id');
+		const sound = id && Player.sounds.find(sound => sound.id === id);
 		sound && Player.play(sound);
-	},
-
-	setFocusedMenuItem: function (e) {
-		e.currentTarget.classList.add('focused');
-		const submenu = e.currentTarget.querySelector('.submenu');
-		// Move the menu to the other side if there isn't room.
-		if (submenu && submenu.getBoundingClientRect().right > document.documentElement.clientWidth) {
-			submenu.style.inset = '0px auto auto -100%';
-		}
-	},
-
-	unsetFocusedMenuItem: function (e) {
-		e.currentTarget.classList.remove('focused');
 	},
 
 	refresh: function () {
@@ -287,9 +175,7 @@ module.exports = {
 
 	toggleHoverImages: function (e) {
 		e && e.preventDefault();
-		Player.config.hoverImages = !Player.config.hoverImages;
-		Player.header.render();
-		Player.settings.save();
+		Player.set('hoverImages', !Player.config.hoverImages);
 	},
 
 	showHoverImage: function (e) {
@@ -304,6 +190,7 @@ module.exports = {
 		// Add it to the list so the mouseleave triggers properly
 		e.currentTarget.parentNode.appendChild(hoverImage);
 		e.currentTarget.hoverImage = hoverImage;
+		hoverImage.row = e.currentTarget;
 		hoverImage.setAttribute('class', `${ns}-hover-image`);
 		hoverImage.setAttribute('src', sound.thumb);
 		Player.playlist.positionHoverImage(e, hoverImage);
@@ -330,7 +217,7 @@ module.exports = {
 	handleDragStart: function (e) {
 		Player.playlist._dragging = e.eventTarget;
 		Player._hoverImages = Player.config.hoverImages;
-		Player.config.hoverImages = false;
+		Player.set('hoverImages', false);
 		e.eventTarget.classList.add(`${ns}-dragging`);
 		e.dataTransfer.setDragImage(new Image(), 0, 0);
 		e.dataTransfer.dropEffect = 'move';
@@ -373,51 +260,19 @@ module.exports = {
 		e.preventDefault();
 		delete Player.playlist._dragging;
 		e.eventTarget.classList.remove(`${ns}-dragging`);
-		Player.config.hoverImages = Player._hoverImages;
+		Player.set('hoverImages', Player._hoverImages);
 	},
 
 	scrollToPlaying: function (type = 'center') {
-		// Avoid scrolling if there's a menu open. That would be quite rude.
-		if (Player.$(`.${ns}-item-menu`)) {
+		// Avoid scrolling if there's a menu open in the playlist. That would be quite rude.
+		if (Player.$(`.${ns}-list-container .${ns}-item-menu`)) {
 			return;
 		}
 		const playing = Player.$(`.${ns}-list-item.playing`);
 		playing && playing.scrollIntoView({ block: type });
 	},
 
-	handleFilter: function (e) {
-		e.preventDefault();
-		let filter = e.eventTarget.getAttribute('data-filter');
-		if (filter) {
-			Player.config.filters.push(filter);
-			Player.playlist.applyFilters();
-			Player.settings.render();
-			Player.settings.save();
-		}
-	},
-
 	applyFilters: function () {
 		Player.sounds.filter(sound => !Player.acceptedSound(sound)).forEach(Player.playlist.remove);
-	},
-
-	handleDownload: function (e) {
-		const src = e.eventTarget.getAttribute('data-src');
-		const name = e.eventTarget.getAttribute('data-name') || new URL(src).pathname.split('/').pop();
-
-		GM.xmlHttpRequest({
-			method: 'GET',
-			url: src,
-			responseType: 'blob',
-			onload: response => {
-				const a = document.createElement('a');
-				a.href = URL.createObjectURL(response.response);
-				a.download = name;
-				a.rel = 'noopener';
-				a.target = '_blank';
-				a.click();
-				URL.revokeObjectURL(a.href);
-			},
-			onerror: () => _logError('There was an error downloading.', 'warning')
-		});
 	}
 };

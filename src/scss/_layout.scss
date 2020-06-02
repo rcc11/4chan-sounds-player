@@ -33,3 +33,7 @@ html.fourchan-x ##{$ns}-container .fa {
 	text-overflow: ellipsis;
 	overflow: hidden;
 }
+
+.#{$ns}-hover-display {
+	display: none;
+}

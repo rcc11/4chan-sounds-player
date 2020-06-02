@@ -1,6 +1,8 @@
 const settingsConfig = require('settings');
 
 module.exports = {
+	atRoot: [ 'set' ],
+
 	delegatedEvents: {
 		click: {
 			[`.${ns}-config-button`]: 'settings.toggle',
@@ -45,7 +47,9 @@ module.exports = {
 	},
 
 	render: function () {
-		Player.$(`.${ns}-settings`).innerHTML = Player.templates.settings();
+		if (Player.container) {
+			Player.$(`.${ns}-settings`).innerHTML = Player.templates.settings();
+		}
 	},
 
 	forceBoardTheme: function () {
@@ -72,7 +76,7 @@ module.exports = {
 		settingsConfig.find(s => s.property === 'colors').settings.forEach(setting => {
 			const updateConfig = force || (setting.default === _get(Player.config, setting.property));
 			colorSettingMap[setting.property] && (setting.default = style[colorSettingMap[setting.property]]);
-			updateConfig && _set(Player.config, setting.property, setting.default);
+			updateConfig && Player.set(setting.property, setting.default, { bypassSave: true, bypassRender: true });
 		});
 
 		// Clean up the element.
@@ -83,7 +87,18 @@ module.exports = {
 		Player.stylesheet && Player.display.updateStylesheet();
 
 		// Re-render the settings if needed.
-		Player.container && Player.settings.render();
+		Player.settings.render();
+	},
+
+	/**
+	 * Update a setting.
+	 */
+	set: function (property, value, { bypassSave, bypassRender, silent } = {}) {
+		const previousValue = _get(Player.config, property);
+		_set(Player.config, property, value);
+		!silent && Player.trigger('config', property, previousValue);
+		!bypassSave && Player.settings.save();
+		!bypassRender && Player.settings.findDefault(property).showInSettings && Player.settings.render();
 	},
 
 	/**
@@ -140,7 +155,7 @@ module.exports = {
 					}
 					const userVal = _get(settings, setting.property);
 					if (userVal !== undefined) {
-						_set(Player.config, setting.property, userVal);
+						Player.set(setting.property, userVal, { bypassSave: true, silent: true });
 					}
 				});
 			} catch(e) {
@@ -152,28 +167,6 @@ module.exports = {
 			console.error('[4chan sounds player]', err);
 		}
 	},
-
-	/**
-	 * Toggle whether the player or settings are displayed.
-	 */
-	toggle: function (e) {
-		try {
-			e.preventDefault();
-			if (Player.config.viewStyle === 'settings') {
-				Player.display.setViewStyle(Player._preSettingsView || 'playlist');
-			} else {
-				Player._preSettingsView = Player.config.viewStyle;
-				Player._preSettingsView === 'fullscreen' && (Player._preSettingsView = 'playlist');
-				Player.display.setViewStyle('settings');
-			}
-		} catch (err) {
-			_logError('There was an error rendering the sound player settings. Please check the console for details.');
-			console.error('[4chan sounds player]', err);
-			// Can't recover, throw.
-			throw err;
-		}
-	},
-
 	/**
 	 * Find a setting in the default configuration.
 	 */
@@ -189,8 +182,30 @@ module.exports = {
 			}
 			return false;
 		});
-		return settingConfig;
+		return settingConfig || { property };
 	},
+
+	/**
+	 * Toggle whether the player or settings are displayed.
+	 */
+	toggle: function (e) {
+		try {
+			e && e.preventDefault();
+			if (Player.config.viewStyle === 'settings') {
+				Player.display.setViewStyle(Player._preSettingsView || 'playlist');
+			} else {
+				Player._preSettingsView = Player.config.viewStyle;
+				Player._preSettingsView === 'fullscreen' && (Player._preSettingsView = 'playlist');
+				Player.display.setViewStyle('settings');
+			}
+		} catch (err) {
+			_logError('There was an error rendering the sound player settings. Please check the console for details.');
+			console.error('[4chan sounds player]', err);
+			// Can't recover, throw.
+			throw err;
+		}
+	},
+
 
 	/**
 	 * Handle the user making a change in the settings view.
@@ -215,13 +230,10 @@ module.exports = {
 			// Not the most stringent check but enough to avoid some spamming.
 			if (currentValue !== newValue) {
 				// Update the setting.
-				_set(Player.config, property, newValue);
+				Player.set(property, newValue);
 
 				// Update the stylesheet reflect any changes.
 				Player.stylesheet.innerHTML = Player.templates.css();
-
-				// Save the new settings.
-				Player.settings.save();
 
 				Player.trigger('config', property, newValue, currentValue);
 			}
@@ -252,8 +264,6 @@ module.exports = {
 
 	handleReset: function (property) {
 		let settingConfig = Player.settings.findDefault(property);
-		_set(Player.config, property, settingConfig.default);
-		Player.settings.save();
-		Player.settings.render();
+		Player.set(property, settingConfig.default);
 	}
 }

@@ -1,7 +1,7 @@
 module.exports = {
 	delegatedEvents: {
 		mousedown: {
-			[`.${ns}-title`]: 'position.initMove',
+			[`.${ns}-header`]: 'position.initMove',
 			[`.${ns}-expander`]: 'position.initResize'
 		}
 	},
@@ -127,7 +127,7 @@ module.exports = {
 	 */
 	initMove: function (e) {
 		e.preventDefault();
-		Player.$(`.${ns}-title`).style.cursor = 'grabbing';
+		Player.$(`.${ns}-header`).style.cursor = 'grabbing';
 
 		// Try to reapply the current sizing to fix oversized winows.
 		const { width, height } = Player.container.getBoundingClientRect();
@@ -153,7 +153,7 @@ module.exports = {
 	stopMove: function (e) {
 		document.documentElement.removeEventListener('mousemove', Player.position.doMove, false);
 		document.documentElement.removeEventListener('mouseup', Player.position.stopMove, false);
-		Player.$(`.${ns}-title`).style.cursor = null;
+		Player.$(`.${ns}-header`).style.cursor = null;
 		GM.setValue(ns + '.position', parseInt(Player.container.style.left, 10) + ':' + parseInt(Player.container.style.top, 10));
 	},
 

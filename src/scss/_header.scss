@@ -1,11 +1,14 @@
-.#{$ns}-title {
+.#{$ns}-header {
 	cursor: grab;
 	text-align: center;
 	border-bottom: solid 1px #{map-get($colors, border)};
-	padding: .25rem 0;
+	padding: .25rem;
+	&:hover .#{$ns}-hover-display {
+		display: flex;
+	}
 }
 // Append a little 1 to indicate repeat one
-html.fourchan-x  .#{$ns}-title .fa-repeat.fa-repeat-one::after {
+html.fourchan-x  .fa-repeat.fa-repeat-one::after {
 	content: '1';
 	font-size: .5rem;
 	visibility: visible;
