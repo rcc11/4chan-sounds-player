@@ -93,6 +93,11 @@ module.exports = {
 		const previousStyle = Player.config.viewStyle;
 		const { width, height } = Player.container.getBoundingClientRect();
 
+		// Exit fullscreen before changing to a different view.
+		if (style !== 'fullscreen') {
+			document.fullscreenElement && document.exitFullscreen();
+		}
+
 		// Change the style.
 		Player.set('viewStyle', style);
 		Player.container.setAttribute('data-view-style', style);
