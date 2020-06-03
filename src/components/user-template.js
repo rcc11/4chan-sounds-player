@@ -421,7 +421,7 @@ module.exports = {
 		// Update the player with it.
 		const listContainer = e.eventTarget.closest(`.${ns}-list-container`);
 		const parent = listContainer || Player.container;
-		player.appendChild(dialog);
+		parent.appendChild(dialog);
 
 		// Make sure it's within the page.
 		const style = document.defaultView.getComputedStyle(dialog);
