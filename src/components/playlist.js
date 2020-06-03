@@ -5,7 +5,7 @@ module.exports = {
 
 	delegatedEvents: {
 		click: { [`.${ns}-list-item`]: 'playlist.handleSelect' },
-		mousemove: { [`.${ns}-list-item`]: 'playlist.moveHoverImage' },
+		mousemove: { [`.${ns}-list-item`]: 'playlist.positionHoverImage' },
 		dragstart: { [`.${ns}-list-item`]: 'playlist.handleDragStart' },
 		dragenter: { [`.${ns}-list-item`]: 'playlist.handleDragEnter' },
 		dragend: { [`.${ns}-list-item`]: 'playlist.handleDragEnd' },
@@ -15,7 +15,7 @@ module.exports = {
 
 	undelegatedEvents: {
 		mouseenter: {
-			[`.${ns}-list-item`]: 'playlist.showHoverImage'
+			[`.${ns}-list-item`]: 'playlist.updateHoverImage'
 		},
 		mouseleave: {
 			[`.${ns}-list-item`]: 'playlist.removeHoverImage'
@@ -25,6 +25,7 @@ module.exports = {
 	initialize: function () {
 		// Focus the playing song when switching to the playlist.
 		Player.on('view', style => style === 'playlist' && Player.playlist.scrollToPlaying());
+
 		// Update the UI when a new sound plays, and scroll to it.
 		Player.on('playsound', sound => {
 			Player.playlist.showImage(sound);
@@ -32,8 +33,16 @@ module.exports = {
 			Player.$(`.${ns}-list-item[data-id="${Player.playing.id}"]`).classList.add('playing');
 			Player.playlist.scrollToPlaying('nearest');
 		});
+
 		// Reapply filters when they change
-		Player.on('config', property => property === 'filters' && Player.playlist.applyFilters());
+		Player.on('config:filters', Player.playlist.applyFilters);
+
+		// Listen to anything that can affect the display of hover images
+		Player.on('config:hoverImages', Player.playlist.setHoverImageVisibility);
+		Player.on('menu-open', Player.playlist.setHoverImageVisibility);
+		Player.on('menu-close', Player.playlist.setHoverImageVisibility);
+
+		// Maintain changes to the user templates it's dependent values
 		Player.userTemplate.maintain(Player.playlist, 'rowTemplate', [ 'shuffle' ]);
 	},
 
@@ -44,8 +53,10 @@ module.exports = {
 		if (!Player.container) {
 			return;
 		}
-		Player.$(`.${ns}-list-container`).innerHTML = Player.templates.list();
+		const container = Player.$(`.${ns}-list-container`);
+		container.innerHTML = Player.templates.list();
 		Player.events.addUndelegatedListeners(Player.playlist.undelegatedEvents);
+		Player.playlist.hoverImage = container.querySelector(`.${ns}-hover-image`);
 	},
 
 	/**
@@ -169,61 +180,75 @@ module.exports = {
 		sound && Player.play(sound);
 	},
 
+	/**
+	 * Read all the sounds from the thread again.
+	 */
 	refresh: function () {
 		parseFiles(document.body);
 	},
 
+	/**
+	 * Toggle the hoverImages setting
+	 */
 	toggleHoverImages: function (e) {
 		e && e.preventDefault();
 		Player.set('hoverImages', !Player.config.hoverImages);
 	},
 
-	showHoverImage: function (e) {
-		// Make sure there isn't already an image, hover images are enabled, and there isn't an open menu.
-		if (e.currentTarget.hoverImage || !Player.config.hoverImages || Player.$(`.${ns}-item-menu`)) {
-			return;
-		}
+	/**
+	 * Only show the hover image with the setting enabled, no item menu open, and nothing being dragged.
+	 */
+	setHoverImageVisibility: function () {
+		const container = Player.$(`.${ns}-list-container`);
+		const hideImage = !Player.config.hoverImages
+			|| Player.playlist._dragging
+			|| container.querySelector(`.${ns}-item-menu`);
+		container.classList[hideImage ? 'add' : 'remove'](`${ns}-hide-hover-image`);
+	},
+
+	/**
+	 * Set the displayed hover image and reposition.
+	 */
+	updateHoverImage: function (e) {
 		const id = e.currentTarget.getAttribute('data-id');
 		const sound = Player.sounds.find(sound => sound.id === id);
-		const hoverImage = document.createElement('img');
-
-		// Add it to the list so the mouseleave triggers properly
-		e.currentTarget.parentNode.appendChild(hoverImage);
-		e.currentTarget.hoverImage = hoverImage;
-		hoverImage.row = e.currentTarget;
-		hoverImage.setAttribute('class', `${ns}-hover-image`);
-		hoverImage.setAttribute('src', sound.thumb);
-		Player.playlist.positionHoverImage(e, hoverImage);
+		Player.playlist.hoverImage.style.display = 'block';
+		Player.playlist.hoverImage.setAttribute('src', sound.thumb);
+		Player.playlist.positionHoverImage(e);
 	},
 
-	moveHoverImage: function (e) {
-		if (e.eventTarget.hoverImage) {
-			Player.playlist.positionHoverImage(e, e.eventTarget.hoverImage);
-		}
-	},
-
-	positionHoverImage: function(e, image) {
-		const { width, height } = image.getBoundingClientRect();
+	/**
+	 * Reposition the hover image to follow the cursor.
+	 */
+	positionHoverImage: function(e) {
+		const { width, height } = Player.playlist.hoverImage.getBoundingClientRect();
 		const maxX = document.documentElement.clientWidth - width - 5;
-		image.style.left = (Math.min(e.clientX, maxX) + 5) + 'px';
-		image.style.top = (e.clientY - height - 10) + 'px';
+		Player.playlist.hoverImage.style.left = (Math.min(e.clientX, maxX) + 5) + 'px';
+		Player.playlist.hoverImage.style.top = (e.clientY - height - 10) + 'px';
 	},
 
+	/**
+	 * Hide the hover image when nothing is being hovered over.
+	 */
 	removeHoverImage: function (e) {
-		e.currentTarget.hoverImage && (e.currentTarget.parentNode.removeChild(e.currentTarget.hoverImage));
-		delete e.currentTarget.hoverImage;
+		Player.playlist.hoverImage.style.display = 'none';
 	},
 
+	/**
+	 * Start dragging a playlist item.
+	 */
 	handleDragStart: function (e) {
 		Player.playlist._dragging = e.eventTarget;
-		Player._hoverImages = Player.config.hoverImages;
-		Player.set('hoverImages', false);
+		Player.playlist.setHoverImageVisibility();
 		e.eventTarget.classList.add(`${ns}-dragging`);
 		e.dataTransfer.setDragImage(new Image(), 0, 0);
 		e.dataTransfer.dropEffect = 'move';
 		e.dataTransfer.setData('text/plain', e.eventTarget.getAttribute('data-id'));
 	},
 
+	/**
+	 * Swap a playlist item when it's dragged over another item.
+	 */
 	handleDragEnter: function (e) {
 		e.preventDefault();
 		const moving = Player.playlist._dragging;
@@ -256,15 +281,20 @@ module.exports = {
 		Player.trigger('order');
 	},
 
+	/**
+	 * Start dragging a playlist item.
+	 */
 	handleDragEnd: function (e) {
 		e.preventDefault();
 		delete Player.playlist._dragging;
 		e.eventTarget.classList.remove(`${ns}-dragging`);
-		Player.set('hoverImages', Player._hoverImages);
+		Player.playlist.setHoverImageVisibility();
 	},
 
+	/**
+	 * Scroll to the playing item, unless there is an open menu in the playlist.
+	 */
 	scrollToPlaying: function (type = 'center') {
-		// Avoid scrolling if there's a menu open in the playlist. That would be quite rude.
 		if (Player.$(`.${ns}-list-container .${ns}-item-menu`)) {
 			return;
 		}
@@ -272,6 +302,9 @@ module.exports = {
 		playing && playing.scrollIntoView({ block: type });
 	},
 
+	/**
+	 * Remove any user filtered items from the playlist.
+	 */
 	applyFilters: function () {
 		Player.sounds.filter(sound => !Player.acceptedSound(sound)).forEach(Player.playlist.remove);
 	}

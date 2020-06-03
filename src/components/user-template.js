@@ -398,12 +398,6 @@ module.exports = {
 	_handleMenu: function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		// Remove any hover image currently shown.
-		const hoverImage = Player.$(`.${ns}-hover-image`);
-		if (hoverImage) {
-			hoverImage.parentNode.removeChild(hoverImage);
-			delete hoverImage.row.hoverImage;
-		}
 		const x = e.clientX;
 		const y = e.clientY;
 		const id = e.eventTarget.getAttribute('data-id');
@@ -441,6 +435,8 @@ module.exports = {
 			el.addEventListener('mouseleave', Player.userTemplate._unsetFocusedMenuItem);
 		});
 
+		Player.trigger('menu-open', dialog);
+
 		return false;
 	},
 
@@ -450,6 +446,7 @@ module.exports = {
 	_closeMenus: function (e) {
 		document.querySelectorAll(`.${ns}-item-menu`).forEach(menu => {
 			menu.parentNode.removeChild(menu);
+			Player.trigger('menu-close', menu);
 		});
 	},
 

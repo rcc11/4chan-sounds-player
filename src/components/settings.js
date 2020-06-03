@@ -96,7 +96,8 @@ module.exports = {
 	set: function (property, value, { bypassSave, bypassRender, silent } = {}) {
 		const previousValue = _get(Player.config, property);
 		_set(Player.config, property, value);
-		!silent && Player.trigger('config', property, previousValue);
+		!silent && Player.trigger('config', property, value, previousValue);
+		!silent && Player.trigger('config:' + property, value, previousValue);
 		!bypassSave && Player.settings.save();
 		!bypassRender && Player.settings.findDefault(property).showInSettings && Player.settings.render();
 	},

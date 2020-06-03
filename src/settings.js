@@ -16,6 +16,11 @@ module.exports = [
 		default: false
 	},
 	{
+		property: 'preventHoverImagesFor',
+		default: [],
+		save: false
+	},
+	{
 		property: 'autoshow',
 		default: true,
 		title: 'Autoshow',

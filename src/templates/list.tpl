@@ -5,5 +5,6 @@
 			sound,
 			outerClass: `${ns}-col-auto`
 		})}
+		<img class="${ns}-hover-image">
 	</div>`
 ).join('')
