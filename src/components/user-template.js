@@ -97,7 +97,7 @@ const buttons = [
 		requireSound: true,
 		href: data => data.sound.src,
 		icon: 'fa-volume-up',
-		text: 'i',
+		text: 's',
 		attrs: data => [
 			`href=${data.sound.src}`,
 			'title="Open the sound in a new tab"',
@@ -121,7 +121,7 @@ const buttons = [
 		requireSound: true,
 		class: `${ns}-download-link`,
 		icon: 'fa-file-sound-o',
-		text: 'i',
+		text: 's',
 		attrs: data => [
 			'title="Download the sound"',
 			`data-src="${data.sound.src}"`
