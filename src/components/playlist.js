@@ -1,4 +1,4 @@
-const { parseFiles } = require('../file_parser');
+const { parseFiles, parseFileName } = require('../file_parser');
 
 module.exports = {
 	atRoot: [ 'add', 'remove' ],
@@ -151,6 +151,38 @@ module.exports = {
 		}
 	},
 
+	addFromFiles: function (files) {
+		// Check each of the files for sounds.
+		[ ...files ].forEach(file => {
+			if (!file.type.startsWith('image') && file.type !== 'video/webm') {
+				return;
+			}
+			const imageSrc = URL.createObjectURL(file);
+			const type = file.type
+			let thumbSrc = imageSrc;
+
+			// If it's not a webm just use the full image as the thumbnail
+			if (file.type !== 'video/webm') {
+				return _continue();
+			}
+
+			// If it's a webm grab the first frame as the thumbnail
+			const canvas = document.createElement('canvas');
+			const video = document.createElement('video');
+			const context = canvas.getContext('2d');
+			video.addEventListener('loadeddata', function () {
+				context.drawImage(video, 0, 0);
+				thumbSrc = canvas.toDataURL();
+				_continue();
+			});
+			video.src = imageSrc;
+
+			function _continue () {
+				parseFileName(file.name, imageSrc, null, thumbSrc).forEach(sound => Player.add({ ...sound, local: true, type }));
+			}
+		});
+	},
+
 	/**
 	 * Remove a sound
 	 */
@@ -250,6 +282,9 @@ module.exports = {
 	 * Swap a playlist item when it's dragged over another item.
 	 */
 	handleDragEnter: function (e) {
+		if (!Player.playlist._dragging) {
+			return;
+		}
 		e.preventDefault();
 		const moving = Player.playlist._dragging;
 		const id = moving.getAttribute('data-id');
@@ -285,6 +320,9 @@ module.exports = {
 	 * Start dragging a playlist item.
 	 */
 	handleDragEnd: function (e) {
+		if (!Player.playlist._dragging) {
+			return;
+		}
 		e.preventDefault();
 		delete Player.playlist._dragging;
 		e.eventTarget.classList.remove(`${ns}-dragging`);

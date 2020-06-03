@@ -67,17 +67,18 @@ function parsePost(post, skipRender) {
 };
 
 function parseFileName (filename, image, post, thumb, imageMD5) {
+	!post && localCounter++;
 	filename = filename.replace(/\-/, '/');
 	const matches = [];
 	let match;
 	while ((match = filenameRE.exec(filename)) !== null) {
 		matches.push(match);
 	}
-	const defaultName = matches[0] && matches[0][1] || post;
+	const defaultName = matches[0] && matches[0][1] || post || 'Local Sound ' + localCounter;
 
 	return matches.reduce((sounds, match, i) => {
 		let src = match[2];
-		const id = (post || 'local' + localCounter++) + ':' + i;
+		const id = (post || 'local' + localCounter) + ':' + i;
 		const title = match[1].trim() || defaultName + (matches.length > 1 ? ` (${i + 1})` : '');
 
 		try {

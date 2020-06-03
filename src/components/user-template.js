@@ -1,5 +1,3 @@
-const { parseFileName } = require('../file_parser');
-
 const buttons = [
 	{
 		property: 'repeat',
@@ -322,33 +320,7 @@ module.exports = {
 	_handleFileSelect: function (e) {
 		e.preventDefault();
 		const input = e.eventTarget;
-		const files = input.files;
-		// Check each of the files for sounds.
-		[ ...files ].forEach(file => {
-			const imageSrc = URL.createObjectURL(file);
-			const type = file.type
-			let thumbSrc = imageSrc;
-
-			// If it's not a webm just use the full image as the thumbnail
-			if (file.type !== 'video/webm') {
-				return _continue();
-			}
-
-			// If it's a webm grab the first frame as the thumbnail
-			const canvas = document.createElement('canvas');
-			const video = document.createElement('video');
-			const context = canvas.getContext('2d');
-			video.addEventListener('loadeddata', function () {
-				context.drawImage(video, 0, 0);
-				thumbSrc = canvas.toDataURL();
-				_continue();
-			});
-			video.src = imageSrc;
-
-			function _continue () {
-				parseFileName(file.name, imageSrc, null, thumbSrc).forEach(sound => Player.add({ ...sound, local: true, type }));
-			}
-		});
+		Player.playlist.addFromFiles(input.files);
 	},
 
 	/**

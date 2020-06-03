@@ -7,6 +7,9 @@ module.exports = {
 		},
 		fullscreenchange: {
 			[`.${ns}-media`]: 'display._handleFullScreenChange'
+		},
+		drop: {
+			[`#${ns}-container`]: 'display._handleDrop'
 		}
 	},
 
@@ -168,6 +171,18 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * Handle file/s being dropped on the player.
+	 */
+	_handleDrop: function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		Player.playlist.addFromFiles(e.dataTransfer.files);
+	},
+
+	/**
+	 * Handle the fullscreen state being changed
+	 */
 	_handleFullScreenChange: function () {
 		if (document.fullscreenElement) {
 			Player._preFullscreenView = Player.config.viewStyle;
