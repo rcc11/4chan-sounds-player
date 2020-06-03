@@ -25,14 +25,10 @@ module.exports = {
 			return;
 		}
 		Player.display._initedChanX = true;
-		const showIcon = document.createElement('span');
+		const showIcon = createElement(`<span id="shortcut-sounds" class="shortcut brackets-wrap" data-index="0">
+			<a href="javascript:;" title="Sounds" class="fa fa-play-circle">Sounds</a>
+		</span>`);
 		shortcuts.insertBefore(showIcon, document.getElementById('shortcut-settings'));
-
-		const attrs = { id: 'shortcut-sounds', class: 'shortcut brackets-wrap', 'data-index': 0 };
-		for (let attr in attrs) {
-			showIcon.setAttribute(attr, attrs[attr]);
-		}
-		showIcon.innerHTML = '<a href="javascript:;" title="Sounds" class="fa fa-play-circle">Sounds</a>';
 		showIcon.querySelector('a').addEventListener('click', Player.display.toggle);
 	},
 
@@ -46,27 +42,13 @@ module.exports = {
 				document.head.removeChild(Player.stylesheet);
 			}
 
+			// Create the main stylesheet.
 			Player.display.updateStylesheet();
 
 			// Create the main player.
-			const el = document.createElement('div');
-			el.innerHTML = Player.templates.body();
-			Player.container = el.querySelector(`#${ns}-container`);
-			document.body.appendChild(Player.container);
+			Player.container = createElement(Player.templates.body(), document.body);
 
 			Player.trigger('rendered');
-
-			// Keep track of heavily updated elements.
-			Player.ui.currentTime = Player.$(`.${ns}-current-time`);
-			Player.ui.duration = Player.$(`.${ns}-duration`);
-			Player.ui.currentTimeBar = Player.$(`.${ns}-seek-bar .${ns}-current-bar`);
-			Player.ui.loadedBar = Player.$(`.${ns}-seek-bar .${ns}-loaded-bar`);
-
-			// Add stylesheets to adjust the progress indicator of the seekbar and volume bar.
-			document.head.appendChild(Player._progressBarStyleSheets[`.${ns}-seek-bar`] = document.createElement('style'));
-			document.head.appendChild(Player._progressBarStyleSheets[`.${ns}-volume-bar`] = document.createElement('style'));
-			Player.controls.updateDuration();
-			Player.controls.updateVolume();
 		} catch (err) {
 			_logError('There was an error rendering the sound player. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
@@ -77,11 +59,7 @@ module.exports = {
 
 	updateStylesheet: function () {
 		// Insert the stylesheet if it doesn't exist.
-		if (!Player.stylesheet) {
-			Player.stylesheet = document.createElement('style');
-			document.head.appendChild(Player.stylesheet);
-		}
-
+		Player.stylesheet = Player.stylesheet || createElement('<style></style>', document.head);
 		Player.stylesheet.innerHTML = Player.templates.css();
 	},
 

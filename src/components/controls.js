@@ -1,3 +1,5 @@
+const progressBarStyleSheets = {};
+
 module.exports = {
 	atRoot: [ 'togglePlay', 'play', 'pause', 'next', 'previous' ],
 
@@ -53,6 +55,19 @@ module.exports = {
 		Player.on('hide', () => {
 			Player._hiddenWhilePolling = !!Player._loadingPoll;
 			Player.controls.stopPollingForLoading();
+		});
+		Player.on('rendered', () => {
+			// Keep track of heavily updated elements.
+			Player.ui.currentTime = Player.$(`.${ns}-current-time`);
+			Player.ui.duration = Player.$(`.${ns}-duration`);
+			Player.ui.currentTimeBar = Player.$(`.${ns}-seek-bar .${ns}-current-bar`);
+			Player.ui.loadedBar = Player.$(`.${ns}-seek-bar .${ns}-loaded-bar`);
+
+			// Add stylesheets to adjust the progress indicator of the seekbar and volume bar.
+			document.head.appendChild(progressBarStyleSheets[`.${ns}-seek-bar`] = document.createElement('style'));
+			document.head.appendChild(progressBarStyleSheets[`.${ns}-volume-bar`] = document.createElement('style'));
+			Player.controls.updateDuration();
+			Player.controls.updateVolume();
 		});
 	},
 
@@ -253,8 +268,8 @@ module.exports = {
 		total || (total = 0);
 		const ratio = !total ? 0 : Math.max(0, Math.min(((current || 0) / total), 1));
 		bar.style.width = (ratio * 100) + '%';
-		if (Player._progressBarStyleSheets[id]) {
-			Player._progressBarStyleSheets[id].innerHTML = `${id} .${ns}-current-bar:after {
+		if (progressBarStyleSheets[id]) {
+			progressBarStyleSheets[id].innerHTML = `${id} .${ns}-current-bar:after {
 				margin-right: ${-.8 * (1 - ratio)}rem;
 			}`;
 		}

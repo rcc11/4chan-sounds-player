@@ -375,18 +375,13 @@ module.exports = {
 		const id = e.eventTarget.getAttribute('data-id');
 		const sound = Player.sounds.find(s => s.id === id);
 
-		// Create the menu.
-		const container = document.createElement('div');
-		container.innerHTML = Player.templates.itemMenu({
-			top: y,
-			left: x,
-			sound
-		});
-		const dialog = container.children[0];
-
-		// Update the player with it.
+		// Add row item menus to the list container. Append to the container otherwise.
 		const listContainer = e.eventTarget.closest(`.${ns}-list-container`);
 		const parent = listContainer || Player.container;
+
+		// Create the menu.
+		const dialog = createElement(Player.templates.itemMenu({ x, y, sound }), parent);
+
 		parent.appendChild(dialog);
 
 		// Make sure it's within the page.
@@ -452,11 +447,7 @@ module.exports = {
 			url: src,
 			responseType: 'blob',
 			onload: response => {
-				const a = document.createElement('a');
-				a.href = URL.createObjectURL(response.response);
-				a.download = name;
-				a.rel = 'noopener';
-				a.target = '_blank';
+				const a = createElement(`<a href="${URL.createObjectURL(response.response)}" download="${name}" rel="noopener" target="_blank"></a>`);
 				a.click();
 				URL.revokeObjectURL(a.href);
 			},

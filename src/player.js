@@ -21,7 +21,6 @@ const Player = window.Player = module.exports = {
 	isHidden: true,
 	container: null,
 	ui: {},
-	_progressBarStyleSheets: {},
 
 	// Build the config from the default
 	config: {},
@@ -64,26 +63,17 @@ const Player = window.Player = module.exports = {
 			if (!is4chan) {
 				// Add a sounds link in the nav for archives
 				const nav = document.querySelector('.navbar-inner .nav:nth-child(2)');
-				const li = document.createElement('li');
-				const showLink = document.createElement('a');
-				showLink.innerHTML = 'Sounds';
-				showLink.href = 'javascript:;'
-				li.appendChild(showLink);
-				nav.appendChild(li);
-				showLink.addEventListener('click', Player.display.toggle);
+				const li = createElement('<li><a href="javascript:;">Sounds</a></li>', nav);
+				li.children[0].addEventListener('click', Player.display.toggle);
 			} else if (isChanX) {
 				// If it's already known that 4chan X is running then setup the button for it.
-				Player.display.initChanX()
+				Player.display.initChanX();
 			} else {
 				// Add the [Sounds] link in the top and bottom nav.
 				document.querySelectorAll('#settingsWindowLink, #settingsWindowLinkBot').forEach(function (link) {
-					const bracket = document.createTextNode('] [');
-					const showLink = document.createElement('a');
-					showLink.innerHTML = 'Sounds';
-					showLink.href = 'javascript:;';
+					const showLink = createElement('<a href="javascript:;">Sounds</a>', null, { click: Player.display.toggle });
 					link.parentNode.insertBefore(showLink, link);
-					link.parentNode.insertBefore(bracket, link);
-					showLink.addEventListener('click', Player.display.toggle);
+					link.parentNode.insertBefore( document.createTextNode('] ['), link);
 				});
 			}
 

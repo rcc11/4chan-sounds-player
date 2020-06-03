@@ -48,7 +48,7 @@ window.toDuration = function(number) {
 	return (hours ? hours + ':' : '') + minutes + ':' + seconds;
 };
 
-window.createElement = function(html, parent, events) {
+window.createElement = function(html, parent, events = {}) {
 	const container = document.createElement('div');
 	container.innerHTML = html;
 	const el = container.children[0];
