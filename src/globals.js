@@ -47,3 +47,14 @@ window.toDuration = function(number) {
 	seconds < 10 && (seconds = '0' + seconds);
 	return (hours ? hours + ':' : '') + minutes + ':' + seconds;
 };
+
+window.createElement = function(html, parent, events) {
+	const container = document.createElement('div');
+	container.innerHTML = html;
+	const el = container.children[0];
+	parent && parent.appendChild(el);
+	for (let event in events) {
+		el.addEventListener(event, events[event]);
+	}
+	return el;
+}

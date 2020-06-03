@@ -10,8 +10,14 @@ module.exports = {
 }
 
 function parseFiles (target, postRender) {
-	target.querySelectorAll('.post').forEach(post => parsePost(post, postRender));
-	if (postRender && Player.container) {
+	let addedSounds = false;
+	let posts = target.classList.contains('post')
+		? [ target ]
+		: target.querySelectorAll('.post');
+
+	posts.forEach(post => parsePost(post, postRender) && (addedSounds = true));
+
+	if (addedSounds && postRender && Player.container) {
 		Player.playlist.render();
 	}
 };
@@ -19,7 +25,15 @@ function parseFiles (target, postRender) {
 function parsePost(post, skipRender) {
 	try {
 		const parentParent = post.parentElement.parentElement;
-		if (parentParent.id === 'qp' || parentParent.classList.contains('inline') || post.parentElement.classList.contains('noFile')) {
+		if (parentParent.id === 'qp' || post.parentElement.classList.contains('noFile')) {
+			return;
+		}
+
+		// If there's a play button this post has already been parsed. Just wire up the link.
+		let playLink = post.querySelector(`.${ns}-play-link`);
+		if (playLink) {
+			const id = playLink.getAttribute('data-id');
+			playLink.onclick = () => Player.play(Player.sounds.find(sound => sound.id === id));
 			return;
 		}
 
@@ -58,7 +72,27 @@ function parsePost(post, skipRender) {
 
 		const sounds = parseFileName(filename, imageSrc, postID, thumbSrc, imageMD5);
 
+		if (!sounds.length) {
+			return;
+		}
+
+		// Create a play link
+		const firstID = sounds[0].id;
+		const text = is4chan ? 'play' : 'Play';
+		const clss = `${ns}-play-link` + (is4chan ? '' : ' btnr');
+		let playLinkParent;
+		if (is4chan) {
+			playLinkParent = post.querySelector('.fileText')
+			playLinkParent.appendChild(document.createTextNode(' '));
+		} else {
+			playLinkParent = post.querySelector('.post_controls');
+		}
+		playLink = createElement(`<a href="javascript:;" class="${clss}" data-id="${firstID}">${text}</a>`, playLinkParent);
+		playLink.onclick = () => Player.play(Player.sounds.find(sound => sound.id === firstID));
+
+		// Don't add sounds from inline quotes of posts in the thread
 		sounds.forEach(sound => Player.add(sound, skipRender));
+		return sounds.length > 0;
 	} catch (err) {
 		_logError('There was an issue parsing the files. Please check the console for details.');
 		console.log('[4chan sounds player]', post)
