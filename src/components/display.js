@@ -121,8 +121,7 @@ module.exports = {
 	},
 
 	/**
-	 * Show the player. Reapplies the saved position/size, and resumes loadeing polling if it was paused.
-	 * @param {*} e 
+	 * Show the player. Reapplies the saved position/size, and resumes loaded amount polling if it was paused.
 	 */
 	show: async function (e) {
 		if (!Player.container) {
@@ -149,10 +148,8 @@ module.exports = {
 	toggleFullScreen: function () {
 		if (!document.fullscreenElement) {
 			Player.$(`.${ns}-media`).requestFullscreen();
-		} else {
-			if (document.exitFullscreen) {
-				document.exitFullscreen();
-			}
+		} else if (document.exitFullscreen) {
+			document.exitFullscreen();
 		}
 	},
 
@@ -181,4 +178,4 @@ module.exports = {
 			Player.display.setViewStyle(Player._preFullscreenView || 'playlist');
 		}
 	}
-}
+};

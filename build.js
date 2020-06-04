@@ -6,9 +6,9 @@ const path = require('path');
 const webpack = require('webpack');
 const config = require('./webpack.config')(undefined, { mode: 'production' });
 
-const package = require('./package');
+const pkg = require('./package');
 
-const header = fs.readFileSync(path.resolve(__dirname, './src/header.js')).toString().replace('VERSION', package.version);
+const header = fs.readFileSync(path.resolve(__dirname, './src/header.js')).toString().replace('VERSION', pkg.version);
 
 webpack(config, (err, stats) => {
 	console.log(stats.toString({

@@ -7,10 +7,10 @@ module.exports = {
 
 	_keyMap: {
 		' ': 'space',
-		'arrowleft': 'left',
-		'arrowright': 'right',
-		'arrowup': 'up',
-		'arrowdown': 'down'
+		arrowleft: 'left',
+		arrowright: 'right',
+		arrowup: 'up',
+		arrowdown: 'down'
 	},
 
 	addHandler: () => {
@@ -76,10 +76,9 @@ module.exports = {
 	 */
 	stringifyKey: function (key) {
 		let k = key.key.toLowerCase();
-		Player.hotkeys._keyMap[k] && (k = Player.hotkeys._keyMap[k])
+		Player.hotkeys._keyMap[k] && (k = Player.hotkeys._keyMap[k]);
 		return (key.ctrlKey ? 'Ctrl+' : '') + (key.shiftKey ? 'Shift+' : '') + (key.metaKey ? 'Meta+' : '') + k;
 	},
-
 
 	/**
 	 * Turn an input string into a hotkey definition object.
@@ -94,10 +93,10 @@ module.exports = {
 	},
 
 	volumeUp: function () {
-		Player.audio.volume = Math.min(Player.audio.volume + .05, 1);
+		Player.audio.volume = Math.min(Player.audio.volume + 0.05, 1);
 	},
 
 	volumeDown: function () {
-		Player.audio.volume = Math.max(Player.audio.volume - .05, 0);
+		Player.audio.volume = Math.max(Player.audio.volume - 0.05, 0);
 	}
 };

@@ -12,4 +12,4 @@ module.exports = {
 			Player.$(`.${ns}-header`).innerHTML = Player.templates.header();
 		}
 	}
-}
+};

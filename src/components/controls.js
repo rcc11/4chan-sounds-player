@@ -179,7 +179,7 @@ module.exports = {
 			const nextSound = Player.sounds[nextIndex];
 			nextSound && Player.play(nextSound);
 		} catch (err) {
-			_logError(`There was an error selecting the ${direction > 0 ? 'next': 'previous'} track. Please check the console for details.`);
+			_logError(`There was an error selecting the ${direction > 0 ? 'next' : 'previous'} track. Please check the console for details.`);
 			console.error('[4chan sounds player]', err);
 		}
 	},
@@ -270,7 +270,7 @@ module.exports = {
 		bar.style.width = (ratio * 100) + '%';
 		if (progressBarStyleSheets[id]) {
 			progressBarStyleSheets[id].innerHTML = `${id} .${ns}-current-bar:after {
-				margin-right: ${-.8 * (1 - ratio)}rem;
+				margin-right: ${-0.8 * (1 - ratio)}rem;
 			}`;
 		}
 	},
@@ -298,4 +298,4 @@ module.exports = {
 		Player.audio.volume = Math.max(0, Math.min(ratio, 1));
 		Player.controls.updateVolume();
 	}
-}
+};

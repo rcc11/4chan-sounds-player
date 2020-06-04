@@ -12,7 +12,7 @@ window.isChanX = document.documentElement.classList.contains('fourchan-x');
  */
 window._logError = function (message, type = 'error') {
 	console.error(message);
-	document.dispatchEvent(new CustomEvent("CreateNotification", {
+	document.dispatchEvent(new CustomEvent('CreateNotification', {
 		bubbles: true,
 		detail: {
 			type: type,
@@ -22,7 +22,7 @@ window._logError = function (message, type = 'error') {
 	}));
 };
 
-window._set = function(object, path, value) {
+window._set = function (object, path, value) {
 	const props = path.split('.');
 	const lastProp = props.pop();
 	const setOn = props.reduce((obj, k) => obj[k] || (obj[k] = {}), object);
@@ -30,7 +30,7 @@ window._set = function(object, path, value) {
 	return object;
 };
 
-window._get = function(object, path, dflt) {
+window._get = function (object, path, dflt) {
 	const props = path.split('.');
 	const lastProp = props.pop();
 	const parent = props.reduce((obj, k) => obj && obj[k], object);
@@ -39,7 +39,7 @@ window._get = function(object, path, dflt) {
 		: dflt;
 };
 
-window.toDuration = function(number) {
+window.toDuration = function (number) {
 	number = Math.floor(number || 0);
 	let [ seconds, minutes, hours ] = _duration(0, number);
 	seconds < 10 && (seconds = '0' + seconds);
@@ -48,14 +48,16 @@ window.toDuration = function(number) {
 
 window.timeAgo = function (date) {
 	const [ seconds, minutes, hours, days, weeks ] = _duration(Math.floor(date), Math.floor(Date.now() / 1000));
+	/* _eslint-disable indent */
 	return weeks > 1 ? weeks + ' weeks ago'
 		: days > 0 ? days + (days === 1 ? ' day' : ' days') + ' ago'
 		: hours > 0 ? hours + (hours === 1 ? ' hour' : ' hours') + ' ago'
 		: minutes > 0 ? minutes + (minutes === 1 ? ' minute' : ' minutes') + ' ago'
 		: seconds + (seconds === 1 ? ' second' : ' seconds') + ' ago';
-}
+	/* eslint-enable indent */
+};
 
-function _duration (from, to) {
+function _duration(from, to) {
 	const diff = Math.max(0, to - from);
 	return [
 		diff % 60,
@@ -63,10 +65,10 @@ function _duration (from, to) {
 		Math.floor(diff / 60 / 60) % 24,
 		Math.floor(diff / 60 / 60 / 24) % 7,
 		Math.floor(diff / 60 / 60 / 24 / 7)
-	]
+	];
 }
 
-window.createElement = function(html, parent, events = {}) {
+window.createElement = function (html, parent, events = {}) {
 	const container = document.createElement('div');
 	container.innerHTML = html;
 	const el = container.children[0];
@@ -75,4 +77,10 @@ window.createElement = function(html, parent, events = {}) {
 		el.addEventListener(event, events[event]);
 	}
 	return el;
-}
+};
+
+window.preventDefault = (f, ...args) => e => {
+	e.preventDefault();
+	const func = typeof f === 'function' ? func : _get(Player, f);
+	func(...args);
+};

@@ -150,7 +150,7 @@ const hoverRE = /h: ?{([^}]*)}/g;
 const buttonRE = new RegExp(`(${buttons.map(option => option.tplName).join('|')})-(?:button|link)(?:\\:"([^"]+?)")?`, 'g');
 const soundNameRE = /sound-name/g;
 const soundIndexRE = /sound-index/g;
-const soundCountRE = /sound-count/g
+const soundCountRE = /sound-count/g;
 
 // Hold information on which config values components templates depend on.
 const componentDeps = [ ];
@@ -168,8 +168,8 @@ module.exports = {
 			[`.${ns}-download-link`]: 'userTemplate._handleDownload',
 			[`.${ns}-shuffle-button`]: 'userTemplate._handleShuffle',
 			[`.${ns}-repeat-button`]: 'userTemplate._handleRepeat',
-			[`.${ns}-reload-button`]: e => { e.preventDefault(); Player.playlist.refresh(); },
-			[`.${ns}-add-button`]: e => { e.preventDefault(); Player.$(`.${ns}-file-input`).click(); },
+			[`.${ns}-reload-button`]: noDefault('playlist.refresh'),
+			[`.${ns}-add-button`]: noDefault(() => Player.$(`.${ns}-file-input`).click()),
 			[`.${ns}-item-menu-button`]: 'userTemplate._handleMenu'
 		},
 		change: {
@@ -210,6 +210,9 @@ module.exports = {
 				if (buttonConf.requireSound && !data.sound) {
 					return '';
 				}
+				// If the button config has sub values then extend the base config with the selected sub value.
+				// Which value is to use is taken from the `property` in the base config of the player config.
+				// This gives us different state displays.
 				if (buttonConf.values) {
 					buttonConf = {
 						...buttonConf,
@@ -361,7 +364,7 @@ module.exports = {
 				const sounds = Player.sounds;
 				for (let i = sounds.length - 1; i > 0; i--) {
 					const j = Math.floor(Math.random() * (i + 1));
-					[sounds[i], sounds[j]] = [sounds[j], sounds[i]];
+					[ sounds[i], sounds[j] ] = [ sounds[j], sounds[i] ];
 				}
 			}
 			Player.trigger('order');
@@ -374,7 +377,7 @@ module.exports = {
 	/**
 	 * Display an item menu.
 	 */
-	_handleMenu: function(e) {
+	_handleMenu: function (e) {
 		e.preventDefault();
 		e.stopPropagation();
 		const x = e.clientX;
@@ -417,7 +420,7 @@ module.exports = {
 	/**
 	 * Close any open menus, except for one belonging to an item that was clicked.
 	 */
-	_closeMenus: function (e) {
+	_closeMenus: function () {
 		document.querySelectorAll(`.${ns}-item-menu`).forEach(menu => {
 			menu.parentNode.removeChild(menu);
 			Player.trigger('menu-close', menu);
@@ -467,4 +470,4 @@ module.exports = {
 		const sound = id && Player.sounds.find(sound => sound.id === '' + id);
 		sound && Player.remove(sound);
 	},
-}
+};

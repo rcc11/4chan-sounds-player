@@ -154,7 +154,7 @@ module.exports = [
 			'pomf.cat',
 			'zz.ht'
 		],
-		actions: [ { title: 'Reset', handler: 'settings.handleReset' } ],
+		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 		showInSettings: true,
 		split: '\n'
 	},
@@ -163,28 +163,28 @@ module.exports = [
 		default: [ '# Image MD5 or sound URL' ],
 		title: 'Filters',
 		description: 'List of URLs or image MD5s to filter, one per line.\nLines starting with a # will be ignored.',
-		actions: [ { title: 'Reset', handler: 'settings.handleReset' } ],
+		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 		showInSettings: true,
 		split: '\n'
 	},
 	{
 		property: 'headerTemplate',
 		title: 'Header Contents',
-		actions: [ { title: 'Reset', handler: 'settings.handleReset' } ],
+		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 		default: 'repeat-button shuffle-button hover-images-button playlist-button\nsound-name\nadd-button reload-button threads-button settings-button close-button',
 		showInSettings: 'textarea',
 	},
 	{
 		property: 'rowTemplate',
 		title: 'Row Contents',
-		actions: [ { title: 'Reset', handler: 'settings.handleReset' } ],
-		default: `sound-name h:{menu-button}`,
+		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
+		default: 'sound-name h:{menu-button}',
 		showInSettings: 'textarea'
 	},
 	{
 		property: 'footerTemplate',
 		title: 'Footer Contents',
-		actions: [ { title: 'Reset', handler: 'settings.handleReset' } ],
+		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 		default: 'playing-button:"sound-index /" sound-count sounds\n'
 			+ 'p:{\n'
 			+ '	<div style="float: right; margin-right: .5rem">\n'

@@ -158,7 +158,7 @@ module.exports = {
 				return;
 			}
 			const imageSrc = URL.createObjectURL(file);
-			const type = file.type
+			const type = file.type;
 			let thumbSrc = imageSrc;
 
 			// If it's not a webm just use the full image as the thumbnail
@@ -177,7 +177,7 @@ module.exports = {
 			});
 			video.src = imageSrc;
 
-			function _continue () {
+			function _continue() {
 				parseFileName(file.name, imageSrc, null, thumbSrc).forEach(sound => Player.add({ ...sound, local: true, type }));
 			}
 		});
@@ -198,7 +198,7 @@ module.exports = {
 		index > -1 && Player.sounds.splice(index, 1);
 
 		// Remove the item from the list.
-		Player.$(`.${ns}-list-container`).removeChild(Player.$(`.${ns}-list-item[data-id="${sound.id}"]`))
+		Player.$(`.${ns}-list-container`).removeChild(Player.$(`.${ns}-list-item[data-id="${sound.id}"]`));
 		Player.trigger('remove', sound);
 	},
 
@@ -252,7 +252,7 @@ module.exports = {
 	/**
 	 * Reposition the hover image to follow the cursor.
 	 */
-	positionHoverImage: function(e) {
+	positionHoverImage: function (e) {
 		const { width, height } = Player.playlist.hoverImage.getBoundingClientRect();
 		const maxX = document.documentElement.clientWidth - width - 5;
 		Player.playlist.hoverImage.style.left = (Math.min(e.clientX, maxX) + 5) + 'px';
@@ -262,7 +262,7 @@ module.exports = {
 	/**
 	 * Hide the hover image when nothing is being hovered over.
 	 */
-	removeHoverImage: function (e) {
+	removeHoverImage: function () {
 		Player.playlist.hoverImage.style.display = 'none';
 	},
 

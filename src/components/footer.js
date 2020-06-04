@@ -1,9 +1,4 @@
 module.exports = {
-	delegatedEvents: {
-		click: {
-		}
-	},
-
 	initialize: function () {
 		Player.userTemplate.maintain(Player.footer, 'footerTemplate');
 	},

@@ -16,16 +16,16 @@ module.exports = {
 		for (let name in eventLocations) {
 			const comp = eventLocations[name];
 			for (let evt in comp.delegatedEvents || {}) {
-				delegated[evt] || (delegated[evt] = [])
+				delegated[evt] || (delegated[evt] = []);
 				delegated[evt].push(comp.delegatedEvents[evt]);
 			}
 			for (let evt in comp.undelegatedEvents || {}) {
-				undelegated[evt] || (undelegated[evt] = [])
+				undelegated[evt] || (undelegated[evt] = []);
 				undelegated[evt].push(comp.undelegatedEvents[evt]);
 			}
 			comp.audioEvents && (audio.push(comp.audioEvents));
 		}
-	
+
 		Player.on('rendered', function () {
 			// Wire up delegated events on the container.
 			for (let evt in delegated) {
@@ -124,4 +124,4 @@ module.exports = {
 	getHandler: function (handler) {
 		return typeof handler === 'string' ? _get(Player, handler) : handler;
 	}
-}
+};

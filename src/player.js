@@ -77,7 +77,7 @@ const Player = window.Player = module.exports = {
 				document.querySelectorAll('#settingsWindowLink, #settingsWindowLinkBot').forEach(function (link) {
 					const showLink = createElement('<a href="javascript:;">Sounds</a>', null, { click: Player.display.toggle });
 					link.parentNode.insertBefore(showLink, link);
-					link.parentNode.insertBefore( document.createTextNode('] ['), link);
+					link.parentNode.insertBefore(document.createTextNode('] ['), link);
 				});
 			}
 
@@ -109,7 +109,7 @@ const Player = window.Player = module.exports = {
 			const link = new URL(src);
 			const host = link.hostname.toLowerCase();
 			return !Player.config.filters.find(v => v === imageMD5 || v === host + link.pathname)
-				&& Player.config.allow.find(h => host === h || host.endsWith('.' + h))
+				&& Player.config.allow.find(h => host === h || host.endsWith('.' + h));
 		} catch (err) {
 			return false;
 		}

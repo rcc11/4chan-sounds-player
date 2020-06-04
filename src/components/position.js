@@ -42,7 +42,7 @@ module.exports = {
 			document.querySelectorAll('#hoverUI .postContainer, .inline .postContainer, .backlink_container article').forEach(post => {
 				post.style.maxWidth = null;
 				post.style.minWidth = null;
-			})
+			});
 		}).observe(document.body, {
 			childList: true,
 			subtree: true
@@ -64,7 +64,7 @@ module.exports = {
 			const limitWidth = enabled && rect.top + rect.height > startY && rect.top < endY;
 			post.style.maxWidth = limitWidth ? `calc(100% - ${offset}px)` : null;
 			post.style.minWidth = limitWidth && Player.config.minPostWidth ? `${Player.config.minPostWidth}` : null;
-		})
+		});
 	},
 
 	/**
@@ -84,7 +84,7 @@ module.exports = {
 	/**
 	 * Handle the user dragging the expander.
 	 */
-	doResize: function(e) {
+	doResize: function (e) {
 		e.preventDefault();
 		Player.position.resize(Player._startWidth + e.clientX - Player._startX, Player._startHeight + e.clientY - Player._startY);
 	},
@@ -92,7 +92,7 @@ module.exports = {
 	/**
 	 * Handle the user releasing the expander.
 	 */
-	stopResize: function() {
+	stopResize: function () {
 		const { width, height } = Player.container.getBoundingClientRect();
 		document.documentElement.removeEventListener('mousemove', Player.position.doResize, false);
 		document.documentElement.removeEventListener('mouseup', Player.position.stopResize, false);
@@ -151,7 +151,7 @@ module.exports = {
 	/**
 	 * Handle the user releasing the heaer.
 	 */
-	stopMove: function (e) {
+	stopMove: function () {
 		document.documentElement.removeEventListener('mousemove', Player.position.doMove, false);
 		document.documentElement.removeEventListener('mouseup', Player.position.stopMove, false);
 		Player.$(`.${ns}-header`).style.cursor = null;
@@ -194,4 +194,4 @@ module.exports = {
 
 		return { top, bottom };
 	}
-}
+};

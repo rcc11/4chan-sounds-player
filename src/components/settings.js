@@ -70,7 +70,7 @@ module.exports = {
 			'colors.border': 'borderBottomColor',
 			// If the border is the same color as the text don't use it as a background color.
 			'colors.even_row': style.borderBottomColor === style.color ? 'backgroundColor' : 'borderBottomColor'
-		}
+		};
 		settingsConfig.find(s => s.property === 'colors').settings.forEach(setting => {
 			const updateConfig = force || (setting.default === _get(Player.config, setting.property));
 			colorSettingMap[setting.property] && (setting.default = style[colorSettingMap[setting.property]]);
@@ -97,6 +97,14 @@ module.exports = {
 		!silent && Player.trigger('config:' + property, value, previousValue);
 		!bypassSave && Player.settings.save();
 		!bypassRender && Player.settings.findDefault(property).showInSettings && Player.settings.render();
+	},
+
+	/**
+	 * Reset a setting to the default value
+	 */
+	reset: function (property) {
+		let settingConfig = Player.settings.findDefault(property);
+		Player.set(property, settingConfig.default);
 	},
 
 	/**
@@ -156,7 +164,7 @@ module.exports = {
 						Player.set(setting.property, userVal, { bypassSave: true, silent: true });
 					}
 				});
-			} catch(e) {
+			} catch (e) {
 				console.error(e);
 				return;
 			}
@@ -200,7 +208,6 @@ module.exports = {
 		}
 	},
 
-
 	/**
 	 * Handle the user making a change in the settings view.
 	 */
@@ -238,6 +245,9 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * Converts a key event in an input to a string representation set as the input value.
+	 */
 	handleKeyChange: function (e) {
 		e.preventDefault();
 		if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Meta') {
@@ -246,16 +256,14 @@ module.exports = {
 		e.eventTarget.value = Player.hotkeys.stringifyKey(e);
 	},
 
+	/**
+	 * Handle an action link next to a heading being clicked.
+	 */
 	handleAction: function (e) {
 		e.preventDefault();
 		const property = e.eventTarget.getAttribute('data-property');
 		const handlerName = e.eventTarget.getAttribute('data-handler');
 		const handler = _get(Player, handlerName);
 		handler && handler(property);
-	},
-
-	handleReset: function (property) {
-		let settingConfig = Player.settings.findDefault(property);
-		Player.set(property, settingConfig.default);
 	}
-}
+};

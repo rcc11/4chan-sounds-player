@@ -4,7 +4,7 @@ import './globals';
 import Player from './player';
 import { parseFiles } from './file_parser';
 
-async function doInit () {
+async function doInit() {
 	// The player tends to be all black without this timeout.
 	// Something with the timing of the stylesheet loading and applying the board theme.
 	setTimeout(async function () {

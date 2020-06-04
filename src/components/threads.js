@@ -31,7 +31,7 @@ module.exports = {
 	},
 
 	/**
-	 * Fetch the threads when the threads first is opened for the first time.
+	 * Fetch the threads when the threads view is opened for the first time.
 	 */
 	_initialFetch: function () {
 		if (Player.container && Player.config.viewStyle === 'threads' && Player.threads.boardList === null) {
@@ -135,7 +135,7 @@ module.exports = {
 				}
 				const pages = boardConf && await get(catalogURL.replace('%s', board));
 				(pages || []).forEach(({ page, threads }) => {
-					allThreads.push(...threads.map(thread => Object.assign(thread, { board, page, ws_board: boardConf.ws_board })))
+					allThreads.push(...threads.map(thread => Object.assign(thread, { board, page, ws_board: boardConf.ws_board })));
 				});
 			}));
 
@@ -168,4 +168,4 @@ module.exports = {
 		});
 		!skipRender && Player.threads.renderTable();
 	}
-}
+};

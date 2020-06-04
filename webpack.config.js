@@ -4,14 +4,14 @@ const path = require('path');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 
-const package = require('./package');
+const pkg = require('./package');
 
 const tplLoader = path.resolve(__dirname, './src/loaders/tpl');
 const tplStringLoader = path.resolve(__dirname, './src/loaders/tpl-string');
 const replaceLoader = path.resolve(__dirname, './src/loaders/replace');
 
 const header = fs.readFileSync(path.resolve(__dirname, './src/header.js'));
-const banner = header.toString().replace('VERSION', package.version);
+const banner = header.toString().replace('VERSION', pkg.version);
 
 module.exports = (env, argv) => ({
 	entry: './src/main.js',
@@ -61,6 +61,6 @@ module.exports = (env, argv) => ({
 	},
 	plugins: [
 		new webpack.BannerPlugin({ banner, raw: true }),
-		new webpack.DefinePlugin({ VERSION: JSON.stringify(package.version) })
+		new webpack.DefinePlugin({ VERSION: JSON.stringify(pkg.version) })
 	]
 });

@@ -1,5 +1,5 @@
-const protocolRE = /^(https?\:)?\/\//;
-const filenameRE = /(.*?)[\[\(\{](?:audio|sound)[ \=\:\|\$](.*?)[\]\)\}]/g;
+const protocolRE = /^(https?:)?\/\//;
+const filenameRE = /(.*?)[[({](?:audio|sound)[ =:|$](.*?)[\])}]/g;
 
 let localCounter = 0;
 
@@ -7,9 +7,9 @@ module.exports = {
 	parseFiles,
 	parsePost,
 	parseFileName
-}
+};
 
-function parseFiles (target, postRender) {
+function parseFiles(target, postRender) {
 	let addedSounds = false;
 	let posts = target.classList.contains('post')
 		? [ target ]
@@ -20,7 +20,7 @@ function parseFiles (target, postRender) {
 	if (addedSounds && postRender && Player.container) {
 		Player.playlist.render();
 	}
-};
+}
 
 function parsePost(post, skipRender) {
 	try {
@@ -62,11 +62,10 @@ function parsePost(post, skipRender) {
 			return;
 		}
 
-
 		const postID = post.id.slice(is4chan ? 1 : 0);
 		const fileThumb = post.querySelector(is4chan ? '.fileThumb' : '.thread_image_link');
 		const imageSrc = fileThumb && fileThumb.href;
-		const thumbImg = fileThumb && fileThumb.querySelector('img')
+		const thumbImg = fileThumb && fileThumb.querySelector('img');
 		const thumbSrc = thumbImg && thumbImg.src;
 		const imageMD5 = thumbImg && thumbImg.getAttribute('data-md5');
 
@@ -82,7 +81,7 @@ function parsePost(post, skipRender) {
 		const clss = `${ns}-play-link` + (is4chan ? '' : ' btnr');
 		let playLinkParent;
 		if (is4chan) {
-			playLinkParent = post.querySelector('.fileText')
+			playLinkParent = post.querySelector('.fileText');
 			playLinkParent.appendChild(document.createTextNode(' '));
 		} else {
 			playLinkParent = post.querySelector('.post_controls');
@@ -95,16 +94,16 @@ function parsePost(post, skipRender) {
 		return sounds.length > 0;
 	} catch (err) {
 		_logError('There was an issue parsing the files. Please check the console for details.');
-		console.log('[4chan sounds player]', post)
+		console.log('[4chan sounds player]', post);
 		console.error(err);
 	}
-};
+}
 
-function parseFileName (filename, image, post, thumb, imageMD5) {
+function parseFileName(filename, image, post, thumb, imageMD5) {
 	if (!filename) {
 		return [];
 	}
-	filename = filename.replace(/\-/, '/');
+	filename = filename.replace(/-/, '/');
 	const matches = [];
 	let match;
 	while ((match = filenameRE.exec(filename)) !== null) {
