@@ -187,23 +187,16 @@ module.exports = {
 	 * Toggle whether the player or settings are displayed.
 	 */
 	toggle: function (e) {
-		try {
-			e && e.preventDefault();
-			// Blur anything focused so the change is applied.
-			let focused = Player.$(`.${ns}-settings :focus`);
-			focused && focused.blur();
-			if (Player.config.viewStyle === 'settings') {
-				Player.display.setViewStyle(Player._preSettingsView || 'playlist');
-			} else {
-				Player._preSettingsView = Player.config.viewStyle;
-				Player._preSettingsView === 'fullscreen' && (Player._preSettingsView = 'playlist');
-				Player.display.setViewStyle('settings');
-			}
-		} catch (err) {
-			_logError('There was an error rendering the sound player settings. Please check the console for details.');
-			console.error('[4chan sounds player]', err);
-			// Can't recover, throw.
-			throw err;
+		e && e.preventDefault();
+		// Blur anything focused so the change is applied.
+		let focused = Player.$(`.${ns}-settings :focus`);
+		focused && focused.blur();
+		if (Player.config.viewStyle === 'settings') {
+			Player.display.setViewStyle(Player._preSettingsView || 'playlist');
+		} else {
+			Player._preSettingsView = Player.config.viewStyle;
+			Player._preSettingsView === 'fullscreen' && (Player._preSettingsView = 'playlist');
+			Player.display.setViewStyle('settings');
 		}
 	},
 

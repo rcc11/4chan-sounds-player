@@ -1,14 +1,14 @@
 {
 	const settingsConfig = require('settings');
 
-	let tpl = `<div class="${ns}-setting-header">Version</div>`
+	let tpl = `<div class="${ns}-heading">Version</div>`
 		+ `<a href="https://github.com/rcc11/4chan-sounds-player/releases/tag/${VERSION}" target="_blank">${VERSION}</a>`;
 
 	tpl += settingsConfig.filter(setting => setting.showInSettings).map(function addSetting(setting) {
 		const desc = setting.description;
-		let out = `<div class="${setting.isSubSetting ? `${ns}-col` : `${ns}-setting-header`} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc.replace(/"/g, '&quot;')}"` : ''}>
+		let out = `<div class="${setting.isSubSetting ? `${ns}-col` : `${ns}-heading`} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc.replace(/"/g, '&quot;')}"` : ''}>
 			${setting.title}
-			${(setting.actions || []).map(action => `<a href="javascript:;" class="${ns}-setting-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`)}
+			${(setting.actions || []).map(action => `<a href="javascript:;" class="${ns}-heading-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`)}
 		</div>`;
 
 		if (setting.settings) {

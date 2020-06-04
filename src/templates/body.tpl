@@ -9,6 +9,9 @@
 		<div class="${ns}-settings" style="height: 400px">
 			${Player.templates.settings(data)}
 		</div>
+		<div class="${ns}-threads" style="height: 400px">
+			${Player.templates.threads(data)}
+		</div>
 	</div>
 	<div class="${ns}-footer">
 		${Player.templates.footer(data)}

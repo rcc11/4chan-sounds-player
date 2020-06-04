@@ -41,12 +41,30 @@ window._get = function(object, path, dflt) {
 
 window.toDuration = function(number) {
 	number = Math.floor(number || 0);
-	let seconds = number % 60;
-	const minutes = Math.floor(number / 60) % 60;
-	const hours = Math.floor(number / 60 / 60);
+	let [ seconds, minutes, hours ] = _duration(0, number);
 	seconds < 10 && (seconds = '0' + seconds);
 	return (hours ? hours + ':' : '') + minutes + ':' + seconds;
 };
+
+window.timeAgo = function (date) {
+	const [ seconds, minutes, hours, days, weeks ] = _duration(Math.floor(date), Math.floor(Date.now() / 1000));
+	return weeks > 1 ? weeks + ' weeks ago'
+		: days > 0 ? days + (days === 1 ? ' day' : ' days') + ' ago'
+		: hours > 0 ? hours + (hours === 1 ? ' hour' : ' hours') + ' ago'
+		: minutes > 0 ? minutes + (minutes === 1 ? ' minute' : ' minutes') + ' ago'
+		: seconds + (seconds === 1 ? ' second' : ' seconds') + ' ago';
+}
+
+function _duration (from, to) {
+	const diff = Math.max(0, to - from);
+	return [
+		diff % 60,
+		Math.floor(diff / 60) % 60,
+		Math.floor(diff / 60 / 60) % 24,
+		Math.floor(diff / 60 / 60 / 24) % 7,
+		Math.floor(diff / 60 / 60 / 24 / 7)
+	]
+}
 
 window.createElement = function(html, parent, events = {}) {
 	const container = document.createElement('div');

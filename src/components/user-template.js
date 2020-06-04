@@ -58,6 +58,13 @@ const buttons = [
 		attrs: [ 'title="Settings"' ]
 	},
 	{
+		tplName: 'threads',
+		class: `${ns}-threads-button`,
+		icon: 'fa-angle-double-right',
+		text: '[T]',
+		attrs: [ 'title="Threads"' ]
+	},
+	{
 		tplName: 'close',
 		class: `${ns}-close-button`,
 		icon: 'fa-times',

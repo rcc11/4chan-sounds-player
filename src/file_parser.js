@@ -101,7 +101,9 @@ function parsePost(post, skipRender) {
 };
 
 function parseFileName (filename, image, post, thumb, imageMD5) {
-	!post && localCounter++;
+	if (!filename) {
+		return [];
+	}
 	filename = filename.replace(/\-/, '/');
 	const matches = [];
 	let match;
@@ -109,6 +111,7 @@ function parseFileName (filename, image, post, thumb, imageMD5) {
 		matches.push(match);
 	}
 	const defaultName = matches[0] && matches[0][1] || post || 'Local Sound ' + localCounter;
+	matches.length && !post && localCounter++;
 
 	return matches.reduce((sounds, match, i) => {
 		let src = match[2];

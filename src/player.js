@@ -9,6 +9,7 @@ const components = {
 	hotkeys: require('./components/hotkeys'),
 	playlist: require('./components/playlist'),
 	position: require('./components/position'),
+	threads: require('./components/threads'),
 	userTemplate: require('./components/user-template')
 };
 
@@ -42,7 +43,10 @@ const Player = window.Player = module.exports = {
 		itemMenu: require('./templates/item_menu.tpl'),
 		list: require('./templates/list.tpl'),
 		player: require('./templates/player.tpl'),
-		settings: require('./templates/settings.tpl')
+		settings: require('./templates/settings.tpl'),
+		threads: require('./templates/threads.tpl'),
+		threadBoards: require('./templates/thread_boards.tpl'),
+		threadList: require('./templates/thread_list.tpl')
 	},
 
 	/**

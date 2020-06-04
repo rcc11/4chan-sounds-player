@@ -2,9 +2,21 @@
 	position: fixed;
 	background: #{map-get($colors, background)};
 	border: 1px solid #{map-get($colors, border)};
-	min-height: 200px;
 	min-width: 100px;
 	color: #{map-get($colors, text)}
+}
+.#{$ns}-heading {
+	font-weight: 600;
+	margin: .5rem 0;
+
+	&.#{$ns}-has-description {
+		cursor: help;
+	}
+}
+.#{$ns}-heading-action {
+	font-weight: normal;
+	text-decoration: underline;
+	margin-left: .25rem;
 }
 .#{$ns}-row {
 	display: flex;
