@@ -6,7 +6,7 @@ module.exports = {
 	delegatedEvents: {
 		click: {
 			[`.${ns}-config-button`]: 'settings.toggle',
-			[`.${ns}-setting-action`]: 'settings.handleAction',
+			[`.${ns}-settings .${ns}-heading-action`]: 'settings.handleAction',
 		},
 		focusout: {
 			[`.${ns}-settings input, .${ns}-settings textarea`]: 'settings.handleChange'
