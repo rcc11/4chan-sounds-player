@@ -24,7 +24,9 @@ module.exports = {
 
 	initialize: function () {
 		// Keep track of the last view style so we can return to it.
-		Player.playlist._lastView = Player.config.viewStyle;
+		Player.playlist._lastView = Player.config.viewStyle === 'playlist' || Player.config.viewStyle === 'image'
+			? Player.config.viewStyle
+			: 'playlist';
 
 		Player.on('view', style => {
 			// Focus the playing song when switching to the playlist.
@@ -66,6 +68,13 @@ module.exports = {
 		container.innerHTML = Player.templates.list();
 		Player.events.addUndelegatedListeners(Player.playlist.undelegatedEvents);
 		Player.playlist.hoverImage = container.querySelector(`.${ns}-hover-image`);
+	},
+
+	/**
+	 * Restore the last playlist or image view.
+	 */
+	restore: function () {
+		Player.display.setViewStyle(Player.playlist._lastView || 'playlist');
 	},
 
 	/**
