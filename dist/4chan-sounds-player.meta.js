@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         4chan sounds player
-// @version      1.7.0
+// @version      2.0.0
 // @namespace    rccom
 // @description  Play that faggy music weeb boi
 // @author       RCC
@@ -14,6 +14,7 @@
 // @grant        GM.xmlHttpRequest
 // @connect      4chan.org
 // @connect      4channel.org
+// @connect      a.4cdn.org
 // @connect      desu-usergeneratedcontent.xyz
 // @connect      arch-img.b4k.co
 // @connect      4cdn.org
