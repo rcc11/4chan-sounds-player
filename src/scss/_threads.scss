@@ -8,6 +8,16 @@
 		width: 4rem;
 	}
 
+	& .#{$ns}-thread-list {
+		margin: 1rem -.25rem 0;
+		padding: .5rem 1rem;
+		border-top: solid 1px #{map-get($colors, border)};
+
+		& .boardBanner {
+			margin: 1rem 0;
+		}
+	}
+
 	& table {
 		margin-top: .5rem;
 		border-collapse: collapse;
@@ -22,11 +32,15 @@
 		}
 
 		& tr {
-			background: #{map-get($colors, odd_row)};
 			padding: .25rem 0;
 		}
-		& tr:nth-child(2n) {
-			background: #{map-get($colors, even_row)};
+		& .#{$ns}-threads-body {
+			& tr {
+				background: #{map-get($colors, even_row)};
+			}
+			& tr:nth-child(2n) {
+				background: #{map-get($colors, odd_row)};
+			}
 		}
 	}
 }

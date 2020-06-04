@@ -20,6 +20,12 @@ Elements of the display, such as icons, are dependent on having 4chan X installe
 
 The player can be moved by dragging the header and resized by dragging bottom right corner of the footer.
 
+#### Adding Local Files
+
+To add local files (images with `[sound=url]` filenames) you can either click the + button in the header and select the files you want or drag and drop files onto the player.
+
+If you want to test out a sound before you post it this is a good method of doing so.
+
 #### Display Modes
 
 The playlist view will list all the sounds in the thread in the order they're playing, with the ability to drag items to modify the order. When hovering over an item the dropdown menu button will show on the right. The menu has an option to remove the item and links to post, image and sound file.
@@ -30,15 +36,15 @@ The image only view hides the playlist allowing the image to be expanded.
 
 ![Playlist UI](./images/green-tea.png)
 
-## Header Controls
-- __Repeat__ - All, One, None
-- __Shuffle__ - Shuffled, Ordered (according to the thread)
-- __Toggle Playlist__ - Switch between the playlist and image view.
-- __Toggle Hover Images__ - Enable/disable image previews when hovering over sounds in the playlist.
-- __Add Local Files__ - Select local files with sound url filenames to add to the playlist.
-- __Reload__ - Check the thread for any sounds not added to the player.
-- __Settings__ - Open the settings view.
-- __Close__ - Hide the player.
+## Sound Threads Search
+
+The threads views allows you to search for threads that include a sound in the OP. You can select which boards to search and a search term to filter by.
+
+The threads can be displayed in a table or a pseudo-board.
+
+![Playlist UI](./images/threads-board.png)
+![Playlist UI](./images/threads-table.png)
+
 
 ## Settings
 
@@ -49,6 +55,7 @@ The image only view hides the playlist allowing the image to be expanded.
 - __Footer/Header/Row Contents__ - Custom display templates. See "Content Templates" below.
 - __Keybinds__ - Keyboard shortcuts can be assigned to control the player and playback. They can be always enabled, enabled only when the player is open, or disabled.
 - __Limit Post Width__ - Reduces the widths of posts that are next to the player so they're not hidden beneath it.
+- __Threads View Display__ - How the threads in the thread view are displayed.
 - __Pause on hide__ - Pauses the player when it's hidden.
 
 ## Content Templates

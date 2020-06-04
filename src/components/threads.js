@@ -7,7 +7,7 @@ const catalogURL = 'https://a.4cdn.org/%s/catalog.json';
 module.exports = {
 	boardList: null,
 	soundThreads: null,
-	displayThreads: [],
+	displayThreads: {},
 	selectedBoards: [ 'a', 'v', 'k', 'jp', 'trash' ],
 	showAllBoards: false,
 
@@ -26,8 +26,16 @@ module.exports = {
 	},
 
 	initialize: function () {
+		// If the native Parser hasn't been intialised chuck customSpoiler on it so we can call it for threads.
+		// You shouldn't do things like this. We can fall back to the table view if it breaks though.
+		if (is4chan && !Parser.customSpoiler) {
+			Parser.customSpoiler = {};
+		}
+
 		Player.on('show', Player.threads._initialFetch);
 		Player.on('view', Player.threads._initialFetch);
+		Player.on('rendered', Player.threads.afterRender);
+		Player.on('config:threadsViewStyle', Player.threads.render);
 	},
 
 	/**
@@ -42,14 +50,56 @@ module.exports = {
 	render: function () {
 		if (Player.container) {
 			Player.$(`.${ns}-threads`).innerHTML = Player.templates.threads();
+			Player.threads.afterRender();
 		}
+	},
+
+	/**
+	 * Render the threads and apply the board styling after the view is rendered.
+	 */
+	afterRender: function () {
+		const threadList = Player.$(`.${ns}-thread-list`);
+		if (threadList) {
+			const bodyStyle = document.defaultView.getComputedStyle(document.body);
+			threadList.style.background = bodyStyle.backgroundColor;
+			threadList.style.backgroundImage = bodyStyle.backgroundImage;
+			threadList.style.backgroundRepeat = bodyStyle.backgroundRepeat;
+			threadList.style.backgroundPosition = bodyStyle.backgroundPosition;
+		}
+		Player.threads.renderThreads();
 	},
 
 	/**
 	 * Render just the threads.
 	 */
-	renderTable: function () {
-		Player.$(`.${ns}-threads-body`).innerHTML = Player.templates.threadList();
+	renderThreads: function () {
+		if (!is4chan || Player.config.threadsViewStyle === 'table') {
+			Player.$(`.${ns}-threads-body`).innerHTML = Player.templates.threadList();
+		} else {
+			try {
+				const list = Player.$(`.${ns}-thread-list`);
+				for (let board in Player.threads.displayThreads) {
+					// Create a board title
+					const boardConf = Player.threads.boardList.find(boardConf => boardConf.board === board);
+					const boardTitle = `/${boardConf.board}/ - ${boardConf.title}`;
+					createElement(`<div class="boardBanner"><div class="boardTitle">${boardTitle}</div></div>`, list);
+
+					// Add each thread for the board
+					const threads = Player.threads.displayThreads[board];
+					for (let i = 0; i < threads.length; i++) {
+						list.appendChild(Parser.buildHTMLFromJSON.call(Parser, threads[i], threads[i].board, true, true));
+
+						// Add a line under each thread
+						createElement('<hr>', list);
+					}
+				}
+			} catch (err) {
+				_logError('Unable to display the threads board view.', 'warning');
+				// If there was an error fall back to the table view.
+				Player.set('threadsViewStyle', 'table');
+				Player.renderThreads();
+			}
+		}
 	},
 
 	/**
@@ -158,12 +208,13 @@ module.exports = {
 		if (Player.threads.soundThreads === null) {
 			return;
 		}
-		if (!search) {
-			Player.threads.displayThreads = Player.threads.soundThreads;
-		}
-		Player.threads.displayThreads = Player.threads.soundThreads.filter(thread => {
-			return thread.sub && thread.sub.includes(search) || thread.com && thread.com.includes(search);
-		});
-		!skipRender && Player.threads.renderTable();
+		Player.threads.displayThreads = Player.threads.soundThreads.reduce((threadsByBoard, thread) => {
+			if (!search || thread.sub && thread.sub.includes(search) || thread.com && thread.com.includes(search)) {
+				threadsByBoard[thread.board] || (threadsByBoard[thread.board] = []);
+				threadsByBoard[thread.board].push(thread);
+			}
+			return threadsByBoard;
+		}, {});
+		!skipRender && Player.threads.renderThreads();
 	}
 };

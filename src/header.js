@@ -14,6 +14,7 @@
 // @grant        GM.xmlHttpRequest
 // @connect      4chan.org
 // @connect      4channel.org
+// @connect      a.4cdn.org
 // @connect      desu-usergeneratedcontent.xyz
 // @connect      arch-img.b4k.co
 // @connect      4cdn.org

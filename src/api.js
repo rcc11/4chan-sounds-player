@@ -6,19 +6,22 @@ module.exports = {
 
 async function get(url) {
 	return new Promise(function (resolve, reject) {
-		const xhr = new XMLHttpRequest();
-		xhr.open('GET', url);
-		xhr.responseType = 'json';
+		const headers = {};
 		if (cache[url]) {
-			xhr.setRequestHeader('If-Modified-Since', cache[url].lastModified);
+			headers['If-Modified-Since'] = cache[url].lastModified;
 		}
-		xhr.addEventListener('load', () => {
-			if (xhr.status >= 200 && xhr.status < 300) {
-				cache[url] = { lastModified: xhr.getResponseHeader('last-modified'), response: xhr.response };
-			}
-			resolve(xhr.status === 304 ? cache[url].response : xhr.response);
+		GM.xmlHttpRequest({
+			method: 'GET',
+			url,
+			headers,
+			responseType: 'json',
+			onload: response => {
+				if (response.status >= 200 && response.status < 300) {
+					cache[url] = { lastModified: response.responseHeaders['last-modified'], response: response.response };
+				}
+				resolve(response.status === 304 ? cache[url].response : response.response);
+			},
+			onerror: reject
 		});
-		xhr.addEventListener('error', reject);
-		xhr.send();
 	});
 }

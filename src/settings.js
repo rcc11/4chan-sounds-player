@@ -55,6 +55,20 @@ module.exports = [
 		]
 	},
 	{
+		property: 'threadsViewStyle',
+		title: 'Threads View',
+		description: 'How threads in the threads view are listed.',
+		showInSettings: true,
+		settings: [ {
+			title: 'Display',
+			default: 'table',
+			options: {
+				table: 'Table',
+				board: 'Board'
+			}
+		} ]
+	},
+	{
 		title: 'Keybinds',
 		showInSettings: true,
 		description: 'Enable keyboard shortcuts.',
