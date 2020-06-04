@@ -3,7 +3,8 @@
 	background: #{map-get($colors, background)};
 	border: 1px solid #{map-get($colors, border)};
 	min-width: 100px;
-	color: #{map-get($colors, text)}
+	color: #{map-get($colors, text)};
+	z-index: 9;
 }
 .#{$ns}-heading {
 	font-weight: 600;
