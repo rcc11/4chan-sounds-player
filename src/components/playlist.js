@@ -206,6 +206,10 @@ module.exports = {
 	 * Handle an playlist item being clicked. Either open/close the menu or play the sound.
 	 */
 	handleSelect: function (e) {
+		// Ignore if a link was clicked.
+		if (e.target.nodeName === 'A' || e.target.closest('a')) {
+			return;
+		}
 		e.preventDefault();
 		const id = e.eventTarget.getAttribute('data-id');
 		const sound = id && Player.sounds.find(sound => sound.id === id);

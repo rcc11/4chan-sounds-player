@@ -413,8 +413,6 @@ module.exports = {
 		});
 
 		Player.trigger('menu-open', dialog);
-
-		return false;
 	},
 
 	/**

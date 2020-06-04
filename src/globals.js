@@ -79,7 +79,7 @@ window.createElement = function (html, parent, events = {}) {
 	return el;
 };
 
-window.preventDefault = (f, ...args) => e => {
+window.noDefault = (f, ...args) => e => {
 	e.preventDefault();
 	const func = typeof f === 'function' ? func : _get(Player, f);
 	func(...args);
