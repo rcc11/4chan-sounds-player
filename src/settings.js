@@ -171,7 +171,7 @@ module.exports = [
 		property: 'headerTemplate',
 		title: 'Header Contents',
 		actions: [ { title: 'Reset', handler: 'settings.handleReset' } ],
-		default: 'repeat-button shuffle-button playlist-button hover-images-button\nsound-name\nadd-button reload-button settings-button close-button',
+		default: 'repeat-button shuffle-button hover-images-button playlist-button\nsound-name\nadd-button reload-button threads-button settings-button close-button',
 		showInSettings: 'textarea',
 	},
 	{

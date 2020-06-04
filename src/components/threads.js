@@ -1,28 +1,8 @@
 const { parseFileName } = require('../file_parser');
+const { get } = require('../api');
 
 const boardsURL = 'https://a.4cdn.org/boards.json';
 const catalogURL = 'https://a.4cdn.org/%s/catalog.json';
-
-const requestCache = {};
-
-async function _fetch(url) {
-	return new Promise(function (resolve, reject) {
-		const xhr = new XMLHttpRequest();
-		xhr.open('GET', url);
-		xhr.responseType = 'json';
-		if (requestCache[url]) {
-			xhr.setRequestHeader('If-Modified-Since', requestCache[url].lastModified);
-		}
-		xhr.addEventListener('load', () => {
-			if (xhr.status >= 200 && xhr.status < 300) {
-				requestCache[url] = { lastModified: xhr.getResponseHeader('last-modified'), response: xhr.response };
-			}
-			resolve(xhr.status === 304 ? requestCache[url].response : xhr.response);
-		});
-		xhr.addEventListener('error', reject);
-		xhr.send();
-	});
-}
 
 module.exports = {
 	boardList: null,
@@ -121,7 +101,7 @@ module.exports = {
 	fetchBoards: async function (fetchThreads) {
 		Player.threads.loading = true;
 		Player.threads.render();
-		Player.threads.boardList = (await _fetch(boardsURL)).boards;
+		Player.threads.boardList = (await get(boardsURL)).boards;
 		if (fetchThreads) {
 			Player.threads.fetch();
 		} else {
@@ -153,7 +133,7 @@ module.exports = {
 				if (!boardConf) {
 					return;
 				}
-				const pages = boardConf && await _fetch(catalogURL.replace('%s', board));
+				const pages = boardConf && await get(catalogURL.replace('%s', board));
 				(pages || []).forEach(({ page, threads }) => {
 					allThreads.push(...threads.map(thread => Object.assign(thread, { board, page, ws_board: boardConf.ws_board })))
 				});

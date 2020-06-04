@@ -10,13 +10,20 @@
 
 	& table {
 		margin-top: .5rem;
+		border-collapse: collapse;
 
 		& th {
+			border-bottom: solid 1px #{map-get($colors, border)};
+		}
+
+		& th, & td {
 			text-align: left;
+			padding: .25rem;
 		}
 
 		& tr {
 			background: #{map-get($colors, odd_row)};
+			padding: .25rem 0;
 		}
 		& tr:nth-child(2n) {
 			background: #{map-get($colors, even_row)};

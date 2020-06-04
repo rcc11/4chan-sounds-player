@@ -60,7 +60,7 @@ const buttons = [
 	{
 		tplName: 'threads',
 		class: `${ns}-threads-button`,
-		icon: 'fa-angle-double-right',
+		icon: 'fa-search',
 		text: '[T]',
 		attrs: [ 'title="Threads"' ]
 	},

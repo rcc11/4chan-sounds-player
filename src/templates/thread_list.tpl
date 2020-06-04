@@ -1,7 +1,7 @@
 (Player.threads.displayThreads || []).map(thread => `
 	<tr>
 		<td>
-			<a href="https://boards.${thread.ws_board ? '4channel' : '4chan'}.org/${thread.board}/thread/${thread.no}">
+			<a class="quotelink" href="//boards.${thread.ws_board ? '4channel' : '4chan'}.org/${thread.board}/thread/${thread.no}#p${thread.no}" target="_blank">
 				>>>/${thread.board}/${thread.no}
 			</a>
 		</td>

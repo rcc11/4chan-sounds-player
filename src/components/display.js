@@ -46,7 +46,9 @@ module.exports = {
 			Player.display.updateStylesheet();
 
 			// Create the main player.
-			Player.container = createElement(Player.templates.body(), document.body);
+			const isThread = document.body.classList.contains('is_thread');
+			const parent = isThread ? document.body.querySelector('.thread') : document.body;
+			Player.container = createElement(Player.templates.body(), parent);
 
 			Player.trigger('rendered');
 		} catch (err) {
