@@ -65,10 +65,8 @@ module.exports = {
 	toggle: function (e) {
 		e && e.preventDefault();
 		if (Player.config.viewStyle === 'threads') {
-			Player.display.setViewStyle(Player._preThreadsView || 'playlist');
+			Player.playlist.restore();
 		} else {
-			Player._preThreadsView = Player.config.viewStyle;
-			![ 'playlist', 'image' ].includes(Player._preThreadsView) && (Player._preThreadsView = 'playlist');
 			Player.display.setViewStyle('threads');
 		}
 	},

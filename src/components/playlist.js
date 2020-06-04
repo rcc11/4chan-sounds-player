@@ -23,8 +23,17 @@ module.exports = {
 	},
 
 	initialize: function () {
-		// Focus the playing song when switching to the playlist.
-		Player.on('view', style => style === 'playlist' && Player.playlist.scrollToPlaying());
+		// Keep track of the last view style so we can return to it.
+		Player.playlist._lastView = Player.config.viewStyle;
+
+		Player.on('view', style => {
+			// Focus the playing song when switching to the playlist.
+			style === 'playlist' && Player.playlist.scrollToPlaying();
+			// Track state.
+			if (style === 'playlist' || style === 'image') {
+				Player.playlist._lastView = style;
+			}
+		});
 
 		// Update the UI when a new sound plays, and scroll to it.
 		Player.on('playsound', sound => {

@@ -167,15 +167,13 @@ module.exports = {
 	 */
 	_handleFullScreenChange: function () {
 		if (document.fullscreenElement) {
-			Player._preFullscreenView = Player.config.viewStyle;
-			Player._preFullscreenView === 'fullscreen' && (Player._preFullscreenView = 'playlist');
 			Player.display.setViewStyle('fullscreen');
 			Player.$(`.${ns}-image-link`).removeAttribute('href');
 		} else {
 			if (Player.playing) {
 				Player.$(`.${ns}-image-link`).href = Player.playing.image;
 			}
-			Player.display.setViewStyle(Player._preFullscreenView || 'playlist');
+			Player.playlist.restore();
 		}
 	}
 };

@@ -130,7 +130,7 @@ module.exports = {
 			}, {});
 			// Don't save "fullscreen" view style;
 			if (settings.viewStyle === 'fullscreen') {
-				delete settings.viewStyle;
+				settings.viewStyle = Player.playlist._lastView || 'playlist';
 			}
 			// Save the settings.
 			return GM.setValue(ns + '.settings', JSON.stringify(settings));
@@ -200,10 +200,8 @@ module.exports = {
 		let focused = Player.$(`.${ns}-settings :focus`);
 		focused && focused.blur();
 		if (Player.config.viewStyle === 'settings') {
-			Player.display.setViewStyle(Player._preSettingsView || 'playlist');
+			Player.playlist.restore();
 		} else {
-			Player._preSettingsView = Player.config.viewStyle;
-			Player._preSettingsView === 'fullscreen' && (Player._preSettingsView = 'playlist');
 			Player.display.setViewStyle('settings');
 		}
 	},
