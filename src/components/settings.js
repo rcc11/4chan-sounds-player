@@ -59,7 +59,7 @@ module.exports = {
 
 	applyBoardTheme: function (force) {
 		// Create a reply element to gather the style from
-		const div = createElement(`<div class="${is4chan ? 'post reply' : 'post_wrapper'}"></div>`, document.body);
+		const div = createElement(`<div class="${is4chan ? 'post reply style-fetcher' : 'post_wrapper'}"></div>`, document.body);
 		const style = document.defaultView.getComputedStyle(div);
 
 		// Apply the computed style to the color config.

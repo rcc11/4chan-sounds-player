@@ -24,6 +24,9 @@ function parseFiles(target, postRender) {
 
 function parsePost(post, skipRender) {
 	try {
+		if (post.classList.contains('style-fetcher')) {
+			return;
+		}
 		const parentParent = post.parentElement.parentElement;
 		if (parentParent.id === 'qp' || post.parentElement.classList.contains('noFile')) {
 			return;
