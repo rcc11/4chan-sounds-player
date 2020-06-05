@@ -37,6 +37,21 @@ module.exports = [
 		settings: [ { title: 'Enabled' } ]
 	},
 	{
+		property: 'chanXControls',
+		title: '4chan X Header Controls',
+		description: 'Show playback controls in the 4chan X header. Customise the template below.',
+		showInSettings: isChanX,
+		settings: [ {
+			title: 'Enabled',
+			default: 'table',
+			options: {
+				always: 'Always',
+				closed: 'Only with the player closed',
+				never: 'Never'
+			}
+		} ]
+	},
+	{
 		property: 'limitPostWidths',
 		title: 'Limit Post Width',
 		description: 'Limit the width of posts so they aren\'t hidden under the player.',
@@ -210,6 +225,13 @@ module.exports = [
 		description: 'Template for the footer contents',
 		showInSettings: 'textarea',
 		attrs: 'style="height:120px;"'
+	},
+	{
+		property: 'chanXTemplate',
+		title: '4chan X Header Controls',
+		default: 'p:{\n\tsound-name\n\tprev-button\n\tplay-button\n\tnext-button\n\tsound-current-time / sound-duration\n}',
+		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
+		showInSettings: 'textarea'
 	},
 	{
 		title: 'Colors',

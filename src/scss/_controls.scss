@@ -11,6 +11,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	cursor: pointer;
 
 	& > div {
 		height: 1rem;
@@ -43,7 +44,7 @@
 	clip-path: polygon(0% 35%, 0% 0%, 35% 0%, 35% 15%, 15% 15%, 15% 35%, 0% 35%, 0% 100%, 35% 100%, 35% 85%, 15% 85%, 15% 65%, 0% 65%, 100% 65%, 100% 100%, 65% 100%, 65% 85%, 85% 85%, 85% 15%, 65% 15%, 65% 0%, 100% 0%, 100% 35%, 85% 35%, 85% 65%, 0% 65%);
 }
 
-.#{$ns}-current-time {
+.#{$ns}-controls  .#{$ns}-current-time {
 	color: white;
 }
 .#{$ns}-duration {
@@ -101,4 +102,23 @@
 }
 .#{$ns}-volume-bar .#{$ns}-current-bar {
 	background: white;
+}
+
+.#{$ns}-chan-x-controls {
+	align-items: inherit;
+
+	.#{$ns}-current-time, .#{$ns}-duration {
+		margin: 0 .25rem;
+	}
+
+	.#{$ns}-media-control {
+		width: 1rem;
+		height: auto;
+		margin-top: -1px;
+
+		& > div {
+			height: .8rem;
+			width: .6rem;
+		}
+	}
 }

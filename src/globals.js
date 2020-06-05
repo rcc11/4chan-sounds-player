@@ -79,6 +79,12 @@ window.createElement = function (html, parent, events = {}) {
 	return el;
 };
 
+window.createElementBefore = function (html, before, events = {}) {
+	const el = createElement(html, null, events);
+	before.parentNode.insertBefore(el, before);
+	return el;
+};
+
 window.noDefault = (f, ...args) => e => {
 	e.preventDefault();
 	const func = typeof f === 'function' ? func : _get(Player, f);

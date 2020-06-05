@@ -58,8 +58,6 @@ module.exports = {
 		});
 		Player.on('rendered', () => {
 			// Keep track of heavily updated elements.
-			Player.ui.currentTime = Player.$(`.${ns}-current-time`);
-			Player.ui.duration = Player.$(`.${ns}-duration`);
 			Player.ui.currentTimeBar = Player.$(`.${ns}-seek-bar .${ns}-current-bar`);
 			Player.ui.loadedBar = Player.$(`.${ns}-seek-bar .${ns}-loaded-bar`);
 
@@ -190,7 +188,9 @@ module.exports = {
 	handleAudioEvent: function () {
 		Player.controls.syncVideo();
 		Player.controls.updateDuration();
-		Player.$(`.${ns}-play-button .${ns}-play-button-display`).classList[Player.audio.paused ? 'add' : 'remove'](`${ns}-play`);
+		document.querySelectorAll(`.${ns}-play-button .${ns}-play-button-display`).forEach(el => {
+			el.classList[Player.audio.paused ? 'add' : 'remove'](`${ns}-play`);
+		});
 	},
 
 	/**
@@ -248,8 +248,10 @@ module.exports = {
 		if (!Player.container) {
 			return;
 		}
-		Player.ui.currentTime.innerHTML = toDuration(Player.audio.currentTime);
-		Player.ui.duration.innerHTML = ' / ' + toDuration(Player.audio.duration);
+		const currentTime = toDuration(Player.audio.currentTime);
+		const duration = toDuration(Player.audio.duration);
+		document.querySelectorAll(`.${ns}-current-time`).forEach(el => el.innerHTML = currentTime);
+		document.querySelectorAll(`.${ns}-duration`).forEach(el => el.innerHTML = duration);
 		Player.controls.updateProgressBarPosition(`.${ns}-seek-bar`, Player.ui.currentTimeBar, Player.audio.currentTime, Player.audio.duration);
 	},
 

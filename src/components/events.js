@@ -28,31 +28,10 @@ module.exports = {
 
 		Player.on('rendered', function () {
 			// Wire up delegated events on the container.
-			for (let evt in delegated) {
-				Player.container.addEventListener(evt, function (e) {
-					let nodes = [ e.target ];
-					while (nodes[nodes.length - 1] !== Player.container) {
-						nodes.push(nodes[nodes.length - 1].parentNode);
-					}
-					for (let node of nodes) {
-						for (let eventList of delegated[evt]) {
-							for (let selector in eventList) {
-								if (node.matches && node.matches(selector)) {
-									e.eventTarget = node;
-									let handler = Player.events.getHandler(eventList[selector]);
-									// If the handler returns false stop propogation
-									if (handler && handler(e) === false) {
-										return;
-									}
-								}
-							}
-						}
-					}
-				});
-			}
+			Player.events.addDelegatedListeners(Player.container, delegated);
 
 			// Wire up undelegated events.
-			Player.events.addUndelegatedListeners(Player.events._undelegatedEvents);
+			Player.events.addUndelegatedListeners(document.body, undelegated);
 
 			// Wire up audio events.
 			for (let eventList of audio) {
@@ -64,9 +43,37 @@ module.exports = {
 	},
 
 	/**
+	 * Set delegated events listeners on a target
+	 */
+	addDelegatedListeners(target, events) {
+		for (let evt in events) {
+			target.addEventListener(evt, function (e) {
+				let nodes = [ e.target ];
+				while (nodes[nodes.length - 1] !== target) {
+					nodes.push(nodes[nodes.length - 1].parentNode);
+				}
+				for (let node of nodes) {
+					for (let eventList of [].concat(events[evt])) {
+						for (let selector in eventList) {
+							if (node.matches && node.matches(selector)) {
+								e.eventTarget = node;
+								let handler = Player.events.getHandler(eventList[selector]);
+								// If the handler returns false stop propogation
+								if (handler && handler(e) === false) {
+									return;
+								}
+							}
+						}
+					}
+				}
+			});
+		}
+	},
+
+	/**
 	 * Set, or reset, directly bound events.
 	 */
-	addUndelegatedListeners: function (events, target = document) {
+	addUndelegatedListeners: function (target, events) {
 		for (let evt in events) {
 			for (let eventList of [].concat(events[evt])) {
 				for (let selector in eventList) {

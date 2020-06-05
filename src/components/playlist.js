@@ -66,7 +66,7 @@ module.exports = {
 		}
 		const container = Player.$(`.${ns}-list-container`);
 		container.innerHTML = Player.templates.list();
-		Player.events.addUndelegatedListeners(Player.playlist.undelegatedEvents);
+		Player.events.addUndelegatedListeners(document.body, Player.playlist.undelegatedEvents);
 		Player.playlist.hoverImage = container.querySelector(`.${ns}-hover-image`);
 	},
 

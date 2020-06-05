@@ -1,6 +1,7 @@
 const components = {
 	// Settings must be first.
 	settings: require('./components/settings'),
+	chanX: require('./components/chanX'),
 	controls: require('./components/controls'),
 	display: require('./components/display'),
 	events: require('./components/events'),
