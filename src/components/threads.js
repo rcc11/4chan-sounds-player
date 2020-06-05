@@ -26,9 +26,10 @@ module.exports = {
 	},
 
 	initialize: function () {
+		Player.threads.hasParser = is4chan && typeof Parser !== 'undefined';
 		// If the native Parser hasn't been intialised chuck customSpoiler on it so we can call it for threads.
 		// You shouldn't do things like this. We can fall back to the table view if it breaks though.
-		if (is4chan && !Parser.customSpoiler) {
+		if (Player.threads.hasParser && !Parser.customSpoiler) {
 			Parser.customSpoiler = {};
 		}
 
@@ -73,7 +74,7 @@ module.exports = {
 	 * Render just the threads.
 	 */
 	renderThreads: function () {
-		if (!is4chan || Player.config.threadsViewStyle === 'table') {
+		if (!Player.threads.hasParser || Player.config.threadsViewStyle === 'table') {
 			Player.$(`.${ns}-threads-body`).innerHTML = Player.templates.threadList();
 		} else {
 			try {

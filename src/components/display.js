@@ -47,7 +47,7 @@ module.exports = {
 
 			// Create the main player. For native threads put it in the threads to get free quote previews.
 			const isThread = document.body.classList.contains('is_thread');
-			const parent = isThread && !isChanX ? document.body.querySelector('.thread') : document.body;
+			const parent = isThread && !isChanX && document.body.querySelector('.thread') || document.body;
 			Player.container = createElement(Player.templates.body(), parent);
 
 			Player.trigger('rendered');

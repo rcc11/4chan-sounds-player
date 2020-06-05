@@ -15,7 +15,7 @@
 		${Player.templates.threadBoards(data)}
 	</div>
 	${
-		!is4chan || Player.config.threadsViewStyle === 'table'
+		!Player.threads.hasParser || Player.config.threadsViewStyle === 'table'
 		? `<table style="width: 100%">
 				<tr>
 					<th>Thread</th>
