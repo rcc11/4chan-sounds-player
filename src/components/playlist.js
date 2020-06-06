@@ -142,7 +142,7 @@ module.exports = {
 					const list = Player.$(`.${ns}-list-container`);
 					let rowContainer = document.createElement('div');
 					rowContainer.innerHTML = Player.templates.list({ sounds: [ sound ] });
-					Player.events.addUndelegatedListeners(Player.playlist.undelegatedEvents, rowContainer);
+					Player.events.addUndelegatedListeners(rowContainer, Player.playlist.undelegatedEvents);
 					let row = rowContainer.children[0];
 					if (index < Player.sounds.length - 1) {
 						const before = Player.$(`.${ns}-list-item[data-id="${Player.sounds[index + 1].id}"]`);
