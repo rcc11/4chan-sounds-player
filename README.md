@@ -14,7 +14,8 @@ A link to open the player is shown at the top and bottom of the page, next to se
 
 Elements of the display, such as icons, are dependent on having 4chan X installed, but it's not a requirement. The icons will fall back to text displays and everything else is purely cosmetic. With it installed the button to open the player is included in the header.
 
-![Playlist UI](./images/button-4chan-x.png)
+![4chan X Button](./images/button-4chan-x.png)
+![4chan X Controls](./images/4chan-x-controls.png)
 
 #### Position/Resizing
 
@@ -48,11 +49,12 @@ The threads can be displayed in a table or a pseudo-board.
 
 ## Settings
 
+- __4chan X Header Controls__ - When to display the playback controls in the 4chan X header. The available options are always, only with the player hidden, and never.
 - __Allowed Hosts__ - Which hosts the player will add sounds from.
 - __Autoshow__ - Open the player automatically for threads that contain sounds.
 - __Colors__ - By default the player will attempt to match the board theme, but you can set your own colors. Selecting "Match Theme" will revert to matching the board theme after making any modifications.
 - __Filters__ - Sounds or images to ignore. On each line add the URL of the sound or the MD5 of the image you want to filter and they will no longer be added to the player. Lines starting with a `#` are ignored. The menu for playlist items has links to add the sound or image to the filters.
-- __Footer/Header/Row Contents__ - Custom display templates. See "Content Templates" below.
+- __Footer/Header/Row/4chan X Header Contents__ - Custom display templates. See "Content Templates" below.
 - __Keybinds__ - Keyboard shortcuts can be assigned to control the player and playback. They can be always enabled, enabled only when the player is open, or disabled.
 - __Limit Post Width__ - Reduces the widths of posts that are next to the player so they're not hidden beneath it.
 - __Threads View Display__ - How the threads in the thread view are displayed.
@@ -93,3 +95,13 @@ All the values here can be followed by `:""` to specify the text, otherwise they
 - `settings-button` - Open/close the settings.
 - `close-button` - Hide the player.
 - `menu-button` - Open the dropdown menu for the sound.
+
+__4chan X Header Controls__
+
+For the 4chan X Header Controls template there are extra replacements, in addition to the ones above.
+
+- `prev-button:` - Play the previous sound.
+- `play-button` -  Play/pause the current sound.,
+- `next-button` -  Play the next sound,
+- `sound-current-time` -  Display the playback time,
+- `sound-duration` -  Display the track duration.

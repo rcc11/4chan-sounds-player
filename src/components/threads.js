@@ -91,7 +91,7 @@ module.exports = {
 						list.appendChild(Parser.buildHTMLFromJSON.call(Parser, threads[i], threads[i].board, true, true));
 
 						// Add a line under each thread
-						createElement('<hr>', list);
+						createElement('<hr style="clear: both">', list);
 					}
 				}
 			} catch (err) {
