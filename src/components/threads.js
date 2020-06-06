@@ -8,7 +8,7 @@ module.exports = {
 	boardList: null,
 	soundThreads: null,
 	displayThreads: {},
-	selectedBoards: [ 'a', 'v', 'k', 'jp', 'trash' ],
+	selectedBoards: Board ? [ Board ] : [ 'a' ],
 	showAllBoards: false,
 
 	delegatedEvents: {
