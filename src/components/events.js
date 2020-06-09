@@ -31,7 +31,7 @@ module.exports = {
 			Player.events.addDelegatedListeners(Player.container, delegated);
 
 			// Wire up undelegated events.
-			Player.events.addUndelegatedListeners(document.body, undelegated);
+			Player.events.addUndelegatedListeners(document, undelegated);
 
 			// Wire up audio events.
 			for (let eventList of audio) {
