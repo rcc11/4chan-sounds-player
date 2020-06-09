@@ -41,25 +41,25 @@ function parsePost(post, skipRender) {
 		}
 
 		let filename = null;
+		let filenameLocations;
 
+		// For the archive there's just the one place to check.
+		// For 4chan there's native / 4chan X / 4chan X with file info formatting
 		if (!is4chan) {
-			const fileLink = post.querySelector('.post_file_filename');
-			filename = fileLink && fileLink.title;
-		} else if (isChanX) {
-			[
-				post.querySelector('.fileText .file-info .fnfull'),
-				post.querySelector('.fileText .file-info > a')
-			].some(function (node) {
-				return node && (filename = node.textContent);
-			});
+			filenameLocations = { '.post_file_filename': 'title' };
 		} else {
-			[
-				post.querySelector('.fileText'),
-				post.querySelector('.fileText > a')
-			].some(function (node) {
-				return node && (filename = node.title || node.tagName === 'A' && node.textContent);
-			});
+			filenameLocations = {
+				'.fileText .file-info .fnfull': 'textContent',
+				'.fileText .file-info > a': 'textContent',
+				'.fileText > a': 'title',
+				'.fileText': 'textContent'
+			};
 		}
+
+		Object.keys(filenameLocations).some(function (selector) {
+			const node = post.querySelector(selector);
+			return node && (filename = node[filenameLocations[selector]]);
+		});
 
 		if (!filename) {
 			return;
