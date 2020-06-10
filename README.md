@@ -107,7 +107,7 @@ __4chan X Header Controls__
 
 For the 4chan X Header Controls template there are extra replacements, in addition to the ones above.
 
-- `prev-button:` - Play the previous sound.
+- `prev-button` - Play the previous sound.
 - `play-button` -  Play/pause the current sound.,
 - `next-button` -  Play the next sound,
 - `sound-current-time` -  Display the playback time,
