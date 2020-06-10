@@ -127,10 +127,10 @@ module.exports = {
 				}
 				return settings;
 			}, {});
-			// Don't save "fullscreen" view style;
-			if (settings.viewStyle === 'fullscreen') {
-				settings.viewStyle = Player.playlist._lastView || 'playlist';
-			}
+			// Show the playlist or image view on load, whichever was last shown.
+			settings.viewStyle = Player.playlist._lastView;
+			// Store the player version with the settings.
+			settings.VERSION = VERSION;
 			// Save the settings.
 			return GM.setValue(ns + '.settings', JSON.stringify(settings));
 		} catch (err) {

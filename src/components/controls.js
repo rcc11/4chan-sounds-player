@@ -84,10 +84,6 @@ module.exports = {
 	 * Start playback.
 	 */
 	play: async function (sound) {
-		if (!Player.audio) {
-			return;
-		}
-
 		try {
 			// If nothing is currently selected to play start playing the first sound.
 			if (!sound && !Player.playing && Player.sounds.length) {
