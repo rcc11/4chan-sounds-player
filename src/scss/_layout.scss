@@ -5,6 +5,12 @@
 	min-width: 100px;
 	color: #{map-get($colors, text)};
 }
+.#{$ns}-panel {
+	padding: 0 .25rem;
+	height: 100%;
+	width: calc(100% - .5rem);
+	overflow: auto;
+}
 .#{$ns}-heading {
 	font-weight: 600;
 	margin: .5rem 0;

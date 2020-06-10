@@ -170,7 +170,9 @@ module.exports = {
 			[`.${ns}-repeat-button`]: 'userTemplate._handleRepeat',
 			[`.${ns}-reload-button`]: noDefault('playlist.refresh'),
 			[`.${ns}-add-button`]: noDefault(() => Player.$(`.${ns}-file-input`).click()),
-			[`.${ns}-item-menu-button`]: 'userTemplate._handleMenu'
+			[`.${ns}-item-menu-button`]: 'userTemplate._handleMenu',
+			[`.${ns}-threads-button`]: 'threads.toggle',
+			[`.${ns}-config-button`]: 'settings.toggle'
 		},
 		change: {
 			[`.${ns}-file-input`]: 'userTemplate._handleFileSelect'

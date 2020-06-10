@@ -6,10 +6,10 @@
 		<div class="${ns}-player">
 			${Player.templates.player(data)}
 		</div>
-		<div class="${ns}-settings" style="height: 400px">
+		<div class="${ns}-settings ${ns}-panel" style="height: 400px">
 			${Player.templates.settings(data)}
 		</div>
-		<div class="${ns}-threads" style="height: 400px">
+		<div class="${ns}-threads ${ns}-panel" style="height: 400px">
 			${Player.templates.threads(data)}
 		</div>
 	</div>

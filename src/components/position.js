@@ -113,11 +113,15 @@ module.exports = {
 
 		Player.container.style.width = width + 'px';
 
-		// Change the height of the playlist or image.
+		// Which element to change the height of depends on the view being displayed.
 		const heightElement = Player.config.viewStyle === 'playlist' ? Player.$(`.${ns}-list-container`)
 			: Player.config.viewStyle === 'image' ? Player.$(`.${ns}-image-link`)
 			: Player.config.viewStyle === 'settings' ? Player.$(`.${ns}-settings`)
 			: Player.config.viewStyle === 'threads' ? Player.$(`.${ns}-threads`) : null;
+
+		if (!heightElement) {
+			return;
+		}
 
 		const offset = Player.container.getBoundingClientRect().height - heightElement.getBoundingClientRect().height;
 		heightElement.style.height = (height - offset) + 'px';

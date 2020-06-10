@@ -1,8 +1,4 @@
 .#{$ns}-settings {
-	padding: 0 .25rem;
-	height: 100%;
-	overflow: auto;
-
 	& textarea {
 		border: solid 1px #{map-get($colors, border)};
 		min-width: 100%;

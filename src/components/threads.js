@@ -13,7 +13,6 @@ module.exports = {
 
 	delegatedEvents: {
 		click: {
-			[`.${ns}-threads-button`]: 'threads.toggle',
 			[`.${ns}-fetch-threads-link`]: 'threads.fetch',
 			[`.${ns}-all-boards-link`]: 'threads.toggleBoardList'
 		},

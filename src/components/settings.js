@@ -5,7 +5,6 @@ module.exports = {
 
 	delegatedEvents: {
 		click: {
-			[`.${ns}-config-button`]: 'settings.toggle',
 			[`.${ns}-settings .${ns}-heading-action`]: 'settings.handleAction',
 		},
 		focusout: {
@@ -213,6 +212,9 @@ module.exports = {
 		try {
 			const input = e.eventTarget;
 			const property = input.getAttribute('data-property');
+			if (!property) {
+				return;
+			}
 			let settingConfig = Player.settings.findDefault(property);
 
 			// Get the new value of the setting.
