@@ -1,5 +1,4 @@
-`<img class="${ns}-hover-image">`
-+ (data.sounds || Player.sounds).map(sound =>
+(data.sounds || Player.sounds).map(sound =>
 	`<div class="${ns}-list-item ${ns}-row ${sound.playing ? 'playing' : ''}" data-id="${sound.id}" draggable="true">
 		${Player.userTemplate.build({
 			template: Player.config.rowTemplate,
@@ -8,3 +7,4 @@
 		})}
 	</div>`
 ).join('')
++ `<img class="${ns}-hover-image">`;
