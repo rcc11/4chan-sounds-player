@@ -10,9 +10,19 @@ A link to open the player is shown at the top and bottom of the page, next to se
 
 ![Playlist UI](./images/button-native.png)
 
+#### Display Modes
+
+The playlist view will list all the sounds in the thread in the order they're playing, with the ability to drag items to modify the order. When hovering over an item the dropdown menu button will show on the right. The menu has an option to remove the item and links to post, image and sound file.
+
+![Playlist UI](./images/playlist.png)
+
+The image only view hides the playlist allowing the image to be expanded.
+
+![Playlist UI](./images/green-tea.png)
+
 #### With 4chan X
 
-Elements of the display, such as icons, are dependent on having 4chan X installed, but it's not a requirement. The icons will fall back to text displays and everything else is purely cosmetic. With it installed the button to open the player is included in the header.
+Elements of the display, such as icons, are dependent on having 4chan X installed, but it's not a requirement. The icons will fall back to text displays and everything else is purely cosmetic. With it installed the button to open the player is included in the header. You can also choose to show playback controls in the 4chan X header.
 
 ![4chan X Button](./images/button-4chan-x.png)
 ![4chan X Controls](./images/4chan-x-controls.png)
@@ -27,15 +37,11 @@ To add local files (images with `[sound=url]` filenames) you can either click th
 
 If you want to test out a sound before you post it this is a good method of doing so.
 
-#### Display Modes
+#### Minimised Thumbnail
 
-The playlist view will list all the sounds in the thread in the order they're playing, with the ability to drag items to modify the order. When hovering over an item the dropdown menu button will show on the right. The menu has an option to remove the item and links to post, image and sound file.
+You can opt to display a thumbnail in the bottom right of the page while the player is hidden. The example here shows a rather large image but the size is customisable.
 
-![Playlist UI](./images/playlist.png)
-
-The image only view hides the playlist allowing the image to be expanded.
-
-![Playlist UI](./images/green-tea.png)
+![Playlist UI](./images/minimised-image.png)
 
 ## Sound Threads Search
 
@@ -57,6 +63,7 @@ The threads can be displayed in a table or a pseudo-board.
 - __Footer/Header/Row/4chan X Header Contents__ - Custom display templates. See "Content Templates" below.
 - __Keybinds__ - Keyboard shortcuts can be assigned to control the player and playback. They can be always enabled, enabled only when the player is open, or disabled.
 - __Limit Post Width__ - Reduces the widths of posts that are next to the player so they're not hidden beneath it.
+- __Minimised Display__ - What is displayed when the player is hidden. You can choose to display a thumnail image (described above) and/or show playback controls in the 4chan X header.
 - __Threads View Display__ - How the threads in the thread view are displayed.
 - __Pause on hide__ - Pauses the player when it's hidden.
 
