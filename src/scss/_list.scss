@@ -19,7 +19,7 @@
 		background: #{map-get($colors, odd_row)};
 
 		overflow: hidden;
-		height: 1rem;
+		height: 1.3rem;
 
 		&.playing {
 			background: #{map-get($colors, playing)} !important;

@@ -1,13 +1,13 @@
 const components = {
 	// Settings must be first.
 	settings: require('./components/settings'),
-	chanX: require('./components/chanX'),
 	controls: require('./components/controls'),
 	display: require('./components/display'),
 	events: require('./components/events'),
 	footer: require('./components/footer'),
 	header: require('./components/header'),
 	hotkeys: require('./components/hotkeys'),
+	minimised: require('./components/minimised'),
 	playlist: require('./components/playlist'),
 	position: require('./components/position'),
 	threads: require('./components/threads'),

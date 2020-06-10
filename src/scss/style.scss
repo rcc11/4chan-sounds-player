@@ -1,4 +1,5 @@
 $ns : "__ns__";
+$max-pip-size: '${Player.config.maxPIPWidth}';
 $colors: (
 	text: '${Player.config.colors.text}',
 	background: '${Player.config.colors.background}',

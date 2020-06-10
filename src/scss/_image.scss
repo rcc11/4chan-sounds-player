@@ -3,6 +3,20 @@
 	display: flex;
 	justify-items: center;
 	justify-content: center;
+
+	&.#{$ns}-pip {
+		position: fixed;
+		right: 10px;
+		height: #{$max-pip-size} !important;
+		max-width: #{$max-pip-size};
+		align-items: end;
+
+		& .#{$ns}-image, .#{$ns}-video {
+			height: initial;
+			width: initial;
+			object-fit: contain;
+		}
+	}
 }
 .#{$ns}-image-link .#{$ns}-video {
 	display: none;

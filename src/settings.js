@@ -37,19 +37,36 @@ module.exports = [
 		settings: [ { title: 'Enabled' } ]
 	},
 	{
-		property: 'chanXControls',
-		title: '4chan X Header Controls',
-		description: 'Show playback controls in the 4chan X header. Customise the template below.',
-		showInSettings: isChanX,
-		settings: [ {
-			title: 'Enabled',
-			default: 'table',
-			options: {
-				always: 'Always',
-				closed: 'Only with the player closed',
-				never: 'Never'
+		title: 'Minimised Display',
+		description: 'Optional displays for when the player is minimised.',
+		settings: [
+			{
+				property: 'pip',
+				title: 'Thumbnail',
+				description: 'Display a fixed thumbnail of the playing image in the bottom right of the thread.',
+				default: true,
+				showInSettings: true
+			},
+			{
+				property: 'maxPIPWidth',
+				title: 'Max Width',
+				description: 'Maximum width for the thumbnail.',
+				default: '150px',
+				updateStylesheet: true,
+				showInSettings: true
+			},
+			{
+				property: 'chanXControls',
+				title: '4chan X Header Controls',
+				description: 'Show playback controls in the 4chan X header. Customise the template below.',
+				showInSettings: isChanX,
+				options: {
+					always: 'Always',
+					closed: 'Only with the player closed',
+					never: 'Never'
+				}
 			}
-		} ]
+		]
 	},
 	{
 		property: 'limitPostWidths',
@@ -229,7 +246,7 @@ module.exports = [
 	{
 		property: 'chanXTemplate',
 		title: '4chan X Header Controls',
-		default: 'p:{\n\tsound-name\n\tprev-button\n\tplay-button\n\tnext-button\n\tsound-current-time / sound-duration\n}',
+		default: 'p:{\n\tpost-link:"sound-name"\n\tprev-button\n\tplay-button\n\tnext-button\n\tsound-current-time / sound-duration\n}',
 		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 		showInSettings: 'textarea'
 	},
@@ -237,6 +254,7 @@ module.exports = [
 		title: 'Colors',
 		showInSettings: true,
 		property: 'colors',
+		updateStylesheet: true,
 		actions: [
 			{ title: 'Match Theme', handler: 'settings.forceBoardTheme' }
 		],

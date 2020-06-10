@@ -234,7 +234,9 @@ module.exports = {
 				Player.set(property, newValue, { bypassRender: true });
 
 				// Update the stylesheet reflect any changes.
-				Player.stylesheet.innerHTML = Player.templates.css();
+				if (settingConfig.updateStylesheet) {
+					Player.display.updateStylesheet();
+				}
 			}
 
 			// Run any handler required by the value changing

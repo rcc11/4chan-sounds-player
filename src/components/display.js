@@ -135,7 +135,7 @@ module.exports = {
 			Player.container.style.display = null;
 
 			Player.isHidden = false;
-			Player.trigger('show');
+			await Player.trigger('show');
 		} catch (err) {
 			_logError('There was an error showing the sound player. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
@@ -145,8 +145,12 @@ module.exports = {
 	/**
 	 * Toggle the video/image and controls fullscreen state
 	 */
-	toggleFullScreen: function () {
+	toggleFullScreen: async function () {
 		if (!document.fullscreenElement) {
+			// Make sure the player (and fullscreen contents) are visible first.
+			if (Player.isHidden) {
+				Player.show();
+			}
 			Player.$(`.${ns}-media`).requestFullscreen();
 		} else if (document.exitFullscreen) {
 			document.exitFullscreen();
@@ -168,10 +172,10 @@ module.exports = {
 	_handleFullScreenChange: function () {
 		if (document.fullscreenElement) {
 			Player.display.setViewStyle('fullscreen');
-			Player.$(`.${ns}-image-link`).removeAttribute('href');
+			document.querySelector(`.${ns}-image-link`).removeAttribute('href');
 		} else {
 			if (Player.playing) {
-				Player.$(`.${ns}-image-link`).href = Player.playing.image;
+				document.querySelector(`.${ns}-image-link`).href = Player.playing.image;
 			}
 			Player.playlist.restore();
 		}

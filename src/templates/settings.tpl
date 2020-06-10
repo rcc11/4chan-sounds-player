@@ -12,62 +12,67 @@
 		</div>
 	`;
 
-	tpl += settingsConfig.filter(setting => setting.showInSettings).map(function addSetting(setting) {
+	settingsConfig.forEach(function addSetting(setting) {
+		// Filter settings that aren't flagged to be displayed.
+		if (!setting.showInSettings && !(setting.settings || []).find(s => s.showInSettings)) {
+			return;
+		}
 		const desc = setting.description;
-		let out = `<div class="${setting.isSubSetting ? `${ns}-col` : `${ns}-heading`} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc.replace(/"/g, '&quot;')}"` : ''}>
-			${setting.title}
-			${(setting.actions || []).map(action => `<a href="javascript:;" class="${ns}-heading-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`)}
-		</div>`;
 
-		if (setting.settings) {
-			out += `<div class="${ns}-row ${ns}-sub-settings">`
-				+ setting.settings.map(subSetting => {
-					return addSetting({
-						...setting,
-						actions: null,
-						settings: null,
-						description: null,
-						...subSetting,
-						isSubSetting: true
-					})
-				}).join('')
-			+ `</div>`;
+		tpl += `
+		<div class="${ns}-row ${setting.isSubSetting ? `${ns}-sub-settings` : ''}">
+			<div class="${ns}-col ${!setting.isSubSetting ? `${ns}-heading` : ''} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc.replace(/"/g, '&quot;')}"` : ''}>
+				${setting.title}
+				${(setting.actions || []).map(action => `<a href="javascript:;" class="${ns}-heading-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`)}
+			</div>`;
 
-			return out;
-		}
+			if (setting.settings) {
+				setting.settings.forEach(subSetting => addSetting({
+					...setting,
+					actions: null,
+					settings: null,
+					description: null,
+					...subSetting,
+					isSubSetting: true
+				}));
+			} else {
 
-		let value = _get(Player.config, setting.property, setting.default);
-		let clss = setting.class ? `class="${setting.class}"` : '';
-		let attrs = setting.attrs || '';
+				let value = _get(Player.config, setting.property, setting.default),
+					attrs = (setting.attrs || '') + (setting.class ? ` class="${setting.class}"` : '') + ` data-property="${setting.property}"`;
 
-		if (setting.format) {
-			value = _get(Player, setting.format)(value);
-		}
+				if (setting.format) {
+					value = _get(Player, setting.format)(value);
+				}
+				let type = typeof value;
 
-		let type = typeof value;
+				if (setting.split) {
+					value = value.join(setting.split);
+				} else if (type === 'object') {
+					value = JSON.stringify(value, null, 4);
+				}
 
-		setting.isSubSetting && (out += `<div class="${ns}-col">`);
+				tpl += `
+				<div class="${ns}-col">
+				${
+					type === 'boolean'
+						? `<input type="checkbox" ${attrs} ${value ? 'checked' : ''}></input>`
 
-		if (type === 'boolean') {
-			out += `<input type="checkbox" ${clss} ${attrs} data-property="${setting.property}" ${value ? 'checked' : ''} style="margin-bottom: .25rem"></input>`;
-		} else if (setting.showInSettings === 'textarea' || type === 'object') {
-			if (setting.split) {
-				value = value.join(setting.split);
-			} else if (type === 'object') {
-				value = JSON.stringify(value, null, 4);
+					: setting.showInSettings === 'textarea' || type === 'object'
+						? `<textarea ${attrs}>${value}</textarea>`
+
+					: setting.options
+						? `<select ${attrs}>
+							${Object.keys(setting.options).map(k => `<option value="${k}" ${value === k ? 'selected' : ''}>
+								${setting.options[k]}
+							</option>`).join('')}
+						</select>`
+
+					: `<input type="text" ${attrs} value="${value}"></input>`
+				}
+				</div>`;
 			}
-			out += `<textarea ${clss} ${attrs} data-property="${setting.property}">${value}</textarea>`;
-		} else if (setting.options) {
-			out += `<select ${clss} ${attrs} data-property="${setting.property}" style="margin-bottom: .25rem">`
-				+ Object.keys(setting.options).map(k => `<option value="${k}" ${value === k ? 'selected' : ''}>${setting.options[k]}</option>`).join('')
-			+ '</select>';
-		} else {
-			out += `<input type="text" ${clss} ${attrs} data-property="${setting.property}" value="${value}"></input>`;
-		}
-
-		setting.isSubSetting && (out += `</div><div class="${ns}-col" style="min-width: 100%"></div>`);
-		return out;
-	}).join('');
+		tpl += '</div>';
+	});
 
 	return tpl;
 }

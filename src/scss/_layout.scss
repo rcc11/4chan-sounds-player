@@ -14,10 +14,10 @@
 .#{$ns}-heading {
 	font-weight: 600;
 	margin: .5rem 0;
-
-	&.#{$ns}-has-description {
-		cursor: help;
-	}
+	min-width: 100%;
+}
+.#{$ns}-has-description {
+	cursor: help;
 }
 .#{$ns}-heading-action {
 	font-weight: normal;
@@ -27,11 +27,14 @@
 .#{$ns}-row {
 	display: flex;
 	flex-wrap: wrap;
+	min-width:100%;
+	box-sizing: border-box;
 }
 .#{$ns}-col-auto {
 	flex: 0 0 auto;
 	width: auto;
 	max-width: 100%;
+	display: inline-flex;
 }
 .#{$ns}-col {
 	flex-basis: 0;

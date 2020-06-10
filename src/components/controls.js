@@ -90,7 +90,7 @@ module.exports = {
 				sound = Player.sounds[0];
 			}
 
-			const video = Player.$(`.${ns}-video`);
+			const video = document.querySelector(`.${ns}-video`);
 			video.removeEventListener('loadeddata', Player.controls.playOnceLoaded);
 
 			// If a new sound is being played update the display.
@@ -121,7 +121,7 @@ module.exports = {
 	 * Handler to start playback once the video and audio are both loaded.
 	 */
 	_playOnceLoaded: function () {
-		const video = Player.$(`.${ns}-video`);
+		const video = document.querySelector(`.${ns}-video`);
 		if (video.readyState > 2 && Player.audio.readyState > 2) {
 			video.removeEventListener('loadeddata', Player.controls._playOnceLoaded);
 			Player.audio.removeEventListener('loadeddata', Player.controls._playOnceLoaded);
@@ -195,7 +195,7 @@ module.exports = {
 	syncVideo: function () {
 		if (Player.playlist.isVideo) {
 			const paused = Player.audio.paused;
-			const video = Player.$(`.${ns}-video`);
+			const video = document.querySelector(`.${ns}-video`);
 			if (video) {
 				if (Player.audio.currentTime < video.duration) {
 					video.currentTime = Player.audio.currentTime;

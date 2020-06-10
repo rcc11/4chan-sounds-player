@@ -1,4 +1,6 @@
 module.exports = {
+	_showingPIP: false,
+
 	initialize: function () {
 		if (!isChanX) {
 			return;
@@ -11,8 +13,10 @@ module.exports = {
 		document.body.removeChild(a);
 
 		// Set up the contents and maintain user template changes.
-		Player.userTemplate.maintain(Player.chanX, 'chanXTemplate', [ 'chanXControls' ], [ 'show', 'hide' ]);
-		Player.on('rendered', Player.chanX.render);
+		Player.userTemplate.maintain(Player.minimised, 'chanXTemplate', [ 'chanXControls' ], [ 'show', 'hide' ]);
+		Player.on('rendered', Player.minimised.render);
+		Player.on('show', Player.minimised.hidePIP);
+		Player.on('hide', Player.minimised.showPIP);
 	},
 
 	render: function () {
@@ -21,7 +25,7 @@ module.exports = {
 			// Create the element if it doesn't exist.
 			// Set the user template and control events on it to make all the buttons work.
 			if (!container) {
-				container = createElementBefore(`<span class="${ns}-chan-x-controls ${ns}-row"></span>`, document.querySelector('#shortcuts').firstElementChild);
+				container = createElementBefore(`<span class="${ns}-chan-x-controls ${ns}-col-auto"></span>`, document.querySelector('#shortcuts').firstElementChild);
 				Player.events.addDelegatedListeners(container, {
 					click: [ Player.userTemplate.delegatedEvents.click, Player.controls.delegatedEvents.click ]
 				});
@@ -44,5 +48,33 @@ module.exports = {
 				}
 			});
 		}
+	},
+
+	/**
+	 * Move the image to a picture in picture like thumnail.
+	 */
+	showPIP: function () {
+		if (!Player.config.pip || !Player.playing || Player.minimised._showingPIP) {
+			return;
+		}
+		Player.minimised._showingPIP = true;
+		const image = document.querySelector(`.${ns}-image-link`);
+		document.body.appendChild(image);
+		image.classList.add(`${ns}-pip`);
+		image.style.bottom = (Player.position.getHeaderOffset().bottom + 10) + 'px';
+		// Show the player again when the image is clicked.
+		image.addEventListener('click', Player.show);
+	},
+
+	/**
+	 * Move the image back to the player.
+	 */
+	hidePIP: function () {
+		Player.minimised._showingPIP = false;
+		const image = document.querySelector(`.${ns}-image-link`);
+		Player.$(`.${ns}-media`).insertBefore(document.querySelector(`.${ns}-image-link`), Player.$(`.${ns}-controls`));
+		image.classList.remove(`${ns}-pip`);
+		image.style.bottom = null;
+		image.removeEventListener('click', Player.show);
 	}
 };
