@@ -2,18 +2,17 @@ module.exports = {
 	_showingPIP: false,
 
 	initialize: function () {
-		if (!isChanX) {
-			return;
-		}
-		// Create a reply element to gather the style from
-		const a = createElement('<a></a>', document.body);
-		const style = document.defaultView.getComputedStyle(a);
-		createElement(`<style>.${ns}-chan-x-controls .${ns}-media-control > div { background: ${style.color} }</style>`, document.head);
-		// Clean up the element.
-		document.body.removeChild(a);
+		if (isChanX) {
+			// Create a reply element to gather the style from
+			const a = createElement('<a></a>', document.body);
+			const style = document.defaultView.getComputedStyle(a);
+			createElement(`<style>.${ns}-chan-x-controls .${ns}-media-control > div { background: ${style.color} }</style>`, document.head);
+			// Clean up the element.
+			document.body.removeChild(a);
 
-		// Set up the contents and maintain user template changes.
-		Player.userTemplate.maintain(Player.minimised, 'chanXTemplate', [ 'chanXControls' ], [ 'show', 'hide' ]);
+			// Set up the contents and maintain user template changes.
+			Player.userTemplate.maintain(Player.minimised, 'chanXTemplate', [ 'chanXControls' ], [ 'show', 'hide' ]);
+		}
 		Player.on('rendered', Player.minimised.render);
 		Player.on('show', Player.minimised.hidePIP);
 		Player.on('hide', Player.minimised.showPIP);
