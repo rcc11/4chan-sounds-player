@@ -43,7 +43,7 @@ module.exports = [
 			{
 				property: 'pip',
 				title: 'Thumbnail',
-				description: 'Display a fixed thumbnail of the playing image in the bottom right of the thread.',
+				description: 'Display a fixed thumbnail of the playing sound in the bottom right of the thread.',
 				default: true,
 				showInSettings: true
 			},
