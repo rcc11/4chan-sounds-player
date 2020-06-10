@@ -3,7 +3,7 @@
 
 	let tpl = `
 		<div class="${ns}-heading">Version</div>
-		<a href="https://github.com/rcc11/4chan-sounds-player/releases/tag/${VERSION}" target="_blank">${VERSION}</a>
+		<a href="https://github.com/rcc11/4chan-sounds-player/releases" target="_blank">${VERSION}</a>
 
 		<div class="${ns}-heading">Encode / Decode URL</div>
 		<div class="${ns}-row">
