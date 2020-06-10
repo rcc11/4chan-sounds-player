@@ -12,6 +12,7 @@
 		align-items: end;
 
 		& .#{$ns}-image, .#{$ns}-video {
+			max-height: 100%;
 			height: initial;
 			width: initial;
 			object-fit: contain;
