@@ -7,7 +7,7 @@
 		${Player.templates.controls(data)}
 	</div>
 </div>
-<div class="${ns}-list-container ${!Player.config.hoverImages ? `${ns}-hide-hover-image` : ''}" style="height: 100px">
+<div class="${ns}-list-container style="height: 100px">
 	${Player.templates.list(data)}
 </div>
 <img class="${ns}-hover-image">`

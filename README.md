@@ -93,6 +93,9 @@ All the values here can be followed by `:""` to specify the text, otherwise they
 - `sound-link` - Opens the sounds source in a new tab.
 - `dl-image-button` - Download the sounds image with the original filename, i.e including `[sound=url]`.
 - `dl-sound-button` - Download the sound audio itself.
+- `filter-image-button` - Add the image MD5 to the filters.
+- `filter-sound-button` - Add the sound URL to the filters.
+- `remove-button` - Remove the sound from the player. Removed sounds can be re-added using the reload button.
 - `repeat-button` - Toggles the repeat setting between all, one and none.
 - `shuffle-button` - Toggles shuffle.
 - `playlist-button` - Toggles between the playlist and image view.

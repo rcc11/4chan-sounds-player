@@ -83,6 +83,7 @@ module.exports = [
 		requireSound: true,
 		icon: 'fa-comment-o',
 		text: 'Post',
+		showIf: data => data.sound.post,
 		attrs: data => [
 			`href=${'#' + (is4chan ? 'p' : '') + data.sound.post}`,
 			'title="Jump to the post for the current sound"'
@@ -132,6 +133,40 @@ module.exports = [
 		attrs: data => [
 			'title="Download the sound"',
 			`data-src="${data.sound.src}"`
+		]
+	},
+	{
+		tplName: 'filter-image',
+		requireSound: true,
+		class: `${ns}-filter-link`,
+		icon: 'fa-filter',
+		text: 's',
+		showIf: data => data.sound.imageMD5,
+		attrs: data => [
+			'title="Add the image MD5 to the filters."',
+			`data-filter="${data.sound.imageMD5}"`
+		]
+	},
+	{
+		tplName: 'filter-sound',
+		requireSound: true,
+		class: `${ns}-filter-link`,
+		icon: 'fa-filter',
+		text: 's',
+		attrs: data => [
+			'title="Add the sound URL to the filters."',
+			`data-filter="${data.sound.src.replace(/^(https?:)?\/\//, '')}"`
+		]
+	},
+	{
+		tplName: 'remove',
+		requireSound: true,
+		class: `${ns}-remove-link`,
+		icon: 'fa-trash-o',
+		text: 's',
+		attrs: data => [
+			'title="Filter the image."',
+			`data-id="${data.sound.id}"`
 		]
 	},
 	{

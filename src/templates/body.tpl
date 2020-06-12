@@ -3,7 +3,7 @@
 		${Player.templates.header(data)}
 	</div>
 	<div class="${ns}-view-container">
-		<div class="${ns}-player">
+		<div class="${ns}-player ${!Player.config.hoverImages ? `${ns}-hide-hover-image` : ''}" ">
 			${Player.templates.player(data)}
 		</div>
 		<div class="${ns}-settings ${ns}-panel" style="height: 400px">

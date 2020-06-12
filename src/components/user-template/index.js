@@ -67,7 +67,7 @@ module.exports = {
 			.replace(hoverRE, `<span class="${ns}-hover-display ${outerClass}">$1</span>`)
 			.replace(buttonRE, function (full, type, text) {
 				let buttonConf = buttons.find(conf => conf.tplName === type);
-				if (buttonConf.requireSound && !data.sound) {
+				if (buttonConf.requireSound && !data.sound || buttonConf.showIf && !buttonConf.showIf(data)) {
 					return '';
 				}
 				// If the button config has sub values then extend the base config with the selected sub value.
