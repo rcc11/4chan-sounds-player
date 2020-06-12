@@ -16,6 +16,7 @@ module.exports = {
 		Player.on('rendered', Player.minimised.render);
 		Player.on('show', Player.minimised.hidePIP);
 		Player.on('hide', Player.minimised.showPIP);
+		Player.on('playsound', Player.minimised.showPIP);
 	},
 
 	render: function () {
@@ -53,7 +54,7 @@ module.exports = {
 	 * Move the image to a picture in picture like thumnail.
 	 */
 	showPIP: function () {
-		if (!Player.config.pip || !Player.playing || Player.minimised._showingPIP) {
+		if (!Player.isHidden || !Player.config.pip || !Player.playing || Player.minimised._showingPIP) {
 			return;
 		}
 		Player.minimised._showingPIP = true;
