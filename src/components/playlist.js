@@ -125,8 +125,8 @@ module.exports = {
 	add: function (sound, skipRender) {
 		try {
 			const id = sound.id;
-			// Make sure the sound is an allowed host, not filtered, and not a duplicate.
-			if (!Player.acceptedSound(sound) || Player.sounds.find(sound => sound.id === id)) {
+			// Make sure the sound is not a duplicate.
+			if (Player.sounds.find(sound => sound.id === id)) {
 				return;
 			}
 

@@ -132,6 +132,8 @@ function parseFileName(filename, image, post, thumb, imageMD5) {
 			return sounds;
 		}
 
-		return sounds.concat({ src, id, title, post, image, filename, thumb, imageMD5 });
+		const sound = { src, id, title, post, image, filename, thumb, imageMD5 };
+		Player.acceptedSound(sound) && sounds.push(sound);
+		return sounds.concat();
 	}, []);
 }
