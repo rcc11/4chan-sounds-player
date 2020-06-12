@@ -9,4 +9,5 @@
 </div>
 <div class="${ns}-list-container ${!Player.config.hoverImages ? `${ns}-hide-hover-image` : ''}" style="height: 100px">
 	${Player.templates.list(data)}
-</div>`
+</div>
+<img class="${ns}-hover-image">`

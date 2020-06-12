@@ -1,6 +1,4 @@
-.#{$ns}-list-container {
-	overflow-y: auto;
-
+.#{$ns}-player {
 	& .#{$ns}-hover-image {
 		position: fixed;
 		max-height: 125px;
@@ -9,6 +7,10 @@
 	&.#{$ns}-hide-hover-image .#{$ns}-hover-image {
 		display: none !important;
 	}
+}
+
+.#{$ns}-list-container {
+	overflow-y: auto;
 
 	& .#{$ns}-list-item {
 		list-style-type: none;

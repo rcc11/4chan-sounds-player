@@ -7,4 +7,3 @@
 		})}
 	</div>`
 ).join('')
-+ `<img class="${ns}-hover-image">`;

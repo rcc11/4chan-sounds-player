@@ -67,7 +67,7 @@ module.exports = {
 		const container = Player.$(`.${ns}-list-container`);
 		container.innerHTML = Player.templates.list();
 		Player.events.addUndelegatedListeners(document.body, Player.playlist.undelegatedEvents);
-		Player.playlist.hoverImage = container.querySelector(`.${ns}-hover-image`);
+		Player.playlist.hoverImage = Player.$(`.${ns}-hover-image`);
 	},
 
 	/**
@@ -254,7 +254,7 @@ module.exports = {
 	 * Only show the hover image with the setting enabled, no item menu open, and nothing being dragged.
 	 */
 	setHoverImageVisibility: function () {
-		const container = Player.$(`.${ns}-list-container`);
+		const container = Player.$(`.${ns}-player`);
 		const hideImage = !Player.config.hoverImages
 			|| Player.playlist._dragging
 			|| container.querySelector(`.${ns}-item-menu`);
