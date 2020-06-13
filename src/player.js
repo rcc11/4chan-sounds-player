@@ -136,7 +136,7 @@ const Player = window.Player = module.exports = {
 				lifetime: 5
 			}
 		}));
-	};
+	}
 };
 
 // Add each of the components to the player.
