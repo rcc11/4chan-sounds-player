@@ -12,6 +12,7 @@
 // @grant        GM.getValue
 // @grant        GM.setValue
 // @grant        GM.xmlHttpRequest
+// @grant        GM_addValueChangeListener
 // @connect      4chan.org
 // @connect      4channel.org
 // @connect      a.4cdn.org

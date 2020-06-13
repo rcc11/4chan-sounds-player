@@ -43,6 +43,9 @@ module.exports = {
 				Player.pause();
 			}
 		});
+
+		// Listen for changes from other tabs
+		GM_addValueChangeListener('settings', Player.settings.sync);
 	},
 
 	render: function () {
@@ -91,6 +94,9 @@ module.exports = {
 	 */
 	set: function (property, value, { bypassSave, bypassRender, silent } = {}) {
 		const previousValue = _get(Player.config, property);
+		if (previousValue === value) {
+			return;
+		}
 		_set(Player.config, property, value);
 		!silent && Player.trigger('config', property, value, previousValue);
 		!silent && Player.trigger('config:' + property, value, previousValue);
@@ -132,7 +138,7 @@ module.exports = {
 			// Store the player version with the settings.
 			settings.VERSION = VERSION;
 			// Save the settings.
-			return GM.setValue(ns + '.settings', JSON.stringify(settings));
+			return GM.setValue('settings', JSON.stringify(settings));
 		} catch (err) {
 			_logError('There was an error saving the sound player settings. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
@@ -144,34 +150,47 @@ module.exports = {
 	 */
 	load: async function () {
 		try {
-			let settings = await GM.getValue(ns + '.settings');
-			if (!settings) {
-				return;
-			}
-			try {
-				settings = JSON.parse(settings);
-				settingsConfig.forEach(function _handleSetting(setting) {
-					if (setting.settings) {
-						return setting.settings.forEach(subSetting => _handleSetting({
-							property: setting.property,
-							default: setting.default,
-							...subSetting
-						}));
-					}
-					const userVal = _get(settings, setting.property);
-					if (userVal !== undefined) {
-						Player.set(setting.property, userVal, { bypassSave: true, silent: true });
-					}
-				});
-			} catch (e) {
-				console.error(e);
-				return;
+			let settings = await GM.getValue('settings') || await GM.getValue(ns + '.settings');
+			if (settings) {
+				Player.settings.apply(settings, { bypassSave: true, silent: true });
 			}
 		} catch (err) {
 			_logError('There was an error loading the sound player settings. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
 		}
 	},
+
+	apply: function (settings, opts = {}) {
+		if (typeof settings === 'string') {
+			settings = JSON.parse(settings);
+		}
+		settingsConfig.forEach(function _handleSetting(setting) {
+			if (setting.settings) {
+				return setting.settings.forEach(subSetting => _handleSetting({
+					property: setting.property,
+					default: setting.default,
+					...subSetting
+				}));
+			}
+			if (opts.ignore && opts.ignore.includes(opts.property)) {
+				return;
+			}
+			const value = _get(settings, setting.property, opts.applyDefault ? setting.default : undefined);
+			if (value !== undefined) {
+				Player.set(setting.property, value, opts);
+			}
+		});
+	},
+
+	/**
+	 * Listen for changes to settings from other tabs.
+	 */
+	sync: function (name, oldValue, newValue, remote) {
+		if (remote) {
+			Player.settings.apply(newValue, { bypassSave: true, applyDefault: true, ignore: [ 'viewStyle' ] });
+		}
+	},
+
 	/**
 	 * Find a setting in the default configuration.
 	 */
