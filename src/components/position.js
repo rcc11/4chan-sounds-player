@@ -9,8 +9,8 @@ module.exports = {
 	initialize: function () {
 		// Apply the last position/size, and post width limiting, when the player is shown.
 		Player.on('show', async function () {
-			const [ top, left ] = (await GM.getValue(ns + '.position') || '').split(':');
-			const [ width, height ] = (await GM.getValue(ns + '.size') || '').split(':');
+			const [ top, left ] = (await GM.getValue('position') || '').split(':');
+			const [ width, height ] = (await GM.getValue('size') || '').split(':');
 			+top && +left && Player.position.move(top, left, true);
 			+width && +height && Player.position.resize(width, height);
 
@@ -47,6 +47,10 @@ module.exports = {
 			childList: true,
 			subtree: true
 		});
+
+		// Listen for changes from other tabs
+		Player.syncTab('position', value => Player.position.move(...value.split(':').concat(true)));
+		Player.syncTab('size', value => Player.position.resize(...value.split(':')));
 	},
 
 	/**
@@ -96,7 +100,7 @@ module.exports = {
 		const { width, height } = Player.container.getBoundingClientRect();
 		document.documentElement.removeEventListener('mousemove', Player.position.doResize, false);
 		document.documentElement.removeEventListener('mouseup', Player.position.stopResize, false);
-		GM.setValue(ns + '.size', width + ':' + height);
+		GM.setValue('size', width + ':' + height);
 	},
 
 	/**
@@ -159,7 +163,7 @@ module.exports = {
 		document.documentElement.removeEventListener('mousemove', Player.position.doMove, false);
 		document.documentElement.removeEventListener('mouseup', Player.position.stopMove, false);
 		Player.$(`.${ns}-header`).style.cursor = null;
-		GM.setValue(ns + '.position', parseInt(Player.container.style.left, 10) + ':' + parseInt(Player.container.style.top, 10));
+		GM.setValue('position', parseInt(Player.container.style.left, 10) + ':' + parseInt(Player.container.style.top, 10));
 	},
 
 	/**

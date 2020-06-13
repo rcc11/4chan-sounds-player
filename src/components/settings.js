@@ -45,7 +45,11 @@ module.exports = {
 		});
 
 		// Listen for changes from other tabs
-		GM_addValueChangeListener('settings', Player.settings.sync);
+		Player.syncTab('settings', value => Player.settings.apply(value, {
+			bypassSave: true,
+			applyDefault: true,
+			ignore: [ 'viewStyle' ]
+		}));
 	},
 
 	render: function () {
@@ -180,15 +184,6 @@ module.exports = {
 				Player.set(setting.property, value, opts);
 			}
 		});
-	},
-
-	/**
-	 * Listen for changes to settings from other tabs.
-	 */
-	sync: function (name, oldValue, newValue, remote) {
-		if (remote) {
-			Player.settings.apply(newValue, { bypassSave: true, applyDefault: true, ignore: [ 'viewStyle' ] });
-		}
 	},
 
 	/**

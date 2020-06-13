@@ -114,7 +114,11 @@ const Player = window.Player = module.exports = {
 		} catch (err) {
 			return false;
 		}
-	}
+	},
+
+	syncTab: (property, callback) => GM_addValueChangeListener(property, (_prop, oldValue, newValue, remote) => {
+		remote && callback(newValue, oldValue);
+	})
 };
 
 // Add each of the components to the player.
