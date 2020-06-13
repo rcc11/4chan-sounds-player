@@ -112,7 +112,7 @@ module.exports = {
 				Player.audio.play();
 			}
 		} catch (err) {
-			_logError('There was an error playing the sound. Please check the console for details.');
+			Player.logError('There was an error playing the sound. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
 		}
 	},
@@ -173,7 +173,7 @@ module.exports = {
 			const nextSound = Player.sounds[nextIndex];
 			nextSound && Player.play(nextSound);
 		} catch (err) {
-			_logError(`There was an error selecting the ${direction > 0 ? 'next' : 'previous'} track. Please check the console for details.`);
+			Player.logError(`There was an error selecting the ${direction > 0 ? 'next' : 'previous'} track. Please check the console for details.`);
 			console.error('[4chan sounds player]', err);
 		}
 	},

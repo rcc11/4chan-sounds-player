@@ -205,7 +205,7 @@ module.exports = {
 			const current = values.indexOf(Player.config.repeat);
 			Player.set('repeat', values[(current + 4) % 3]);
 		} catch (err) {
-			_logError('There was an error changing the repeat setting. Please check the console for details.', 'warning');
+			Player.logError('There was an error changing the repeat setting. Please check the console for details.', 'warning');
 			console.error('[4chan sounds player]', err);
 		}
 	},
@@ -231,7 +231,7 @@ module.exports = {
 			}
 			Player.trigger('order');
 		} catch (err) {
-			_logError('There was an error changing the shuffle setting. Please check the console for details.', 'warning');
+			Player.logError('There was an error changing the shuffle setting. Please check the console for details.', 'warning');
 			console.error('[4chan sounds player]', err);
 		}
 	},
@@ -321,7 +321,7 @@ module.exports = {
 				a.click();
 				URL.revokeObjectURL(a.href);
 			},
-			onerror: () => _logError('There was an error downloading.', 'warning')
+			onerror: () => Player.logError('There was an error downloading.', 'warning')
 		});
 	},
 

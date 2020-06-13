@@ -96,7 +96,7 @@ function parsePost(post, skipRender) {
 		sounds.forEach(sound => Player.add(sound, skipRender));
 		return sounds.length > 0;
 	} catch (err) {
-		_logError('There was an issue parsing the files. Please check the console for details.');
+		Player.logError('There was an issue parsing the files. Please check the console for details.');
 		console.log('[4chan sounds player]', post);
 		console.error(err);
 	}

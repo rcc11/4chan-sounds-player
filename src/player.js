@@ -85,7 +85,7 @@ const Player = window.Player = module.exports = {
 			// Render the player, but not neccessarily show it.
 			Player.display.render();
 		} catch (err) {
-			_logError('There was an error initialzing the sound player. Please check the console for details.');
+			Player.logError('There was an error initialzing the sound player. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
 			// Can't recover so throw this error.
 			throw err;
@@ -116,9 +116,27 @@ const Player = window.Player = module.exports = {
 		}
 	},
 
+	/**
+	 * Listen for changes
+	 */
 	syncTab: (property, callback) => GM_addValueChangeListener(property, (_prop, oldValue, newValue, remote) => {
 		remote && callback(newValue, oldValue);
-	})
+	}),
+
+	/**
+	 * Send an error notification event.
+	 */
+	logError: function (message, type = 'error') {
+		console.error(message);
+		document.dispatchEvent(new CustomEvent('CreateNotification', {
+			bubbles: true,
+			detail: {
+				type: type,
+				content: message,
+				lifetime: 5
+			}
+		}));
+	};
 };
 
 // Add each of the components to the player.

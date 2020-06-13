@@ -94,7 +94,7 @@ module.exports = {
 					}
 				}
 			} catch (err) {
-				_logError('Unable to display the threads board view.', 'warning');
+				Player.logError('Unable to display the threads board view.', 'warning');
 				// If there was an error fall back to the table view.
 				Player.set('threadsViewStyle', 'table');
 				Player.renderThreads();
@@ -169,7 +169,7 @@ module.exports = {
 			try {
 				await Player.threads.fetchBoards();
 			} catch (err) {
-				_logError('Failed to fetch the boards configuration.');
+				Player.logError('Failed to fetch the boards configuration.');
 				console.error(err);
 				return;
 			}
@@ -192,7 +192,7 @@ module.exports = {
 				return sounds.length;
 			});
 		} catch (err) {
-			_logError('Failed to search for sounds threads.');
+			Player.logError('Failed to search for sounds threads.');
 			console.error(err);
 		}
 		Player.threads.loading = false;

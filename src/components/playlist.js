@@ -97,7 +97,7 @@ module.exports = {
 			}
 			container.classList[isVideo ? 'add' : 'remove'](ns + '-show-video');
 		} catch (err) {
-			_logError('There was an error display the sound player image. Please check the console for details.');
+			Player.logError('There was an error display the sound player image. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
 		}
 	},
@@ -114,7 +114,7 @@ module.exports = {
 		try {
 			Player.display.setViewStyle(style);
 		} catch (err) {
-			_logError('There was an error switching the view style. Please check the console for details.', 'warning');
+			Player.logError('There was an error switching the view style. Please check the console for details.', 'warning');
 			console.error('[4chan sounds player]', err);
 		}
 	},
@@ -164,7 +164,7 @@ module.exports = {
 				Player.trigger('add', sound);
 			}
 		} catch (err) {
-			_logError('There was an error adding to the sound player. Please check the console for details.');
+			Player.logError('There was an error adding to the sound player. Please check the console for details.');
 			console.log('[4chan sounds player]', sound);
 			console.error('[4chan sounds player]', err);
 		}

@@ -52,7 +52,7 @@ module.exports = {
 
 			Player.trigger('rendered');
 		} catch (err) {
-			_logError('There was an error rendering the sound player. Please check the console for details.');
+			Player.logError('There was an error rendering the sound player. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
 			// Can't recover, throw.
 			throw err;
@@ -115,7 +115,7 @@ module.exports = {
 			Player.isHidden = true;
 			Player.trigger('hide');
 		} catch (err) {
-			_logError('There was an error hiding the sound player. Please check the console for details.');
+			Player.logError('There was an error hiding the sound player. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
 		}
 	},
@@ -137,7 +137,7 @@ module.exports = {
 			Player.isHidden = false;
 			await Player.trigger('show');
 		} catch (err) {
-			_logError('There was an error showing the sound player. Please check the console for details.');
+			Player.logError('There was an error showing the sound player. Please check the console for details.');
 			console.error('[4chan sounds player]', err);
 		}
 	},

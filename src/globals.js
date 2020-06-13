@@ -8,21 +8,6 @@ window.is4chan = location.hostname.includes('4chan.org') || location.hostname.in
 window.isChanX = document.documentElement.classList.contains('fourchan-x');
 window.Board = location.pathname.split('/')[1];
 
-/**
- * Send an error notification event
- */
-window._logError = function (message, type = 'error') {
-	console.error(message);
-	document.dispatchEvent(new CustomEvent('CreateNotification', {
-		bubbles: true,
-		detail: {
-			type: type,
-			content: message,
-			lifetime: 5
-		}
-	}));
-};
-
 window._set = function (object, path, value) {
 	const props = path.split('.');
 	const lastProp = props.pop();
