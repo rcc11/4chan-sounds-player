@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         4chan sounds player
-// @version      2.2.1
+// @version      2.3.0
 // @namespace    rccom
 // @description  Play that faggy music weeb boi
 // @author       RCC
@@ -12,6 +12,7 @@
 // @grant        GM.getValue
 // @grant        GM.setValue
 // @grant        GM.xmlHttpRequest
+// @grant        GM_addValueChangeListener
 // @connect      4chan.org
 // @connect      4channel.org
 // @connect      a.4cdn.org
