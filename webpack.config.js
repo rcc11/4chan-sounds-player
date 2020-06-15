@@ -18,10 +18,11 @@ module.exports = (env, argv) => ({
 	devtool: 'none',
 	mode: argv.mode,
 	output: {
-		filename: argv.mode === 'production'
-			? '4chan-sounds-player.user.js'
-			: '4chan-sounds-player.user.dev.js',
-		path: path.resolve(__dirname, 'dist'),
+		filename: argv.filename
+			|| (argv.mode === 'production'
+				? '4chan-sounds-player.user.js'
+				: '4chan-sounds-player.user.dev.js'),
+		path: argv.path || path.resolve(__dirname, 'dist'),
 	},
 	optimization: {
 		minimizer: [
