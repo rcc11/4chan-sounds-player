@@ -147,7 +147,7 @@ module.exports = [
 		requireSound: true,
 		class: `${ns}-filter-link`,
 		icon: 'fa-filter',
-		text: 's',
+		text: 'i',
 		showIf: data => data.sound.imageMD5,
 		attrs: data => [
 			'title="Add the image MD5 to the filters."',
@@ -170,7 +170,7 @@ module.exports = [
 		requireSound: true,
 		class: `${ns}-remove-link`,
 		icon: 'fa-trash-o',
-		text: 's',
+		text: 'r',
 		attrs: data => [
 			'title="Filter the image."',
 			`data-id="${data.sound.id}"`
@@ -183,5 +183,12 @@ module.exports = [
 		icon: 'fa-angle-down',
 		text: '▼',
 		attrs: data => [ `data-id=${data.sound.id}` ]
+	},
+	{
+		tplName: 'view-menu',
+		class: `${ns}-view-menu-button`,
+		icon: 'fa-angle-down',
+		text: '▾',
+		attrs: [ 'href="javascript:;"']
 	}
 ];

@@ -26,10 +26,12 @@ module.exports = {
 			[`.${ns}-repeat-button`]: 'userTemplate._handleRepeat',
 			[`.${ns}-reload-button`]: noDefault('playlist.refresh'),
 			[`.${ns}-add-button`]: noDefault(() => Player.$(`.${ns}-file-input`).click()),
-			[`.${ns}-item-menu-button`]: 'userTemplate._handleMenu',
+			[`.${ns}-item-menu-button`]: 'userTemplate._handleItemMenu',
+			[`.${ns}-view-menu-button`]: 'userTemplate._handleViewsMenu',
 			[`.${ns}-threads-button`]: 'threads.toggle',
 			[`.${ns}-tools-button`]: 'tools.toggle',
-			[`.${ns}-config-button`]: 'settings.toggle'
+			[`.${ns}-config-button`]: 'settings.toggle',
+			[`.${ns}-player-button`]: 'playlist.restore'
 		},
 		change: {
 			[`.${ns}-file-input`]: 'userTemplate._handleFileSelect'
@@ -81,7 +83,7 @@ module.exports = {
 					};
 				}
 				const attrs = typeof buttonConf.attrs === 'function' ? buttonConf.attrs(data) : buttonConf.attrs || [];
-				attrs.some(attr => attr.startsWith('href')) || attrs.push('href=javascript:;');
+				attrs.some(attr => attr.startsWith('href')) || attrs.push('href="javascript:;"');
 				(buttonConf.class || outerClass) && attrs.push(`class="${buttonConf.class || ''} ${outerClass || ''}"`);
 
 				if (!text) {
@@ -230,11 +232,9 @@ module.exports = {
 	/**
 	 * Display an item menu.
 	 */
-	_handleMenu: function (e) {
+	_handleItemMenu: function (e) {
 		e.preventDefault();
 		e.stopPropagation();
-		const x = e.clientX;
-		const y = e.clientY;
 		const id = e.eventTarget.getAttribute('data-id');
 		const sound = Player.sounds.find(s => s.id === id);
 
@@ -243,8 +243,21 @@ module.exports = {
 		const parent = listContainer || Player.container;
 
 		// Create the menu.
-		const dialog = createElement(Player.templates.itemMenu({ x, y, sound }), parent);
+		const dialog = createElement(Player.templates.itemMenu({ sound }), parent);
+		Player.userTemplate._showMenu(e.clientX, e.clientY, dialog, parent)
+	},
 
+	_handleViewsMenu: function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		const dialog = createElement(Player.templates.viewsMenu());
+		Player.userTemplate._showMenu(e.clientX, e.clientY, dialog);
+	},
+
+	_showMenu: function (x, y, dialog, parent) {
+		dialog.style.top = y + 'px';
+		dialog.style.left = x + 'px';
+		parent || (parent = Player.container);
 		parent.appendChild(dialog);
 
 		// Make sure it's within the page.
@@ -272,7 +285,7 @@ module.exports = {
 	 * Close any open menus, except for one belonging to an item that was clicked.
 	 */
 	_closeMenus: function () {
-		document.querySelectorAll(`.${ns}-item-menu`).forEach(menu => {
+		document.querySelectorAll(`.${ns}-menu`).forEach(menu => {
 			menu.parentNode.removeChild(menu);
 			Player.trigger('menu-close', menu);
 		});

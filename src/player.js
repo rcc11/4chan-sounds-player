@@ -49,7 +49,8 @@ const Player = window.Player = module.exports = {
 		threads: require('./templates/threads.tpl'),
 		threadBoards: require('./templates/thread_boards.tpl'),
 		threadList: require('./templates/thread_list.tpl'),
-		tools: require('./templates/tools.tpl')
+		tools: require('./templates/tools.tpl'),
+		viewsMenu: require('./templates/views_menu.tpl')
 	},
 
 	/**

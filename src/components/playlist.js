@@ -249,7 +249,7 @@ module.exports = {
 		const container = Player.$(`.${ns}-player`);
 		const hideImage = !Player.config.hoverImages
 			|| Player.playlist._dragging
-			|| container.querySelector(`.${ns}-item-menu`);
+			|| container.querySelector(`.${ns}-menu`);
 		container.classList[hideImage ? 'add' : 'remove'](`${ns}-hide-hover-image`);
 	},
 
@@ -348,7 +348,7 @@ module.exports = {
 	 * Scroll to the playing item, unless there is an open menu in the playlist.
 	 */
 	scrollToPlaying: function (type = 'center') {
-		if (Player.$(`.${ns}-list-container .${ns}-item-menu`)) {
+		if (Player.$(`.${ns}-list-container .${ns}-menu`)) {
 			return;
 		}
 		const playing = Player.$(`.${ns}-list-item.playing`);
