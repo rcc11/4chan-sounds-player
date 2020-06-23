@@ -12,6 +12,9 @@
 		<div class="${ns}-threads ${ns}-panel" style="height: 400px">
 			${Player.templates.threads(data)}
 		</div>
+		<div class="${ns}-tools ${ns}-panel" style="height: 400px">
+			${Player.templates.tools(data)}
+		</div>
 	</div>
 	<div class="${ns}-footer">
 		${Player.templates.footer(data)}

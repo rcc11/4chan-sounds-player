@@ -1,0 +1,61 @@
+.#{$ns}-create-sound-status {
+	margin-top: .5rem;
+	border: solid 1px #{map-get($colors, border)};
+	border-radius: 5px;
+	padding: .25rem;
+}
+.#{$ns}-file-overlay, .#{$ns}-create-sound-form input[type=text] {
+	height: 1.5rem;
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 5rem;
+	color: black;
+}
+
+.#{$ns}-file-overlay.placeholder span, .#{$ns}-create-sound-form input[type=text]::placeholder {
+	color: #AAA;
+	opacity: 1;
+}
+
+.#{$ns}-file-overlay {
+	position: relative;
+	background: white;
+	border: solid 1px #{map-get($colors, border)};
+	padding: 0 .25rem;
+	display: flex;
+	align-items: center;
+
+	& .placeholder-text {
+		display: none;
+	}
+
+	&.placeholder .placeholder-text {
+		display: inherit;
+	}
+
+	& > span {
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
+	& > input[type=file] {
+		width: 100%;
+		box-sizing: border-box;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		opacity: 0;
+	}
+	& .overfile {
+		z-index: 9999;
+	}
+}
+
+.#{$ns}-webm-sound-label {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	background: white;
+	padding-left: .25rem;
+	right: 0;
+}

@@ -65,6 +65,13 @@ module.exports = [
 		attrs: [ 'title="Threads"' ]
 	},
 	{
+		tplName: 'tools',
+		class: `${ns}-tools-button`,
+		icon: 'fa-gears',
+		text: '[T]',
+		attrs: [ 'title="Tools"' ]
+	},
+	{
 		tplName: 'close',
 		class: `${ns}-close-button`,
 		icon: 'fa-times',
@@ -109,7 +116,7 @@ module.exports = [
 		attrs: data => [
 			`href=${data.sound.src}`,
 			'title="Open the sound in a new tab"',
-			'target="blank"'
+			'target="_blank"'
 		]
 	},
 	{

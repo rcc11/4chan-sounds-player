@@ -40,6 +40,10 @@ document.addEventListener('4chanXInitFinished', function () {
 });
 
 if (!isChanX) {
-	document.addEventListener('DOMContentLoaded', doInit);
+	if (document.readyState !== 'loading') {
+		doInit();
+	} else {
+		document.addEventListener('DOMContentLoaded', doInit);
+	}
 }
 

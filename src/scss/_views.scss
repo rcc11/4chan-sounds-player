@@ -1,4 +1,4 @@
-.#{$ns}-threads, .#{$ns}-settings, .#{$ns}-player {
+.#{$ns}-threads, .#{$ns}-settings, .#{$ns}-tools, .#{$ns}-player {
 	display: none;
 }
 
@@ -6,6 +6,9 @@
 	display: block;
 }
 ##{$ns}-container[data-view-style="threads"] .#{$ns}-threads {
+	display: block;
+}
+##{$ns}-container[data-view-style="tools"] .#{$ns}-tools {
 	display: block;
 }
 

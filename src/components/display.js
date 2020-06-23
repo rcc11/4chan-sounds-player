@@ -3,13 +3,22 @@ module.exports = {
 
 	delegatedEvents: {
 		click: {
-			[`.${ns}-close-button`]: 'hide'
+			[`.${ns}-close-button`]: 'hide',
+			[`.${ns}-dismiss-link`]: 'display._handleDismiss'
 		},
 		fullscreenchange: {
 			[`.${ns}-media`]: 'display._handleFullScreenChange'
 		},
 		drop: {
 			[`#${ns}-container`]: 'display._handleDrop'
+		}
+	},
+
+	initialize: async function () {
+		try {
+			Player.display.dismissed = (await GM.getValue('dismissed')).split(',');
+		} catch (err) {
+			Player.display.dismissed = [];
 		}
 	},
 
@@ -52,8 +61,7 @@ module.exports = {
 
 			Player.trigger('rendered');
 		} catch (err) {
-			Player.logError('There was an error rendering the sound player. Please check the console for details.');
-			console.error('[4chan sounds player]', err);
+			Player.logError('There was an error rendering the sound player.', err);
 			// Can't recover, throw.
 			throw err;
 		}
@@ -108,16 +116,11 @@ module.exports = {
 		if (!Player.container) {
 			return;
 		}
-		try {
-			e && e.preventDefault();
-			Player.container.style.display = 'none';
+		e && e.preventDefault();
+		Player.container.style.display = 'none';
 
-			Player.isHidden = true;
-			Player.trigger('hide');
-		} catch (err) {
-			Player.logError('There was an error hiding the sound player. Please check the console for details.');
-			console.error('[4chan sounds player]', err);
-		}
+		Player.isHidden = true;
+		Player.trigger('hide');
 	},
 
 	/**
@@ -127,19 +130,14 @@ module.exports = {
 		if (!Player.container) {
 			return;
 		}
-		try {
-			e && e.preventDefault();
-			if (!Player.container.style.display) {
-				return;
-			}
-			Player.container.style.display = null;
-
-			Player.isHidden = false;
-			await Player.trigger('show');
-		} catch (err) {
-			Player.logError('There was an error showing the sound player. Please check the console for details.');
-			console.error('[4chan sounds player]', err);
+		e && e.preventDefault();
+		if (!Player.container.style.display) {
+			return;
 		}
+		Player.container.style.display = null;
+
+		Player.isHidden = false;
+		await Player.trigger('show');
 	},
 
 	/**
@@ -179,5 +177,19 @@ module.exports = {
 			}
 			Player.playlist.restore();
 		}
+	},
+
+	_handleDismiss: async function (e) {
+		e.preventDefault();
+		const dismiss = e.eventTarget.getAttribute('data-dismiss');
+		if (dismiss && !Player.display.dismissed.includes(dismiss)) {
+			Player.display.dismissed.push(dismiss);
+			Player.$all(`[data-dismiss-id="${dismiss}"]`).forEach(el => el.parentNode.removeChild(el));
+			await GM.setValue('dismissed', Player.display.dismissed.join(','));
+		}
+	},
+
+	ifNotDismissed: function (name, text) {
+		return Player.display.dismissed.includes(name) ? '' : text;
 	}
 };

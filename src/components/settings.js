@@ -148,8 +148,7 @@ module.exports = {
 			// Save the settings.
 			return GM.setValue('settings', JSON.stringify(settings));
 		} catch (err) {
-			Player.logError('There was an error saving the sound player settings. Please check the console for details.');
-			console.error('[4chan sounds player]', err);
+			Player.logError('There was an error saving the sound player settings.', err);
 		}
 	},
 
@@ -163,8 +162,7 @@ module.exports = {
 				Player.settings.apply(settings, { bypassSave: true, silent: true });
 			}
 		} catch (err) {
-			Player.logError('There was an error loading the sound player settings. Please check the console for details.');
-			console.error('[4chan sounds player]', err);
+			Player.logError('There was an error loading the sound player settings.', err);
 		}
 	},
 
@@ -260,8 +258,7 @@ module.exports = {
 			// Run any handler required by the value changing
 			settingConfig && settingConfig.handler && _get(Player, settingConfig.handler, () => null)(newValue);
 		} catch (err) {
-			Player.logError('There was an error updating the setting. Please check the console for details.');
-			console.error('[4chan sounds player]', err);
+			Player.logError('There was an error updating the setting.', err);
 		}
 	},
 

@@ -28,6 +28,7 @@ module.exports = {
 			[`.${ns}-add-button`]: noDefault(() => Player.$(`.${ns}-file-input`).click()),
 			[`.${ns}-item-menu-button`]: 'userTemplate._handleMenu',
 			[`.${ns}-threads-button`]: 'threads.toggle',
+			[`.${ns}-tools-button`]: 'tools.toggle',
 			[`.${ns}-config-button`]: 'settings.toggle'
 		},
 		change: {
@@ -199,41 +200,31 @@ module.exports = {
 	 * Toggle the repeat style.
 	 */
 	_handleRepeat: function (e) {
-		try {
-			e.preventDefault();
-			const values = [ 'all', 'one', 'none' ];
-			const current = values.indexOf(Player.config.repeat);
-			Player.set('repeat', values[(current + 4) % 3]);
-		} catch (err) {
-			Player.logError('There was an error changing the repeat setting. Please check the console for details.', 'warning');
-			console.error('[4chan sounds player]', err);
-		}
+		e.preventDefault();
+		const values = [ 'all', 'one', 'none' ];
+		const current = values.indexOf(Player.config.repeat);
+		Player.set('repeat', values[(current + 4) % 3]);
 	},
 
 	/**
 	 * Toggle the shuffle style.
 	 */
 	_handleShuffle: function (e) {
-		try {
-			e.preventDefault();
-			Player.set('shuffle', !Player.config.shuffle);
-			Player.header.render();
+		e.preventDefault();
+		Player.set('shuffle', !Player.config.shuffle);
+		Player.header.render();
 
-			// Update the play order.
-			if (!Player.config.shuffle) {
-				Player.sounds.sort((a, b) => Player.compareIds(a.id, b.id));
-			} else {
-				const sounds = Player.sounds;
-				for (let i = sounds.length - 1; i > 0; i--) {
-					const j = Math.floor(Math.random() * (i + 1));
-					[ sounds[i], sounds[j] ] = [ sounds[j], sounds[i] ];
-				}
+		// Update the play order.
+		if (!Player.config.shuffle) {
+			Player.sounds.sort((a, b) => Player.compareIds(a.id, b.id));
+		} else {
+			const sounds = Player.sounds;
+			for (let i = sounds.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[ sounds[i], sounds[j] ] = [ sounds[j], sounds[i] ];
 			}
-			Player.trigger('order');
-		} catch (err) {
-			Player.logError('There was an error changing the shuffle setting. Please check the console for details.', 'warning');
-			console.error('[4chan sounds player]', err);
 		}
+		Player.trigger('order');
 	},
 
 	/**
@@ -321,7 +312,7 @@ module.exports = {
 				a.click();
 				URL.revokeObjectURL(a.href);
 			},
-			onerror: () => Player.logError('There was an error downloading.', 'warning')
+			onerror: response => Player.logError('There was an error downloading.', response, 'warning')
 		});
 	},
 

@@ -11,6 +11,7 @@ const components = {
 	playlist: require('./components/playlist'),
 	position: require('./components/position'),
 	threads: require('./components/threads'),
+	tools: require('./components/tools'),
 	userTemplate: require('./components/user-template')
 };
 
@@ -47,7 +48,8 @@ const Player = window.Player = module.exports = {
 		settings: require('./templates/settings.tpl'),
 		threads: require('./templates/threads.tpl'),
 		threadBoards: require('./templates/thread_boards.tpl'),
-		threadList: require('./templates/thread_list.tpl')
+		threadList: require('./templates/thread_list.tpl'),
+		tools: require('./templates/tools.tpl')
 	},
 
 	/**
@@ -85,8 +87,7 @@ const Player = window.Player = module.exports = {
 			// Render the player, but not neccessarily show it.
 			Player.display.render();
 		} catch (err) {
-			Player.logError('There was an error initialzing the sound player. Please check the console for details.');
-			console.error('[4chan sounds player]', err);
+			Player.logError('There was an error initialzing the sound player. Please check the console for details.', err);
 			// Can't recover so throw this error.
 			throw err;
 		}
@@ -119,15 +120,15 @@ const Player = window.Player = module.exports = {
 	/**
 	 * Listen for changes
 	 */
-	syncTab: (property, callback) => GM_addValueChangeListener(property, (_prop, oldValue, newValue, remote) => {
+	syncTab: (property, callback) => typeof GM_addValueChangeListener !== 'undefined' && GM_addValueChangeListener(property, (_prop, oldValue, newValue, remote) => {
 		remote && callback(newValue, oldValue);
 	}),
 
 	/**
 	 * Send an error notification event.
 	 */
-	logError: function (message, type = 'error') {
-		console.error(message);
+	logError: function (message, error, type = 'error') {
+		console.error('[4chan sounds player]', message, error);
 		document.dispatchEvent(new CustomEvent('CreateNotification', {
 			bubbles: true,
 			detail: {

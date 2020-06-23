@@ -112,8 +112,7 @@ module.exports = {
 				Player.audio.play();
 			}
 		} catch (err) {
-			Player.logError('There was an error playing the sound. Please check the console for details.');
-			console.error('[4chan sounds player]', err);
+			Player.logError('There was an error playing the sound. Please check the console for details.', err);
 		}
 	},
 
@@ -154,28 +153,23 @@ module.exports = {
 		if (!Player.audio) {
 			return;
 		}
-		try {
-			// If there's no sound fall out.
-			if (!Player.sounds.length) {
-				return;
-			}
-			// If there's no sound currently playing or it's not in the list then just play the first sound.
-			const currentIndex = Player.sounds.indexOf(Player.playing);
-			if (currentIndex === -1) {
-				return Player.play(Player.sounds[0]);
-			}
-			// Get the next index, either repeating the same, wrapping round to repeat all or just moving the index.
-			const nextIndex = !force && Player.config.repeat === 'one'
-				? currentIndex
-				: Player.config.repeat === 'all'
-					? ((currentIndex + direction) + Player.sounds.length) % Player.sounds.length
-					: currentIndex + direction;
-			const nextSound = Player.sounds[nextIndex];
-			nextSound && Player.play(nextSound);
-		} catch (err) {
-			Player.logError(`There was an error selecting the ${direction > 0 ? 'next' : 'previous'} track. Please check the console for details.`);
-			console.error('[4chan sounds player]', err);
+		// If there's no sound fall out.
+		if (!Player.sounds.length) {
+			return;
 		}
+		// If there's no sound currently playing or it's not in the list then just play the first sound.
+		const currentIndex = Player.sounds.indexOf(Player.playing);
+		if (currentIndex === -1) {
+			return Player.play(Player.sounds[0]);
+		}
+		// Get the next index, either repeating the same, wrapping round to repeat all or just moving the index.
+		const nextIndex = !force && Player.config.repeat === 'one'
+			? currentIndex
+			: Player.config.repeat === 'all'
+				? ((currentIndex + direction) + Player.sounds.length) % Player.sounds.length
+				: currentIndex + direction;
+		const nextSound = Player.sounds[nextIndex];
+		nextSound && Player.play(nextSound);
 	},
 
 	/**

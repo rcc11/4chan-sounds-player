@@ -74,5 +74,5 @@ window.createElementBefore = function (html, before, events = {}) {
 window.noDefault = (f, ...args) => e => {
 	e.preventDefault();
 	const func = typeof f === 'function' ? f : _get(Player, f);
-	func(...args);
+	func(e, ...args);
 };

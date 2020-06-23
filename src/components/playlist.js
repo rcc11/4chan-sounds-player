@@ -37,6 +37,9 @@ module.exports = {
 			}
 		});
 
+		// Keey track of  of the hover image element.
+		Player.on('rendered', () => Player.playlist.hoverImage = Player.$(`.${ns}-hover-image`));
+
 		// Update the UI when a new sound plays, and scroll to it.
 		Player.on('playsound', sound => {
 			Player.playlist.showImage(sound);
@@ -85,21 +88,16 @@ module.exports = {
 			return;
 		}
 		let isVideo = Player.playlist.isVideo = !thumb && (sound.image.endsWith('.webm') || sound.type === 'video/webm');
-		try {
-			const container = document.querySelector(`.${ns}-image-link`);
-			const img = container.querySelector(`.${ns}-image`);
-			const video = container.querySelector(`.${ns}-video`);
-			img.src = '';
-			img.src = isVideo || thumb ? sound.thumb : sound.image;
-			video.src = isVideo ? sound.image : undefined;
-			if (Player.config.viewStyle !== 'fullscreen') {
-				container.href = sound.image;
-			}
-			container.classList[isVideo ? 'add' : 'remove'](ns + '-show-video');
-		} catch (err) {
-			Player.logError('There was an error display the sound player image. Please check the console for details.');
-			console.error('[4chan sounds player]', err);
+		const container = document.querySelector(`.${ns}-image-link`);
+		const img = container.querySelector(`.${ns}-image`);
+		const video = container.querySelector(`.${ns}-video`);
+		img.src = '';
+		img.src = isVideo || thumb ? sound.thumb : sound.image;
+		video.src = isVideo ? sound.image : undefined;
+		if (Player.config.viewStyle !== 'fullscreen') {
+			container.href = sound.image;
 		}
+		container.classList[isVideo ? 'add' : 'remove'](ns + '-show-video');
 	},
 
 	/**
@@ -111,12 +109,7 @@ module.exports = {
 		}
 		e && e.preventDefault();
 		let style = Player.config.viewStyle === 'playlist' ? 'image' : 'playlist';
-		try {
-			Player.display.setViewStyle(style);
-		} catch (err) {
-			Player.logError('There was an error switching the view style. Please check the console for details.', 'warning');
-			console.error('[4chan sounds player]', err);
-		}
+		Player.display.setViewStyle(style);
 	},
 
 	/**
@@ -164,9 +157,8 @@ module.exports = {
 				Player.trigger('add', sound);
 			}
 		} catch (err) {
-			Player.logError('There was an error adding to the sound player. Please check the console for details.');
+			Player.logError('There was an error adding to the sound player. Please check the console for details.', err);
 			console.log('[4chan sounds player]', sound);
-			console.error('[4chan sounds player]', err);
 		}
 	},
 
@@ -197,7 +189,7 @@ module.exports = {
 			video.src = imageSrc;
 
 			function _continue() {
-				parseFileName(file.name, imageSrc, null, thumbSrc).forEach(sound => Player.add({ ...sound, local: true, type }));
+				parseFileName(file.name, imageSrc, null, thumbSrc, null, true).forEach(sound => Player.add({ ...sound, local: true, type }));
 			}
 		});
 	},

@@ -38,7 +38,8 @@ module.exports = (env, argv) => ({
 	},
 	resolve: {
 		modules: [
-			'./src'
+			'./src',
+			'./node_modules'
 		]
 	},
 	module: {
@@ -61,6 +62,7 @@ module.exports = (env, argv) => ({
 		]
 	},
 	plugins: [
+		new webpack.IgnorePlugin({ resourceRegExp: /fs/ }),
 		new webpack.BannerPlugin({ banner, raw: true }),
 		new webpack.DefinePlugin({ VERSION: JSON.stringify(pkg.version) })
 	]

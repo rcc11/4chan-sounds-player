@@ -96,13 +96,12 @@ function parsePost(post, skipRender) {
 		sounds.forEach(sound => Player.add(sound, skipRender));
 		return sounds.length > 0;
 	} catch (err) {
-		Player.logError('There was an issue parsing the files. Please check the console for details.');
+		Player.logError('There was an issue parsing the files. Please check the console for details.', err);
 		console.log('[4chan sounds player]', post);
-		console.error(err);
 	}
 }
 
-function parseFileName(filename, image, post, thumb, imageMD5) {
+function parseFileName(filename, image, post, thumb, imageMD5, bypassVerification) {
 	if (!filename) {
 		return [];
 	}
@@ -125,7 +124,7 @@ function parseFileName(filename, image, post, thumb, imageMD5) {
 				src = decodeURIComponent(src);
 			}
 
-			if (src.match(protocolRE) === null) {
+			if (!src.startsWith('blob:') && src.match(protocolRE) === null) {
 				src = (location.protocol + '//' + src);
 			}
 		} catch (error) {
@@ -133,7 +132,9 @@ function parseFileName(filename, image, post, thumb, imageMD5) {
 		}
 
 		const sound = { src, id, title, post, image, filename, thumb, imageMD5 };
-		Player.acceptedSound(sound) && sounds.push(sound);
+		if (bypassVerification || Player.acceptedSound(sound)) {
+			sounds.push(sound);
+		}
 		return sounds;
 	}, []);
 }
