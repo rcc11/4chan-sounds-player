@@ -4,12 +4,6 @@
 	let tpl = `
 		<div class="${ns}-heading">Version</div>
 		<a href="https://github.com/rcc11/4chan-sounds-player/releases" target="_blank">${VERSION}</a>
-
-		<div class="${ns}-heading">Encode / Decode URL</div>
-		<div class="${ns}-row">
-			<input type="text" class="${ns}-decoded-input ${ns}-col" placeholder="https://">
-			<input type="text" class="${ns}-encoded-input ${ns}-col" placeholder="https%3A%2F%2F">
-		</div>
 	`;
 
 	settingsConfig.forEach(function addSetting(setting) {

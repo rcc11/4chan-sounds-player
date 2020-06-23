@@ -29,7 +29,11 @@ module.exports = {
 			[`.${ns}-webm-sound`]: 'tools._handleWebmSoundChange'
 		},
 		drop: {
-			[`.${ns}-create-sound`]: 'tools._handleCreateSoundDrop'
+			[`.${ns}-create-sound-form`]: 'tools._handleCreateSoundDrop'
+		},
+		keyup: {
+			[`.${ns}-encoded-input`]: 'tools._handleEncoded',
+			[`.${ns}-decoded-input`]: 'tools._handleDecoded'
 		}
 	},
 
@@ -48,6 +52,20 @@ module.exports = {
 		} else {
 			Player.display.setViewStyle('tools');
 		}
+	},
+
+	/**
+	 * Encode the decoded input.
+	 */
+	_handleDecoded: function (e) {
+		Player.$(`.${ns}-encoded-input`).value = encodeURIComponent(e.eventTarget.value);
+	},
+
+	/**
+	 * Decode the encoded input.
+	 */
+	_handleEncoded: function (e) {
+		Player.$(`.${ns}-decoded-input`).value = decodeURIComponent(e.eventTarget.value);
 	},
 
 	/**

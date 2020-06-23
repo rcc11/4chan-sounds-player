@@ -15,10 +15,6 @@ module.exports = {
 		},
 		keydown: {
 			[`.${ns}-key-input`]: 'settings.handleKeyChange',
-		},
-		keyup: {
-			[`.${ns}-encoded-input`]: 'settings._handleEncoded',
-			[`.${ns}-decoded-input`]: 'settings._handleDecoded'
 		}
 	},
 
@@ -282,19 +278,5 @@ module.exports = {
 		const handlerName = e.eventTarget.getAttribute('data-handler');
 		const handler = _get(Player, handlerName);
 		handler && handler(property);
-	},
-
-	/**
-	 * Encode the decoded input.
-	 */
-	_handleDecoded: function (e) {
-		Player.$(`.${ns}-encoded-input`).value = encodeURIComponent(e.eventTarget.value);
-	},
-
-	/**
-	 * Decode the encoded input.
-	 */
-	_handleEncoded: function (e) {
-		Player.$(`.${ns}-decoded-input`).value = decodeURIComponent(e.eventTarget.value);
 	}
 };
