@@ -13,4 +13,25 @@
 		align-content: center;
 		white-space: nowrap;
 	}
+
+	& .#{$ns}-settings-tabs {
+		align-items: center;
+		align-content: center;
+		justify-content: center;
+	}
+	& .#{$ns}-settings-tab {
+		margin: .25rem;
+		text-decoration: underline;
+		text-align: center;
+		&.active {
+			font-weight: bold;
+		}
+	}
+
+	& .#{$ns}-settings-group {
+		display: none;
+		&.active {
+			display: block;
+		}
+	}
 }

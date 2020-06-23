@@ -25,7 +25,7 @@ module.exports = [
 		default: true,
 		title: 'Autoshow',
 		description: 'Automatically show the player when the thread contains sounds.',
-		showInSettings: true,
+		displayGroup: 'Display',
 		settings: [ { title: 'Enabled' } ]
 	},
 	{
@@ -33,33 +33,32 @@ module.exports = [
 		default: true,
 		title: 'Pause on hide',
 		description: 'Pause the player when it\'s hidden.',
-		showInSettings: true,
+		displayGroup: 'Display',
 		settings: [ { title: 'Enabled' } ]
 	},
 	{
 		title: 'Minimised Display',
 		description: 'Optional displays for when the player is minimised.',
+		displayGroup: 'Display',
 		settings: [
 			{
 				property: 'pip',
 				title: 'Thumbnail',
 				description: 'Display a fixed thumbnail of the playing sound in the bottom right of the thread.',
-				default: true,
-				showInSettings: true
+				default: true
 			},
 			{
 				property: 'maxPIPWidth',
 				title: 'Max Width',
 				description: 'Maximum width for the thumbnail.',
 				default: '150px',
-				updateStylesheet: true,
-				showInSettings: true
+				updateStylesheet: true
 			},
 			{
 				property: 'chanXControls',
 				title: '4chan X Header Controls',
 				description: 'Show playback controls in the 4chan X header. Customise the template below.',
-				showInSettings: isChanX,
+				displayMethod: isChanX || null,
 				options: {
 					always: 'Always',
 					closed: 'Only with the player closed',
@@ -72,7 +71,7 @@ module.exports = [
 		property: 'limitPostWidths',
 		title: 'Limit Post Width',
 		description: 'Limit the width of posts so they aren\'t hidden under the player.',
-		showInSettings: true,
+		displayGroup: 'Display',
 		settings: [
 			{
 				property: 'limitPostWidths',
@@ -90,7 +89,7 @@ module.exports = [
 		property: 'threadsViewStyle',
 		title: 'Threads View',
 		description: 'How threads in the threads view are listed.',
-		showInSettings: true,
+		displayGroup: 'Display',
 		settings: [ {
 			title: 'Display',
 			default: 'table',
@@ -102,7 +101,7 @@ module.exports = [
 	},
 	{
 		title: 'Keybinds',
-		showInSettings: true,
+		displayGroup: 'Keybinds',
 		description: 'Enable keyboard shortcuts.',
 		format: 'hotkeys.stringifyKey',
 		parse: 'hotkeys.parseKey',
@@ -201,7 +200,7 @@ module.exports = [
 			'zz.ht'
 		],
 		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
-		showInSettings: true,
+		displayGroup: 'Filter',
 		split: '\n'
 	},
 	{
@@ -210,26 +209,28 @@ module.exports = [
 		title: 'Filters',
 		description: 'List of URLs or image MD5s to filter, one per line.\nLines starting with a # will be ignored.',
 		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
-		showInSettings: true,
+		displayGroup: 'Filter',
 		split: '\n'
 	},
 	{
 		property: 'headerTemplate',
-		title: 'Header Contents',
+		title: 'Header',
 		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
-		default: 'repeat-button shuffle-button hover-images-button playlist-button\nsound-name\nadd-button reload-button threads-button settings-button close-button',
-		showInSettings: 'textarea',
+		default: 'repeat-button shuffle-button hover-images-button playlist-button\nsound-name\nview-menu-button add-button reload-button close-button',
+		displayGroup: 'Templates',
+		displayMethod: 'textarea'
 	},
 	{
 		property: 'rowTemplate',
-		title: 'Row Contents',
+		title: 'Row',
 		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 		default: 'sound-name h:{menu-button}',
-		showInSettings: 'textarea'
+		displayGroup: 'Templates',
+		displayMethod: 'textarea'
 	},
 	{
 		property: 'footerTemplate',
-		title: 'Footer Contents',
+		title: 'Footer',
 		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 		default: 'playing-button:"sound-index /" sound-count sounds\n'
 			+ 'p:{\n'
@@ -240,19 +241,21 @@ module.exports = [
 			+ '	</div>\n'
 			+ '}',
 		description: 'Template for the footer contents',
-		showInSettings: 'textarea',
+		displayGroup: 'Templates',
+		displayMethod: 'textarea',
 		attrs: 'style="height:120px;"'
 	},
 	{
 		property: 'chanXTemplate',
-		title: '4chan X Header Controls',
+		title: '4chan X Header',
 		default: 'p:{\n\tpost-link:"sound-name"\n\tprev-button\n\tplay-button\n\tnext-button\n\tsound-current-time / sound-duration\n}',
 		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
-		showInSettings: 'textarea'
+		displayGroup: 'Templates',
+		displayMethod: 'textarea'
 	},
 	{
 		title: 'Colors',
-		showInSettings: true,
+		displayGroup: 'Display',
 		property: 'colors',
 		updateStylesheet: true,
 		actions: [

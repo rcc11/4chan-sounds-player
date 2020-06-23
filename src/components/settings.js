@@ -6,12 +6,13 @@ module.exports = {
 	delegatedEvents: {
 		click: {
 			[`.${ns}-settings .${ns}-heading-action`]: 'settings.handleAction',
+			[`.${ns}-settings-tab`]: 'settings._handleTab'
 		},
 		focusout: {
-			[`.${ns}-settings input, .${ns}-settings textarea`]: 'settings.handleChange'
+			[`.${ns}-settings input, .${ns}-settings textarea`]: 'settings._handleChange'
 		},
 		change: {
-			[`.${ns}-settings input[type=checkbox], .${ns}-settings select`]: 'settings.handleChange'
+			[`.${ns}-settings input[type=checkbox], .${ns}-settings select`]: 'settings._handleChange'
 		},
 		keydown: {
 			[`.${ns}-key-input`]: 'settings.handleKeyChange',
@@ -19,6 +20,8 @@ module.exports = {
 	},
 
 	initialize: async function () {
+		Player.settings.view = 'Display';
+
 		// Apply the default board theme as default.
 		Player.settings.applyBoardTheme();
 
@@ -218,9 +221,25 @@ module.exports = {
 	},
 
 	/**
+	 * Switch the displayed group
+	 */
+	_handleTab: function (e) {
+		const group = e.eventTarget.getAttribute('data-group');
+		if (group) {
+			e.preventDefault();
+			const currentGroup = Player.$(`.${ns}-settings-group.active`);
+			const currentTab = Player.$(`.${ns}-settings-tab.active`);
+			currentGroup && currentGroup.classList.remove('active');
+			currentTab && currentTab.classList.remove('active');
+			Player.$(`.${ns}-settings-group[data-group="${group}"]`).classList.add('active');
+			Player.$(`.${ns}-settings-tab[data-group="${group}"]`).classList.add('active');
+		}
+	},
+
+	/**
 	 * Handle the user making a change in the settings view.
 	 */
-	handleChange: function (e) {
+	_handleChange: function (e) {
 		try {
 			const input = e.eventTarget;
 			const property = input.getAttribute('data-property');
