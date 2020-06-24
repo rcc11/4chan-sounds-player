@@ -1,21 +1,5 @@
 module.exports = {
-	fileHosts: [
-		{
-			id: 'catbox',
-			default: true,
-			name: 'catbox.moe',
-			url: 'https://catbox.moe/user/api.php',
-			data: { reqtype: 'fileupload', fileToUpload: '$file', userhash: '' }
-		},
-		{
-			id: 'pomf',
-			name: 'pomf.cat',
-			url: 'https://pomf.cat/upload.php',
-			data: { 'files[]': '$file' },
-			responsePath: 'response.files[0].url',
-			soundUrl: 'a.pomf.cat/%s'
-		}
-	],
+	createStatusText: '',
 
 	delegatedEvents: {
 		click: {
@@ -38,11 +22,22 @@ module.exports = {
 	},
 
 	initialize: function () {
-		Player.on('rendered', () => {
-			Player.tools.status = Player.$(`.${ns}-create-sound-status`);
-			Player.tools.imgInput = Player.$(`.${ns}-create-sound-img`);
-			Player.tools.sndInput = Player.$(`.${ns}-create-sound-snd`);
+		Player.on('config:uploadHosts', Player.tools.render);
+		Player.on('config:defaultUploadHost', function (newValue) {
+			Player.$(`.${ns}-create-sound-host`).value = newValue;
 		});
+		Player.on('rendered', Player.tools.afterRender);
+	},
+
+	render: function () {
+		Player.$(`.${ns}-tools`).innerHTML = Player.templates.tools();
+		Player.tools.afterRender();
+	},
+
+	afterRender: function () {
+		Player.tools.status = Player.$(`.${ns}-create-sound-status`);
+		Player.tools.imgInput = Player.$(`.${ns}-create-sound-img`);
+		Player.tools.sndInput = Player.$(`.${ns}-create-sound-snd`);
 	},
 
 	toggle: function (e) {
@@ -52,6 +47,11 @@ module.exports = {
 		} else {
 			Player.display.setViewStyle('tools');
 		}
+	},
+
+	updateCreateStatus: function (text) {
+		Player.tools.status.style.display = text ? 'inherit' : 'none';
+		Player.tools.status.innerHTML = Player.tools.createStatusText = text;
 	},
 
 	/**
@@ -131,15 +131,13 @@ module.exports = {
 	 */
 	_handleCreate: async function (e) {
 		e && e.preventDefault();
-		const status = Player.tools.status;
 		// Revoke the URL for an existing created image.
 		Player.tools._createdImageURL && URL.revokeObjectURL(Player.tools._createdImageURL);
 		Player.tools._createdImage = null;
 
-		status.innerHTML = 'Creating sound image';
+		Player.tools.updateCreateStatus('Creating sound image');
 
 		Player.$(`.${ns}-create-button`).disabled = true;
-		status.style.display = 'inherit';
 
 		// Get the host, image and sound (checking if the sound is from a webm "image")
 		const host = Player.$(`.${ns}-create-sound-host`).value;
@@ -188,14 +186,16 @@ module.exports = {
 		function _finish(msg, err) {
 			Player.$(`.${ns}-create-button`).disabled = false;
 			if (err) {
-				status.innerHTML += '<br>Failed!';
+				Player.tools.updateCreateStatus(Player.tools.createStatusText + '<br>Failed!');
 				return Player.logError(msg, err);
 			}
 			// Complete! with some action links
-			status.innerHTML += `<br>Complete!<br>`
-				+ (is4chan ? `<a href="#" class="${ns}-create-sound-post-link">Post</a> - ` : '')
-				+ ` <a href="#" class="${ns}-create-sound-add-link">Add</a> - `
-				+ ` <a href="${Player.tools._createdImageURL}" download="${Player.tools._createdImage.name}">Download</a>`;
+				Player.tools.updateCreateStatus(Player.tools.createStatusText
+					+ `<br>Complete!<br>`
+					+ (is4chan ? `<a href="#" class="${ns}-create-sound-post-link">Post</a> - ` : '')
+					+ ` <a href="#" class="${ns}-create-sound-add-link">Add</a> - `
+					+ ` <a href="${Player.tools._createdImageURL}" download="${Player.tools._createdImage.name}">Download</a>`
+				);
 		}
 	},
 
@@ -203,9 +203,11 @@ module.exports = {
 	 * Extract just the audio or video from a file.
 	 */
 	extract: async function (file, type) {
-		const status = Player.tools.status;
+		if (typeof ffmpeg !== 'function') {
+			throw new Error('ffmpeg is not available');
+		}
 		const name = file.name.replace(/\.[^/.]+$/, '') + (type === 'audio' ? '.ogg' : '.webm');
-		status.innerHTML += '<br>Extracting ' + type;
+		Player.tools.updateCreateStatus(Player.tools.createStatusText + '<br>Extracting ' + type);
 
 		const result = ffmpeg({
 			MEMFS: [ { name: '_' + file.name, data: await new Response(file).arrayBuffer() }],
@@ -221,20 +223,21 @@ module.exports = {
 	 * Upload the sound file and return a link to it.
 	 */
 	postFile: async function (file, hostId) {
-		const status = Player.tools.status;
-		const host = Player.tools.fileHosts.find(host => host.id === hostId);
+		const host = Player.config.uploadHosts[hostId];
 
-		if (!host) {
-			throw new Error('Unknown host ' + hostId);
+		if (!host || host.invalid) {
+			throw new Error('Invalid host ' + hostId);
 		}
 
 		const formData = new FormData();
 		Object.keys(host.data).forEach(key => {
-			formData.append(key, host.data[key] === '$file' ? file : host.data[key]);
+			if (host.data[key] !== null) {
+				formData.append(key, host.data[key] === '$file' ? file : host.data[key]);
+			}
 		});
 
-		const statusText = status.innerHTML;
-		status.innerHTML += '<br>Uploading sound';
+		const statusText = Player.tools.createStatusText;
+		Player.tools.updateCreateStatus(Player.tools.createStatusText + '<br>Uploading sound');
 
 		return new Promise((resolve, reject) => {
 			GM.xmlHttpRequest({
@@ -252,13 +255,13 @@ module.exports = {
 							? (response.responseText.match(new RegExp(host.responseMatch)) || [])[0]
 							: response.responseText;
 					const uploadedUrl = host.soundUrl ? host.soundUrl.replace('%s', responseVal) : responseVal;
-					status.innerHTML = statusText + `<br>Uploaded to <a href="${uploadedUrl}">${uploadedUrl}</a>`;
+					Player.tools.updateCreateStatus(statusText + `<br>Uploaded to <a href="${uploadedUrl}" target="_blank">${uploadedUrl}</a>`);
 					resolve(uploadedUrl);
 				},
 				upload: {
 					onprogress: response => {
 						const total = response.total > 0 ? response.total : file.size;
-						status.innerHTML = statusText + '<br>Uploading sound - ' + Math.floor(response.loaded / total * 100) + '%';
+						Player.tools.updateCreateStatus(statusText + '<br>Uploading sound - ' + Math.floor(response.loaded / total * 100) + '%');
 					}
 				},
 				onerror: reject

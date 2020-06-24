@@ -29,8 +29,9 @@
 			<div class="${ns}-row ${setting.isSubSetting ? `${ns}-sub-settings` : ''}">
 				<div class="${ns}-col ${!setting.isSubSetting ? `${ns}-heading` : ''} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc.replace(/"/g, '&quot;')}"` : ''}>
 					${setting.title}
-					${(setting.actions || []).map(action => `<a href="javascript:;" class="${ns}-heading-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`)}
-				</div>`;
+					${(setting.actions || []).map(action => `<a href="#" class="${ns}-heading-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`)}
+				</div>
+				${setting.text || ''}`;
 
 				if (setting.settings) {
 					setting.settings.forEach(subSetting => addSetting({
@@ -49,6 +50,8 @@
 					if (setting.format) {
 						value = _get(Player, setting.format)(value);
 					}
+					let displayMethod = setting.displayMethod;
+					let displayMethodFunction = _get(Player, displayMethod);
 					let type = typeof value;
 
 					if (setting.split) {
@@ -59,10 +62,13 @@
 
 					tpl += `
 					<div class="${ns}-col">
-						${type === 'boolean'
+						${typeof displayMethodFunction === 'function'
+							? displayMethodFunction(value, attrs)
+
+						: type === 'boolean'
 							? `<input type="checkbox" ${attrs} ${value ? 'checked' : ''}></input>`
 
-						: setting.displayMethod === 'textarea' || type === 'object'
+						: displayMethod === 'textarea' || type === 'object'
 							? `<textarea ${attrs}>${value}</textarea>`
 
 						: setting.options

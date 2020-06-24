@@ -1,6 +1,6 @@
 `<div class="${ns}-heading ${ns}-has-description" title="Search for threads with a sound OP">
 	Active Threads
-	${!Player.threads.loading ? `- <a class="${ns}-fetch-threads-link ${ns}-heading-action" href="javascript:;">Update</a>` : ''}
+	${!Player.threads.loading ? `- <a class="${ns}-fetch-threads-link ${ns}-heading-action" href="#">Update</a>` : ''}
 </div>
 <div style="display: ${Player.threads.loading ? 'block' : 'none'}">Loading</div>
 <div style="display: ${Player.threads.loading ? 'none' : 'block'}">
@@ -9,7 +9,7 @@
 	</div>
 	<input type="text" class="${ns}-threads-filter" value="${Player.threads.filterValue || ''}"></input>
 	<div class="${ns}-heading">
-		Boards - <a class="${ns}-all-boards-link ${ns}-heading-action" href="javascript:;">${Player.threads.showAllBoards ? 'Selected Only' : 'Show All'}</a>
+		Boards - <a class="${ns}-all-boards-link ${ns}-heading-action" href="#">${Player.threads.showAllBoards ? 'Selected Only' : 'Show All'}</a>
 	</div>
 	<div class="${ns}-thread-board-list">
 		${Player.templates.threadBoards(data)}

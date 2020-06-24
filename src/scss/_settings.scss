@@ -34,4 +34,24 @@
 			display: block;
 		}
 	}
+
+	& .#{$ns}-host-input {
+		margin: .5rem 0;
+		border-top: solid 1px #{map-get($colors, border)};
+
+		&.invalid {
+			border: solid 1px red;
+		}
+
+		& .#{$ns}-host-controls {
+			align-items: center;
+			justify-content: space-between;
+			margin: .125rem 0;
+		}
+
+		& input[type=text] {
+			min-width: 100%;
+			box-sizing: border-box
+		}
+	}
 }

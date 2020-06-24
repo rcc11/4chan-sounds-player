@@ -24,9 +24,11 @@
 	<div class="${ns}-row">
 		<div class="${ns}-col">
 			<select class="${ns}-create-sound-host">
-				${Player.tools.fileHosts.map(host => `
-					<option value="${host.id}" ${host.default ? 'selected' : ''}>${host.name}</option>
-				`).join('')}
+				${Object.keys(Player.config.uploadHosts).map((hostId, i) =>
+					!Player.config.uploadHosts[hostId].invalid
+						? `<option value="${hostId}" ${Player.config.defaultUploadHost === hostId ? 'selected' : ''}>${hostId}</option>`
+						: ''
+				).join('')}
 			</select>
 		</div>
 	</div>
@@ -55,25 +57,12 @@
 			<input type="text" class="${ns}-create-sound-name" placeholder="Name">
 		</div>
 	</div>
-	<!--<div class="${ns}-row">
-		Sound
-	</div>
-	<div class="${ns}-row">
-		<div class="${ns}-col">
-			<label class="${ns}-webm-sound-label" style="display: none;"><input type="checkbox" class="${ns}-webm-sound">Use webm</label>
-			<input class="${ns}-create-sound-snd" type="file" accept="audio/*,video/*">
-		</div>
-	</div>
-	<div class="${ns}-row">
-		Name
-	</div>
-	<div class="${ns}-row ${ns}-create-sound-options">
-		<input type="text" class="${ns}-create-sound-name">
-	</div>-->
 	<div class="${ns}-row" style="margin-top: .5rem">
 		<div class="${ns}-col-auto" style="margin-right: .5rem">
 			<button class="${ns}-create-button">Create</button>
 		</div>
 	</div>
 </div>
-<div class="${ns}-create-sound-status" style="display: none"></div>`
+<div class="${ns}-create-sound-status" ${Player.tools.createStatusText ? '' : 'style="display: none"'}>
+	${Player.tools.createStatusText}
+</div>`

@@ -42,6 +42,7 @@ const Player = window.Player = module.exports = {
 		css: require('./scss/style.scss'),
 		footer: require('./templates/footer.tpl'),
 		header: require('./templates/header.tpl'),
+		hostInput: require('./templates/host_input.tpl'),
 		itemMenu: require('./templates/item_menu.tpl'),
 		list: require('./templates/list.tpl'),
 		player: require('./templates/player.tpl'),
@@ -128,12 +129,12 @@ const Player = window.Player = module.exports = {
 	/**
 	 * Send an error notification event.
 	 */
-	logError: function (message, error, type = 'error') {
+	logError: function (message, error, type) {
 		console.error('[4chan sounds player]', message, error);
 		document.dispatchEvent(new CustomEvent('CreateNotification', {
 			bubbles: true,
 			detail: {
-				type: type,
+				type: type || 'error',
 				content: message,
 				lifetime: 5
 			}

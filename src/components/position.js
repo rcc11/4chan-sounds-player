@@ -121,7 +121,8 @@ module.exports = {
 		const heightElement = Player.config.viewStyle === 'playlist' ? Player.$(`.${ns}-list-container`)
 			: Player.config.viewStyle === 'image' ? Player.$(`.${ns}-image-link`)
 			: Player.config.viewStyle === 'settings' ? Player.$(`.${ns}-settings`)
-			: Player.config.viewStyle === 'threads' ? Player.$(`.${ns}-threads`) : null;
+			: Player.config.viewStyle === 'threads' ? Player.$(`.${ns}-threads`)
+			: Player.config.viewStyle === 'tools' ? Player.$(`.${ns}-tools`) : null;
 
 		if (!heightElement) {
 			return;

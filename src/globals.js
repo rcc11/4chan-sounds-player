@@ -17,6 +17,9 @@ window._set = function (object, path, value) {
 };
 
 window._get = function (object, path, dflt) {
+	if (typeof path !== 'string') {
+		return dflt;
+	}
 	const props = path.split('.');
 	const lastProp = props.pop();
 	const parent = props.reduce((obj, k) => obj && obj[k], object);
@@ -24,6 +27,26 @@ window._get = function (object, path, dflt) {
 		? parent[lastProp]
 		: dflt;
 };
+
+/**
+ * Check two values are equal. Arrays/Objects are deep checked.
+ */
+window._isEqual = function (a, b, strict = true) {
+	if (typeof a !== typeof b) {
+		return false;
+	}
+	if (Array.isArray(a, b)) {
+		return a === b || a.length === b.length && a.every((_a, i) => _isEqual(_a, b[i]));
+	}
+	if (typeof a === 'object' && a !== b) {
+		const allKeys = Object.keys(a);
+		allKeys.push(...Object.keys(b).filter(k => !allKeys.includes(k)));
+		return allKeys.every(key => _isEqual(a[key], b[key]));
+	}
+	return strict
+		? a === b
+		: a == b;
+}
 
 window.toDuration = function (number) {
 	number = Math.floor(number || 0);
@@ -76,3 +99,12 @@ window.noDefault = (f, ...args) => e => {
 	const func = typeof f === 'function' ? f : _get(Player, f);
 	func(e, ...args);
 };
+
+class PlayerError extends Error {
+	constructor (msg, type) {
+		super(msg);
+		this.reason = msg;
+		this.type = type;
+	}
+}
+window.PlayerError = PlayerError;

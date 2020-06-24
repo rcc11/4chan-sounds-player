@@ -5,7 +5,7 @@ module.exports = {
 
 	delegatedEvents: {
 		click: {
-			[`.${ns}-settings .${ns}-heading-action`]: 'settings.handleAction',
+			[`.${ns}-settings .${ns}-heading-action`]: 'settings._handleAction',
 			[`.${ns}-settings-tab`]: 'settings._handleTab'
 		},
 		focusout: {
@@ -99,16 +99,16 @@ module.exports = {
 	/**
 	 * Update a setting.
 	 */
-	set: function (property, value, { bypassSave, bypassRender, silent } = {}) {
+	set: function (property, value, { bypassValidation, bypassSave, bypassRender, silent } = {}) {
 		const previousValue = _get(Player.config, property);
-		if (previousValue === value) {
+		if (!bypassValidation && _isEqual(previousValue, value)) {
 			return;
 		}
 		_set(Player.config, property, value);
 		!silent && Player.trigger('config', property, value, previousValue);
 		!silent && Player.trigger('config:' + property, value, previousValue);
 		!bypassSave && Player.settings.save();
-		!bypassRender && Player.settings.findDefault(property).showInSettings && Player.settings.render();
+		!bypassRender && Player.settings.findDefault(property).displayGroup && Player.settings.render();
 	},
 
 	/**
@@ -124,7 +124,7 @@ module.exports = {
 	 */
 	save: function () {
 		try {
-			// Filter settings that have been modified from the default.
+			// Filter settings that haven't been modified from the default.
 			const settings = settingsConfig.reduce(function _handleSetting(settings, setting) {
 				if (setting.settings) {
 					setting.settings.forEach(subSetting => _handleSetting(settings, {
@@ -133,8 +133,17 @@ module.exports = {
 						...subSetting
 					}));
 				} else {
-					const userVal = _get(Player.config, setting.property);
-					if (userVal !== undefined && userVal !== setting.default) {
+					let userVal = _get(Player.config, setting.property);
+					if (userVal !== undefined && !_isEqual(userVal, setting.default)) {
+						// If the setting is a mixed in object only store items that differ from the default.
+						if (setting.mix) {
+							userVal = Object.keys(userVal).reduce((changed, key) => {
+								if (!_isEqual(setting.default[key], userVal[key])) {
+									changed[key] = userVal[key];
+								}
+								return changed;
+							}, {});
+						}
 						_set(settings, setting.property, userVal);
 					}
 				}
@@ -177,11 +186,20 @@ module.exports = {
 					...subSetting
 				}));
 			}
-			if (opts.ignore && opts.ignore.includes(opts.property)) {
+			if (opts.ignore && opts.ignore.includes(setting.property)) {
 				return;
 			}
-			const value = _get(settings, setting.property, opts.applyDefault ? setting.default : undefined);
+			let value = _get(settings, setting.property, opts.applyDefault ? setting.default : undefined);
 			if (value !== undefined) {
+				if (setting.mix) {
+					// Mix in default.
+					value = { ...setting.default, ...(value || {}) };
+					// Remove null values, used to indicate the default should not be set.
+					value = Object.keys(value).reduce((filteredValues, k) => {
+						value[k] !== null && (filteredValues[k] = value[k]);
+						return filteredValues;
+					}, {});
+				}
 				Player.set(setting.property, value, opts);
 			}
 		});
@@ -227,6 +245,7 @@ module.exports = {
 		const group = e.eventTarget.getAttribute('data-group');
 		if (group) {
 			e.preventDefault();
+			Player.settings.view = group;
 			const currentGroup = Player.$(`.${ns}-settings-group.active`);
 			const currentTab = Player.$(`.${ns}-settings-tab.active`);
 			currentGroup && currentGroup.classList.remove('active');
@@ -253,16 +272,16 @@ module.exports = {
 			let newValue = input[input.getAttribute('type') === 'checkbox' ? 'checked' : 'value'];
 
 			if (settingConfig.parse) {
-				newValue = _get(Player, settingConfig.parse)(newValue);
+				newValue = _get(Player, settingConfig.parse)(newValue, currentValue, e);
 			}
 			if (settingConfig && settingConfig.split) {
 				newValue = newValue.split(decodeURIComponent(settingConfig.split));
 			}
 
 			// Not the most stringent check but enough to avoid some spamming.
-			if (currentValue !== newValue) {
+			if (!_isEqual(currentValue, newValue, !settingConfig.looseCompare)) {
 				// Update the setting.
-				Player.set(property, newValue, { bypassRender: true });
+				Player.set(property, newValue, { bypassValidation: true, bypassRender: true });
 
 				// Update the stylesheet reflect any changes.
 				if (settingConfig.updateStylesheet) {
@@ -273,7 +292,7 @@ module.exports = {
 			// Run any handler required by the value changing
 			settingConfig && settingConfig.handler && _get(Player, settingConfig.handler, () => null)(newValue);
 		} catch (err) {
-			Player.logError('There was an error updating the setting.', err);
+			Player.logError(err.reason || 'There was an error updating the setting.', err, err.type || 'error');
 		}
 	},
 
@@ -291,11 +310,119 @@ module.exports = {
 	/**
 	 * Handle an action link next to a heading being clicked.
 	 */
-	handleAction: function (e) {
+	_handleAction: function (e) {
 		e.preventDefault();
 		const property = e.eventTarget.getAttribute('data-property');
 		const handlerName = e.eventTarget.getAttribute('data-handler');
 		const handler = _get(Player, handlerName);
-		handler && handler(property);
+		handler && handler(property, e);
+	},
+
+	renderHosts: function (_value) {
+		return `<div class="${ns}-host-inputs">`
+			+ Object.keys(Player.config.uploadHosts).map(Player.templates.hostInput).join('')
+		+ `</div>`;
+	},
+
+	parseHosts: function (newValue, hosts, e) {
+		hosts = { ...hosts };
+		const container = e.eventTarget.closest(`.${ns}-host-input`);
+		let name = container.getAttribute('data-host-name');
+		let host = hosts[name] = { ...hosts[name] };
+		const changedField = e.eventTarget.getAttribute('name');
+		let _error = msg => {
+			host.invalid = true;
+			container.classList.add('invalid');
+			throw new PlayerError(msg, 'warning');
+		}
+
+		// If the name was changed then reassign in hosts and update the data-host-name attribute.
+		if (changedField === 'name' && newValue !== name) {
+			if (!newValue || hosts[newValue]) {
+				_error('A unique name for the host is required.');
+			}
+			container.setAttribute('data-host-name', newValue);
+			hosts[newValue] = host;
+			delete hosts[name];
+			name = newValue;
+		}
+
+		// Validate URL
+		if (changedField === 'url' || changedField === 'soundUrl') {
+			try {
+				(changedField === 'url' || newValue) && new URL(newValue);
+			} catch (err) {
+				_error('The value must be a valid URL.');
+			}
+		}
+
+		// Parse the data
+		if (changedField === 'data') {
+			try {
+				newValue = JSON.parse(newValue);
+			} catch (err) {
+				_error('The data must be valid JSON.');
+			}
+		}
+
+		host[changedField] = newValue;
+
+		try {
+			const urlValue = container.querySelector(`[name=url]`).value;
+			const soundUrlValue = container.querySelector(`[name=soundUrl]`).value;
+			const dataValue = container.querySelector(`[name=data]`).value;
+			if (name && JSON.parse(dataValue) && new URL(urlValue) && (!soundUrlValue || new URL(soundUrlValue))) {
+				delete host.invalid;
+				container.classList.remove('invalid');
+			}
+		} catch (err) {
+			// leave it invalid
+		}
+
+		return hosts;
+	},
+
+	addUploadHost: function () {
+		const hosts = Player.config.uploadHosts;
+		const container = Player.$(`.${ns}-host-inputs`);
+		let name = 'New Host';
+		let i = 1;
+		while (Player.config.uploadHosts[name]) {
+			name = name + ' ' + ++i;
+		}
+		hosts[name] = { invalid: true, data: { 'file': '$file' } };
+		if (container.children[0]) {
+			createElementBefore(Player.templates.hostInput(name), container.children[0]);
+		} else {
+			createElement(Player.templates.hostInput(name), container);
+		}
+		Player.settings.set('uploadHosts', hosts, { bypassValidation: true, bypassRender: true, silent: true });
+	},
+
+	removeHost: function (prop, e) {
+		const hosts = Player.config.uploadHosts;
+		const container = e.eventTarget.closest(`.${ns}-host-input`);
+		const name = container.getAttribute('data-host-name');
+		// For hosts in the defaults set null so we know to not include them on load
+		if (Player.settings.findDefault('uploadHosts').default[name]) {
+			hosts[name] = null;
+		} else {
+			delete hosts[name];
+		}
+		container.parentNode.removeChild(container);
+		Player.settings.set('uploadHosts', hosts, { bypassValidation: true, bypassRender: true });
+	},
+
+	setDefaultHost: function (_new, _current, e) {
+		const selected = e.eventTarget.closest(`.${ns}-host-input`).getAttribute('data-host-name');
+		if (selected === Player.config.defaultUploadHost) {
+			return selected;
+		}
+
+		Object.keys(Player.config.uploadHosts).forEach(name => {
+			const checkbox = Player.$(`.${ns}-host-input[data-host-name="${name}"] input[data-property="defaultUploadHost"]`);
+			checkbox && (checkbox.checked = name === selected);
+		});
+		return selected;
 	}
 };
