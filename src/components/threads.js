@@ -1,6 +1,7 @@
 const { parseFileName } = require('../file_parser');
 const { get } = require('../api');
 
+const maxSavedBoards = 10;
 const boardsURL = 'https://a.4cdn.org/boards.json';
 const catalogURL = 'https://a.4cdn.org/%s/catalog.json';
 
@@ -24,7 +25,7 @@ module.exports = {
 		}
 	},
 
-	initialize: function () {
+	initialize: async function () {
 		Player.threads.hasParser = is4chan && typeof Parser !== 'undefined';
 		// If the native Parser hasn't been intialised chuck customSpoiler on it so we can call it for threads.
 		// You shouldn't do things like this. We can fall back to the table view if it breaks though.
@@ -36,6 +37,12 @@ module.exports = {
 		Player.on('view', Player.threads._initialFetch);
 		Player.on('rendered', Player.threads.afterRender);
 		Player.on('config:threadsViewStyle', Player.threads.render);
+		try {
+			const savedBoards = await GM.getValue('threads_board_selection');
+			savedBoards && (Player.threads.selectedBoards = savedBoards.split(','));
+		} catch (err) {
+			// Leave it deafulted to the current board.
+		}
 	},
 
 	/**
@@ -133,14 +140,15 @@ module.exports = {
 	/**
 	 * Select/deselect a board.
 	 */
-	toggleBoard: function (e) {
+	toggleBoard: async function (e) {
 		const board = e.eventTarget.value;
 		const selected = e.eventTarget.checked;
 		if (selected) {
-			!Player.threads.selectedBoards.includes(board) && Player.threads.selectedBoards.push(board);
+			!Player.threads.selectedBoards.includes(board) && Player.threads.selectedBoards.unshift(board);
 		} else {
 			Player.threads.selectedBoards = Player.threads.selectedBoards.filter(b => b !== board);
 		}
+		await GM.setValue('threads_board_selection', Player.threads.selectedBoards.slice(0, maxSavedBoards).join(','));
 	},
 
 	/**
