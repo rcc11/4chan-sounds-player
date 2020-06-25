@@ -1,10 +1,14 @@
+const dismissedContentCache = {};
+const dismissedRestoreCache = {};
+
 module.exports = {
 	atRoot: [ 'show', 'hide' ],
 
 	delegatedEvents: {
 		click: {
 			[`.${ns}-close-button`]: 'hide',
-			[`.${ns}-dismiss-link`]: 'display._handleDismiss'
+			[`.${ns}-dismiss-link`]: 'display._handleDismiss',
+			[`.${ns}-restore-link`]: 'display._handleRestore'
 		},
 		fullscreenchange: {
 			[`.${ns}-media`]: 'display._handleFullScreenChange'
@@ -179,17 +183,38 @@ module.exports = {
 		}
 	},
 
+	_handleRestore: async function (e) {
+		e.preventDefault();
+		const restore = e.eventTarget.getAttribute('data-restore');
+		const restoreIndex = Player.display.dismissed.indexOf(restore);
+		if (restore && restoreIndex > -1) {
+			Player.display.dismissed.splice(restoreIndex, 1);
+			Player.$all(`[data-restore="${restore}"]`).forEach(el => {
+				createElementBefore(dismissedContentCache[restore], el);
+				el.parentNode.removeChild(el);
+			});
+			await GM.setValue('dismissed', Player.display.dismissed.join(','));
+		}
+	},
+
 	_handleDismiss: async function (e) {
 		e.preventDefault();
 		const dismiss = e.eventTarget.getAttribute('data-dismiss');
 		if (dismiss && !Player.display.dismissed.includes(dismiss)) {
 			Player.display.dismissed.push(dismiss);
-			Player.$all(`[data-dismiss-id="${dismiss}"]`).forEach(el => el.parentNode.removeChild(el));
+			Player.$all(`[data-dismiss-id="${dismiss}"]`).forEach(el => {
+				createElementBefore(`<a href="#" class="${ns}-restore-link" data-restore="${dismiss}">${dismissedRestoreCache[dismiss]}</a>`, el);
+				el.parentNode.removeChild(el);
+			});
 			await GM.setValue('dismissed', Player.display.dismissed.join(','));
 		}
 	},
 
-	ifNotDismissed: function (name, text) {
-		return Player.display.dismissed.includes(name) ? '' : text;
+	ifNotDismissed: function (name, restore, text) {
+		dismissedContentCache[name] = text;
+		dismissedRestoreCache[name] = restore;
+		return Player.display.dismissed.includes(name)
+			? `<a href="#" class="${ns}-restore-link" data-restore="${name}">${restore}</a>`
+			: text;
 	}
 };

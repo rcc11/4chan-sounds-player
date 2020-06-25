@@ -8,16 +8,16 @@
 	Create Sound Image
 </div>
 <div class="${ns}-create-sound-form">
-	${Player.display.ifNotDismissed('createSoundDetails', 
-	`<div class="${ns}-row" data-dismiss-id="createSoundDetails">
-		<div class="${ns}-col" style="margin-bottom: .5rem">
+	<div class="${ns}-row" style="margin-bottom: .5rem">
+		${Player.display.ifNotDismissed('createSoundDetails', 'Show Help Text',
+		`<div class="${ns}-col" data-dismiss-id="createSoundDetails">
 			Select an image and sound, or drag & drop them here.
 			The sound will be uploaded to the selected file host and the url will be added to the image filename.
 			The image can be a webm file, and if it contains audio it can also be used as the sound.
 			Doing so will split the file into a video file to be posted and audio file to be uploaded.
 			<a href="javascript:;" class="${ns}-dismiss-link" data-dismiss="createSoundDetails">Dismiss</a>
-		</div>
-	</div>`)}
+		</div>`)}
+	</div>
 	<div class="${ns}-row">
 		Host
 	</div>
