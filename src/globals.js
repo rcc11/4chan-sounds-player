@@ -38,7 +38,7 @@ window._isEqual = function (a, b, strict = true) {
 	if (Array.isArray(a, b)) {
 		return a === b || a.length === b.length && a.every((_a, i) => _isEqual(_a, b[i]));
 	}
-	if (typeof a === 'object' && a !== b) {
+	if (a && b && typeof a === 'object' && a !== b) {
 		const allKeys = Object.keys(a);
 		allKeys.push(...Object.keys(b).filter(k => !allKeys.includes(k)));
 		return allKeys.every(key => _isEqual(a[key], b[key]));

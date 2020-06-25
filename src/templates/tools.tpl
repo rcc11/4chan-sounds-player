@@ -9,7 +9,7 @@
 </div>
 <div class="${ns}-create-sound-form">
 	<div class="${ns}-row" style="margin-bottom: .5rem">
-		${Player.display.ifNotDismissed('createSoundDetails', 'Show Help Text',
+		${Player.display.ifNotDismissed('createSoundDetails', 'Show Help',
 		`<div class="${ns}-col" data-dismiss-id="createSoundDetails">
 			Select an image and sound, or drag & drop them here.
 			The sound will be uploaded to the selected file host and the url will be added to the image filename.
@@ -25,7 +25,7 @@
 		<div class="${ns}-col">
 			<select class="${ns}-create-sound-host">
 				${Object.keys(Player.config.uploadHosts).map((hostId, i) =>
-					!Player.config.uploadHosts[hostId].invalid
+					Player.config.uploadHosts[hostId] && !Player.config.uploadHosts[hostId].invalid
 						? `<option value="${hostId}" ${Player.config.defaultUploadHost === hostId ? 'selected' : ''}>${hostId}</option>`
 						: ''
 				).join('')}

@@ -194,11 +194,6 @@ module.exports = {
 				if (setting.mix) {
 					// Mix in default.
 					value = { ...setting.default, ...(value || {}) };
-					// Remove null values, used to indicate the default should not be set.
-					value = Object.keys(value).reduce((filteredValues, k) => {
-						value[k] !== null && (filteredValues[k] = value[k]);
-						return filteredValues;
-					}, {});
 				}
 				Player.set(setting.property, value, opts);
 			}
@@ -424,5 +419,10 @@ module.exports = {
 			checkbox && (checkbox.checked = name === selected);
 		});
 		return selected;
+	},
+
+	restoreDefaultHosts: function () {
+		Object.assign(Player.config.uploadHosts, Player.settings.findDefault('uploadHosts').default);
+		Player.set('uploadHosts', Player.config.uploadHosts, { bypassValidation: true });
 	}
 };

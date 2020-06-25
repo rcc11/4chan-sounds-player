@@ -29,9 +29,22 @@
 			<div class="${ns}-row ${setting.isSubSetting ? `${ns}-sub-settings` : ''}">
 				<div class="${ns}-col ${!setting.isSubSetting ? `${ns}-heading` : ''} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc.replace(/"/g, '&quot;')}"` : ''}>
 					${setting.title}
-					${(setting.actions || []).map(action => `<a href="#" class="${ns}-heading-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`)}
-				</div>
-				${setting.text || ''}`;
+					${(setting.actions || []).map(action => `<a href="#" class="${ns}-heading-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`).join(' ')}
+				</div>`;
+				if (setting.text) {
+					tpl += setting.dismissTextId
+						? `<div class="${ns}-col" style="min-width: 100%">`
+								+ Player.display.ifNotDismissed(
+									setting.dismissTextId,
+									setting.dismissRestoreText,
+									`<div data-dismiss-id="${setting.dismissTextId}">`
+										+ setting.text
+										+ `<a href="javascript:;" class="${ns}-dismiss-link" data-dismiss="${setting.dismissTextId}" style="display:block; margin-top:.25rem">Dismiss</a>`
+									+ `</div>`
+								)
+							+ `</div>`
+						: setting.text;
+				};
 
 				if (setting.settings) {
 					setting.settings.forEach(subSetting => addSetting({
