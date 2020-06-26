@@ -255,6 +255,7 @@ module.exports = {
 	},
 
 	_showMenu: function (x, y, dialog, parent) {
+		Player.userTemplate._closeMenus();
 		dialog.style.top = y + 'px';
 		dialog.style.left = x + 'px';
 		parent || (parent = Player.container);

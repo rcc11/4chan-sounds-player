@@ -98,10 +98,10 @@ The threads can be displayed in a table or a pseudo-board.
 - __Hosts__ - The hosts used for uploading created sounds. Each host is configured using the following properties.
     - __Name__ - A unique name used as the host identifier.
 	- __URL__ - The URL the file is updated to do.
-	- __Response Path__ - Path to locate the URL for the uploaded sound in JSON.response.
-	- __Response Match__ - A regular expression where the first match group used to identify the URL in response text.
-	- __Sound URL__ - A URL that where `%s` is replace the result of the result path or result match.
 	- __Data__ - A JSON object representing the form data posted for the upload. The file is specified by setting `$file` as the value.
+	- __Response Path__ - _(Optional)_ A path to locate the URL for the uploaded sound in a JSON response.
+	- __Response Match__ - _(Optional)_ A regular expression where the first match group is used to identify the URL for the uploaded sound in the response text.
+	- __Sound URL__ - _(Optional)_ A URL that where `%s` is replaced the result of the result path or result match.
 
 ## Content Templates
 
