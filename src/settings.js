@@ -144,6 +144,20 @@ module.exports = [
 				default: { key: 'arrowright' }
 			},
 			{
+				property: 'hotkey_bindings.previousGroup',
+				title: 'Previous Group',
+				keyHandler: () => Player.previous({ group: true }),
+				ignoreRepeat: true,
+				default: { shiftKey: true, key: 'arrowleft' }
+			},
+			{
+				property: 'hotkey_bindings.nextGroup',
+				title: 'Next Group',
+				keyHandler: () => Player.next({ group: true }),
+				ignoreRepeat: true,
+				default: { shiftKey: true, key: 'arrowright' }
+			},
+			{
 				property: 'hotkey_bindings.volumeUp',
 				title: 'Volume Up',
 				keyHandler: 'hotkeys.volumeUp',

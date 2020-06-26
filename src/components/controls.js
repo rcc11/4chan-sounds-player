@@ -138,18 +138,18 @@ module.exports = {
 	/**
 	 * Play the next sound.
 	 */
-	next: function (force) {
-		Player.controls._movePlaying(1, force);
+	next: function (opts) {
+		Player.controls._movePlaying(1, opts);
 	},
 
 	/**
 	 * Play the previous sound.
 	 */
-	previous: function (force) {
-		Player.controls._movePlaying(-1, force);
+	previous: function (opts) {
+		Player.controls._movePlaying(-1, opts);
 	},
 
-	_movePlaying: function (direction, force) {
+	_movePlaying: function (direction, { force, group } = {}) {
 		if (!Player.audio) {
 			return;
 		}
@@ -163,12 +163,20 @@ module.exports = {
 			return Player.play(Player.sounds[0]);
 		}
 		// Get the next index, either repeating the same, wrapping round to repeat all or just moving the index.
-		const nextIndex = !force && Player.config.repeat === 'one'
-			? currentIndex
-			: Player.config.repeat === 'all'
-				? ((currentIndex + direction) + Player.sounds.length) % Player.sounds.length
-				: currentIndex + direction;
-		const nextSound = Player.sounds[nextIndex];
+		let nextSound;
+		if (!force && Player.config.repeat === 'one') {
+			nextSound = Player.sounds[currentIndex];
+		} else {
+			let newIndex = currentIndex;
+			// Get the next index wrapping round if repeat all is selected
+			// Keep going if it's group move, there's still more sounds to check, and the next sound is still in the same group.
+			do {
+				newIndex = Player.config.repeat === 'all'
+					? ((newIndex + direction) + Player.sounds.length) % Player.sounds.length
+					: newIndex + direction;
+				nextSound = Player.sounds[newIndex];
+			} while (group && nextSound && newIndex !== currentIndex && (!nextSound.post || nextSound.post === Player.playing.post))
+		}
 		nextSound && Player.play(nextSound);
 	},
 

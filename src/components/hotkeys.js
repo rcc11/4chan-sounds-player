@@ -66,7 +66,7 @@ module.exports = {
 
 			if (bindingConfig) {
 				e.preventDefault();
-				return _get(Player, bindingConfig.keyHandler)();
+				return Player.events.getHandler(bindingConfig.keyHandler)();
 			}
 		}
 	},
