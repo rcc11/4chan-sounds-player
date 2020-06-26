@@ -90,7 +90,7 @@ module.exports = {
 			webmCheckbox.checked && isVideo && Player.tools._handleFileSelect(Player.tools.sndInput, image);
 			// If the image isn't a webm make sure Copy Video is deselected (click to fire change event)
 			webmCheckbox.checked && !isVideo && webmCheckbox.click();
-		} else if (await Player.tools.hasAudio) {
+		} else if (await Player.tools.hasAudio(image)) {
 			Player.logError('Audio not allowed for the image webm.', null, 'warning');
 		}
 
@@ -232,6 +232,9 @@ module.exports = {
 	},
 
 	hasAudio: function (file) {
+		if (!file.type.startsWith('audio') && !file.type.startsWith('video')) {
+			return false;
+		}
 		return new Promise((resolve, reject) => {
 			const url = URL.createObjectURL(file);
 			const video = document.createElement('video');

@@ -26,8 +26,8 @@
 // @connect      too.lewd.se
 // @connect      *
 // @run-at       document-start
-// @require      https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/ffmpeg-webm.js
-// @updateURL    https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player.meta.js
-// @downloadURL  https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player.user.js
+// @require      FFMPEG_REQUIRE
+// @updateURL    https://raw.githubusercontent.com/rcc11/4chan-sounds-player/BRANCH/dist/FILENAME.meta.js
+// @downloadURL  https://raw.githubusercontent.com/rcc11/4chan-sounds-player/BRANCH/dist/FILENAME.js
 // ==/UserScript==
 

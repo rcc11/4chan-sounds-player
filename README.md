@@ -2,7 +2,10 @@
 
 A floating player for 4chan sounds threads. 
 
-[Click here to install](https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player.user.js).
+## Install
+[Stable](https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player.user.js).
+
+[Beta](https://raw.githubusercontent.com/rcc11/4chan-sounds-player/beta/dist/4chan-sounds-player.user.js).
 
 ## Sound Player UI
 
@@ -42,6 +45,18 @@ If you want to test out a sound before you post it this is a good method of doin
 You can opt to display a thumbnail in the bottom right of the page while the player is hidden. The example here shows a rather large image but the size is customisable.
 
 ![Playlist UI](./images/minimised-image.png)
+
+## Tools
+
+#### Encode/Decode URLS
+
+Just two inputs that let you paste encoded and decoded URLs.
+
+#### Create Sound Image
+
+This form allows you to select/drop and image and sound. The sound will be uploaded to the selected host and the image will be renamed to include `[sound=url]` link to it. Once complete you can choose to post it, download it, or add it to the player.
+
+![Playlist UI](./images/tools.png)
 
 ## Sound Threads Search
 

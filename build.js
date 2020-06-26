@@ -4,11 +4,15 @@ const fs = require('fs');
 const path = require('path');
 
 const webpack = require('webpack');
-const config = require('./webpack.config')(undefined, { mode: 'production' });
-
-const pkg = require('./package');
-
-const header = fs.readFileSync(path.resolve(__dirname, './src/header.js')).toString().replace('VERSION', pkg.version);
+const { userInfo } = require('os');
+const config = require('./webpack.config')(undefined, {
+	mode: 'production',
+	ffmpeg: !!process.argv.includes('--ffmpeg'),
+	'build-ffmpeg': !!process.argv.includes('--build-ffmpeg'),
+	'require-ffmpeg': !!process.argv.includes('--require-ffmpeg')
+});
+const bannerPlugin = config.plugins.find(plugin => plugin instanceof webpack.BannerPlugin);
+const header = bannerPlugin.options.banner;
 
 webpack(config, (err, stats) => {
 	console.log(stats.toString({
@@ -19,5 +23,5 @@ webpack(config, (err, stats) => {
 		return;
 	}
 
-	fs.writeFileSync(path.join(__dirname, './dist/4chan-sounds-player.meta.js'), header);
+	fs.writeFileSync(path.join(__dirname, './dist/' + config.output.filename.replace('.user.js', '.meta.js')), header);
 });
