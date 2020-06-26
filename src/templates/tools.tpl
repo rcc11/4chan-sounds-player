@@ -11,10 +11,12 @@
 	<div class="${ns}-row" style="margin-bottom: .5rem">
 		${Player.display.ifNotDismissed('createSoundDetails', 'Show Help',
 		`<div class="${ns}-col" data-dismiss-id="createSoundDetails">
-			Select an image and sound, or drag & drop them here.
+			Select an image and sound to combine as a sound image.
 			The sound will be uploaded to the selected file host and the url will be added to the image filename.
-			The image can be a webm file, and if it contains audio it can also be used as the sound.
-			Doing so will split the file into a video file to be posted and audio file to be uploaded.
+			${Player.tools.hasFFmpeg
+				? 'Selecting a webm with audio as the image will split it into a video only webm to be posted and ogg audio file to be uploaded.'
+				: 'For a webm with audio first split the webm into a separate video and audio file and select them both.'
+			}
 			<a href="javascript:;" class="${ns}-dismiss-link" data-dismiss="createSoundDetails">Dismiss</a>
 		</div>`)}
 	</div>
@@ -38,16 +40,16 @@
 	<div class="${ns}-row">
 		<div class="${ns}-col">
 			<div class="${ns}-file-overlay placeholder">
-				<span class="placeholder">No Image Selected</span>
+				<span class="placeholder">Select/Drop Image</span>
 				<span class="text"></span>
 				<input class="${ns}-create-sound-img" type="file" accept="image/*,.webm">
 			</div>
 		</div>
 		<div class="${ns}-col">
 			<div class="${ns}-file-overlay placeholder">
-				<span class="placeholder">No Sound Selected</span>
+				<span class="placeholder">Select/Drop Sound</span>
 				<span class="text"></span>
-				<label class="${ns}-webm-sound-label overfile" style="display: none;">Use webm<input type="checkbox" class="${ns}-webm-sound"></label>
+				${!Player.tools.hasFFmpeg && `<label class="${ns}-use-video-label overfile" style="display: none;">Copy video<input type="checkbox" class="${ns}-use-video"></label>` || ''}
 				<input class="${ns}-create-sound-snd" type="file" accept="audio/*,video/*">
 			</div>
 		</div>

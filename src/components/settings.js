@@ -287,7 +287,7 @@ module.exports = {
 			// Run any handler required by the value changing
 			settingConfig && settingConfig.handler && _get(Player, settingConfig.handler, () => null)(newValue);
 		} catch (err) {
-			Player.logError(err.reason || 'There was an error updating the setting.', err, err.type || 'error');
+			Player.logError('There was an error updating the setting.', err);
 		}
 	},
 

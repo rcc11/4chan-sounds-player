@@ -1,4 +1,8 @@
+const ffmpegVersionUrl = 'https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player-with-ffmpeg.user.js';
+const promoteFFmpegVersion = false;
+
 module.exports = {
+	hasFFmpeg: typeof ffmpeg === 'function',
 	createStatusText: '',
 
 	delegatedEvents: {
@@ -10,7 +14,7 @@ module.exports = {
 		change: {
 			[`.${ns}-create-sound-img`]: 'tools._handleImageSelect',
 			[`.${ns}-create-sound-form input[type=file]`]: e => Player.tools._handleFileSelect(e.eventTarget),
-			[`.${ns}-webm-sound`]: 'tools._handleWebmSoundChange'
+			[`.${ns}-use-video`]: 'tools._handleWebmSoundChange'
 		},
 		drop: {
 			[`.${ns}-create-sound-form`]: 'tools._handleCreateSoundDrop'
@@ -71,20 +75,27 @@ module.exports = {
 	/**
 	 * Show/hide the "Use webm" checkbox when an image is selected.
 	 */
-	_handleImageSelect: function (e) {
+	_handleImageSelect: async function (e) {
 		const input = e && e.eventTarget || Player.tools.imgInput;
 		const image = input.files[0];
 		const isVideo = image.type === 'video/webm';
+		let placeholder = image.name.replace(/\.[^/.]+$/, '');
 
-		// Show the Use Webm label if the image is a webm file
-		Player.$(`.${ns}-webm-sound-label`).style.display = isVideo ? 'inherit' : 'none';
+		if (Player.tools.hasFFmpeg) {
+			// Show the Use Webm label if the image is a webm file
+			Player.$(`.${ns}-use-video-label`).style.display = isVideo ? 'inherit' : 'none';
 
-		// If the image isn't a webm make sure Use Webm is deselected (click to fire change event)
-		const webmCheckbox = Player.$(`.${ns}-webm-sound`);
-		webmCheckbox.checked && !isVideo && webmCheckbox.click();
+			const webmCheckbox = Player.$(`.${ns}-use-video`);
+			// If the image is a video and Copy Video is selected then update the sound input as well
+			webmCheckbox.checked && isVideo && Player.tools._handleFileSelect(Player.tools.sndInput, image);
+			// If the image isn't a webm make sure Copy Video is deselected (click to fire change event)
+			webmCheckbox.checked && !isVideo && webmCheckbox.click();
+		} else if (await Player.tools.hasAudio) {
+			Player.logError('Audio not allowed for the image webm.', null, 'warning');
+		}
 
 		// Show the image name as the placeholder for the name input since it's the default
-		Player.$(`.${ns}-create-sound-name`).setAttribute('placeholder', image.name.replace(/\.[^/.]+$/, ''));
+		Player.$(`.${ns}-create-sound-name`).setAttribute('placeholder', placeholder);
 	},
 
 	_handleFileSelect: function (input, file) {
@@ -110,17 +121,23 @@ module.exports = {
 	_handleCreateSoundDrop: function (e) {
 		e.preventDefault();
 		e.stopPropagation();
+		const targetInput = e.target.nodeName === 'INPUT' && e.target.getAttribute('type') === 'file' && e.target;
 		[ ...e.dataTransfer.files ].forEach(file => {
+			const isVideo = file.type.startsWith('video');
 			const isImage = file.type.startsWith('image') || file.type === 'video/webm';
-			const isSound = file.type.startsWith('audio') || file.type.startsWith('video');
-			if (isImage || isSound) {
+			const isSound = file.type.startsWith('audio');
+			if (isVideo || isImage || isSound) {
 				const dataTransfer = new DataTransfer();
 				dataTransfer.items.add(file);
-				const input = isImage ? Player.tools.imgInput : Player.tools.sndInput;
+				const input = file.type === 'video/webm' && targetInput
+					? targetInput
+					: isImage
+						? Player.tools.imgInput
+						: Player.tools.sndInput;
 				input.files = dataTransfer.files;
 				Player.tools._handleFileSelect(input, file);
+				input === Player.tools.imgInput && Player.tools._handleImageSelect();
 			}
-			isImage && Player.tools._handleImageSelect();
 		});
 		return false;
 	},
@@ -142,27 +159,42 @@ module.exports = {
 		// Get the host, image and sound (checking if the sound is from a webm "image")
 		const host = Player.$(`.${ns}-create-sound-host`).value;
 		let image = Player.tools.imgInput.files[0];
-		let sound = !Player.$(`.${ns}-webm-sound`).checked || image.type !== 'video/webm'
+		let sound = !(Player.$(`.${ns}-use-video`) || {}).checked || !image.type.startsWith('video')
 			? Player.tools.sndInput.files[0]
 			: image;
 		const name = Player.$(`.${ns}-create-sound-name`).value || image.name.replace(/\.[^/.]+$/, '');
+		const isAudioWebmImage = image.type.startsWith('video') && await Player.tools.hasAudio(image);
 
-		// If the image is a webm then extract just the video.
-		if (image.type === 'video/webm') {
-			try {
-				image = await Player.tools.extract(image, 'video');
-			} catch (err) {
-				return _finish('Video extraction failed.', err);
-			}
+		if (!image) {
+			return _finish('Missing file.', new PlayerError('Select an image or webm.', 'warning'));
 		}
-
-		// If the sound is a video extract the audio from it.
-		if (sound.type.startsWith('video')) {
-			try {
-				sound = await Player.tools.extract(sound, 'audio');
-			} catch (err) {
-				return _finish('Sound extraction failed.', err);
+		if (!sound) {
+			return _finish('Missing file.', new PlayerError('Select a sound.', 'warning'));
+		}
+		if (isAudioWebmImage && !Player.tools.hasFFmpeg) {
+			Player.tools.updateCreateStatus(Player.tools.createStatusText
+				+ '<br>' + (promoteFFmpegVersion ? 'This version of the player does not enable webm splitting.' : 'Audio not allowed for the image webm.')
+				+ '<br>Remove the audio from the webm and try again.'
+				+ (promoteFFmpegVersion ? '<br>Alternatively install the <a href="${ffmpegVersionUrl}">ffmpeg version</a> to extract video/audio automatically.' : ''));
+			return _finish('Cannot extract video', new PlayerError('Audio not allowed for the image webm.', null, 'error'));
+		}
+		try {
+			// If the image is a webm with audio then extract just the video.
+			if (isAudioWebmImage) {
+				image = await Player.tools.extract(image, 'video');
 			}
+
+			// If the sound is a video extract the audio from it.
+			if (sound.type.startsWith('video')) {
+				if (!await Player.tools.hasAudio(sound)) {
+					return _finish('No audio', new PlayerError('The selected video has no audio.', 'warning'));
+				}
+				if (!Player.tools.hasFFmpeg) {
+					sound = await Player.tools.extract(sound, 'audio');
+				}
+			}
+		} catch (err) {
+			return _finish('Media extraction failed.', err);
 		}
 
 		// Upload the sound.
@@ -199,15 +231,28 @@ module.exports = {
 		}
 	},
 
+	hasAudio: function (file) {
+		return new Promise((resolve, reject) => {
+			const url = URL.createObjectURL(file);
+			const video = document.createElement('video');
+			video.addEventListener('loadeddata', () => {
+				URL.revokeObjectURL(url);
+				resolve(video.mozHasAudio || !!video.webkitAudioDecodedByteCount);
+			});
+			video.addEventListener('error', reject);
+			video.src = url;
+		});
+	},
+
 	/**
 	 * Extract just the audio or video from a file.
 	 */
 	extract: async function (file, type) {
+		Player.tools.updateCreateStatus(Player.tools.createStatusText + '<br>Extracting ' + type);
 		if (typeof ffmpeg !== 'function') {
-			throw new Error('ffmpeg is not available');
+			return file;
 		}
 		const name = file.name.replace(/\.[^/.]+$/, '') + (type === 'audio' ? '.ogg' : '.webm');
-		Player.tools.updateCreateStatus(Player.tools.createStatusText + '<br>Extracting ' + type);
 
 		const result = ffmpeg({
 			MEMFS: [ { name: '_' + file.name, data: await new Response(file).arrayBuffer() }],
@@ -226,7 +271,7 @@ module.exports = {
 		const host = Player.config.uploadHosts[hostId];
 
 		if (!host || host.invalid) {
-			throw new Error('Invalid host ' + hostId);
+			throw new PlayerError('Invalid upload host: ' + hostId, 'error');
 		}
 
 		const formData = new FormData();

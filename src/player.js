@@ -131,6 +131,10 @@ const Player = window.Player = module.exports = {
 	 */
 	logError: function (message, error, type) {
 		console.error('[4chan sounds player]', message, error);
+		if (error instanceof PlayerError) {
+			message = error.reason;
+			type = error.type || type;
+		}
 		document.dispatchEvent(new CustomEvent('CreateNotification', {
 			bubbles: true,
 			detail: {
