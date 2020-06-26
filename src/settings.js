@@ -335,8 +335,7 @@ module.exports = [
 			pomf: {
 				url: 'https://pomf.cat/upload.php',
 				data: { 'files[]': '$file' },
-				responsePath: 'files[0].url',
-				soundUrl: 'a.pomf.cat/%s'
+				responsePath: 'files.0.url'
 			}
 		}
 	}

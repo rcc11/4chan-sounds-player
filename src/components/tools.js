@@ -300,7 +300,7 @@ module.exports = {
 					const responseVal = host.responsePath
 						? _get(response.response, host.responsePath)
 						: host.responseMatch
-							? (response.responseText.match(new RegExp(host.responseMatch)) || [])[0]
+							? (response.responseText.match(new RegExp(host.responseMatch)) || [])[1]
 							: response.responseText;
 					const uploadedUrl = host.soundUrl ? host.soundUrl.replace('%s', responseVal) : responseVal;
 					Player.tools.updateCreateStatus(statusText + `<br>Uploaded to <a href="${uploadedUrl}" target="_blank">${uploadedUrl}</a>`);

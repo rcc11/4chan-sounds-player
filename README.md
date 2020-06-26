@@ -70,17 +70,38 @@ The threads can be displayed in a table or a pseudo-board.
 
 ## Settings
 
+#### Display
+
 - __4chan X Header Controls__ - When to display the playback controls in the 4chan X header. The available options are always, only with the player hidden, and never.
-- __Allowed Hosts__ - Which hosts the player will add sounds from.
 - __Autoshow__ - Open the player automatically for threads that contain sounds.
 - __Colors__ - By default the player will attempt to match the board theme, but you can set your own colors. Selecting "Match Theme" will revert to matching the board theme after making any modifications.
-- __Filters__ - Sounds or images to ignore. On each line add the URL of the sound or the MD5 of the image you want to filter and they will no longer be added to the player. Lines starting with a `#` are ignored. The menu for playlist items has links to add the sound or image to the filters.
-- __Footer/Header/Row/4chan X Header Contents__ - Custom display templates. See "Content Templates" below.
-- __Keybinds__ - Keyboard shortcuts can be assigned to control the player and playback. They can be always enabled, enabled only when the player is open, or disabled.
+
 - __Limit Post Width__ - Reduces the widths of posts that are next to the player so they're not hidden beneath it.
 - __Minimised Display__ - What is displayed when the player is hidden. You can choose to display a thumnail image (described above) and/or show playback controls in the 4chan X header.
 - __Threads View Display__ - How the threads in the thread view are displayed.
 - __Pause on hide__ - Pauses the player when it's hidden.
+
+#### Keybinds
+
+- __Keybinds__ - Keyboard shortcuts can be assigned to control the player and playback. They can be always enabled, enabled only when the player is open, or disabled.
+
+#### Filter
+
+- __Allowed Hosts__ - Which hosts the player will add sounds from.
+- __Filters__ - Sounds or images to ignore. On each line add the URL of the sound or the MD5 of the image you want to filter and they will no longer be added to the player. Lines starting with a `#` are ignored. The menu for playlist items has links to add the sound or image to the filters.
+
+#### Templates
+- __Footer/Header/Row/4chan X Header Contents__ - Custom display templates. See "Content Templates" below for usage.
+
+#### Hosts
+
+- __Hosts__ - The hosts used for uploading created sounds. Each host is configured using the following properties.
+    - __Name__ - A unique name used as the host identifier.
+	- __URL__ - The URL the file is updated to do.
+	- __Response Path__ - Path to locate the URL for the uploaded sound in JSON.response.
+	- __Response Match__ - A regular expression where the first match group used to identify the URL in response text.
+	- __Sound URL__ - A URL that where `%s` is replace the result of the result path or result match.
+	- __Data__ - A JSON object representing the form data posted for the upload. The file is specified by setting `$file` as the value.
 
 ## Content Templates
 
