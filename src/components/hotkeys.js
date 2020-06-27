@@ -1,4 +1,4 @@
-const settingsConfig = require('../settings');
+const settingsConfig = require('config');
 
 module.exports = {
 	initialize: function () {

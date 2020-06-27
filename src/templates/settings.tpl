@@ -1,5 +1,5 @@
 {
-	const settingsConfig = require('settings');
+	const settingsConfig = require('config');
 	const groups = settingsConfig.reduce((groups, setting) => {
 		if (setting.displayGroup) {
 			groups[setting.displayGroup] || (groups[setting.displayGroup] = []);

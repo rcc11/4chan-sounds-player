@@ -19,7 +19,7 @@
 }
 
 ##{$ns}-container[data-view-style="image"] {
-	& .#{$ns}-list-container {
+	& .#{$ns}-list-container, & .#{$ns}-playlist-search {
 		display: none;
 	}
 	& .#{$ns}-image-link {
