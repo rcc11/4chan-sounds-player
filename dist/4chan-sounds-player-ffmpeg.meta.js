@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         4chan sounds player
-// @version      3.0.0-a8d5309
+// @version      3.0.0-7ef305c
 // @namespace    rccom
 // @description  Play that faggy music weeb boi
 // @author       RCC
@@ -20,10 +20,14 @@
 // @connect      arch-img.b4k.co
 // @connect      4cdn.org
 // @connect      a.pomf.cat
+// @connect      pomf.cat
 // @connect      files.catbox.moe
+// @connect      catbox.moe
 // @connect      share.dmca.gripe
 // @connect      z.zz.ht
+// @connect      zz.ht
 // @connect      too.lewd.se
+// @connect      lewd.se
 // @connect      *
 // @run-at       document-start
 // @require      https://raw.githubusercontent.com/rcc11/4chan-sounds-player/beta/dist/ffmpeg-webm.js
