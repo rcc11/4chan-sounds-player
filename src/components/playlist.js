@@ -368,7 +368,7 @@ module.exports = {
 	 */
 	_handleSearch: function (e) {
 		const lastSearch = Player.playlist._lastSearch;
-		const v = Player.playlist._lastSearch = e.eventTarget.value;
+		const v = Player.playlist._lastSearch = e.eventTarget.value.toLowerCase();
 		if (v === lastSearch) {
 			return;
 		}
@@ -384,8 +384,8 @@ module.exports = {
 	matchesSearch: function (sound) {
 		const v = Player.playlist._lastSearch;
 		return !v
-			|| sound.title.includes(v)
-			|| String(sound.post).includes(v)
-			|| String(sound.src).includes(v);
+			|| sound.title.toLowerCase().includes(v)
+			|| String(sound.post.toLowerCase()).includes(v)
+			|| String(sound.src.toLowerCase()).includes(v);
 	}
 };
