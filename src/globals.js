@@ -101,10 +101,11 @@ window.noDefault = (f, ...args) => e => {
 };
 
 class PlayerError extends Error {
-	constructor (msg, type) {
+	constructor (msg, type, err) {
 		super(msg);
 		this.reason = msg;
 		this.type = type;
+		this.error = err;
 	}
 }
 window.PlayerError = PlayerError;

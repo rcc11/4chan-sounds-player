@@ -51,11 +51,11 @@
 	}
 }
 
-.#{$ns}-use-video-label {
+.#{$ns}-input-append {
 	position: absolute;
 	display: flex;
 	align-items: center;
 	background: white;
 	padding-left: .25rem;
-	right: 0;
+	right: .125rem;
 }

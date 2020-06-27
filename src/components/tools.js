@@ -9,7 +9,8 @@ module.exports = {
 		click: {
 			[`.${ns}-create-button`]: 'tools._handleCreate',
 			[`.${ns}-create-sound-post-link`]: 'tools._addCreatedToQR',
-			[`.${ns}-create-sound-add-link`]: 'tools._addCreatedToPlayer'
+			[`.${ns}-create-sound-add-link`]: 'tools._addCreatedToPlayer',
+			[`.${ns}-toggle-sound-input`]: 'tools._handleToggleSoundInput'
 		},
 		change: {
 			[`.${ns}-create-sound-img`]: 'tools._handleImageSelect',
@@ -27,9 +28,7 @@ module.exports = {
 
 	initialize: function () {
 		Player.on('config:uploadHosts', Player.tools.render);
-		Player.on('config:defaultUploadHost', function (newValue) {
-			Player.$(`.${ns}-create-sound-host`).value = newValue;
-		});
+		Player.on('config:defaultUploadHost', newValue => Player.$(`.${ns}-create-sound-host`).value = newValue);
 		Player.on('rendered', Player.tools.afterRender);
 	},
 
@@ -115,6 +114,14 @@ module.exports = {
 		Player.tools._handleFileSelect(sound, e.eventTarget.checked && image.files[0]);
 	},
 
+	_handleToggleSoundInput: function (e) {
+		e.preventDefault();
+		const showURL = e.eventTarget.getAttribute('data-type') === 'url';
+		Player.$(`.${ns}-create-sound-snd-url`).closest(`.${ns}-row`).style.display = showURL ? null : 'none';
+		Player.$(`.${ns}-create-sound-snd`).closest(`.${ns}-file-overlay`).style.display = showURL ? 'none' : null;
+		Player.tools.useSoundURL = showURL;
+	},
+
 	/**
 	 * Handle files being dropped on the create sound section.
 	 */
@@ -156,79 +163,84 @@ module.exports = {
 
 		Player.$(`.${ns}-create-button`).disabled = true;
 
-		// Get the host, image and sound (checking if the sound is from a webm "image")
+		// Get the host, image and sound (checking if the sound is from a webm "image" or a URL)
 		const host = Player.$(`.${ns}-create-sound-host`).value;
+		const useSoundURL = Player.tools.useSoundURL;
 		let image = Player.tools.imgInput.files[0];
+		let soundURL = useSoundURL && Player.$(`.${ns}-create-sound-snd-url`).value;
 		let sound = !(Player.$(`.${ns}-use-video`) || {}).checked || !image.type.startsWith('video')
 			? Player.tools.sndInput.files[0]
 			: image;
-		const name = Player.$(`.${ns}-create-sound-name`).value || image.name.replace(/\.[^/.]+$/, '');
-		const isAudioWebmImage = image.type.startsWith('video') && await Player.tools.hasAudio(image);
+		const name = Player.$(`.${ns}-create-sound-name`).value || image && image.name.replace(/\.[^/.]+$/, '');
+		const isAudioWebmImage = image && image.type.startsWith('video') && await Player.tools.hasAudio(image);
 
-		if (!image) {
-			return _finish('Missing file.', new PlayerError('Select an image or webm.', 'warning'));
-		}
-		if (!sound) {
-			return _finish('Missing file.', new PlayerError('Select a sound.', 'warning'));
-		}
-		if (isAudioWebmImage && !Player.tools.hasFFmpeg) {
-			Player.tools.updateCreateStatus(Player.tools.createStatusText
-				+ '<br>' + (promoteFFmpegVersion ? 'This version of the player does not enable webm splitting.' : 'Audio not allowed for the image webm.')
-				+ '<br>Remove the audio from the webm and try again.'
-				+ (promoteFFmpegVersion ? '<br>Alternatively install the <a href="${ffmpegVersionUrl}">ffmpeg version</a> to extract video/audio automatically.' : ''));
-			return _finish('Cannot extract video', new PlayerError('Audio not allowed for the image webm.', null, 'error'));
-		}
 		try {
-			// If the image is a webm with audio then extract just the video.
+			if (!image) {
+				throw new PlayerError('Select an image or webm.', 'warning');
+			}
+
 			if (isAudioWebmImage) {
+				// If ffmpeg is not available fall out.
+				if (!Player.tools.hasFFmpeg) {
+					Player.tools.updateCreateStatus(Player.tools.createStatusText
+						+ '<br>' + (promoteFFmpegVersion ? 'This version of the player does not enable webm splitting.' : 'Audio not allowed for the image webm.')
+						+ '<br>Remove the audio from the webm and try again.'
+						+ (promoteFFmpegVersion ? '<br>Alternatively install the <a href="${ffmpegVersionUrl}">ffmpeg version</a> to extract video/audio automatically.' : ''));
+					throw new PlayerError('Audio not allowed for the image webm.', 'warning');
+				}
+	
+				// If the image is a webm with audio then extract just the video.
 				image = await Player.tools.extract(image, 'video');
 			}
 
-			// If the sound is a video extract the audio from it.
-			if (sound.type.startsWith('video')) {
-				if (!await Player.tools.hasAudio(sound)) {
-					return _finish('No audio', new PlayerError('The selected video has no audio.', 'warning'));
+			if (useSoundURL) {
+				try {
+					new URL(soundURL);
+				} catch (err) {
+					throw new PlayerError('The provided sound URL is invalid.', 'warning');
 				}
-				if (!Player.tools.hasFFmpeg) {
-					sound = await Player.tools.extract(sound, 'audio');
+			} else {
+				if (!sound) {
+					throw new PlayerError('Select a sound.', 'warning');
+				}
+				// If the sound is a video extract the audio from it.
+				if (sound.type.startsWith('video')) {
+					if (!await Player.tools.hasAudio(sound)) {
+						throw new PlayerError('The selected video has no audio.', 'warning');
+					}
+					if (!Player.tools.hasFFmpeg) {
+						sound = await Player.tools.extract(sound, 'audio');
+					}
+				}
+
+				// Upload the sound.
+				try {
+					soundURL = await Player.tools.postFile(sound, host);
+				} catch (err) {
+					throw new PlayerError('Upload failed.', 'error', err);
 				}
 			}
-		} catch (err) {
-			return _finish('Media extraction failed.', err);
-		}
 
-		// Upload the sound.
-		let soundURL;
-		try {
-			soundURL = await Player.tools.postFile(sound, host);
-		} catch (err) {
-			return _finish('Upload failed.', err);
-		}
+			// Create a new file that includes [sound=url] in the name.
+			const ext = image.name.match(/\.([^/.]+)$/)[1];
+			const soundImage = new File([ image ], `${name}[sound=${encodeURIComponent(soundURL)}].${ext}`, { type: image.type });
 
-		// Create a new file that includes [sound=url] in the name.
-		const ext = image.name.match(/\.([^/.]+)$/)[1];
-		const soundImage = new File([ image ], `${name}[sound=${encodeURIComponent(soundURL)}].${ext}`, { type: image.type });
+			// Keep track of the create image and a url to it.
+			Player.tools._createdImage = soundImage;
+			Player.tools._createdImageURL = URL.createObjectURL(soundImage);
 
-		// Keep track of the create image and a url to it.
-		Player.tools._createdImage = soundImage;
-		Player.tools._createdImageURL = URL.createObjectURL(soundImage);
-
-		_finish();
-
-		function _finish(msg, err) {
-			Player.$(`.${ns}-create-button`).disabled = false;
-			if (err) {
-				Player.tools.updateCreateStatus(Player.tools.createStatusText + '<br>Failed!');
-				return Player.logError(msg, err);
-			}
 			// Complete! with some action links
-				Player.tools.updateCreateStatus(Player.tools.createStatusText
-					+ `<br>Complete!<br>`
-					+ (is4chan ? `<a href="#" class="${ns}-create-sound-post-link">Post</a> - ` : '')
-					+ ` <a href="#" class="${ns}-create-sound-add-link">Add</a> - `
-					+ ` <a href="${Player.tools._createdImageURL}" download="${Player.tools._createdImage.name}">Download</a>`
-				);
+			Player.tools.updateCreateStatus(Player.tools.createStatusText
+				+ `<br>Complete!<br>`
+				+ (is4chan ? `<a href="#" class="${ns}-create-sound-post-link">Post</a> - ` : '')
+				+ ` <a href="#" class="${ns}-create-sound-add-link">Add</a> - `
+				+ ` <a href="${Player.tools._createdImageURL}" download="${Player.tools._createdImage.name}">Download</a>`
+			);
+		} catch (err) {
+			Player.tools.updateCreateStatus(Player.tools.createStatusText + '<br>Failed!');
+			Player.logError('Failed to create sound image', err);
 		}
+		Player.$(`.${ns}-create-button`).disabled = false;
 	},
 
 	hasAudio: function (file) {

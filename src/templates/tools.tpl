@@ -46,11 +46,18 @@
 			</div>
 		</div>
 		<div class="${ns}-col">
-			<div class="${ns}-file-overlay placeholder">
+			<div class="${ns}-file-overlay placeholder" ${Player.tools.useSoundURL ? 'display: none;' : ''}>
 				<span class="placeholder">Select/Drop Sound</span>
 				<span class="text"></span>
-				${!Player.tools.hasFFmpeg && `<label class="${ns}-use-video-label overfile" style="display: none;">Copy video<input type="checkbox" class="${ns}-use-video"></label>` || ''}
+				<div class="overfile ${ns}-input-append">
+					${!Player.tools.hasFFmpeg && `<label class="${ns}-use-video-label" style="display: none;">Copy video<input type="checkbox" class="${ns}-use-video"></label>` || ''}
+					<a href="#" class="${ns}-toggle-sound-input fa fa-link" data-type="url" title="Enter a URL of a previously uploaded file."></a>
+				</div>
 				<input class="${ns}-create-sound-snd" type="file" accept="audio/*,video/*">
+			</div>
+			<div class="${ns}-row" style="align-items: center; position: relative; ${Player.tools.useSoundURL ? '' : 'display: none;'}">
+				<a href="#" class="${ns}-toggle-sound-input ${ns}-input-append" data-type="file" title="Select a file to upload."><span class="fa fa-file-sound-o"></span></a>
+				<input type="text" class="${ns}-create-sound-snd-url" placeholder="Sound URL" style="min-width: 100%;">
 			</div>
 		</div>
 	</div>
