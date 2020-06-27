@@ -2,7 +2,7 @@
 // @name         4chan sounds player
 // @version      VERSION
 // @namespace    rccom
-// @description  Play that faggy music weeb boi
+// @description  A player designed for 4chan sounds threads.
 // @author       RCC
 // @match        *://boards.4chan.org/*
 // @match        *://boards.4channel.org/*

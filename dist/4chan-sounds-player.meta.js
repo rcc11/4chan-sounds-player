@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         4chan sounds player
-// @version      3.0.0-7ef305c
+// @version      3.0.0
 // @namespace    rccom
-// @description  Play that faggy music weeb boi
+// @description  A player designed for 4chan sounds threads.
 // @author       RCC
 // @match        *://boards.4chan.org/*
 // @match        *://boards.4channel.org/*
@@ -30,7 +30,7 @@
 // @connect      lewd.se
 // @connect      *
 // @run-at       document-start
-// @updateURL    https://raw.githubusercontent.com/rcc11/4chan-sounds-player/beta/dist/4chan-sounds-player.meta.js
-// @downloadURL  https://raw.githubusercontent.com/rcc11/4chan-sounds-player/beta/dist/4chan-sounds-player.js
+// @updateURL    https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player.meta.js
+// @downloadURL  https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player.js
 // ==/UserScript==
 
