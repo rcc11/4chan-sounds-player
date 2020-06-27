@@ -21,4 +21,8 @@ module.exports = [
 		property: 'hoverImages',
 		default: false
 	},
+	{
+		property: 'showPlaylistSearch',
+		deafult: true
+	}
 ];

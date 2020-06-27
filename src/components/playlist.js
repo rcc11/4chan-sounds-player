@@ -57,6 +57,9 @@ module.exports = {
 		Player.on('menu-open', Player.playlist.setHoverImageVisibility);
 		Player.on('menu-close', Player.playlist.setHoverImageVisibility);
 
+		// Listen to the search display being toggled
+		Player.on('config:showPlaylistSearch', Player.playlist.toggleSearch);
+
 		// Maintain changes to the user templates it's dependent values
 		Player.userTemplate.maintain(Player.playlist, 'rowTemplate', [ 'shuffle' ]);
 	},
@@ -367,8 +370,12 @@ module.exports = {
 	 * Search the playlist
 	 */
 	_handleSearch: function (e) {
+		Player.playlist.search(e.eventTarget.value.toLowerCase());
+	},
+
+	search: function (v) {
 		const lastSearch = Player.playlist._lastSearch;
-		const v = Player.playlist._lastSearch = e.eventTarget.value.toLowerCase();
+		Player.playlist._lastSearch = v;
 		if (v === lastSearch) {
 			return;
 		}
@@ -387,5 +394,11 @@ module.exports = {
 			|| sound.title.toLowerCase().includes(v)
 			|| String(sound.post.toLowerCase()).includes(v)
 			|| String(sound.src.toLowerCase()).includes(v);
+	},
+
+	toggleSearch: function (show) {
+		const input = Player.$(`.${ns}-playlist-search`);
+		Player.playlist._lastSearch && Player.playlist.search();
+		input.style.display = show ? null : 'none';
 	}
 };

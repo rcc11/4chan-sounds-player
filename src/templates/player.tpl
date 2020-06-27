@@ -7,7 +7,7 @@
 		${Player.templates.controls(data)}
 	</div>
 </div>
-<input class="${ns}-playlist-search" type="input" placeholder="Search" style="min-width: 100%; box-sizing: border-box">
+<input class="${ns}-playlist-search" type="input" placeholder="Search" style="min-width: 100%; box-sizing: border-box; ${!Player.config.showPlaylistSearch ? 'display: none;' : ''}">
 <div class="${ns}-list-container style="height: 100px">
 	${Player.templates.list(data)}
 </div>

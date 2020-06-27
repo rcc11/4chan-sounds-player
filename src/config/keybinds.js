@@ -88,6 +88,12 @@ module.exports = [
 				default: { key: '' }
 			},
 			{
+				property: 'hotkey_bindings.toggleSearch',
+				title: 'Toggle Playlist Search',
+				keyHandler: () => Player.set('showPlaylistSearch', !Player.config.showPlaylistSearch),
+				default: { key: '' }
+			},
+			{
 				property: 'hotkey_bindings.scrollToPlaying',
 				title: 'Jump To Playing',
 				keyHandler: 'playlist.scrollToPlaying',
