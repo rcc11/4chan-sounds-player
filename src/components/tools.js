@@ -185,10 +185,10 @@ module.exports = {
 					Player.tools.updateCreateStatus(Player.tools.createStatusText
 						+ '<br>' + (promoteFFmpegVersion ? 'This version of the player does not enable webm splitting.' : 'Audio not allowed for the image webm.')
 						+ '<br>Remove the audio from the webm and try again.'
-						+ (promoteFFmpegVersion ? '<br>Alternatively install the <a href="${ffmpegVersionUrl}">ffmpeg version</a> to extract video/audio automatically.' : ''));
+						+ (promoteFFmpegVersion ? `<br>Alternatively install the <a href="${ffmpegVersionUrl}">ffmpeg version</a> to extract video/audio automatically.` : ''));
 					throw new PlayerError('Audio not allowed for the image webm.', 'warning');
 				}
-	
+
 				// If the image is a webm with audio then extract just the video.
 				image = await Player.tools.extract(image, 'video');
 			}
@@ -231,7 +231,7 @@ module.exports = {
 
 			// Complete! with some action links
 			Player.tools.updateCreateStatus(Player.tools.createStatusText
-				+ `<br>Complete!<br>`
+				+ '<br>Complete!<br>'
 				+ (is4chan ? `<a href="#" class="${ns}-create-sound-post-link">Post</a> - ` : '')
 				+ ` <a href="#" class="${ns}-create-sound-add-link">Add</a> - `
 				+ ` <a href="${Player.tools._createdImageURL}" download="${Player.tools._createdImage.name}">Download</a>`
@@ -270,7 +270,7 @@ module.exports = {
 		const name = file.name.replace(/\.[^/.]+$/, '') + (type === 'audio' ? '.ogg' : '.webm');
 
 		const result = ffmpeg({
-			MEMFS: [ { name: '_' + file.name, data: await new Response(file).arrayBuffer() }],
+			MEMFS: [ { name: '_' + file.name, data: await new Response(file).arrayBuffer() } ],
 			arguments: type === 'audio'
 				? [ '-i', '_' + file.name, '-vn', '-c', 'copy', name ]
 				: [ '-i', '_' + file.name, '-an', '-c', 'copy', name ]
@@ -305,6 +305,7 @@ module.exports = {
 				url: host.url,
 				data: formData,
 				responseType: host.responsePath ? 'json' : 'text',
+				headers: host.headers,
 				onload: async response => {
 					if (response.status < 200 || response.status >= 300) {
 						return reject(response);
@@ -357,8 +358,8 @@ module.exports = {
 			const event = new CustomEvent('drop', { view: window, bubbles: true, cancelable: true });
 			event.dataTransfer = dataTransfer;
 			document.querySelector('#qr').dispatchEvent(event);
-		
-		// Native, set the file input value. Check for a quick reply 
+
+		// Native, set the file input value. Check for a quick reply
 		} else if (qrLink) {
 			qrLink.click();
 			document.querySelector('#qrFile').files = dataTransfer.files;

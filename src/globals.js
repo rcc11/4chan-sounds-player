@@ -46,7 +46,7 @@ window._isEqual = function (a, b, strict = true) {
 	return strict
 		? a === b
 		: a == b;
-}
+};
 
 window.toDuration = function (number) {
 	number = Math.floor(number || 0);
@@ -101,7 +101,7 @@ window.noDefault = (f, ...args) => e => {
 };
 
 class PlayerError extends Error {
-	constructor (msg, type, err) {
+	constructor(msg, type, err) {
 		super(msg);
 		this.reason = msg;
 		this.type = type;

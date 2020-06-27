@@ -316,7 +316,7 @@ module.exports = {
 	renderHosts: function (_value) {
 		return `<div class="${ns}-host-inputs">`
 			+ Object.keys(Player.config.uploadHosts).map(Player.templates.hostInput).join('')
-		+ `</div>`;
+		+ '</div>';
 	},
 
 	parseHosts: function (newValue, hosts, e) {
@@ -325,48 +325,65 @@ module.exports = {
 		let name = container.getAttribute('data-host-name');
 		let host = hosts[name] = { ...hosts[name] };
 		const changedField = e.eventTarget.getAttribute('name');
-		let _error = msg => {
-			host.invalid = true;
-			container.classList.add('invalid');
-			throw new PlayerError(msg, 'warning');
-		}
-
-		// If the name was changed then reassign in hosts and update the data-host-name attribute.
-		if (changedField === 'name' && newValue !== name) {
-			if (!newValue || hosts[newValue]) {
-				_error('A unique name for the host is required.');
-			}
-			container.setAttribute('data-host-name', newValue);
-			hosts[newValue] = host;
-			delete hosts[name];
-			name = newValue;
-		}
-
-		// Validate URL
-		if (changedField === 'url' || changedField === 'soundUrl') {
-			try {
-				(changedField === 'url' || newValue) && new URL(newValue);
-			} catch (err) {
-				_error('The value must be a valid URL.');
-			}
-		}
-
-		// Parse the data
-		if (changedField === 'data') {
-			try {
-				newValue = JSON.parse(newValue);
-			} catch (err) {
-				_error('The data must be valid JSON.');
-			}
-		}
-
-		host[changedField] = newValue;
 
 		try {
-			const urlValue = container.querySelector(`[name=url]`).value;
-			const soundUrlValue = container.querySelector(`[name=soundUrl]`).value;
-			const dataValue = container.querySelector(`[name=data]`).value;
-			if (name && JSON.parse(dataValue) && new URL(urlValue) && (!soundUrlValue || new URL(soundUrlValue))) {
+			// If the name was changed then reassign in hosts and update the data-host-name attribute.
+			if (changedField === 'name' && newValue !== name) {
+				if (!newValue || hosts[newValue]) {
+					throw new PlayerError('A unique name for the host is required.', 'warning');
+				}
+				container.setAttribute('data-host-name', newValue);
+				hosts[newValue] = host;
+				delete hosts[name];
+				name = newValue;
+			}
+
+			// Validate URL
+			if (changedField === 'url' || changedField === 'soundUrl') {
+				try {
+					(changedField === 'url' || newValue) && new URL(newValue);
+				} catch (err) {
+					throw new PlayerError('The value must be a valid URL.', 'warning');
+				}
+			}
+
+			// Parse the data
+			if (changedField === 'data') {
+				try {
+					newValue = JSON.parse(newValue);
+				} catch (err) {
+					throw new PlayerError('The data must be valid JSON.', 'warning');
+				}
+			}
+
+			if (changedField === 'headers') {
+				try {
+					newValue = newValue ? JSON.parse(newValue) : undefined;
+				} catch (err) {
+					throw new PlayerError('The headers must be valid JSON.', 'warning');
+				}
+			}
+		} catch (err) {
+			host.invalid = true;
+			container.classList.add('invalid');
+			throw err;
+		}
+
+		if (newValue === undefined) {
+			delete host[changedField];
+		} else {
+			host[changedField] = newValue;
+		}
+
+		try {
+			const soundUrlValue = container.querySelector('[name=soundUrl]').value;
+			const headersValue = container.querySelector('[name=headers]').value;
+			if (name
+				&& JSON.parse(container.querySelector('[name=data]').value)
+				&& new URL(container.querySelector('[name=url]').value)
+				&& (!soundUrlValue || new URL(soundUrlValue))
+				&& (!headersValue || JSON.parse(headersValue))) {
+
 				delete host.invalid;
 				container.classList.remove('invalid');
 			}
@@ -385,7 +402,7 @@ module.exports = {
 		while (Player.config.uploadHosts[name]) {
 			name = name + ' ' + ++i;
 		}
-		hosts[name] = { invalid: true, data: { 'file': '$file' } };
+		hosts[name] = { invalid: true, data: { file: '$file' } };
 		if (container.children[0]) {
 			createElementBefore(Player.templates.hostInput(name), container.children[0]);
 		} else {

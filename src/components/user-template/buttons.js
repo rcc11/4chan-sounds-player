@@ -189,6 +189,6 @@ module.exports = [
 		class: `${ns}-view-menu-button`,
 		icon: 'fa-angle-down',
 		text: '▾',
-		attrs: [ 'href="javascript:;"']
+		attrs: [ 'href="javascript:;"' ]
 	}
 ];

@@ -22,7 +22,10 @@
 			<div class="${ns}-col"><input type="text" data-property="uploadHosts" name="soundUrl" value="${host.soundUrl || ''}" placeholder="File URL Format"></div>
 		</div>
 		<div class="${ns}-row">
-			<div class="${ns}-col"><textarea data-property="uploadHosts" name="data">${JSON.stringify(host.data, null, 4)}</textarea></div>
+			<div class="${ns}-col"><textarea data-property="uploadHosts" name="data" placeholder="Data (JSON)">${JSON.stringify(host.data, null, 4)}</textarea></div>
+		</div>
+		<div class="${ns}-row">
+			<div class="${ns}-col"><textarea data-property="uploadHosts" name="headers" placeholder="Headers (JSON)">${host.headers ? JSON.stringify(host.headers, null, 4) : ''}</textarea></div>
 		</div>
 	</div>`;
 }

@@ -244,7 +244,7 @@ module.exports = {
 
 		// Create the menu.
 		const dialog = createElement(Player.templates.itemMenu({ sound }), parent);
-		Player.userTemplate._showMenu(e.clientX, e.clientY, dialog, parent)
+		Player.userTemplate._showMenu(e.clientX, e.clientY, dialog, parent);
 	},
 
 	_handleViewsMenu: function (e) {

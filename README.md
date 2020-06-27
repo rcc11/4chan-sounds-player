@@ -99,9 +99,12 @@ The threads can be displayed in a table or a pseudo-board.
     - __Name__ - A unique name used as the host identifier.
 	- __URL__ - The URL the file is updated to do.
 	- __Data__ - A JSON object representing the form data posted for the upload. The file is specified by setting `$file` as the value.
+	- __Headers__ - _(Optional)_ Request headers.
 	- __Response Path__ - _(Optional)_ A path to locate the URL for the uploaded sound in a JSON response.
 	- __Response Match__ - _(Optional)_ A regular expression where the first match group is used to identify the URL for the uploaded sound in the response text.
 	- __Sound URL__ - _(Optional)_ A URL that where `%s` is replaced the result of the result path or result match.
+
+Various hosts accept a token for user identification. These are typically identified in the default setup as a null value which you can replace with your token.
 
 ## Content Templates
 
@@ -138,7 +141,11 @@ All the values here can be followed by `:""` to specify the text, otherwise they
 - `hover-images-button` - Toggles hover images in the playlist.
 - `add-button` - Open the file input to add local files.
 - `reload-button` - Reloads the sounds from the thread to add any missing files. Useful if you change the allowed hosts or filters but generally all sounds should already be added.
+- `view-button` - Open the view menu dropdown to switch between views.
+- `menu-button` - Open the player (image/playlist) view.
 - `settings-button` - Open/close the settings.
+- `threads-button` - Open/close the threads search view.
+- `tools-button` - Open/close the tools view.
 - `close-button` - Hide the player.
 - `menu-button` - Open the dropdown menu for the sound.
 

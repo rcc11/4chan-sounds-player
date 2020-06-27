@@ -24,7 +24,7 @@ module.exports = (env, argv) => {
 	const ffmpegRequire = ffmpegVersion ? '// @require$1https://raw.githubusercontent.com/rcc11/4chan-sounds-player/' + branch + '/dist/ffmpeg-webm.js\n' : '';
 
 	const filename = `4chan-sounds-player${argv.mode === 'production' ? '' : '-dev'}${ffmpegVersion ? '-ffmpeg' : ''}`;
-	
+
 	const header = fs.readFileSync(path.resolve(__dirname, './src/header.js'));
 	const banner = header.toString()
 		.replace('VERSION', version)
@@ -82,5 +82,5 @@ module.exports = (env, argv) => {
 			new webpack.BannerPlugin({ banner, raw: true }),
 			new webpack.DefinePlugin({ VERSION: JSON.stringify(version) })
 		]
-	}
-}
+	};
+};

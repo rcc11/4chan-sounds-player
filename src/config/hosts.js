@@ -11,7 +11,6 @@ module.exports = [
 			{ title: 'Add', handler: 'settings.addUploadHost' },
 			{ title: 'Restore Defaults', handler: 'settings.restoreDefaultHosts' },
 		],
-		default: 'sound-name h:{menu-button}',
 		displayGroup: 'Hosts',
 		displayMethod: 'settings.renderHosts',
 		parse: 'settings.parseHosts',
@@ -35,6 +34,22 @@ module.exports = [
 				url: 'https://pomf.cat/upload.php',
 				data: { 'files[]': '$file' },
 				responsePath: 'files.0.url'
+			},
+			zz: {
+				url: 'https://zz.ht/api/upload',
+				responsePath: 'files.0.url',
+				data: {
+					'files[]': '$file'
+				},
+				headers: {
+					token: null
+				}
+			},
+			lewd: {
+				url: 'https://lewd.se/upload',
+				data: { file: '$file' },
+				headers: { token: null, shortUrl: true },
+				responsePath: 'data.link'
 			}
 		}
 	}

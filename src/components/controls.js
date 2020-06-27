@@ -175,7 +175,7 @@ module.exports = {
 					? ((newIndex + direction) + Player.sounds.length) % Player.sounds.length
 					: newIndex + direction;
 				nextSound = Player.sounds[newIndex];
-			} while (group && nextSound && newIndex !== currentIndex && (!nextSound.post || nextSound.post === Player.playing.post))
+			} while (group && nextSound && newIndex !== currentIndex && (!nextSound.post || nextSound.post === Player.playing.post));
 		}
 		nextSound && Player.play(nextSound);
 	},
