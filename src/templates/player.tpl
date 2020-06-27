@@ -7,6 +7,7 @@
 		${Player.templates.controls(data)}
 	</div>
 </div>
+<input class="${ns}-playlist-search" type="input" placeholder="Search" style="min-width: 100%; box-sizing: border-box">
 <div class="${ns}-list-container style="height: 100px">
 	${Player.templates.list(data)}
 </div>

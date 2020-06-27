@@ -10,7 +10,8 @@ module.exports = {
 		dragenter: { [`.${ns}-list-item`]: 'playlist.handleDragEnter' },
 		dragend: { [`.${ns}-list-item`]: 'playlist.handleDragEnd' },
 		dragover: { [`.${ns}-list-item`]: e => e.preventDefault() },
-		drop: { [`.${ns}-list-item`]: e => e.preventDefault() }
+		drop: { [`.${ns}-list-item`]: e => e.preventDefault() },
+		keyup: { [`.${ns}-playlist-search`]: 'playlist._handleSearch' }
 	},
 
 	undelegatedEvents: {
@@ -360,5 +361,31 @@ module.exports = {
 	 */
 	applyFilters: function () {
 		Player.sounds.filter(sound => !Player.acceptedSound(sound)).forEach(Player.playlist.remove);
+	},
+
+	/**
+	 * Search the playlist
+	 */
+	_handleSearch: function (e) {
+		const lastSearch = Player.playlist._lastSearch;
+		const v = Player.playlist._lastSearch = e.eventTarget.value;
+		if (v === lastSearch) {
+			return;
+		}
+		if (!v) {
+			return Player.$all(`.${ns}-list-item`).forEach(el => el.style.display = null);
+		}
+		Player.sounds.forEach(sound => {
+			const row = Player.$(`.${ns}-list-item[data-id="${sound.id}"]`);
+			row && (row.style.display = Player.playlist.matchesSearch(sound) ? null : 'none');
+		});
+	},
+
+	matchesSearch: function (sound) {
+		const v = Player.playlist._lastSearch;
+		return !v
+			|| sound.title.includes(v)
+			|| String(sound.post).includes(v)
+			|| String(sound.src).includes(v);
 	}
 };
