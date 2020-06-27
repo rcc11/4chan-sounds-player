@@ -398,7 +398,8 @@ module.exports = {
 
 	toggleSearch: function (show) {
 		const input = Player.$(`.${ns}-playlist-search`);
-		Player.playlist._lastSearch && Player.playlist.search();
+		!show && Player.playlist._lastSearch && Player.playlist.search();
 		input.style.display = show ? null : 'none';
+		show && input.focus();
 	}
 };
