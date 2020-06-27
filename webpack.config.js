@@ -12,8 +12,10 @@ const tplStringLoader = path.resolve(__dirname, './src/loaders/tpl-string');
 const replaceLoader = path.resolve(__dirname, './src/loaders/replace');
 
 const branch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
+const hash = execSync('git rev-parse --short HEAD').toString().trim();
 
 module.exports = (env, argv) => {
+	const version = pkg.version + (argv['append-hash'] ? '-' + hash : '');
 	if (argv.ffmpeg ||  argv['build-ffmpeg']) {
 		execFileSync(path.join(__dirname, './build-ffmpeg.sh'));
 	}
@@ -25,7 +27,7 @@ module.exports = (env, argv) => {
 	
 	const header = fs.readFileSync(path.resolve(__dirname, './src/header.js'));
 	const banner = header.toString()
-		.replace('VERSION', pkg.version)
+		.replace('VERSION', version)
 		.replace(/FILENAME/g, filename)
 		.replace(/BRANCH/g, branch)
 		.replace(/\/\/ @require(\s+)FFMPEG_REQUIRE\n/, ffmpegRequire);
@@ -78,7 +80,7 @@ module.exports = (env, argv) => {
 		plugins: [
 			new webpack.IgnorePlugin({ resourceRegExp: /fs/ }),
 			new webpack.BannerPlugin({ banner, raw: true }),
-			new webpack.DefinePlugin({ VERSION: JSON.stringify(pkg.version) })
+			new webpack.DefinePlugin({ VERSION: JSON.stringify(version) })
 		]
 	}
 }
