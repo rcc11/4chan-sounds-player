@@ -131,7 +131,8 @@ module.exports = {
 	/**
 	 * Switch between showing just the selected boards and all boards.
 	 */
-	toggleBoardList: function () {
+	toggleBoardList: function (e) {
+		e.preventDefault();
 		Player.threads.showAllBoards = !Player.threads.showAllBoards;
 		Player.$(`.${ns}-all-boards-link`).innerHTML = Player.threads.showAllBoards ? 'Selected Only' : 'Show All';
 		Player.threads.renderBoards();
@@ -194,7 +195,7 @@ module.exports = {
 			}));
 
 			Player.threads.soundThreads = allThreads.filter(thread => {
-				const sounds = parseFileName(thread.filename, `https://i.4cdn.org/${thread.board}/${thread.tim}${thread.ext}`, thread.no, `https://i.4cdn.org/${thread.board}/${thread.tim}s${thread.ext}`, thread.md5);
+				const sounds = parseFileName(thread.filename, `https://i.4cdn.org/${thread.board}/${thread.tim}${thread.ext}`, thread.no, `https://i.4cdn.org/${thread.board}/${thread.tim}s${thread.ext}`, thread.md5, true);
 				return sounds.length;
 			});
 		} catch (err) {

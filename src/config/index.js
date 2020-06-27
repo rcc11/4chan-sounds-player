@@ -1,9 +1,10 @@
 module.exports = [
+	// Order the groups appear in.
 	...require('./display'),
 	...require('./filter'),
-	...require('./hosts'),
 	...require('./keybinds'),
 	...require('./templates'),
+	...require('./hosts'),
 
 	{
 		property: 'shuffle',
