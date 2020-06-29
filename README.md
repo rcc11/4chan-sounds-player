@@ -7,7 +7,7 @@ A floating player for 4chan sounds threads.
 
 ## Sound Player UI
 
-A link to open the player is shown at the top and bottom of the page, next to settings. For [4chan X](#with-4chan-x]) the link is in the header.
+A link to open the player is shown at the top and bottom of the page, next to settings. For [4chan X](#with-4chan-x) the link is in the header.
 
 ![Native Button](./images/button-native.png)
 
