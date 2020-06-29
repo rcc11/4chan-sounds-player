@@ -9,7 +9,7 @@ A floating player for 4chan sounds threads.
 
 A link to open the player is shown at the top and bottom of the page, next to settings.
 
-![Playlist UI](./images/button-native.png)
+![Native Button](./images/button-native.png)
 
 #### Display Modes
 
@@ -19,7 +19,7 @@ The playlist view will list all the sounds in the thread in the order they're pl
 
 The image only view hides the playlist allowing the image to be expanded.
 
-![Playlist UI](./images/green-tea.png)
+![Image UI](./images/green-tea.png)
 
 #### With 4chan X
 
@@ -42,7 +42,7 @@ If you want to test out a sound before you post it this is a good method of doin
 
 You can opt to display a thumbnail in the bottom right of the page while the player is hidden. The example here shows a rather large image but the size is customisable.
 
-![Playlist UI](./images/minimised-image.png)
+![Minimised Thumbnail](./images/minimised-image.png)
 
 ## Tools
 
@@ -54,7 +54,7 @@ Just two inputs that let you paste encoded and decoded URLs.
 
 This form allows you to select/drop and image and sound. The sound will be uploaded to the selected host and the image will be renamed to include `[sound=url]` link to it. Once complete you can choose to post it, download it, or add it to the player.
 
-![Playlist UI](./images/tools.png)
+![Tools View](./images/tools.png)
 
 ## Sound Threads Search
 
@@ -62,8 +62,8 @@ The threads views allows you to search for threads that include a sound in the O
 
 The threads can be displayed in a table or a pseudo-board.
 
-![Playlist UI](./images/threads-board.png)
-![Playlist UI](./images/threads-table.png)
+![Threads Search Board View](./images/threads-board.png)
+![Threads Search Table View](./images/threads-table.png)
 
 
 ## Settings
@@ -164,4 +164,4 @@ The [FFmpeg version](dist/4chan-sounds-player-ffmpeg.user.js) of this userscript
 
 In order to function as a userscript require [a copy](dist/ffmpeg-webm.js) is provided wrapped as `(function (self) { let module = {}; <ffmpeg.js> self.ffmpeg=module.exports;})(self);`.
 
-The FFmpeg version allows the sound image creation tool to accept a webm with audio and split it into separate video and audio files. The benefit of this weighed against added the sizable require is slim if if not none, especially considering it's a step you can easily do during the creation of a webm.
+The FFmpeg version allows the sound image creation tool to accept a webm with audio and split it into separate video and audio files. The benefit of this weighed against the sizable added require is slim if not none, especially considering it's a step you can easily do during the creation of a webm.
