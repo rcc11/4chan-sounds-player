@@ -7,7 +7,7 @@ A floating player for 4chan sounds threads.
 
 ## Sound Player UI
 
-A link to open the player is shown at the top and bottom of the page, next to settings.
+A link to open the player is shown at the top and bottom of the page, next to settings. For [4chan X](#with-4chan-x]) the link is in the header.
 
 ![Native Button](./images/button-native.png)
 
@@ -52,7 +52,7 @@ Just two inputs that let you paste encoded and decoded URLs.
 
 #### Create Sound Image
 
-This form allows you to select/drop and image and sound. The sound will be uploaded to the selected host and the image will be renamed to include `[sound=url]` link to it. Once complete you can choose to post it, download it, or add it to the player.
+This form allows you to select/drop and image and sound. The sound will be uploaded to the selected host and the image will be renamed to include a `[sound=url]` link to it. Once complete you can choose to post it, download it, or add it to the player. Refer to [Hosts](#hosts) for the configuration.
 
 ![Tools View](./images/tools.png)
 
@@ -73,7 +73,6 @@ The threads can be displayed in a table or a pseudo-board.
 - __4chan X Header Controls__ - When to display the playback controls in the 4chan X header. The available options are always, only with the player hidden, and never.
 - __Autoshow__ - Open the player automatically for threads that contain sounds.
 - __Colors__ - By default the player will attempt to match the board theme, but you can set your own colors. Selecting "Match Theme" will revert to matching the board theme after making any modifications.
-
 - __Limit Post Width__ - Reduces the widths of posts that are next to the player so they're not hidden beneath it.
 - __Minimised Display__ - What is displayed when the player is hidden. You can choose to display a thumnail image (described above) and/or show playback controls in the 4chan X header.
 - __Threads View Display__ - How the threads in the thread view are displayed.
@@ -89,7 +88,7 @@ The threads can be displayed in a table or a pseudo-board.
 - __Filters__ - Sounds or images to ignore. On each line add the URL of the sound or the MD5 of the image you want to filter and they will no longer be added to the player. Lines starting with a `#` are ignored. The menu for playlist items has links to add the sound or image to the filters.
 
 #### Templates
-- __Footer/Header/Row/4chan X Header Contents__ - Custom display templates. See "Content Templates" below for usage.
+- __Footer/Header/Row/4chan X Header Contents__ - Custom display templates. See [Content Templates](#content-templates) below for usage.
 
 #### Hosts
 
