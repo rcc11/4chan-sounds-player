@@ -3,14 +3,9 @@
 const fs = require('fs');
 const path = require('path');
 
+const argv = require('minimist')(process.argv.slice(2));
 const webpack = require('webpack');
-const config = require('./webpack.config')(undefined, {
-	mode: 'production',
-	ffmpeg: !!process.argv.includes('--ffmpeg'),
-	'build-ffmpeg': !!process.argv.includes('--build-ffmpeg'),
-	'require-ffmpeg': !!process.argv.includes('--require-ffmpeg'),
-	'append-hash': !!process.argv.includes('--append-hash')
-});
+const config = require('./webpack.config')(undefined, Object.assign({ mode: 'production' }, argv));
 const bannerPlugin = config.plugins.find(plugin => plugin instanceof webpack.BannerPlugin);
 const header = bannerPlugin.options.banner;
 

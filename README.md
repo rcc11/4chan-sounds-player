@@ -3,7 +3,9 @@
 A floating player for 4chan sounds threads. 
 
 ## Install
-[Click here](https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player.user.js), or [here](https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player-ffmpeg.user.js) for the FFmpeg version (see bottom of the README).
+[Stable](https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player.user.js), [Beta](https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player-beta.user.js).
+
+There's an an [FFmpeg version](#ffmpeg-version).
 
 ## Sound Player UI
 
