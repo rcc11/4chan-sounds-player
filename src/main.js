@@ -1,10 +1,17 @@
 'use strict';
 
 import './globals';
-import Player from './player';
-import { parseFiles } from './file_parser';
 
 async function doInit() {
+	// Wait for 4chan X if it's installed and not finished initialising.
+	if (!isChanX && (isChanX = document.documentElement.classList.contains('fourchan-x'))) {
+		return;
+	}
+
+	// Require these here so every other require is sure of the 4chan X state.
+	const Player = require('./player');
+	const { parseFiles } = require('./file_parser');
+
 	// The player tends to be all black without this timeout.
 	// Something with the timing of the stylesheet loading and applying the board theme.
 	setTimeout(async function () {
@@ -32,13 +39,15 @@ async function doInit() {
 }
 
 document.addEventListener('4chanXInitFinished', function () {
-	if (isChanX) {
+	const wasChanX = isChanX;
+	isChanX = true;
+	if (wasChanX) {
 		doInit();
 	}
-	isChanX = true;
 	Player.display.initChanX();
 });
 
+// If it's already known 4chan X is installed this can be skipped.
 if (!isChanX) {
 	if (document.readyState !== 'loading') {
 		doInit();
