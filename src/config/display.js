@@ -36,7 +36,7 @@ module.exports = [
 			{
 				property: 'chanXControls',
 				title: '4chan X Header Controls',
-				description: 'Show playback controls in the 4chan X header. Customise the template below.',
+				description: 'Show playback controls in the 4chan X header. The display can be customised in Templates.',
 				displayMethod: isChanX || null,
 				options: {
 					always: 'Always',
