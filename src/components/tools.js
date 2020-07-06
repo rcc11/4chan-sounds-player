@@ -10,7 +10,8 @@ module.exports = {
 			[`.${ns}-create-button`]: 'tools._handleCreate',
 			[`.${ns}-create-sound-post-link`]: 'tools._addCreatedToQR',
 			[`.${ns}-create-sound-add-link`]: 'tools._addCreatedToPlayer',
-			[`.${ns}-toggle-sound-input`]: 'tools._handleToggleSoundInput'
+			[`.${ns}-toggle-sound-input`]: 'tools._handleToggleSoundInput',
+			[`.${ns}-host-setting-link`]: noDefault(() => Player.settings.toggle('Hosts'))
 		},
 		change: {
 			[`.${ns}-create-sound-img`]: 'tools._handleImageSelect',

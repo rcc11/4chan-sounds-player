@@ -13,10 +13,13 @@
 		`<div class="${ns}-col" data-dismiss-id="createSoundDetails">
 			Select an image and sound to combine as a sound image.
 			The sound will be uploaded to the selected file host and the url will be added to the image filename.
+			If you have an account for a host that you would like to use then make the required changes in the <a class="${ns}-host-setting-link" href="#">host config</a>.
+			That typically means providing a user token in the data or headers.<br>
 			${Player.tools.hasFFmpeg
 				? 'Selecting a webm with audio as the image will split it into a video only webm to be posted and ogg audio file to be uploaded.'
 				: 'For a webm with audio first split the webm into a separate video and audio file and select them both.'
 			}
+			<br>
 			<a href="javascript:;" class="${ns}-dismiss-link" data-dismiss="createSoundDetails">Dismiss</a>
 		</div>`)}
 	</div>

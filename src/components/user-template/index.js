@@ -30,7 +30,7 @@ module.exports = {
 			[`.${ns}-view-menu-button`]: 'userTemplate._handleViewsMenu',
 			[`.${ns}-threads-button`]: 'threads.toggle',
 			[`.${ns}-tools-button`]: 'tools.toggle',
-			[`.${ns}-config-button`]: 'settings.toggle',
+			[`.${ns}-config-button`]: noDefault(() => Player.settings.toggle()),
 			[`.${ns}-player-button`]: 'playlist.restore'
 		},
 		change: {

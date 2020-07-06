@@ -221,15 +221,22 @@ module.exports = {
 	/**
 	 * Toggle whether the player or settings are displayed.
 	 */
-	toggle: function (e) {
-		e && e.preventDefault();
+	toggle: function (group) {
 		// Blur anything focused so the change is applied.
 		let focused = Player.$(`.${ns}-settings :focus`);
 		focused && focused.blur();
-		if (Player.config.viewStyle === 'settings') {
-			Player.playlist.restore();
-		} else {
+
+		// Restore the playlist if there's no group given and the settings are already open.
+		if (!group && Player.config.viewStyle === 'settings') {
+			return Player.playlist.restore();
+		}
+		// Switch to the settings view if it's not already showing.
+		if (Player.config.viewStyle !== 'settings') {
 			Player.display.setViewStyle('settings');
+		}
+		// Switch to a given group.
+		if (group && group !== Player.settings.view) {
+			Player.settings.showGroup(group);
 		}
 	},
 
@@ -240,14 +247,18 @@ module.exports = {
 		const group = e.eventTarget.getAttribute('data-group');
 		if (group) {
 			e.preventDefault();
-			Player.settings.view = group;
-			const currentGroup = Player.$(`.${ns}-settings-group.active`);
-			const currentTab = Player.$(`.${ns}-settings-tab.active`);
-			currentGroup && currentGroup.classList.remove('active');
-			currentTab && currentTab.classList.remove('active');
-			Player.$(`.${ns}-settings-group[data-group="${group}"]`).classList.add('active');
-			Player.$(`.${ns}-settings-tab[data-group="${group}"]`).classList.add('active');
+			Player.settings.showGroup(group);
 		}
+	},
+
+	showGroup: function (group) {
+		Player.settings.view = group;
+		const currentGroup = Player.$(`.${ns}-settings-group.active`);
+		const currentTab = Player.$(`.${ns}-settings-tab.active`);
+		currentGroup && currentGroup.classList.remove('active');
+		currentTab && currentTab.classList.remove('active');
+		Player.$(`.${ns}-settings-group[data-group="${group}"]`).classList.add('active');
+		Player.$(`.${ns}-settings-tab[data-group="${group}"]`).classList.add('active');
 	},
 
 	/**
