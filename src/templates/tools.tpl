@@ -1,7 +1,7 @@
 `<div class="${ns}-heading">Encode / Decode URL</div>
 <div class="${ns}-row">
-	<input type="text" class="${ns}-decoded-input ${ns}-col" placeholder="https://">
-	<input type="text" class="${ns}-encoded-input ${ns}-col" placeholder="https%3A%2F%2F">
+	<div class="${ns}-col"><input type="text" class="${ns}-decoded-input" placeholder="https://"></div>
+<div class="${ns}-col"><input type="text" class="${ns}-encoded-input" placeholder="https%3A%2F%2F"></div>
 </div>
 
 <div class="${ns}-heading">
