@@ -3,6 +3,7 @@ const promoteFFmpegVersion = false;
 
 module.exports = {
 	hasFFmpeg: typeof ffmpeg === 'function',
+	_uploadIdx: 0,
 	createStatusText: '',
 
 	delegatedEvents: {
@@ -11,7 +12,8 @@ module.exports = {
 			[`.${ns}-create-sound-post-link`]: 'tools._addCreatedToQR',
 			[`.${ns}-create-sound-add-link`]: 'tools._addCreatedToPlayer',
 			[`.${ns}-toggle-sound-input`]: 'tools._handleToggleSoundInput',
-			[`.${ns}-host-setting-link`]: noDefault(() => Player.settings.toggle('Hosts'))
+			[`.${ns}-host-setting-link`]: noDefault(() => Player.settings.toggle('Hosts')),
+			[`.${ns}-remove-file`]: noDefault(e => Player.tools._handleFileRemove(e))
 		},
 		change: {
 			[`.${ns}-create-sound-img`]: 'tools._handleImageSelect',
@@ -87,7 +89,7 @@ module.exports = {
 
 			const webmCheckbox = Player.$(`.${ns}-use-video`);
 			// If the image is a video and Copy Video is selected then update the sound input as well
-			webmCheckbox.checked && isVideo && Player.tools._handleFileSelect(Player.tools.sndInput, image);
+			webmCheckbox.checked && isVideo && Player.tools._handleFileSelect(Player.tools.sndInput, [ image ]);
 			// If the image isn't a webm make sure Copy Video is deselected (click to fire change event)
 			webmCheckbox.checked && !isVideo && webmCheckbox.click();
 		} else if (await Player.tools.hasAudio(image)) {
@@ -98,12 +100,38 @@ module.exports = {
 		Player.$(`.${ns}-create-sound-name`).setAttribute('placeholder', placeholder);
 	},
 
-	_handleFileSelect: function (input, file) {
-		const container = input.parentNode;
-		const fileText = container.querySelector('span');
-		file || (file = input.files[0]);
-		container.classList[file ? 'remove' : 'add']('placeholder');
-		fileText.innerHTML = file ? file.name : container.getAttribute('placeholder');
+	/**
+	 * Update the custom file input display when the input changes
+	 */
+	_handleFileSelect: function (input, files) {
+		const container = input.closest(`.${ns}-file-input`);
+		const fileText = container.querySelector('.text');
+		const fileList = container.querySelector(`.${ns}-file-list`);
+		files || (files = [ ...input.files ]);
+		container.classList[files.length ? 'remove' : 'add']('placeholder');
+		fileText.innerHTML = files.length > 1
+			? files.length + ' files'
+			: files[0] && files[0].name || '';
+		fileList && (fileList.innerHTML = files.length < 2 ? '' : files.map((file, i) =>
+			`<div class="${ns}-row">
+				<div class="${ns}-col ${ns}-truncate-text">${file.name}</div>
+				<a class="${ns}-col-auto ${ns}-remove-file" href="#" data-idx="${i}"><span class="fa fa-times">X</span></a>
+			</div>`
+		).join(''));
+	},
+
+	/**
+	 * Handle a file being removed from a multi input
+	 */
+	_handleFileRemove: function (e) {
+		const idx = +e.eventTarget.getAttribute('data-idx');
+		const input = e.eventTarget.closest(`.${ns}-file-input`).querySelector('input[type="file"]');
+		const dataTransfer = new DataTransfer();
+		for (let i = 0; i < input.files.length; i++) {
+			i !== idx && dataTransfer.items.add(input.files[i]);
+		}
+		input.files = dataTransfer.files;
+		Player.tools._handleFileSelect(input);
 	},
 
 	/**
@@ -112,7 +140,7 @@ module.exports = {
 	_handleWebmSoundChange: function (e) {
 		const sound = Player.tools.sndInput;
 		const image = Player.tools.imgInput;
-		Player.tools._handleFileSelect(sound, e.eventTarget.checked && image.files[0]);
+		Player.tools._handleFileSelect(sound, e.eventTarget.checked && [ image.files[0] ]);
 	},
 
 	_handleToggleSoundInput: function (e) {
@@ -135,15 +163,18 @@ module.exports = {
 			const isImage = file.type.startsWith('image') || file.type === 'video/webm';
 			const isSound = file.type.startsWith('audio');
 			if (isVideo || isImage || isSound) {
-				const dataTransfer = new DataTransfer();
-				dataTransfer.items.add(file);
 				const input = file.type === 'video/webm' && targetInput
 					? targetInput
 					: isImage
 						? Player.tools.imgInput
 						: Player.tools.sndInput;
+				const dataTransfer = new DataTransfer();
+				if (input.multiple) {
+					[ ...input.files ].forEach(file => dataTransfer.items.add(file));
+				}
+				dataTransfer.items.add(file);
 				input.files = dataTransfer.files;
-				Player.tools._handleFileSelect(input, file);
+				Player.tools._handleFileSelect(input);
 				input === Player.tools.imgInput && Player.tools._handleImageSelect();
 			}
 		});
@@ -168,11 +199,11 @@ module.exports = {
 		const host = Player.$(`.${ns}-create-sound-host`).value;
 		const useSoundURL = Player.tools.useSoundURL;
 		let image = Player.tools.imgInput.files[0];
-		let soundURL = useSoundURL && Player.$(`.${ns}-create-sound-snd-url`).value;
-		let sound = !(Player.$(`.${ns}-use-video`) || {}).checked || !image.type.startsWith('video')
-			? Player.tools.sndInput.files[0]
-			: image;
-		const name = Player.$(`.${ns}-create-sound-name`).value || image && image.name.replace(/\.[^/.]+$/, '');
+		let soundURLs = useSoundURL && Player.$(`.${ns}-create-sound-snd-url`).value.split(',').map(v => v.trim());
+		let sounds = !(Player.$(`.${ns}-use-video`) || {}).checked || !image.type.startsWith('video')
+			? [ ...Player.tools.sndInput.files ]
+			: image && [ image ];
+		const customName = Player.$(`.${ns}-create-sound-name`).value;
 		const isAudioWebmImage = image && image.type.startsWith('video') && await Player.tools.hasAudio(image);
 
 		try {
@@ -196,35 +227,46 @@ module.exports = {
 
 			if (useSoundURL) {
 				try {
-					new URL(soundURL);
+					soundURLs.forEach(url => new URL(url));
 				} catch (err) {
 					throw new PlayerError('The provided sound URL is invalid.', 'warning');
 				}
 			} else {
-				if (!sound) {
+				if (!sounds || !sounds.length) {
 					throw new PlayerError('Select a sound.', 'warning');
 				}
-				// If the sound is a video extract the audio from it.
-				if (sound.type.startsWith('video')) {
-					if (!await Player.tools.hasAudio(sound)) {
-						throw new PlayerError('The selected video has no audio.', 'warning');
+				// Check videos have audio and extract it if possible.
+				sounds = await Promise.all(sounds.map(async sound => {
+					if (sound.type.startsWith('video')) {
+						if (!await Player.tools.hasAudio(sound)) {
+							throw new PlayerError(`The selected video has no audio. (${sound.name})`, 'warning');
+						}
+						if (Player.tools.hasFFmpeg) {
+							return await Player.tools.extract(sound, 'audio');
+						}
 					}
-					if (!Player.tools.hasFFmpeg) {
-						sound = await Player.tools.extract(sound, 'audio');
-					}
-				}
+					return sound;
+				}));
 
-				// Upload the sound.
+				// Upload the sounds.
 				try {
-					soundURL = await Player.tools.postFile(sound, host);
+					soundURLs = await Promise.all(sounds.map(async sound => Player.tools.postFile(sound, host)));
 				} catch (err) {
 					throw new PlayerError('Upload failed.', 'error', err);
 				}
 			}
 
-			// Create a new file that includes [sound=url] in the name.
+			// Create a new file that inacludes [sound=url] in the name.
 			const ext = image.name.match(/\.([^/.]+)$/)[1];
-			const soundImage = new File([ image ], `${name}[sound=${encodeURIComponent(soundURL)}].${ext}`, { type: image.type });
+			// Only split a given name if there's multiple sound.
+			const names = customName
+				? (soundURLs.length > 1 ? customName.split(',') : [ customName ])
+				: [ image.name.replace(/\.[^/.]+$/, '') ];
+			let filename = '';
+			for (let i = 0; i < soundURLs.length; i++) {
+				filename += (names[i] || '').trim() + '[sound=' + encodeURIComponent(soundURLs[i]) + ']';
+			}
+			const soundImage = new File([ image ], filename + '.' + ext, { type: image.type });
 
 			// Keep track of the create image and a url to it.
 			Player.tools._createdImage = soundImage;
@@ -235,7 +277,7 @@ module.exports = {
 				+ '<br>Complete!<br>'
 				+ (is4chan ? `<a href="#" class="${ns}-create-sound-post-link">Post</a> - ` : '')
 				+ ` <a href="#" class="${ns}-create-sound-add-link">Add</a> - `
-				+ ` <a href="${Player.tools._createdImageURL}" download="${Player.tools._createdImage.name}">Download</a>`
+				+ ` <a href="${Player.tools._createdImageURL}" download="${soundImage.name}" title="${soundImage.name}">Download</a>`
 			);
 		} catch (err) {
 			Player.tools.updateCreateStatus(Player.tools.createStatusText + '<br>Failed!');
@@ -284,6 +326,7 @@ module.exports = {
 	 * Upload the sound file and return a link to it.
 	 */
 	postFile: async function (file, hostId) {
+		const idx = Player.tools._uploadIdx++;
 		const host = Player.config.uploadHosts[hostId];
 
 		if (!host || host.invalid) {
@@ -297,8 +340,7 @@ module.exports = {
 			}
 		});
 
-		const statusText = Player.tools.createStatusText;
-		Player.tools.updateCreateStatus(Player.tools.createStatusText + '<br>Uploading sound');
+		Player.tools.updateCreateStatus(Player.tools.createStatusText + `<br><span class="${ns}-upload-status-${idx}">Uploading ${file.name}</span>`);
 
 		return new Promise((resolve, reject) => {
 			GM.xmlHttpRequest({
@@ -317,13 +359,14 @@ module.exports = {
 							? (response.responseText.match(new RegExp(host.responseMatch)) || [])[1]
 							: response.responseText;
 					const uploadedUrl = host.soundUrl ? host.soundUrl.replace('%s', responseVal) : responseVal;
-					Player.tools.updateCreateStatus(statusText + `<br>Uploaded to <a href="${uploadedUrl}" target="_blank">${uploadedUrl}</a>`);
+					Player.$(`.${ns}-upload-status-${idx}`).innerHTML = `Uploaded ${file.name} to <a href="${uploadedUrl}" target="_blank">${uploadedUrl}</a>`;
+					Player.tools.createStatusText = Player.tools.status.innerHTML;
 					resolve(uploadedUrl);
 				},
 				upload: {
 					onprogress: response => {
 						const total = response.total > 0 ? response.total : file.size;
-						Player.tools.updateCreateStatus(statusText + '<br>Uploading sound - ' + Math.floor(response.loaded / total * 100) + '%');
+						Player.$(`.${ns}-upload-status-${idx}`).innerHTML = `Uploading ${file.name} - ${Math.floor(response.loaded / total * 100)}%`;
 					}
 				},
 				onerror: reject

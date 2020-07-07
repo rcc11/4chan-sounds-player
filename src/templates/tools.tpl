@@ -20,6 +20,8 @@
 				: 'For a webm with audio first split the webm into a separate video and audio file and select them both.'
 			}
 			<br>
+			Multiple sound files, or a comma-separated list of sound URLs, can be given for a single image.
+			If you do have multiple sounds the name will also be a considered comma-separated list.<br>
 			<a href="javascript:;" class="${ns}-dismiss-link" data-dismiss="createSoundDetails">Dismiss</a>
 		</div>`)}
 	</div>
@@ -42,33 +44,38 @@
 	</div>
 	<div class="${ns}-row">
 		<div class="${ns}-col">
-			<div class="${ns}-file-overlay placeholder">
-				<span class="placeholder">Select/Drop Image</span>
+			<div class="${ns}-file-input placeholder">
+				<div class="${ns}-file-overlay">
+				<span class="placeholder-text">Select/Drop Image</span>
 				<span class="text"></span>
 				<input class="${ns}-create-sound-img" type="file" accept="image/*,.webm">
+				</div>
 			</div>
 		</div>
 		<div class="${ns}-col">
-			<div class="${ns}-file-overlay placeholder" ${Player.tools.useSoundURL ? 'display: none;' : ''}>
-				<span class="placeholder">Select/Drop Sound</span>
-				<span class="text"></span>
-				<div class="overfile ${ns}-input-append">
-					${!Player.tools.hasFFmpeg && `<label class="${ns}-use-video-label" style="display: none;">Copy video<input type="checkbox" class="${ns}-use-video"></label>` || ''}
-					<a href="#" class="${ns}-toggle-sound-input fa fa-link" data-type="url" title="Enter a URL of a previously uploaded file.">U</a>
+			<div class="${ns}-file-input placeholder" ${Player.tools.useSoundURL ? 'display: none;' : ''}>
+				<div class="${ns}-file-overlay">
+					<span class="placeholder-text">Select/Drop Sound/s</span>
+					<span class="text"></span>
+					<div class="overfile ${ns}-input-append">
+						${!Player.tools.hasFFmpeg && `<label class="${ns}-use-video-label" style="display: none;">Copy video<input type="checkbox" class="${ns}-use-video"></label>` || ''}
+						<a href="#" class="${ns}-toggle-sound-input fa fa-link" data-type="url" title="Enter a URL of a previously uploaded file.">U</a>
+					</div>
+					<input class="${ns}-create-sound-snd" type="file" accept="audio/*,video/*" multiple>
 				</div>
-				<input class="${ns}-create-sound-snd" type="file" accept="audio/*,video/*">
+				<div class="${ns}-file-list"></div>
 			</div>
 			<div class="${ns}-row" style="align-items: center; position: relative; ${Player.tools.useSoundURL ? '' : 'display: none;'}">
 				<a href="#" class="${ns}-toggle-sound-input ${ns}-input-append" data-type="file" title="Select a file to upload.">
 					<span class="fa fa-file-sound-o" style="margin-right: .125rem">F</span>
 				</a>
-				<input type="text" class="${ns}-create-sound-snd-url" placeholder="Sound URL" style="min-width: 100%;">
+				<input type="text" class="${ns}-create-sound-snd-url" placeholder="Sound URL/s" style="min-width: 100%;">
 			</div>
 		</div>
 	</div>
 	<div class="${ns}-row">
 		<div class="${ns}-col">
-			<input type="text" class="${ns}-create-sound-name" placeholder="Name">
+			<input type="text" class="${ns}-create-sound-name" placeholder="Name/s">
 		</div>
 	</div>
 	<div class="${ns}-row" style="margin-top: .5rem">
