@@ -239,7 +239,7 @@ module.exports = {
 					throw new PlayerError('The provided sound URL is invalid.', 'warning');
 				}
 				if (maxFilenameLength < soundlessLength + soundURLs.join('').length) {
-					throw new PlayerError('Too many sounds selected.', 'warning');
+					throw new PlayerError('The generated image filename is too long.', 'warning');
 				}
 			} else {
 				if (!sounds || !sounds.length) {
@@ -252,7 +252,7 @@ module.exports = {
 					? maxFilenameLength < soundlessLength + (host.filenameLength) * sounds.length
 					: sounds.length > 8;
 				if (tooManySounds) {
-					throw new PlayerError('Too many sounds selected.', 'warning');
+					throw new PlayerError('The generated image filename is too long.', 'warning');
 				}
 
 				// Check videos have audio and extract it if possible.
