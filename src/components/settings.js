@@ -1,4 +1,5 @@
 const settingsConfig = require('config');
+const migrations = require('../migrations');
 
 module.exports = {
 	atRoot: [ 'set' ],
@@ -39,6 +40,9 @@ module.exports = {
 
 		// Load the user config.
 		await Player.settings.load();
+
+		// Run any migrations.
+		await Player.settings.migrate(Player.config.VERSION);
 
 		// Listen for the player closing to apply the pause on hide setting.
 		Player.on('hide', function () {
@@ -178,6 +182,7 @@ module.exports = {
 		if (typeof settings === 'string') {
 			settings = JSON.parse(settings);
 		}
+		settings.VERSION && (Player.config.VERSION = settings.VERSION);
 		settingsConfig.forEach(function _handleSetting(setting) {
 			if (setting.settings) {
 				return setting.settings.forEach(subSetting => _handleSetting({
@@ -198,6 +203,45 @@ module.exports = {
 				Player.set(setting.property, value, opts);
 			}
 		});
+	},
+
+	/**
+	 * Run migrations when the player is updated.
+	 */
+	migrate: async function (fromVersion) {
+		// Fall out if the player hasn't updated.
+		if (!fromVersion || fromVersion === VERSION) {
+			return;
+		}
+		for (let i = 0; i < migrations.length; i++) {
+			let mig = migrations[i];
+			if (Player.settings.compareVersions(fromVersion, mig.version) < 0) {
+				try {
+					console.log('[4chan sound player] Migrate:', mig.name);
+					await mig.run();
+				} catch (err) {
+					console.error(err);
+				}
+			}
+		}
+		Player.settings.save();
+	},
+
+	/**
+	 * Compare two semver strings.
+	 */
+	compareVersions: function (a, b) {
+		const aParts = a.split('.');
+		const bParts = b.split('.');
+		for (let i = 0; i < 3; i++) {
+			if (+aParts[i] > +bParts[i]) {
+				return 1;
+			}
+			if (+aParts[i] < +bParts[i]) {
+				return -1;
+			}
+		}
+		return 0;
 	},
 
 	/**
