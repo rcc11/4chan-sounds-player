@@ -28,12 +28,14 @@ module.exports = [
 			catbox: {
 				default: true,
 				url: 'https://catbox.moe/user/api.php',
-				data: { reqtype: 'fileupload', fileToUpload: '$file', userhash: null }
+				data: { reqtype: 'fileupload', fileToUpload: '$file', userhash: null },
+				filenameLength: 43
 			},
 			pomf: {
 				url: 'https://pomf.cat/upload.php',
 				data: { 'files[]': '$file' },
-				responsePath: 'files.0.url'
+				responsePath: 'files.0.url',
+				filenameLength: 37
 			},
 			zz: {
 				url: 'https://zz.ht/api/upload',
@@ -43,13 +45,15 @@ module.exports = [
 				},
 				headers: {
 					token: null
-				}
+				},
+				filenameLength: 33
 			},
 			lewd: {
 				url: 'https://lewd.se/upload',
 				data: { file: '$file' },
 				headers: { token: null, shortUrl: true },
-				responsePath: 'data.link'
+				responsePath: 'data.link',
+				filenameLength: 44
 			}
 		}
 	}

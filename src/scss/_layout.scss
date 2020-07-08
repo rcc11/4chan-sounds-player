@@ -42,6 +42,11 @@
 	max-width: 100%;
 	width: 100%;
 }
+.#{$ns}-align-center {
+	align-items: center;
+	align-content: center;
+	align-self: center;
+}
 // Hide the text with 4chan X since the icons will show
 html.fourchan-x ##{$ns}-container .fa {
 	font-size: 0;

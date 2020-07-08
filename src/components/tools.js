@@ -1,5 +1,7 @@
 const ffmpegVersionUrl = 'https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player-with-ffmpeg.user.js';
 const promoteFFmpegVersion = false;
+// Seems to be the cut off point for file names
+const maxFilenameLength = 218;
 
 module.exports = {
 	hasFFmpeg: typeof ffmpeg === 'function',
@@ -196,14 +198,19 @@ module.exports = {
 		Player.$(`.${ns}-create-button`).disabled = true;
 
 		// Gather the input values.
-		const host = Player.$(`.${ns}-create-sound-host`).value;
+		const host =  Player.config.uploadHosts[Player.$(`.${ns}-create-sound-host`).value];
+		const stripProtocol = Player.$(`.${ns}-strip-protocol`).checked;
 		const useSoundURL = Player.tools.useSoundURL;
 		let image = Player.tools.imgInput.files[0];
-		let soundURLs = useSoundURL && Player.$(`.${ns}-create-sound-snd-url`).value.split(',').map(v => v.trim());
+		let soundURLs = useSoundURL && Player.$(`.${ns}-create-sound-snd-url`).value.split(',').map(v => v.trim()).filter(v => v);
 		let sounds = !(Player.$(`.${ns}-use-video`) || {}).checked || !image || !image.type.startsWith('video')
 			? [ ...Player.tools.sndInput.files ]
 			: image && [ image ];
 		const customName = Player.$(`.${ns}-create-sound-name`).value;
+		// Only split a given name if there's multiple sounds.
+		const names = customName
+			? ((soundURLs || sounds).length > 1 ? customName.split(',').map(v => v.trim()) : [ customName ])
+			: [ image.name.replace(/\.[^/.]+$/, '') ];
 
 		try {
 			if (!image) {
@@ -224,16 +231,32 @@ module.exports = {
 				image = await Player.tools.extract(image, 'video');
 			}
 
+			const soundlessLength = names.join('').length + (soundURLs || sounds).length * 8;
 			if (useSoundURL) {
 				try {
-					soundURLs.forEach(url => new URL(url));
+					// Make sure each url is valid, and strip the protocol if requested.
+					soundURLs = soundURLs.forEach(url => new URL(url));
+					stripProtocol && (soundURLs = soundURLs.map(url => url.replace(/^(https?:)?\/\//, '')));
 				} catch (err) {
 					throw new PlayerError('The provided sound URL is invalid.', 'warning');
+				}
+				if (maxFilenameLength < soundlessLength + soundURLs.join('').length) {
+					throw new PlayerError('Too many sounds selected.', 'warning');
 				}
 			} else {
 				if (!sounds || !sounds.length) {
 					throw new PlayerError('Select a sound.', 'warning');
 				}
+
+				// Check the final filename length if the URL length is known for the host.
+				// Limit to 8 otherwise. zz.ht is as small as you're likely to get and that can only fit 8.
+				const tooManySounds = host.filenameLength
+					? maxFilenameLength < soundlessLength + (host.filenameLength - (stripProtocol ? 14 : 0)) * sounds.length
+					: sounds.length > 8;
+				if (tooManySounds) {
+					throw new PlayerError('Too many sounds selected.', 'warning');
+				}
+
 				// Check videos have audio and extract it if possible.
 				sounds = await Promise.all(sounds.map(async sound => {
 					if (sound.type.startsWith('video')) {
@@ -250,21 +273,18 @@ module.exports = {
 				// Upload the sounds.
 				try {
 					soundURLs = await Promise.all(sounds.map(async sound => Player.tools.postFile(sound, host)));
+					stripProtocol && (soundURLs = soundURLs.map(url => url.replace(/^(https?:)?\/\//, '')));
 				} catch (err) {
 					throw new PlayerError('Upload failed.', 'error', err);
 				}
 			}
 
 			// Create a new file that inacludes [sound=url] in the name.
-			const ext = image.name.match(/\.([^/.]+)$/)[1];
-			// Only split a given name if there's multiple sound.
-			const names = customName
-				? (soundURLs.length > 1 ? customName.split(',') : [ customName ])
-				: [ image.name.replace(/\.[^/.]+$/, '') ];
 			let filename = '';
 			for (let i = 0; i < soundURLs.length; i++) {
-				filename += (names[i] || '').trim() + '[sound=' + encodeURIComponent(soundURLs[i]) + ']';
+				filename += (names[i] || '') + '[sound=' + encodeURIComponent(soundURLs[i]) + ']';
 			}
+			const ext = image.name.match(/\.([^/.]+)$/)[1];
 			const soundImage = new File([ image ], filename + '.' + ext, { type: image.type });
 
 			// Keep track of the create image and a url to it.
@@ -324,9 +344,8 @@ module.exports = {
 	/**
 	 * Upload the sound file and return a link to it.
 	 */
-	postFile: async function (file, hostId) {
+	postFile: async function (file, host) {
 		const idx = Player.tools._uploadIdx++;
-		const host = Player.config.uploadHosts[hostId];
 
 		if (!host || host.invalid) {
 			throw new PlayerError('Invalid upload host: ' + hostId, 'error');

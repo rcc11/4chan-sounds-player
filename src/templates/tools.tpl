@@ -26,21 +26,42 @@
 		</div>`)}
 	</div>
 	<div class="${ns}-row">
-		Host
+		<div class="${ns}-col">
+			<div class="${ns}-row">
+				Host
+			</div>
+			<div class="${ns}-row">
+				<div class="${ns}-col">
+					<select class="${ns}-create-sound-host">
+						${Object.keys(Player.config.uploadHosts).map((hostId, i) =>
+							Player.config.uploadHosts[hostId] && !Player.config.uploadHosts[hostId].invalid
+								? `<option value="${hostId}" ${Player.config.defaultUploadHost === hostId ? 'selected' : ''}>${hostId}</option>`
+								: ''
+						).join('')}
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="${ns}-col">
+			<div class="${ns}-row">
+				Options
+			</div>
+			<div class="${ns}-row">
+				<div class="${ns}-col ${ns}-align-center">
+					<label title="Remove the protocol from sound URLs to save space">
+						<input class="${ns}-strip-protocol" type="checkbox" style="margin-left: 0" checked>Strip https://
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="${ns}-row" style="margin-top: .25rem">
+		Data
 	</div>
 	<div class="${ns}-row">
 		<div class="${ns}-col">
-			<select class="${ns}-create-sound-host">
-				${Object.keys(Player.config.uploadHosts).map((hostId, i) =>
-					Player.config.uploadHosts[hostId] && !Player.config.uploadHosts[hostId].invalid
-						? `<option value="${hostId}" ${Player.config.defaultUploadHost === hostId ? 'selected' : ''}>${hostId}</option>`
-						: ''
-				).join('')}
-			</select>
+			<input type="text" class="${ns}-create-sound-name" placeholder="Name/s">
 		</div>
-	</div>
-	<div class="${ns}-row">
-		Data
 	</div>
 	<div class="${ns}-row">
 		<div class="${ns}-col">
@@ -65,7 +86,7 @@
 				</div>
 				<div class="${ns}-file-list"></div>
 			</div>
-			<div class="${ns}-row" style="align-items: center; position: relative; ${Player.tools.useSoundURL ? '' : 'display: none;'}">
+			<div class="${ns}-row ${ns}-align-center" style="position: relative; ${Player.tools.useSoundURL ? '' : 'display: none;'}">
 				<a href="#" class="${ns}-toggle-sound-input ${ns}-input-append" data-type="file" title="Select a file to upload.">
 					<span class="fa fa-file-sound-o" style="margin-right: .125rem">F</span>
 				</a>
@@ -73,13 +94,8 @@
 			</div>
 		</div>
 	</div>
-	<div class="${ns}-row">
-		<div class="${ns}-col">
-			<input type="text" class="${ns}-create-sound-name" placeholder="Name/s">
-		</div>
-	</div>
 	<div class="${ns}-row" style="margin-top: .5rem">
-		<div class="${ns}-col-auto" style="margin-right: .5rem">
+		<div class="${ns}-col-auto">
 			<button class="${ns}-create-button">Create</button>
 		</div>
 	</div>
