@@ -58,7 +58,7 @@
 					<span class="placeholder-text">Select/Drop Sound/s</span>
 					<span class="text"></span>
 					<div class="overfile ${ns}-input-append">
-						${!Player.tools.hasFFmpeg && `<label class="${ns}-use-video-label" style="display: none;">Copy video<input type="checkbox" class="${ns}-use-video"></label>` || ''}
+						${Player.tools.hasFFmpeg && `<label class="${ns}-use-video-label" style="display: none;">Use video<input type="checkbox" class="${ns}-use-video"></label>` || ''}
 						<a href="#" class="${ns}-toggle-sound-input fa fa-link" data-type="url" title="Enter a URL of a previously uploaded file.">U</a>
 					</div>
 					<input class="${ns}-create-sound-snd" type="file" accept="audio/*,video/*" multiple>

@@ -195,23 +195,22 @@ module.exports = {
 
 		Player.$(`.${ns}-create-button`).disabled = true;
 
-		// Get the host, image and sound (checking if the sound is from a webm "image" or a URL)
+		// Gather the input values.
 		const host = Player.$(`.${ns}-create-sound-host`).value;
 		const useSoundURL = Player.tools.useSoundURL;
 		let image = Player.tools.imgInput.files[0];
 		let soundURLs = useSoundURL && Player.$(`.${ns}-create-sound-snd-url`).value.split(',').map(v => v.trim());
-		let sounds = !(Player.$(`.${ns}-use-video`) || {}).checked || !image.type.startsWith('video')
+		let sounds = !(Player.$(`.${ns}-use-video`) || {}).checked || !image || !image.type.startsWith('video')
 			? [ ...Player.tools.sndInput.files ]
 			: image && [ image ];
 		const customName = Player.$(`.${ns}-create-sound-name`).value;
-		const isAudioWebmImage = image && image.type.startsWith('video') && await Player.tools.hasAudio(image);
 
 		try {
 			if (!image) {
 				throw new PlayerError('Select an image or webm.', 'warning');
 			}
 
-			if (isAudioWebmImage) {
+			if (image.type.startsWith('video') && await Player.tools.hasAudio(image)) {
 				// If ffmpeg is not available fall out.
 				if (!Player.tools.hasFFmpeg) {
 					Player.tools.updateCreateStatus(Player.tools.createStatusText
