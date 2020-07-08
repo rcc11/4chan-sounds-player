@@ -231,8 +231,10 @@ module.exports = {
 	 * Compare two semver strings.
 	 */
 	compareVersions: function (a, b) {
-		const aParts = a.split('.');
-		const bParts = b.split('.');
+		const [ aVer, aHash ] = a.split('-');
+		const [ bVer, bHash ] = b.split('-');
+		const aParts = aVer.split('.');
+		const bParts = bVer.split('.');
 		for (let i = 0; i < 3; i++) {
 			if (+aParts[i] > +bParts[i]) {
 				return 1;
@@ -241,7 +243,7 @@ module.exports = {
 				return -1;
 			}
 		}
-		return 0;
+		return aHash !== bHash;
 	},
 
 	/**
