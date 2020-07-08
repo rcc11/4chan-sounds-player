@@ -26,33 +26,17 @@
 		</div>`)}
 	</div>
 	<div class="${ns}-row">
+		Host
+	</div>
+	<div class="${ns}-row">
 		<div class="${ns}-col">
-			<div class="${ns}-row">
-				Host
-			</div>
-			<div class="${ns}-row">
-				<div class="${ns}-col">
-					<select class="${ns}-create-sound-host">
-						${Object.keys(Player.config.uploadHosts).map((hostId, i) =>
-							Player.config.uploadHosts[hostId] && !Player.config.uploadHosts[hostId].invalid
-								? `<option value="${hostId}" ${Player.config.defaultUploadHost === hostId ? 'selected' : ''}>${hostId}</option>`
-								: ''
-						).join('')}
-					</select>
-				</div>
-			</div>
-		</div>
-		<div class="${ns}-col">
-			<div class="${ns}-row">
-				Options
-			</div>
-			<div class="${ns}-row">
-				<div class="${ns}-col ${ns}-align-center">
-					<label title="Remove the protocol from sound URLs to save space">
-						<input class="${ns}-strip-protocol" type="checkbox" style="margin-left: 0" checked>Strip https://
-					</label>
-				</div>
-			</div>
+			<select class="${ns}-create-sound-host">
+				${Object.keys(Player.config.uploadHosts).map((hostId, i) =>
+					Player.config.uploadHosts[hostId] && !Player.config.uploadHosts[hostId].invalid
+						? `<option value="${hostId}" ${Player.config.defaultUploadHost === hostId ? 'selected' : ''}>${hostId}</option>`
+						: ''
+				).join('')}
+			</select>
 		</div>
 	</div>
 	<div class="${ns}-row" style="margin-top: .25rem">

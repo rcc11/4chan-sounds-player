@@ -149,7 +149,7 @@ module.exports = {
 		e.preventDefault();
 		const showURL = e.eventTarget.getAttribute('data-type') === 'url';
 		Player.$(`.${ns}-create-sound-snd-url`).closest(`.${ns}-row`).style.display = showURL ? null : 'none';
-		Player.$(`.${ns}-create-sound-snd`).closest(`.${ns}-file-overlay`).style.display = showURL ? 'none' : null;
+		Player.$(`.${ns}-create-sound-snd`).closest(`.${ns}-file-input`).style.display = showURL ? 'none' : null;
 		Player.tools.useSoundURL = showURL;
 	},
 
@@ -199,7 +199,6 @@ module.exports = {
 
 		// Gather the input values.
 		const host =  Player.config.uploadHosts[Player.$(`.${ns}-create-sound-host`).value];
-		const stripProtocol = Player.$(`.${ns}-strip-protocol`).checked;
 		const useSoundURL = Player.tools.useSoundURL;
 		let image = Player.tools.imgInput.files[0];
 		let soundURLs = useSoundURL && Player.$(`.${ns}-create-sound-snd-url`).value.split(',').map(v => v.trim()).filter(v => v);
@@ -234,9 +233,8 @@ module.exports = {
 			const soundlessLength = names.join('').length + (soundURLs || sounds).length * 8;
 			if (useSoundURL) {
 				try {
-					// Make sure each url is valid, and strip the protocol if requested.
-					soundURLs = soundURLs.forEach(url => new URL(url));
-					stripProtocol && (soundURLs = soundURLs.map(url => url.replace(/^(https?:)?\/\//, '')));
+					// Make sure each url is valid and strip the protocol.
+					soundURLs = soundURLs.map(url => new URL(url) && url.replace(/^(https?:)?\/\//, ''));
 				} catch (err) {
 					throw new PlayerError('The provided sound URL is invalid.', 'warning');
 				}
@@ -251,7 +249,7 @@ module.exports = {
 				// Check the final filename length if the URL length is known for the host.
 				// Limit to 8 otherwise. zz.ht is as small as you're likely to get and that can only fit 8.
 				const tooManySounds = host.filenameLength
-					? maxFilenameLength < soundlessLength + (host.filenameLength - (stripProtocol ? 14 : 0)) * sounds.length
+					? maxFilenameLength < soundlessLength + (host.filenameLength) * sounds.length
 					: sounds.length > 8;
 				if (tooManySounds) {
 					throw new PlayerError('Too many sounds selected.', 'warning');
@@ -273,7 +271,6 @@ module.exports = {
 				// Upload the sounds.
 				try {
 					soundURLs = await Promise.all(sounds.map(async sound => Player.tools.postFile(sound, host)));
-					stripProtocol && (soundURLs = soundURLs.map(url => url.replace(/^(https?:)?\/\//, '')));
 				} catch (err) {
 					throw new PlayerError('Upload failed.', 'error', err);
 				}
@@ -282,7 +279,7 @@ module.exports = {
 			// Create a new file that inacludes [sound=url] in the name.
 			let filename = '';
 			for (let i = 0; i < soundURLs.length; i++) {
-				filename += (names[i] || '') + '[sound=' + encodeURIComponent(soundURLs[i]) + ']';
+				filename += (names[i] || '') + '[sound=' + encodeURIComponent(soundURLs[i].replace(/^(https?:)?\/\//, '')) + ']';
 			}
 			const ext = image.name.match(/\.([^/.]+)$/)[1];
 			const soundImage = new File([ image ], filename + '.' + ext, { type: image.type });
