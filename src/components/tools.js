@@ -208,8 +208,8 @@ module.exports = {
 		const customName = Player.$(`.${ns}-create-sound-name`).value;
 		// Only split a given name if there's multiple sounds.
 		const names = customName
-			? ((soundURLs || sounds).length > 1 ? customName.split(',').map(v => v.trim()) : [ customName ])
-			: [ image.name.replace(/\.[^/.]+$/, '') ];
+			? ((soundURLs || sounds).length > 1 ? customName.split(',') : [ customName ]).map(v => v.trim())
+			: image && [ image.name.replace(/\.[^/.]+$/, '') ];
 
 		try {
 			if (!image) {
@@ -276,7 +276,11 @@ module.exports = {
 				}
 			}
 
-			// Create a new file that inacludes [sound=url] in the name.
+			if (!soundURLs.length) {
+				throw new PlayerError('No sounds selected.', 'warning');
+			}
+
+			// Create a new file that includes [sound=url] in the name.
 			let filename = '';
 			for (let i = 0; i < soundURLs.length; i++) {
 				filename += (names[i] || '') + '[sound=' + encodeURIComponent(soundURLs[i].replace(/^(https?:)?\/\//, '')) + ']';
@@ -296,7 +300,8 @@ module.exports = {
 				+ ` <a href="${Player.tools._createdImageURL}" download="${soundImage.name}" title="${soundImage.name}">Download</a>`
 			);
 		} catch (err) {
-			Player.tools.updateCreateStatus(Player.tools.createStatusText + '<br>Failed!');
+			Player.tools.updateCreateStatus(Player.tools.createStatusText
+				+ '<br>Failed! ' + (err instanceof PlayerError ? err.reason : ''));
 			Player.logError('Failed to create sound image', err);
 		}
 		Player.$(`.${ns}-create-button`).disabled = false;
