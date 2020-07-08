@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "build": "./build.js",
+    "build-beta": "./build.js --filename 4chan-sounds-player-beta.user.js --append-hash",
     "build-dev": "npx webpack --config webpack.config.js --mode development"
   },
   "author": "rcc11",
