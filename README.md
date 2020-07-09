@@ -54,7 +54,7 @@ Just two inputs that let you paste encoded and decoded URLs.
 
 #### Create Sound Image
 
-This form allows you to select/drop and image and sound. The sound will be uploaded to the selected host and the image will be renamed to include a `[sound=url]` link to it. Once complete you can choose to post it, download it, or add it to the player. Refer to [Hosts](#hosts) for the configuration.
+This form allows you to select/drop and image and sound. The sound will be uploaded to the selected host and the image will be renamed to include a `[sound=url]` link to it. You can also select multiple sounds to add to a single image, but keep in mind the filename length limit when doing so. Once complete you can choose to post the created image, download it, or add it to the player. Refer to [Hosts](#hosts) for the configuration.
 
 ![Tools View](./images/tools.png)
 
