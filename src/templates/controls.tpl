@@ -18,7 +18,10 @@
 	</div>
 </div>
 <div class="${ns}-col-auto">
-	<span class="${ns}-current-time">0:00</span> / <span class="${ns}-duration">0:00</span>
+	<span>
+		<span class="${ns}-current-time">0:00</span>
+		<span class="${ns}-text-grey"> / <span class="${ns}-duration">0:00</span></span>
+	</span>
 </div>
 <div class="${ns}-col-auto">
 	<div class="${ns}-volume-bar ${ns}-progress-bar">
