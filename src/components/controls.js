@@ -83,7 +83,7 @@ module.exports = {
 	/**
 	 * Start playback.
 	 */
-	play: async function (sound) {
+	play: async function (sound, { paused } = {}) {
 		try {
 			// If nothing is currently selected to play start playing the first sound.
 			if (!sound && !Player.playing && Player.sounds.length) {
@@ -104,12 +104,14 @@ module.exports = {
 				await Player.trigger('playsound', sound);
 			}
 
-			// If there's a video wait for it and the sound to load before playing.
-			if (Player.playlist.isVideo && (video.readyState < 3 || Player.audio.readyState < 3)) {
-				video.addEventListener('loadeddata', Player.controls._playOnceLoaded);
-				Player.audio.addEventListener('loadeddata', Player.controls._playOnceLoaded);
-			} else {
-				Player.audio.play();
+			if (!paused) {
+				// If there's a video wait for it and the sound to load before playing.
+				if (Player.playlist.isVideo && (video.readyState < 3 || Player.audio.readyState < 3)) {
+					video.addEventListener('loadeddata', Player.controls._playOnceLoaded);
+					Player.audio.addEventListener('loadeddata', Player.controls._playOnceLoaded);
+				} else {
+					Player.audio.play();
+				}
 			}
 		} catch (err) {
 			Player.logError('There was an error playing the sound. Please check the console for details.', err);
@@ -149,7 +151,7 @@ module.exports = {
 		Player.controls._movePlaying(-1, opts);
 	},
 
-	_movePlaying: function (direction, { force, group } = {}) {
+	_movePlaying: function (direction, { force, group, paused } = {}) {
 		if (!Player.audio) {
 			return;
 		}
@@ -177,7 +179,7 @@ module.exports = {
 				nextSound = Player.sounds[newIndex];
 			} while (group && nextSound && newIndex !== currentIndex && (!nextSound.post || nextSound.post === Player.playing.post));
 		}
-		nextSound && Player.play(nextSound);
+		nextSound && Player.play(nextSound, { paused });
 	},
 
 	/**

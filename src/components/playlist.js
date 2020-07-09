@@ -206,8 +206,7 @@ module.exports = {
 
 		// If the playing sound is being removed then play the next sound.
 		if (Player.playing === sound) {
-			Player.pause();
-			Player.next({ force: true });
+			Player.next({ force: true, paused: Player.audio.paused });
 		}
 		// Remove the sound from the the list and play order.
 		index > -1 && Player.sounds.splice(index, 1);
