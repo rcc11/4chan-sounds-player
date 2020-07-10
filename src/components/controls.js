@@ -92,7 +92,8 @@ module.exports = {
 			}
 
 			const video = document.querySelector(`.${ns}-video`);
-			video.removeEventListener('loadeddata', Player.controls.playOnceLoaded);
+			video.removeEventListener('canplaythrough', Player.controls.playOnceLoaded);
+			Player.audio.removeEventListener('canplaythrough', Player.controls._playOnceLoaded);
 
 			// If a new sound is being played update the display.
 			if (sound) {
@@ -108,8 +109,8 @@ module.exports = {
 			if (!paused) {
 				// If there's a video wait for it and the sound to load before playing.
 				if (Player.playlist.isVideo && (video.readyState < 3 || Player.audio.readyState < 3)) {
-					video.addEventListener('loadeddata', Player.controls._playOnceLoaded);
-					Player.audio.addEventListener('loadeddata', Player.controls._playOnceLoaded);
+					video.addEventListener('canplaythrough', Player.controls._playOnceLoaded);
+					Player.audio.addEventListener('canplaythrough', Player.controls._playOnceLoaded);
 				} else {
 					Player.audio.play();
 				}
@@ -125,9 +126,11 @@ module.exports = {
 	_playOnceLoaded: function () {
 		const video = document.querySelector(`.${ns}-video`);
 		if (video.readyState > 2 && Player.audio.readyState > 2) {
-			video.removeEventListener('loadeddata', Player.controls._playOnceLoaded);
-			Player.audio.removeEventListener('loadeddata', Player.controls._playOnceLoaded);
+			video.removeEventListener('canplaythrough', Player.controls._playOnceLoaded);
+			Player.audio.removeEventListener('canplaythrough', Player.controls._playOnceLoaded);
 			Player.audio.play();
+			// Sometimes it just doesn't sync when the playback starts. Give it a second and then force a sync.
+			setTimeout(() => Player.controls.syncVideo, 100);
 		}
 	},
 
