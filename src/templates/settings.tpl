@@ -12,7 +12,7 @@
 		${Object.keys(groups).map(name => 
 			`<a href="javascript:;" class="${ns}-col-auto ${ns}-settings-tab ${Player.settings.view !== name ? '' : 'active'}" data-group="${name}">${name}</a>`
 		).join(' | ')}
-		| <a href="https://github.com/rcc11/4chan-sounds-player/releases" class="${ns}-col-auto ${ns}-settings-tab" target="_blank">v${VERSION}</a>
+		| <a href="${Player.settings.changelog}" class="${ns}-col-auto ${ns}-settings-tab" target="_blank">v${VERSION}</a>
 	</div>`;
 
 	Object.keys(groups).forEach(name => {
@@ -26,7 +26,7 @@
 			const desc = setting.description;
 
 			tpl += `
-			<div class="${ns}-row ${setting.isSubSetting ? `${ns}-sub-settings` : ''}">
+			<div class="${ns}-row ${ns}-align-center ${setting.isSubSetting ? `${ns}-sub-settings` : ''}">
 				<div class="${ns}-col ${!setting.isSubSetting ? `${ns}-heading` : ''} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc.replace(/"/g, '&quot;')}"` : ''}>
 					${setting.title}
 					${(setting.actions || []).map(action => `<a href="#" class="${ns}-heading-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`).join(' ')}
@@ -58,13 +58,13 @@
 				} else {
 
 					let value = _get(Player.config, setting.property, setting.default),
-						attrs = (setting.attrs || '') + (setting.class ? ` class="${setting.class}"` : '') + ` data-property="${setting.property}"`;
+						attrs = (setting.attrs || '') + (setting.class ? ` class="${setting.class}"` : '') + ` data-property="${setting.property}"`,
+						displayMethod = setting.displayMethod,
+						displayMethodFunction = _get(Player, displayMethod);
 
 					if (setting.format) {
 						value = _get(Player, setting.format)(value);
 					}
-					let displayMethod = setting.displayMethod;
-					let displayMethodFunction = _get(Player, displayMethod);
 					let type = typeof value;
 
 					if (setting.split) {
@@ -73,26 +73,25 @@
 						value = JSON.stringify(value, null, 4);
 					}
 
-					tpl += `
-					<div class="${ns}-col">
-						${typeof displayMethodFunction === 'function'
+					tpl += typeof displayMethodFunction === 'function'
 							? displayMethodFunction(value, attrs)
 
 						: type === 'boolean'
-							? `<input type="checkbox" ${attrs} ${value ? 'checked' : ''}></input>`
+							? `<div class="${ns}-col"><input type="checkbox" ${attrs} ${value ? 'checked' : ''}></div>`
 
 						: displayMethod === 'textarea' || type === 'object'
-							? `<textarea ${attrs}>${value}</textarea>`
+							? `<div class="${ns}-row ${ns}-col"><textarea ${attrs}>${value}</textarea></div>`
 
 						: setting.options
-							? `<select ${attrs}>
-								${Object.keys(setting.options).map(k => `<option value="${k}" ${value === k ? 'selected' : ''}>
-									${setting.options[k]}
-								</option>`).join('')}
-							</select>`
+							? `<div class="${ns}-col">
+								<select ${attrs}>
+									${Object.keys(setting.options).map(k => `<option value="${k}" ${value === k ? 'selected' : ''}>
+										${setting.options[k]}
+									</option>`).join('')}
+								</select>
+							</div>`
 
-						: `<input type="text" ${attrs} value="${value}"></input>`}
-					</div>`;
+						: `<div class="${ns}-col"><input type="text" ${attrs} value="${value}"></div>`;
 				}
 			tpl += '</div>';
 		});

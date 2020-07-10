@@ -80,7 +80,7 @@ module.exports = (env, argv) => {
 		plugins: [
 			new webpack.IgnorePlugin({ resourceRegExp: /fs/ }),
 			new webpack.BannerPlugin({ banner, raw: true }),
-			new webpack.DefinePlugin({ VERSION: JSON.stringify(version) })
+			new webpack.DefinePlugin({ VERSION: JSON.stringify(version), MODE: JSON.stringify(argv.mode) })
 		]
 	};
 };

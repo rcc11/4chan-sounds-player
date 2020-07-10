@@ -3,6 +3,7 @@ const dismissedRestoreCache = {};
 
 module.exports = {
 	atRoot: [ 'show', 'hide' ],
+	public: [ 'show', 'hide' ],
 
 	delegatedEvents: {
 		click: {

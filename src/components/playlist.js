@@ -2,6 +2,7 @@ const { parseFiles, parseFileName } = require('../file_parser');
 
 module.exports = {
 	atRoot: [ 'add', 'remove' ],
+	public: [ 'search' ],
 
 	delegatedEvents: {
 		click: { [`.${ns}-list-item`]: 'playlist.handleSelect' },

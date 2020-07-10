@@ -4,7 +4,7 @@
 	if (!host) {
 		return '';
 	}
-	return `<div class="${ns}-host-input ${host.invalid ? 'invalid' : ''}" data-host-name="${data}">
+	return `<div class="${ns}-row ${ns}-col ${ns}-host-input ${host.invalid ? 'invalid' : ''}" data-host-name="${data}">
 		<div class="${ns}-row ${ns}-host-controls">
 			<div class="${ns}-col-auto">
 				<label>

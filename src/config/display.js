@@ -4,16 +4,21 @@ module.exports = [
 		default: true,
 		title: 'Autoshow',
 		description: 'Automatically show the player when the thread contains sounds.',
-		displayGroup: 'Display',
-		settings: [ { title: 'Enabled' } ]
+		displayGroup: 'Display'
 	},
 	{
 		property: 'pauseOnHide',
 		default: true,
-		title: 'Pause on hide',
+		title: 'Pause On Hide',
 		description: 'Pause the player when it\'s hidden.',
-		displayGroup: 'Display',
-		settings: [ { title: 'Enabled' } ]
+		displayGroup: 'Display'
+	},
+	{
+		property: 'showUpdatedNotification',
+		default: true,
+		title: 'Show Updated Notifications',
+		description: 'Show notifications when the player is successfully updated.',
+		displayGroup: 'Display'
 	},
 	{
 		title: 'Minimised Display',

@@ -2,6 +2,7 @@ const progressBarStyleSheets = {};
 
 module.exports = {
 	atRoot: [ 'togglePlay', 'play', 'pause', 'next', 'previous' ],
+	public: [ 'play', 'pause', 'next', 'previous' ],
 
 	delegatedEvents: {
 		click: {

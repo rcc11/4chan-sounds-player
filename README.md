@@ -134,6 +134,7 @@ All the values here can be followed by `:""` to specify the text, otherwise they
 - `filter-image-button` - Add the image MD5 to the filters.
 - `filter-sound-button` - Add the sound URL to the filters.
 - `remove-button` - Remove the sound from the player. Removed sounds can be re-added using the reload button.
+- `menu-button` - Open the dropdown menu for the sound.
 - `repeat-button` - Toggles the repeat setting between all, one and none.
 - `shuffle-button` - Toggles shuffle.
 - `playlist-button` - Toggles between the playlist and image view.
@@ -141,12 +142,10 @@ All the values here can be followed by `:""` to specify the text, otherwise they
 - `add-button` - Open the file input to add local files.
 - `reload-button` - Reloads the sounds from the thread to add any missing files. Useful if you change the allowed hosts or filters but generally all sounds should already be added.
 - `view-menu-button` - Open the view menu dropdown to switch between views.
-- `menu-button` - Open the player (image/playlist) view.
 - `settings-button` - Open/close the settings.
 - `threads-button` - Open/close the threads search view.
 - `tools-button` - Open/close the tools view.
 - `close-button` - Hide the player.
-- `menu-button` - Open the dropdown menu for the sound.
 
 __4chan X Header Controls__
 

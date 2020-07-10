@@ -4,6 +4,8 @@ const migrations = require('../migrations');
 module.exports = {
 	atRoot: [ 'set' ],
 
+	changelog: 'https://github.com/rcc11/4chan-sounds-player/releases',
+
 	delegatedEvents: {
 		click: {
 			[`.${ns}-settings .${ns}-heading-action`]: 'settings._handleAction',
@@ -40,6 +42,10 @@ module.exports = {
 
 		// Load the user config.
 		await Player.settings.load();
+
+		if (Player.config.showUpdatedNotification && Player.config.VERSION && Player.config.VERSION !== VERSION) {
+			Player.alert(`4chan Sounds Player has been updated to <a href="${Player.settings.changelog}">version ${VERSION}</a>.`);
+		}
 
 		// Run any migrations.
 		await Player.settings.migrate(Player.config.VERSION);

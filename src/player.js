@@ -24,6 +24,7 @@ const Player = window.Player = module.exports = {
 	isHidden: true,
 	container: null,
 	ui: {},
+	_public: [],
 
 	// Build the config from the default
 	config: {},
@@ -86,6 +87,13 @@ const Player = window.Player = module.exports = {
 				});
 			}
 
+			// Expose some functionality via PlayerEvent custom events.
+			document.addEventListener('PlayerEvent', e => {
+				if (e.detail.action && (MODE === 'development' || Player._public.includes(e.detail.action))) {
+					return _get(Player, e.detail.action).apply(window, e.detail.arguments);
+				}
+			});
+
 			// Render the player, but not neccessarily show it.
 			Player.display.render();
 		} catch (err) {
@@ -127,7 +135,7 @@ const Player = window.Player = module.exports = {
 	}),
 
 	/**
-	 * Send an error notification event.
+	 * Log errors and show an error notification.
 	 */
 	logError: function (message, error, type) {
 		console.error('[4chan sounds player]', message, error);
@@ -136,14 +144,22 @@ const Player = window.Player = module.exports = {
 			message = error.reason;
 			type = error.type || type;
 		}
-		document.dispatchEvent(new CustomEvent('CreateNotification', {
-			bubbles: true,
-			detail: {
-				type: type || 'error',
-				content: message,
-				lifetime: 5
-			}
-		}));
+		Player.alert(message, type || 'error', 5);
+	},
+
+	/**
+	 * Show a notification using 4chan X or the native extention.
+	 */
+	alert: function (content, type = 'info', lifetime = 5) {
+		if (isChanX) {
+			content = createElement(`<span>${content}</span`);
+			document.dispatchEvent(new CustomEvent('CreateNotification', {
+				bubbles: true,
+				detail: { content, type, lifetime }
+			}));
+		} else if (typeof Feedback !== 'undefined') {
+			Feedback.showMessage(content, type === 'info' ? 'notify' : 'error', lifetime * 1000);
+		}
 	}
 };
 
@@ -151,4 +167,7 @@ const Player = window.Player = module.exports = {
 for (let name in components) {
 	Player[name] = components[name];
 	(Player[name].atRoot || []).forEach(k => Player[k] = Player[name][k]);
+	(Player[name].public || []).forEach(k => {
+		Player._public.push((Player[name].atRoot || []).includes(k) ? k : `${name}.${k}`)
+	});
 }
