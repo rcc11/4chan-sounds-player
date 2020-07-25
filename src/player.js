@@ -168,6 +168,6 @@ for (let name in components) {
 	Player[name] = components[name];
 	(Player[name].atRoot || []).forEach(k => Player[k] = Player[name][k]);
 	(Player[name].public || []).forEach(k => {
-		Player._public.push((Player[name].atRoot || []).includes(k) ? k : `${name}.${k}`)
+		Player._public.push((Player[name].atRoot || []).includes(k) ? k : `${name}.${k}`);
 	});
 }

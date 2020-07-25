@@ -13,7 +13,7 @@ function parseFiles(target, postRender) {
 	let addedSounds = false;
 	let posts = target.classList.contains('post')
 		? [ target ]
-		: target.querySelectorAll('.post');
+		: target.querySelectorAll(is4chan ? '.post' : 'article');
 
 	posts.forEach(post => parsePost(post, postRender) && (addedSounds = true));
 
@@ -43,10 +43,13 @@ function parsePost(post, skipRender) {
 		let filename = null;
 		let filenameLocations;
 
-		// For the archive there's just the one place to check.
+		// For the archive the OP and replies selector differs
 		// For 4chan there's native / 4chan X / 4chan X with file info formatting
 		if (!is4chan) {
-			filenameLocations = { '.post_file_filename': 'title' };
+			filenameLocations = {
+				'.thread_image_box .post_file_filename': 'textContent',
+				'.post_file_filename': 'title'
+			};
 		} else {
 			filenameLocations = {
 				'.fileText .file-info .fnfull': 'textContent',

@@ -44,7 +44,7 @@ module.exports = {
 		await Player.settings.load();
 
 		if (Player.config.showUpdatedNotification && Player.config.VERSION && Player.config.VERSION !== VERSION) {
-			Player.alert(`4chan Sounds Player has been updated to <a href="${Player.settings.changelog}">version ${VERSION}</a>.`);
+			Player.alert(`4chan Sounds Player has been updated to <a href="${Player.settings.changelog}" target="_blank">version ${VERSION}</a>.`);
 		}
 
 		// Run any migrations.
