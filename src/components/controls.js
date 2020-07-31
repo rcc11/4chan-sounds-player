@@ -205,9 +205,7 @@ module.exports = {
 			const paused = Player.audio.paused;
 			const video = document.querySelector(`.${ns}-video`);
 			if (video) {
-				if (Player.audio.currentTime < video.duration) {
-					video.currentTime = Player.audio.currentTime;
-				}
+				video.currentTime = Player.audio.currentTime % video.duration;
 				if (paused) {
 					video.pause();
 				} else {
