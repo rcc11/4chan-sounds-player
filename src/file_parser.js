@@ -1,5 +1,5 @@
 const protocolRE = /^(https?:)?\/\//;
-const filenameRE = /(.*?)[[({](?:audio|sound)[ =:|$](.*?)[\])}]/g;
+const filenameRE = /(.*?)[[({](?:audio|sound)[ =:|$](.*?)[\])}]/gi;
 
 let localCounter = 0;
 
