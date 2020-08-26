@@ -2,7 +2,7 @@
 	align-items: center;
 	padding: .5rem;
 
-	background: #3f3f44;
+	background: #{map-get($colors, controls_background)};
 }
 
 .#{$ns}-media-control {
@@ -16,11 +16,11 @@
 	& > div {
 		height: 1rem;
 		width: .8rem;
-		background: white;
+		background: #{map-get($colors, controls_inactive)};;
 	}
 
 	&:hover > div {
-		background: #00b6f0;
+		background: #{map-get($colors, controls_active)};
 	}
 }
 
@@ -45,7 +45,7 @@
 }
 
 .#{$ns}-controls  .#{$ns}-current-time {
-	color: white;
+	color: #{map-get($colors, controls_inactive)};
 }
 
 .#{$ns}-progress-bar {
@@ -58,7 +58,7 @@
 	& .#{$ns}-full-bar {
 		height: .3rem;
 		width: 100%;
-		background: #131314;
+		background: #{map-get($colors, controls_empty_bar)};
 		border-radius: 1rem;
 		position: relative;
 
@@ -70,7 +70,7 @@
 		}
 
 		& .#{$ns}-loaded-bar {
-			background: #5a5a5b;
+			background: #{map-get($colors, controls_loaded_bar)};
 		}
 
 		& .#{$ns}-current-bar {
@@ -80,7 +80,7 @@
 
 			&:after {
 				content: '';
-				background: white;
+				background: #{map-get($colors, controls_inactive)};
 				height: .8rem;
 				min-width: .8rem;
 				border-radius: 1rem;
@@ -90,15 +90,15 @@
 	}
 
 	&:hover .#{$ns}-current-bar:after {
-		background: #00b6f0;
+		background: #{map-get($colors, controls_active)};
 	}
 }
 
 .#{$ns}-seek-bar .#{$ns}-current-bar {
-	background: #00b6f0;
+	background: #{map-get($colors, controls_active)};
 }
 .#{$ns}-volume-bar .#{$ns}-current-bar {
-	background: white;
+	background: #{map-get($colors, controls_inactive)};;
 }
 
 .#{$ns}-chan-x-controls {

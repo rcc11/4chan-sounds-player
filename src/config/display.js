@@ -96,37 +96,62 @@ module.exports = [
 			{
 				property: 'colors.text',
 				default: '#000000',
-				title: 'Text Color'
+				title: 'Text'
 			},
 			{
 				property: 'colors.background',
 				default: '#d6daf0',
-				title: 'Background Color'
+				title: 'Background'
 			},
 			{
 				property: 'colors.border',
 				default: '#b7c5d9',
-				title: 'Border Color'
+				title: 'Border'
 			},
 			{
 				property: 'colors.odd_row',
 				default: '#d6daf0',
-				title: 'Odd Row Color',
+				title: 'Odd Row',
 			},
 			{
 				property: 'colors.even_row',
 				default: '#b7c5d9',
-				title: 'Even Row Color'
+				title: 'Even Row'
 			},
 			{
 				property: 'colors.playing',
 				default: '#98bff7',
-				title: 'Playing Row Color'
+				title: 'Playing Row'
 			},
 			{
 				property: 'colors.dragging',
 				default: '#c396c8',
-				title: 'Dragging Row Color'
+				title: 'Dragging Row'
+			},
+			{
+				property: 'colors.controls_background',
+				default: '#3f3f44',
+				title: 'Controls Background'
+			},
+			{
+				property: 'colors.controls_inactive',
+				default: '#FFFFFF',
+				title: 'Control Items'
+			},
+			{
+				property: 'colors.controls_active',
+				default: '#00b6f0',
+				title: 'Focused Control Items'
+			},
+			{
+				property: 'colors.controls_empty_bar',
+				default: '#131314',
+				title: 'Volume/Seek Bar Background'
+			},
+			{
+				property: 'colors.controls_loaded_bar',
+				default: '#5a5a5b',
+				title: 'Loaded Bar Background'
 			}
 		]
 	}

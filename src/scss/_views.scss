@@ -41,7 +41,8 @@
 		position: absolute;
 		left: 0;
 		right: 0;
-		bottom: calc(-2.5rem + .4rem)
+		bottom: calc(-2.5rem + .4rem);
+		opacity: .7;
 	}
 	& .#{$ns}-controls:hover {
 		bottom: 0;
