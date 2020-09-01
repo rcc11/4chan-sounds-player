@@ -25,16 +25,17 @@ module.exports = {
 			[`.${ns}-shuffle-button`]: 'userTemplate._handleShuffle',
 			[`.${ns}-repeat-button`]: 'userTemplate._handleRepeat',
 			[`.${ns}-reload-button`]: noDefault('playlist.refresh'),
-			[`.${ns}-add-button`]: noDefault(() => Player.$(`.${ns}-file-input`).click()),
+			[`.${ns}-add-button`]: noDefault(() => Player.$(`.${ns}-add-local-file-input`).click()),
 			[`.${ns}-item-menu-button`]: 'userTemplate._handleItemMenu',
 			[`.${ns}-view-menu-button`]: 'userTemplate._handleViewsMenu',
 			[`.${ns}-threads-button`]: 'threads.toggle',
 			[`.${ns}-tools-button`]: 'tools.toggle',
 			[`.${ns}-config-button`]: noDefault(() => Player.settings.toggle()),
+			[`.${ns}-favorites-button`]: 'favorites.toggle',
 			[`.${ns}-player-button`]: 'playlist.restore'
 		},
 		change: {
-			[`.${ns}-file-input`]: 'userTemplate._handleFileSelect'
+			[`.${ns}-add-local-file-input`]: 'userTemplate._handleFileSelect'
 		}
 	},
 

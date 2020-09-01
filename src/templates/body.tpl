@@ -19,5 +19,5 @@
 	<div class="${ns}-footer">
 		${Player.templates.footer(data)}
 	</div>
-	<input class="${ns}-file-input" type="file" style="display: none" accept="image/*,.webm" multiple>
+	<input class="${ns}-add-local-file-input" type="file" style="display: none" accept="image/*,.webm" multiple>
 </div>`
