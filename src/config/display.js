@@ -89,7 +89,7 @@ module.exports = [
 		property: 'colors',
 		updateStylesheet: true,
 		actions: [
-			{ title: 'Match Theme', handler: 'settings.forceBoardTheme' }
+			{ title: 'Match Theme', handler: 'display.forceBoardTheme' }
 		],
 		// These colors will be overriden with the theme defaults at initialization.
 		settings: [
@@ -131,27 +131,37 @@ module.exports = [
 			{
 				property: 'colors.controls_background',
 				default: '#3f3f44',
-				title: 'Controls Background'
+				title: 'Controls Background',
+				description: 'The controls container element background.',
+				actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 			},
 			{
 				property: 'colors.controls_inactive',
 				default: '#FFFFFF',
-				title: 'Control Items'
+				title: 'Control Items',
+				description: 'The playback controls and played bar.',
+				actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 			},
 			{
 				property: 'colors.controls_active',
 				default: '#00b6f0',
-				title: 'Focused Control Items'
+				title: 'Focused Control Items',
+				description: 'The control items when hovered.',
+				actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 			},
 			{
 				property: 'colors.controls_empty_bar',
 				default: '#131314',
-				title: 'Volume/Seek Bar Background'
+				title: 'Volume/Seek Bar Background',
+				decscription: 'The background of the volume and seek bars.',
+				actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 			},
 			{
 				property: 'colors.controls_loaded_bar',
 				default: '#5a5a5b',
-				title: 'Loaded Bar Background'
+				title: 'Loaded Bar Background',
+				description: 'The loaded bar within the seek bar.',
+				actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 			}
 		]
 	}

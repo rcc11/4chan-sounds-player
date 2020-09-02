@@ -26,7 +26,7 @@ module.exports = {
 		Player.settings.view = 'Display';
 
 		// Apply the default board theme as default.
-		Player.settings.applyBoardTheme();
+		Player.display.applyBoardTheme();
 
 		// Apply the default config.
 		Player.config = settingsConfig.reduce(function reduceSettings(config, setting) {
@@ -71,50 +71,23 @@ module.exports = {
 		}
 	},
 
-	forceBoardTheme: function () {
-		Player.settings.applyBoardTheme(true);
-		Player.settings.save();
-	},
-
-	applyBoardTheme: function (force) {
-		// Create a reply element to gather the style from
-		const div = createElement(`<div class="${is4chan ? 'post reply style-fetcher' : 'post_wrapper'}"></div>`, document.body);
-		const style = document.defaultView.getComputedStyle(div);
-
-		// Apply the computed style to the color config.
-		const colorSettingMap = {
-			'colors.text': 'color',
-			'colors.background': 'backgroundColor',
-			'colors.odd_row': 'backgroundColor',
-			'colors.border': 'borderBottomColor',
-			// If the border is the same color as the text don't use it as a background color.
-			'colors.even_row': style.borderBottomColor === style.color ? 'backgroundColor' : 'borderBottomColor'
-		};
-		settingsConfig.find(s => s.property === 'colors').settings.forEach(setting => {
-			const updateConfig = force || (setting.default === _get(Player.config, setting.property));
-			colorSettingMap[setting.property] && (setting.default = style[colorSettingMap[setting.property]]);
-			updateConfig && Player.set(setting.property, setting.default, { bypassSave: true, bypassRender: true });
-		});
-
-		// Clean up the element.
-		document.body.removeChild(div);
-
-		// Updated the stylesheet if it exists.
-		Player.stylesheet && Player.display.updateStylesheet();
-
-		// Re-render the settings if needed.
-		Player.settings.render();
-	},
-
 	/**
 	 * Update a setting.
 	 */
-	set: function (property, value, { bypassValidation, bypassSave, bypassRender, silent } = {}) {
+	set: function (property, value, { bypassValidation, bypassSave, bypassRender, silent, bypassStylesheet, settingConfig } = {}) {
+		settingConfig = settingConfig || Player.settings.findDefault(property);
 		const previousValue = _get(Player.config, property);
+
+		// Check if the value has actually changed.
 		if (!bypassValidation && _isEqual(previousValue, value)) {
 			return;
 		}
+
+		// Set the new value.
 		_set(Player.config, property, value);
+
+		// Trigger events, unless they are disabled in opts.
+		!bypassStylesheet && settingConfig && settingConfig.updateStylesheet && Player.display.updateStylesheet()
 		!silent && Player.trigger('config', property, value, previousValue);
 		!silent && Player.trigger('config:' + property, value, previousValue);
 		!bypassSave && Player.settings.save();
@@ -126,7 +99,7 @@ module.exports = {
 	 */
 	reset: function (property) {
 		let settingConfig = Player.settings.findDefault(property);
-		Player.set(property, settingConfig.default);
+		Player.set(property, settingConfig.default, { settingConfig });
 	},
 
 	/**
@@ -206,7 +179,7 @@ module.exports = {
 					// Mix in default.
 					value = { ...setting.default, ...(value || {}) };
 				}
-				Player.set(setting.property, value, opts);
+				Player.set(setting.property, value, { ...opts, settingConfig: setting });
 			}
 		});
 	},
@@ -339,16 +312,8 @@ module.exports = {
 			// Not the most stringent check but enough to avoid some spamming.
 			if (!_isEqual(currentValue, newValue, !settingConfig.looseCompare)) {
 				// Update the setting.
-				Player.set(property, newValue, { bypassValidation: true, bypassRender: true });
-
-				// Update the stylesheet reflect any changes.
-				if (settingConfig.updateStylesheet) {
-					Player.display.updateStylesheet();
-				}
+				Player.set(property, newValue, { bypassValidation: true, bypassRender: true, settingConfig });
 			}
-
-			// Run any handler required by the value changing
-			settingConfig && settingConfig.handler && _get(Player, settingConfig.handler, () => null)(newValue);
 		} catch (err) {
 			Player.logError('There was an error updating the setting.', err);
 		}

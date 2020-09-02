@@ -27,9 +27,11 @@
 
 			tpl += `
 			<div class="${ns}-row ${ns}-align-center ${setting.isSubSetting ? `${ns}-sub-settings` : ''}">
-				<div class="${ns}-col ${!setting.isSubSetting ? `${ns}-heading` : ''} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc.replace(/"/g, '&quot;')}"` : ''}>
+				<div class="${ns}-col ${!setting.isSubSetting ? `${ns}-heading` : `${ns}-space-between`} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc.replace(/"/g, '&quot;')}"` : ''}>
 					${setting.title}
-					${(setting.actions || []).map(action => `<a href="#" class="${ns}-heading-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`).join(' ')}
+					<div style="display: inline-block; margin-right: .25rem">
+						${(setting.actions || []).map(action => `<a href="#" class="${ns}-heading-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`).join(' ')}
+					</div>
 				</div>`;
 				if (setting.text) {
 					tpl += setting.dismissTextId

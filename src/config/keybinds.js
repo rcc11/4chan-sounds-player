@@ -11,7 +11,6 @@ module.exports = [
 			{
 				property: 'hotkeys',
 				default: 'open',
-				handler: 'hotkeys.apply',
 				title: 'Enabled',
 				format: null,
 				parse: null,

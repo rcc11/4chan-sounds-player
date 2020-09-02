@@ -3,6 +3,7 @@ const settingsConfig = require('config');
 module.exports = {
 	initialize: function () {
 		Player.on('rendered', Player.hotkeys.apply);
+		Player.on('config:hotkeys', Player.hotkeys.apply);
 	},
 
 	_keyMap: {

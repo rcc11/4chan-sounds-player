@@ -46,6 +46,10 @@
 	align-content: center;
 	align-self: center;
 }
+.#{$ns}-space-between {
+	justify-content: space-between;
+}
+
 // Hide the text with 4chan X since the icons will show
 html.fourchan-x ##{$ns}-container .fa {
 	font-size: 0;

@@ -1,3 +1,5 @@
+const settingsConfig = require('config');
+
 const dismissedContentCache = {};
 const dismissedRestoreCache = {};
 
@@ -70,6 +72,41 @@ module.exports = {
 			// Can't recover, throw.
 			throw err;
 		}
+	},
+
+	forceBoardTheme: function () {
+		Player.display.applyBoardTheme(true);
+		Player.settings.save();
+	},
+
+	applyBoardTheme: function (force) {
+		// Create a reply element to gather the style from
+		const div = createElement(`<div class="${is4chan ? 'post reply style-fetcher' : 'post_wrapper'}"></div>`, document.body);
+		const style = document.defaultView.getComputedStyle(div);
+
+		// Apply the computed style to the color config.
+		const colorSettingMap = {
+			'colors.text': 'color',
+			'colors.background': 'backgroundColor',
+			'colors.odd_row': 'backgroundColor',
+			'colors.border': 'borderBottomColor',
+			// If the border is the same color as the text don't use it as a background color.
+			'colors.even_row': style.borderBottomColor === style.color ? 'backgroundColor' : 'borderBottomColor'
+		};
+		settingsConfig.find(s => s.property === 'colors').settings.forEach(setting => {
+			const updateConfig = force || (setting.default === _get(Player.config, setting.property));
+			colorSettingMap[setting.property] && (setting.default = style[colorSettingMap[setting.property]]);
+			updateConfig && Player.set(setting.property, setting.default, { bypassSave: true, bypassRender: true, bypassStylesheet: true});
+		});
+
+		// Clean up the element.
+		document.body.removeChild(div);
+
+		// Updated the stylesheet if it exists.
+		Player.stylesheet && Player.display.updateStylesheet();
+
+		// Re-render the settings if needed.
+		Player.settings.render();
 	},
 
 	updateStylesheet: function () {
