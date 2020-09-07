@@ -4,6 +4,40 @@ module.exports = {
 	initialize: function () {
 		Player.on('rendered', Player.hotkeys.apply);
 		Player.on('config:hotkeys', Player.hotkeys.apply);
+
+		// Setup up hardware media keys.
+		if ('mediaSession' in navigator && Player.config.hardwareMediaKeys) {
+			const actions = [
+				[ 'play', () => Player.play() ],
+				[ 'pause', () => Player.pause() ],
+				[ 'stop', () => Player.pause() ],
+				[ 'previoustrack', () => Player.previous() ],
+				[ 'nexttrack', () => Player.next() ],
+				[ 'seekbackward', evt => Player.audio.currentTime -= evt.seekOffset || 10 ],
+				[ 'seekforward', evt => Player.audio.currentTime += evt.seekOffset || 10 ],
+				[ 'seekto', evt => Player.audio.currentTime += evt.seekTime ]
+			]
+			for (let [ type, handler ] of actions) {
+				try {
+					navigator.mediaSession.setActionHandler(type, handler);
+				} catch(err) {
+					// not enabled...
+				}
+			}
+
+			// Keep the media metadata updated.
+			Player.audio.addEventListener('pause', () => navigator.mediaSession.playbackState = 'paused');
+			Player.audio.addEventListener('ended', () => navigator.mediaSession.playbackState = 'paused');
+			Player.audio.addEventListener('play', function() {
+				navigator.mediaSession.playbackState = 'playing';
+				navigator.mediaSession.metadata = new MediaMetadata({
+					title: Player.playing.title,
+					artist: '4chan Sounds Player',
+					album: document.title,
+					artwork: [ { src: Player.playing.thumb } ]
+				});
+			});
+		}
 	},
 
 	_keyMap: {

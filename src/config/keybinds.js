@@ -1,4 +1,15 @@
+const hasMediaSession = 'mediaSession' in navigator;
+
 module.exports = [
+	{
+		property: 'hardwareMediaKeys',
+		title: 'Hardware Media Keys',
+		displayGroup: 'Keybinds',
+		description: 'Enable playback control via hardware media keys.'
+			+ (!hasMediaSession ? ' Your browser does not support this feature.' : ''),
+		default: hasMediaSession,
+		attrs: !hasMediaSession && 'disabled'
+	},
 	{
 		title: 'Keybinds',
 		displayGroup: 'Keybinds',
