@@ -6,9 +6,9 @@ module.exports = {
 
 	delegatedEvents: {
 		click: {
-			[`.${ns}-previous-button`]: () => Player.previous(),
+			[`.${ns}-previous-button`]: () => Player.previous({ force: true }),
 			[`.${ns}-play-button`]: 'togglePlay',
-			[`.${ns}-next-button`]: () => Player.next(),
+			[`.${ns}-next-button`]: () => Player.next({ force: true }),
 			[`.${ns}-seek-bar`]: 'controls.handleSeek',
 			[`.${ns}-volume-bar`]: 'controls.handleVolume',
 			[`.${ns}-fullscreen-button`]: 'display.toggleFullScreen'

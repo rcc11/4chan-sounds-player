@@ -42,28 +42,28 @@ module.exports = [
 			{
 				property: 'hotkey_bindings.previous',
 				title: 'Previous',
-				keyHandler: 'previous',
+				keyHandler: () => Player.previous({ force: true }),
 				ignoreRepeat: true,
 				default: { key: 'arrowleft' }
 			},
 			{
 				property: 'hotkey_bindings.next',
 				title: 'Next',
-				keyHandler: 'next',
+				keyHandler: () => Player.next({ force: true }),
 				ignoreRepeat: true,
 				default: { key: 'arrowright' }
 			},
 			{
 				property: 'hotkey_bindings.previousGroup',
 				title: 'Previous Group',
-				keyHandler: () => Player.previous({ group: true }),
+				keyHandler: () => Player.previous({ force: true, group: true }),
 				ignoreRepeat: true,
 				default: { shiftKey: true, key: 'arrowleft' }
 			},
 			{
 				property: 'hotkey_bindings.nextGroup',
 				title: 'Next Group',
-				keyHandler: () => Player.next({ group: true }),
+				keyHandler: () => Player.next({ force: true, group: true }),
 				ignoreRepeat: true,
 				default: { shiftKey: true, key: 'arrowright' }
 			},
