@@ -88,6 +88,11 @@ module.exports = [
 		displayGroup: 'Display',
 		property: 'colors',
 		updateStylesheet: true,
+		class: `${ns}-colorpicker-input`,
+		displayMethod: (value, attrs) => `<div class="${ns}-col">
+				<input type="text" ${attrs} value="${value}">
+				<div class="${ns}-cp-preview" style="background: ${value}"></div>
+			</div>`,
 		actions: [
 			{ title: 'Match Theme', handler: 'display.forceBoardTheme' }
 		],

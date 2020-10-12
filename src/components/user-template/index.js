@@ -39,15 +39,6 @@ module.exports = {
 		}
 	},
 
-	undelegatedEvents: {
-		click: {
-			body: 'userTemplate._closeMenus'
-		},
-		keydown: {
-			body: e => e.key === 'Escape' && Player.userTemplate._closeMenus()
-		}
-	},
-
 	initialize: function () {
 		Player.on('config', Player.userTemplate._handleConfig);
 		Player.on('playsound', () => Player.userTemplate._handleEvent('playsound'));
@@ -256,7 +247,7 @@ module.exports = {
 	},
 
 	_showMenu: function (x, y, dialog, parent) {
-		Player.userTemplate._closeMenus();
+		Player.display.closeDialogs();
 		dialog.style.top = y + 'px';
 		dialog.style.left = x + 'px';
 		parent || (parent = Player.container);
@@ -281,16 +272,6 @@ module.exports = {
 		});
 
 		Player.trigger('menu-open', dialog);
-	},
-
-	/**
-	 * Close any open menus, except for one belonging to an item that was clicked.
-	 */
-	_closeMenus: function () {
-		document.querySelectorAll(`.${ns}-menu`).forEach(menu => {
-			menu.parentNode.removeChild(menu);
-			Player.trigger('menu-close', menu);
-		});
 	},
 
 	_setFocusedMenuItem: function (e) {

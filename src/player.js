@@ -1,6 +1,7 @@
 const components = {
 	// Settings must be first.
 	settings: require('./components/settings'),
+	colorpicker: require('./components/colorpicker'),
 	controls: require('./components/controls'),
 	display: require('./components/display'),
 	events: require('./components/events'),
@@ -39,6 +40,7 @@ const Player = window.Player = module.exports = {
 	// Get all the templates.
 	templates: {
 		body: require('./templates/body.tpl'),
+		colorpicker: require('./templates/colorpicker.tpl'),
 		controls: require('./templates/controls.tpl'),
 		css: require('./scss/style.scss'),
 		footer: require('./templates/footer.tpl'),

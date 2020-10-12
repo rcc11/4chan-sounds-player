@@ -1,0 +1,70 @@
+.#{$ns}-colorpicker {
+	position: fixed;
+	padding: .25rem;
+	white-space: nowrap;
+	z-index: 999;
+
+	.#{$ns}-cp-saturation {
+		display: inline-block;
+		position: relative;
+		background: linear-gradient(to right, white, #F00);
+
+		& .position {
+			width: 5px;
+		}
+	}
+	.#{$ns}-cp-saturation::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border-radius: inherit;
+		background: black;
+		-webkit-mask-image: linear-gradient(#0000, #000);
+	}
+	.#{$ns}-cp-hue {
+		margin-left: .5rem;
+		display: inline-block;
+		position: relative;
+		width: 30px;
+		background: linear-gradient(to bottom, #F00, #FF0, #0F0, #0FF, #00F, #F0F, #F00);
+
+		& .position {
+			top: -3px;
+			left: -1px;
+			right: -1px;
+		}
+	}
+	.#{$ns}-cp-saturation .position, .#{$ns}-cp-hue .position {
+		position: absolute;
+		height: 5px;
+		border-radius: 1rem;
+	}
+	.#{$ns}-output {
+		vertical-align: top;
+		margin-left: 1rem;
+		display: inline-block;
+		
+		& .#{$ns}-rgb-input {
+			width: 2rem;
+		}
+
+		& .output-color {
+			height: 40px;
+			margin: .25rem 0;
+		}
+	}
+}
+
+.#{$ns}-cp-preview, .#{$ns}-cp-saturation .position, .#{$ns}-cp-hue .position, .#{$ns}-output .output-color {
+	border: solid 1px black;
+	box-shadow: inset 0 0 0 1px #EEE;
+}
+
+.#{$ns}-cp-preview {
+	height: 1em;
+	width: 1em;
+	margin-left: .125rem;
+}

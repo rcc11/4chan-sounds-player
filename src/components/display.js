@@ -21,6 +21,15 @@ module.exports = {
 		}
 	},
 
+	undelegatedEvents: {
+		click: {
+			body: 'display.closeDialogs'
+		},
+		keydown: {
+			body: e => e.key === 'Escape' && Player.display.closeDialogs(e)
+		}
+	},
+
 	initialize: async function () {
 		try {
 			Player.display.dismissed = (await GM.getValue('dismissed')).split(',');
@@ -254,5 +263,18 @@ module.exports = {
 		return Player.display.dismissed.includes(name)
 			? `<a href="#" class="${ns}-restore-link" data-restore="${name}">${restore}</a>`
 			: text;
-	}
+	},
+
+	/**
+	 * Close any open menus.
+	 */
+	closeDialogs: function (e) {
+		document.querySelectorAll(`.${ns}-menu, .${ns}-colorpicker`).forEach(menu => {
+			// Don't close colorpickers when you click inside them.
+			if (!e || !menu.classList.contains(`${ns}-colorpicker`) || !menu.contains(e.target)) {
+				menu.parentNode.removeChild(menu);
+				Player.trigger('menu-close', menu);
+			}
+		});
+	},
 };
