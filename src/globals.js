@@ -5,7 +5,7 @@
 window.ns = 'fc-sounds';
 
 window.is4chan = location.hostname.includes('4chan.org') || location.hostname.includes('4channel.org');
-window.isChanX = document.documentElement.classList.contains('fourchan-x');
+window.isChanX = document.documentElement && document.documentElement.classList.contains('fourchan-x');
 window.Board = location.pathname.split('/')[1];
 
 window._set = function (object, path, value) {
