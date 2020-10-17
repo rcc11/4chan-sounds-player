@@ -1,4 +1,4 @@
-`<div id="${ns}-container" data-view-style="${Player.config.viewStyle}" style="top: 30px; left: 0px; width: 350px; display: none;">
+`<div id="${ns}-container" data-view-style="${Player.config.viewStyle}" style="top: 30px; left: 0px; width: 360px; display: none;">
 	<div class="${ns}-header ${ns}-row">
 		${Player.templates.header(data)}
 	</div>
