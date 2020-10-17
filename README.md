@@ -120,7 +120,7 @@ __Conditional Display__
 __Sound Properties__
 - `sound-count` - The number of songs added to the player.
 - `sound-index` - The index of the sound (starting from 1).
-- `sound-name` - The name of the sound.
+- `sound-name` - The name of the sound. If you want to scroll long sound names use `sound-name-marquee`.
 
 __Links/Buttons__
 
