@@ -92,7 +92,7 @@ module.exports = [
 		text: 'Post',
 		showIf: data => data.sound.post,
 		attrs: data => [
-			`class="${ns}-truncate-text`,
+			`class="${ns}-truncate-text"`,
 			`href=${'#' + (is4chan ? 'p' : '') + data.sound.post}`,
 			'title="Jump to the post for the current sound"'
 		]
