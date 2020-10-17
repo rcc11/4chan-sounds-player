@@ -5,6 +5,7 @@ const playingRE = /p: ?{([^}]*)}/g;
 const hoverRE = /h: ?{([^}]*)}/g;
 const buttonRE = new RegExp(`(${buttons.map(option => option.tplName).join('|')})-(?:button|link)(?:\\:"([^"]+?)")?`, 'g');
 const soundNameRE = /sound-name/g;
+const soundNameMarqueeRE = /sound-name-marquee/g;
 const soundIndexRE = /sound-index/g;
 const soundCountRE = /sound-count/g;
 
@@ -86,7 +87,8 @@ module.exports = {
 
 				return `<a ${attrs.join(' ')}>${text}</a>`;
 			})
-			.replace(soundNameRE, name ? `<div class="fc-sounds-col fc-sounds-truncate-text"><span title="${name}">${name}</span></div>` : '')
+			.replace(soundNameMarqueeRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem; text-overflow: clip;"><span title="${name}" class="${ns}-title-marquee" data-location="${data.location || ''}">${name}</span></div>` : '')
+			.replace(soundNameRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem"><span title="${name}">${name}</span></div>` : '')
 			.replace(soundIndexRE, data.sound ? Player.sounds.indexOf(data.sound) + 1 : 0)
 			.replace(soundCountRE, Player.sounds.length)
 			.replace(/%v/g, VERSION);

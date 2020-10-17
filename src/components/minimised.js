@@ -38,6 +38,7 @@ module.exports = {
 			// Render the contents.
 			container.innerHTML = Player.userTemplate.build({
 				template: Player.config.chanXTemplate,
+				location: '4chan-X-controls',
 				sound: Player.playing,
 				replacements: {
 					'prev-button': `<div class="${ns}-media-control ${ns}-previous-button"><div class="${ns}-previous-button-display"></div></div>`,

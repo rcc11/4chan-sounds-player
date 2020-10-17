@@ -36,6 +36,11 @@ module.exports = {
 		} catch (err) {
 			Player.display.dismissed = [];
 		}
+		Player.on('playsound', () => {
+			// Reset marquees
+			Player.display._marquees = {};
+			!Player.display._marqueeTO && Player.display.runTitleMarquee();
+		});
 	},
 
 	/**
@@ -277,4 +282,35 @@ module.exports = {
 			}
 		});
 	},
+
+	runTitleMarquee: async function () {
+		Player.display._marqueeTO = setTimeout(Player.display.runTitleMarquee, 1000);
+		document.querySelectorAll(`.${ns}-title-marquee`).forEach(title => {
+			const offset = title.parentNode.getBoundingClientRect().width - (title.scrollWidth + 1);
+			const location = title.getAttribute('data-location');
+			// Fall out if the title is fully visible.
+			if (offset >= 0) {
+				return;
+			}
+			const data = Player.display._marquees[location] = Player.display._marquees[location] || {
+				direction: 1,
+				position: parseInt(title.style.marginLeft, 10) || 0
+			};
+			// Pause at each end.
+			if (data.pause > 0) {
+				data.pause--;
+				return;
+			}
+			data.position = data.position - (20 * data.direction);
+
+			// Pause then reverse direction when the end is reached.
+			if (data.position > 0 || data.position < offset) {
+				data.position = Math.min(0, Math.max(data.position, offset));
+				data.direction = data.direction * -1;
+				data.pause = 1;
+			}
+
+			title.style.marginLeft = data.position + 'px';
+		});
+	}
 };
