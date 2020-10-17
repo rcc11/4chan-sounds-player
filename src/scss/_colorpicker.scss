@@ -22,7 +22,7 @@
 		bottom: 0;
 		border-radius: inherit;
 		background: black;
-		-webkit-mask-image: linear-gradient(#0000, #000);
+		mask-image: linear-gradient(#0000, #000);
 	}
 	.#{$ns}-cp-hue {
 		margin-left: .5rem;
