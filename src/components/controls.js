@@ -51,7 +51,10 @@ module.exports = {
 		loadstart: 'controls.pollForLoading'
 	},
 
-	initialize: function () {
+	initialize: async function () {
+		// Apply the previous volume
+		GM.getValue('volume').then(volume => volume >= 0 && volume <= 1 && (Player.audio.volume = volume));
+
 		Player.on('show', () => Player._hiddenWhilePolling && Player.controls.pollForLoading());
 		Player.on('hide', () => {
 			Player._hiddenWhilePolling = !!Player._loadingPoll;
@@ -261,6 +264,7 @@ module.exports = {
 	 * Update the volume bar.
 	 */
 	updateVolume: function () {
+		GM.setValue('volume', Player.audio.volume);
 		Player.controls.updateProgressBarPosition(`.${ns}-volume-bar`, Player.$(`.${ns}-volume-bar .${ns}-current-bar`), Player.audio.volume, 1);
 	},
 
