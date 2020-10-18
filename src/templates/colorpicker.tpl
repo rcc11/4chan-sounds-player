@@ -13,6 +13,7 @@
 			<tr><td>R:</td><td><input type="text" class="${ns}-rgb-input" data-color="0" value="${data.rgb[0]}"></td></tr>
 			<tr><td>G:</td><td><input type="text" class="${ns}-rgb-input" data-color="1" value="${data.rgb[1]}"></td></tr>
 			<tr><td>B:</td><td><input type="text" class="${ns}-rgb-input" data-color="2" value="${data.rgb[2]}"></td></tr>
+			<tr><td>A:</td><td><input type="text" class="${ns}-rgb-input" data-color="3" value="${data.rgb[3]}"></td></tr>
 		</table>
 
 		<button class="${ns}-apply-colorpicker">Apply</button><br>

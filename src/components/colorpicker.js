@@ -36,32 +36,26 @@ module.exports = {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const input = e.eventTarget.nodeName === 'INPUT'
-			? e.eventTarget
-			: e.eventTarget.parentNode.querySelector('input');
+		const parent = e.eventTarget.parentNode;
+		const input = e.eventTarget.nodeName === 'INPUT' ? e.eventTarget : parent.querySelector('input');
+		const preview = parent.querySelector(`.${ns}-cp-preview`);
 		if (!input || input._colorpicker) {
 			return;
 		}
 
 		Player.display.closeDialogs();
 		
-		// See if the input has a hex or rgb value and get it as [ r, g, b ] in the range 0 - 255.
-		let hexMatch, rgbMatch, rgb = [ 255, 0, 0 ];
-		if (hexMatch = input.value.match(/#([0-9A-F]{6}|[0-9A-F]{3})\s*/i)) {
-			let hex = hexMatch[1];
-			rgb = hex.length === 6
-				? [ parseInt(hex[0] + hex[1], 16), parseInt(hex[2] + hex[3], 16), parseInt(hex[4] + hex[5], 16) ]
-				: [ parseInt(hex[0] + hex[0], 16), parseInt(hex[1] + hex[1], 16), parseInt(hex[2] + hex[2], 16) ];
-		} else if (rgbMatch = input.value.match(/\s*rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*\d+\s*)?\)/)) {
-			rgb = [ +rgbMatch[1], +rgbMatch[2], +rgbMatch[3] ];
-		}
+		// Get the color from the preview.
+		const previewColor = window.getComputedStyle(preview).backgroundColor;
+		const rgbMatch = previewColor.match(/rgba?\((\d+), (\d+), (\d+)(?:, ([\d\.]+))?\)/);
+		const rgb = [ +rgbMatch[1], +rgbMatch[2], +rgbMatch[3], isNaN(+rgbMatch[4]) ? 1 : rgbMatch[4] ];
 
 		// Try and put the color picker aligned to the left under the input.
 		const inputRect = input.getBoundingClientRect();
 		const top = inputRect.top + inputRect.height;
 		const left = inputRect.left;
 
-		const colorpicker = createElement(Player.templates.colorpicker({ HEIGHT, WIDTH, top, left, rgb }), input.parentNode);
+		const colorpicker = createElement(Player.templates.colorpicker({ HEIGHT, WIDTH, top, left, rgb }), parent);
 
 		// Reposition around the input if the colorpicker is off screen.
 		const { width: cpWidth, height: cpHeight } = colorpicker.getBoundingClientRect();
@@ -75,12 +69,10 @@ module.exports = {
 		input._colorpicker = colorpicker;
 		colorpicker._input = input;
 		
-		colorpicker._colorpicker = { hsv: [ 0, 1, 1 ], rgb: rgb };
+		colorpicker._colorpicker = { hsv: [ 0, 1, 1, 1 ], rgb: rgb };
 
 		// If there's a color in the input then update the hue/saturation positions to show it.
-		if (hexMatch || rgbMatch) {
-			Player.colorpicker.updateOutput(colorpicker);
-		}
+		Player.colorpicker.updateOutput(colorpicker);
 	},
 
 	_handleHueMove: function (e) {
@@ -91,7 +83,7 @@ module.exports = {
 		const colorpicker = e.eventTarget.closest(`.${ns}-colorpicker`);
 		const y = Math.max(0, e.clientY - e.eventTarget.getBoundingClientRect().top);
 		colorpicker._colorpicker.hsv[0] = y / HEIGHT;
-		const _hue = Player.colorpicker.hsv2rgb(colorpicker._colorpicker.hsv[0], 1, 1);
+		const _hue = Player.colorpicker.hsv2rgb(colorpicker._colorpicker.hsv[0], 1, 1, 1);
 
 		colorpicker.querySelector(`.${ns}-cp-saturation`).style.background = `linear-gradient(to right, white, rgb(${_hue[0]}, ${_hue[1]}, ${_hue[2]}))`;
 		e.eventTarget.querySelector('.position').style.top = Math.max(-3, (y - 6)) + 'px';
@@ -126,25 +118,26 @@ module.exports = {
 	updateOutput: function (colorpicker, fromHSV) {
 		const order = fromHSV ? [ 'hsv', 'rgb' ] : [ 'rgb', 'hsv' ];
 		colorpicker._colorpicker[order[1]] = Player.colorpicker[`${order[0]}2${order[1]}`](...colorpicker._colorpicker[order[0]]);
-		const [ r, g, b ] = colorpicker._colorpicker.rgb;
+		const [ r, g, b, a ] = colorpicker._colorpicker.rgb;
 
 		// Update the display.
 		if (fromHSV) {
 			colorpicker.querySelector(`.${ns}-rgb-input[data-color="0"]`).value = r;
 			colorpicker.querySelector(`.${ns}-rgb-input[data-color="1"]`).value = g;
 			colorpicker.querySelector(`.${ns}-rgb-input[data-color="2"]`).value = b;
+			colorpicker.querySelector(`.${ns}-rgb-input[data-color="3"]`).value = a;
 		} else {
 			const [ h, s, v ] = colorpicker._colorpicker.hsv;
 			const huePos = colorpicker.querySelector(`.${ns}-cp-hue .position`);
 			const satPos = colorpicker.querySelector(`.${ns}-cp-saturation .position`);
-			const _hue = Player.colorpicker.hsv2rgb(h, 1, 1);
+			const _hue = Player.colorpicker.hsv2rgb(h, 1, 1, 1);
 			colorpicker.querySelector(`.${ns}-cp-saturation`).style.background = `linear-gradient(to right, white, rgb(${_hue[0]}, ${_hue[1]}, ${_hue[2]}))`;
 			huePos.style.top = (HEIGHT * h) - 3 + 'px';
 			satPos.style.left = (s * WIDTH) - 3 + 'px';
 			satPos.style.top = ((1 - v) * WIDTH) - 3 + 'px';
 		}
 
-		colorpicker.querySelector('.output-color').style.background = `rgb(${r}, ${g}, ${b})`;
+		colorpicker.querySelector('.output-color').style.background = `rgb(${r}, ${g}, ${b}, ${a})`;
 	},
 
 	_applyColorPicker: function (e) {
@@ -153,9 +146,9 @@ module.exports = {
 
 		// Update the input.
 		const colorpicker = e.eventTarget.closest(`.${ns}-colorpicker`);
-		const [ r, g, b ] = colorpicker._colorpicker.rgb;
+		const [ r, g, b, a ] = colorpicker._colorpicker.rgb;
 		const input = colorpicker._input;
-		input.value = `rgb(${r}, ${g}, ${b})`;
+		input.value = `rgb(${r}, ${g}, ${b}, ${a})`;
 
 		// Remove the colorpicker.
 		delete input._colorpicker;
@@ -166,7 +159,7 @@ module.exports = {
 		input.blur();
 	},
 	
-	hsv2rgb: function(h, s, v) {
+	hsv2rgb: function(h, s, v, a) {
 		const i = Math.floor((h * 6));
 		const f = (h * 6) - i;
 		const p = v * (1 - s);
@@ -181,10 +174,11 @@ module.exports = {
 			Math.round(r * 255),
 			Math.round(g * 255),
 			Math.round(b * 255),
+			a
 		];
 	},
 
-	rgb2hsv: function (r, g, b) {
+	rgb2hsv: function (r, g, b, a) {
 		var max = Math.max(r, g, b),
 			min = Math.min(r, g, b),
 			d = max - min,
@@ -199,7 +193,7 @@ module.exports = {
 			case b: h = (r - g) + d * 4; h /= 6 * d; break;
 		}
 
-		return [ h, s, v ];
+		return [ h, s, v, a ];
 	},
 
 	_updatePreview: function (e) {
