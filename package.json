@@ -4,7 +4,7 @@
   "description": "Play that faggy music weeb boi",
   "main": "main.js",
   "scripts": {
-    "build": "./build.js",
+    "build": "./build.js; ./build.js --require-ffmpeg",
     "build-beta": "./build.js --filename 4chan-sounds-player-beta.user.js --append-hash",
     "build-dev": "npx webpack --config webpack.config.js --mode development"
   },
