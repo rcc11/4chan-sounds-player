@@ -27,7 +27,7 @@ module.exports = {
 			[`.${ns}-repeat-button`]: 'userTemplate._handleRepeat',
 			[`.${ns}-reload-button`]: noDefault('playlist.refresh'),
 			[`.${ns}-add-button`]: noDefault(() => Player.$(`.${ns}-add-local-file-input`).click()),
-			[`.${ns}-item-menu-button`]: 'userTemplate._handleItemMenu',
+			[`.${ns}-item-menu-button`]: 'playlist._handleItemMenu',
 			[`.${ns}-view-menu-button`]: 'userTemplate._handleViewsMenu',
 			[`.${ns}-threads-button`]: 'threads.toggle',
 			[`.${ns}-tools-button`]: 'tools.toggle',
@@ -223,24 +223,6 @@ module.exports = {
 		Player.trigger('order');
 	},
 
-	/**
-	 * Display an item menu.
-	 */
-	_handleItemMenu: function (e) {
-		e.preventDefault();
-		e.stopPropagation();
-		const id = e.eventTarget.getAttribute('data-id');
-		const sound = Player.sounds.find(s => s.id === id);
-
-		// Add row item menus to the list container. Append to the container otherwise.
-		const listContainer = e.eventTarget.closest(`.${ns}-list-container`);
-		const parent = listContainer || Player.container;
-
-		// Create the menu.
-		const dialog = createElement(Player.templates.itemMenu({ sound }), parent);
-		Player.userTemplate._showMenu(e.clientX, e.clientY, dialog, parent);
-	},
-
 	_handleViewsMenu: function (e) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -248,7 +230,7 @@ module.exports = {
 		Player.userTemplate._showMenu(e.clientX, e.clientY, dialog);
 	},
 
-	_showMenu: function (x, y, dialog, parent) {
+	_showMenu: function (x, y, dialog, parent, alignRight) {
 		Player.display.closeDialogs();
 		dialog.style.top = y + 'px';
 		dialog.style.left = x + 'px';
@@ -259,8 +241,8 @@ module.exports = {
 		const style = document.defaultView.getComputedStyle(dialog);
 		const width = parseInt(style.width, 10);
 		const height = parseInt(style.height, 10);
-		// Show the dialog to the left of the cursor, if there's room.
-		if (x - width > 0) {
+		// Show the dialog to the left of the cursor if desired and there's room or it's off screen.
+		if ((alignRight && x - width > 0) || x + width > document.documentElement.clientWidth) {
 			dialog.style.left = x - width + 'px';
 		}
 		// Move the dialog above the cursor if it's off screen.

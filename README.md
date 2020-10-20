@@ -15,7 +15,7 @@ A link to open the player is shown at the top and bottom of the page, next to se
 
 #### Display Modes
 
-The playlist view will list all the sounds in the thread in the order they're playing, with the ability to drag items to modify the order. When hovering over an item the dropdown menu button will show on the right. The menu has an option to remove the item and links to post, image and sound file.
+The playlist view will list all the sounds in the thread in the order they're playing, with the ability to drag items to modify the order. When hovering over an item the dropdown menu button will show on the right. The menu has an option to remove the item and links to post, image and sound file. It can also be opened by right clicking an item.
 
 ![Playlist UI](./images/playlist.png)
 
@@ -134,7 +134,7 @@ All the values here can be followed by `:""` to specify the text, otherwise they
 - `filter-image-button` - Add the image MD5 to the filters.
 - `filter-sound-button` - Add the sound URL to the filters.
 - `remove-button` - Remove the sound from the player. Removed sounds can be re-added using the reload button.
-- `menu-button` - Open the dropdown menu for the sound.
+- `menu-button` - Open the dropdown menu for the sound. You can right click the sound item to open it instead.
 - `repeat-button` - Toggles the repeat setting between all, one and none.
 - `shuffle-button` - Toggles shuffle.
 - `playlist-button` - Toggles between the playlist and image view.

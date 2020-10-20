@@ -12,7 +12,8 @@ module.exports = {
 		dragend: { [`.${ns}-list-item`]: 'playlist.handleDragEnd' },
 		dragover: { [`.${ns}-list-item`]: e => e.preventDefault() },
 		drop: { [`.${ns}-list-item`]: e => e.preventDefault() },
-		keyup: { [`.${ns}-playlist-search`]: 'playlist._handleSearch' }
+		keyup: { [`.${ns}-playlist-search`]: 'playlist._handleSearch' },
+		contextmenu: { [`.${ns}-list-item`]: 'playlist._handleItemMenu' }
 	},
 
 	undelegatedEvents: {
@@ -236,6 +237,24 @@ module.exports = {
 	 */
 	refresh: function () {
 		parseFiles(document.body);
+	},
+
+	/**
+	 * Display an item menu.
+	 */
+	_handleItemMenu: function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+		const id = e.eventTarget.getAttribute('data-id');
+		const sound = Player.sounds.find(s => s.id === id);
+
+		// Add row item menus to the list container. Append to the container otherwise.
+		const listContainer = e.eventTarget.closest(`.${ns}-list-container`);
+		const parent = listContainer || Player.container;
+
+		// Create the menu.
+		const dialog = createElement(Player.templates.itemMenu({ sound }), parent);
+		Player.userTemplate._showMenu(e.clientX, e.clientY, dialog, parent);
 	},
 
 	/**
