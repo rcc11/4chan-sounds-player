@@ -41,7 +41,7 @@ module.exports = {
 			const savedBoards = await GM.getValue('threads_board_selection');
 			savedBoards && (Player.threads.selectedBoards = savedBoards.split(','));
 		} catch (err) {
-			// Leave it deafulted to the current board.
+			// Leave it defaulted to the current board.
 		}
 	},
 

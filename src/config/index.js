@@ -24,6 +24,6 @@ module.exports = [
 	},
 	{
 		property: 'showPlaylistSearch',
-		deafult: true
+		default: true
 	}
 ];
