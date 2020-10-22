@@ -52,14 +52,19 @@ module.exports = [
 		]
 	},
 	{
-		property: 'limitPostWidths',
-		title: 'Limit Post Width',
-		description: 'Limit the width of posts so they aren\'t hidden under the player.',
+		title: 'Threads',
 		displayGroup: 'Display',
 		settings: [
 			{
+				property: 'autoScrollThread',
+				description: 'Automatically scroll the thread to posts as sounds play.',
+				title: 'Auto Scroll',
+				default: false
+			},
+			{
 				property: 'limitPostWidths',
-				title: 'Enabled',
+				description: 'Limit the width of posts so they aren\'t hidden under the player.',
+				title: 'Limit Post Widths',
 				default: true
 			},
 			{

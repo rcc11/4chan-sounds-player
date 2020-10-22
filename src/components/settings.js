@@ -91,7 +91,7 @@ module.exports = {
 		!silent && Player.trigger('config', property, value, previousValue);
 		!silent && Player.trigger('config:' + property, value, previousValue);
 		!bypassSave && Player.settings.save();
-		!bypassRender && Player.settings.findDefault(property).displayGroup && Player.settings.render();
+		!bypassRender && settingConfig.displayGroup && Player.settings.render();
 	},
 
 	/**

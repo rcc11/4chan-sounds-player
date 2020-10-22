@@ -114,6 +114,12 @@ module.exports = [
 				title: 'Toggle Hover Images',
 				keyHandler: 'playlist.toggleHoverImages',
 				default: { key: '' }
+			},
+			{
+				property: 'hotkey_bindings.toggleAutoScroll',
+				title: 'Toggle Auto Scroll',
+				keyHandler:  () => Player.set('autoScrollThread', !Player.config.autoScrollThread),
+				default: { key: '' }
 			}
 		]
 	}

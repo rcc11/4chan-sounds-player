@@ -305,5 +305,13 @@ module.exports = {
 		const ratio = e.offsetX / parseInt(document.defaultView.getComputedStyle(e.eventTarget || e.target).width, 10);
 		Player.audio.volume = Math.max(0, Math.min(ratio, 1));
 		Player.controls.updateVolume();
+	},
+
+	volumeUp: function () {
+		Player.audio.volume = Math.min(Player.audio.volume + 0.05, 1);
+	},
+
+	volumeDown: function () {
+		Player.audio.volume = Math.max(Player.audio.volume - 0.05, 0);
 	}
 };

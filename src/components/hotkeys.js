@@ -125,13 +125,5 @@ module.exports = {
 		const newValue = { key };
 		keys.forEach(key => newValue[key.toLowerCase() + 'Key'] = true);
 		return newValue;
-	},
-
-	volumeUp: function () {
-		Player.audio.volume = Math.min(Player.audio.volume + 0.05, 1);
-	},
-
-	volumeDown: function () {
-		Player.audio.volume = Math.max(Player.audio.volume - 0.05, 0);
 	}
 };
