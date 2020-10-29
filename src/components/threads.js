@@ -94,6 +94,7 @@ module.exports = {
 		} else {
 			try {
 				const list = Player.$(`.${ns}-thread-list`);
+				list.innerHTML = '';
 				for (let board in Player.threads.displayThreads) {
 					// Create a board title
 					const boardConf = Player.threads.boardList.find(boardConf => boardConf.board === board);
@@ -219,12 +220,13 @@ module.exports = {
 	 * Apply the filter input to the already fetched threads.
 	 */
 	filter: function (search, skipRender) {
+		search = search.toLowerCase();
 		Player.threads.filterValue = search || '';
 		if (Player.threads.soundThreads === null) {
 			return;
 		}
 		Player.threads.displayThreads = Player.threads.soundThreads.reduce((threadsByBoard, thread) => {
-			if (!search || thread.sub && thread.sub.includes(search) || thread.com && thread.com.includes(search)) {
+			if (!search || thread.sub && thread.sub.toLowerCase().includes(search) || thread.com && thread.com.toLowerCase().includes(search)) {
 				threadsByBoard[thread.board] || (threadsByBoard[thread.board] = []);
 				threadsByBoard[thread.board].push(thread);
 			}
