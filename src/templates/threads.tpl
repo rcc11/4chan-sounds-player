@@ -14,9 +14,18 @@
 	<div class="${ns}-thread-board-list">
 		${Player.templates.threadBoards(data)}
 	</div>
+	<div class="${ns}-heading" style="text-align: center">
+		${Player.config.threadsViewStyle !== 'table'
+			? `<a class="${ns}-threads-view-style ${ns}-heading-action" style="margin: 0" data-style="table" href="#">Table</a>`
+			: `<span>Table</span>`}
+		|
+		${Player.config.threadsViewStyle !== 'board'
+			? `<a class="${ns}-threads-view-style ${ns}-heading-action" style="margin: 0" data-style="board" href="#">Board</a>`
+			: `<span>Board</span>`}
+	</div>
 	${
 		!Player.threads.hasParser || Player.config.threadsViewStyle === 'table'
-		? `<table style="width: 100%">
+		? `<table>
 				<tr>
 					<th>Thread</th>
 					<th>Subject</th>

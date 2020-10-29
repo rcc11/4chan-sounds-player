@@ -15,7 +15,8 @@ module.exports = {
 	delegatedEvents: {
 		click: {
 			[`.${ns}-fetch-threads-link`]: 'threads.fetch',
-			[`.${ns}-all-boards-link`]: 'threads.toggleBoardList'
+			[`.${ns}-all-boards-link`]: 'threads.toggleBoardList',
+			[`.${ns}-threads-view-style`]: 'threads.toggleView'
 		},
 		keyup: {
 			[`.${ns}-threads-filter`]: e => Player.threads.filter(e.eventTarget.value)
@@ -74,6 +75,14 @@ module.exports = {
 			threadList.style.backgroundPosition = bodyStyle.backgroundPosition;
 		}
 		Player.threads.renderThreads();
+	},
+
+	/**
+	 * Switch between board and table view.
+	 */
+	toggleView: function (e) {
+		e.preventDefault();
+		Player.set('threadsViewStyle', e.eventTarget.getAttribute('data-style'));
 	},
 
 	/**

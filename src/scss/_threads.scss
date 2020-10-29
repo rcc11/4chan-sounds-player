@@ -5,7 +5,7 @@
 	}
 
 	& .#{$ns}-thread-list {
-		margin: 1rem -.25rem 0;
+		margin: .5rem -.25rem 0;
 		padding: .5rem 1rem;
 		border-top: solid 1px #{map-get($colors, border)};
 
@@ -15,6 +15,8 @@
 	}
 
 	& table {
+		border-top: solid 1px #{map-get($colors, border)};
+		width: 100%;
 		margin-top: .5rem;
 		border-collapse: collapse;
 
