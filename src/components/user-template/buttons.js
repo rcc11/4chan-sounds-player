@@ -140,7 +140,8 @@ module.exports = [
 		text: 's',
 		attrs: data => [
 			'title="Download the sound"',
-			`data-src="${data.sound.src}"`
+			`data-src="${data.sound.src}"`,
+			`data-name="${data.sound.title}"`
 		]
 	},
 	{

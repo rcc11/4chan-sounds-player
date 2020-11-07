@@ -252,23 +252,21 @@ module.exports = {
 		// Add the focused class handler
 		dialog.querySelectorAll('.entry').forEach(el => {
 			el.addEventListener('mouseenter', Player.userTemplate._setFocusedMenuItem);
-			el.addEventListener('mouseleave', Player.userTemplate._unsetFocusedMenuItem);
 		});
 
 		Player.trigger('menu-open', dialog);
 	},
 
 	_setFocusedMenuItem: function (e) {
-		e.currentTarget.classList.add('focused');
 		const submenu = e.currentTarget.querySelector('.submenu');
+		const menu = e.currentTarget.closest(`.dialog`);
+		const currentFocus = menu.querySelectorAll(`.focused`);
+		currentFocus.forEach(el => el.classList.remove('focused'));
+		e.currentTarget.classList.add('focused');
 		// Move the menu to the other side if there isn't room.
 		if (submenu && submenu.getBoundingClientRect().right > document.documentElement.clientWidth) {
-			submenu.style.inset = '0px auto auto -100%';
+			submenu.style.inset = '0px 100% auto auto';
 		}
-	},
-
-	_unsetFocusedMenuItem: function (e) {
-		e.currentTarget.classList.remove('focused');
 	},
 
 	_handleFilter: function (e) {
