@@ -32,6 +32,6 @@
 // @run-at       document-start
 // @require      FFMPEG_REQUIRE
 // @updateURL    https://raw.githubusercontent.com/rcc11/4chan-sounds-player/BRANCH/dist/FILENAME.meta.js
-// @downloadURL  https://raw.githubusercontent.com/rcc11/4chan-sounds-player/BRANCH/dist/FILENAME.js
+// @downloadURL  https://raw.githubusercontent.com/rcc11/4chan-sounds-player/BRANCH/dist/FILENAME.user.js
 // ==/UserScript==
 

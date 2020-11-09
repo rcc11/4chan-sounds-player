@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         4chan sounds player
-// @version      3.1.4-4bab90b
+// @version      3.1.4-121a7d6
 // @namespace    rccom
 // @description  A player designed for 4chan sounds threads.
 // @author       RCC
@@ -30,7 +30,7 @@
 // @connect      lewd.se
 // @connect      *
 // @run-at       document-start
-// @updateURL    https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player.meta.js
-// @downloadURL  https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player.js
+// @updateURL    https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player-beta.meta.js
+// @downloadURL  https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player-beta.user.js
 // ==/UserScript==
 

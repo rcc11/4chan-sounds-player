@@ -32,7 +32,7 @@
 // @run-at       document-start
 // @require      https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/ffmpeg-webm.js
 // @updateURL    https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player-ffmpeg.meta.js
-// @downloadURL  https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player-ffmpeg.js
+// @downloadURL  https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player-ffmpeg.user.js
 // ==/UserScript==
 
 

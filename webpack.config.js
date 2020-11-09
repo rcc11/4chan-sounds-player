@@ -23,7 +23,7 @@ module.exports = (env, argv) => {
 	const ffmpegVersion = argv.ffmpeg || argv['require-ffmpeg'];
 	const ffmpegRequire = ffmpegVersion ? '// @require$1https://raw.githubusercontent.com/rcc11/4chan-sounds-player/' + branch + '/dist/ffmpeg-webm.js\n' : '';
 
-	const filename = `4chan-sounds-player${argv.mode === 'production' ? '' : '-dev'}${ffmpegVersion ? '-ffmpeg' : ''}`;
+	const filename = argv.filename || `4chan-sounds-player${argv.mode === 'production' ? '' : '-dev'}${ffmpegVersion ? '-ffmpeg' : ''}`;
 
 	const header = fs.readFileSync(path.resolve(__dirname, './src/header.js'));
 	const banner = header.toString()
@@ -37,7 +37,7 @@ module.exports = (env, argv) => {
 		devtool: 'none',
 		mode: argv.mode,
 		output: {
-			filename: argv.filename || (filename + '.user.js'),
+			filename: (argv.filename || filename) + '.user.js',
 			path: argv.path || path.resolve(__dirname, 'dist'),
 		},
 		optimization: {
