@@ -1,6 +1,6 @@
 `<div class="${ns}-menu dialog" id="menu" tabindex="0" data-type="post" style="position: fixed;">
 	<a class="${ns}-remove-link entry focused" href="javascript:;" data-id="${data.sound.id}">Remove</a>
-	${data.sound.post ? `<a class="entry" href="#${(is4chan ? 'p' : '') + data.sound.post}">Show Post</a>` : ''}
+	${data.sound.post ? `<a class="entry" href="#${data.postIdPrefix + data.sound.post}">Show Post</a>` : ''}
 	<div class="entry has-submenu">
 		Open
 		<div class="dialog submenu" style="inset: 0px auto auto 100%;">

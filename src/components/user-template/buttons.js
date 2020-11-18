@@ -1,3 +1,5 @@
+const { postIdPrefix } = require('../../selectors');
+
 module.exports = [
 	{
 		property: 'repeat',
@@ -93,7 +95,7 @@ module.exports = [
 		showIf: data => data.sound.post,
 		attrs: data => [
 			`class="${ns}-truncate-text"`,
-			`href=${'#' + (is4chan ? 'p' : '') + data.sound.post}`,
+			`href=${'#' + postIdPrefix + data.sound.post}`,
 			'title="Jump to the post for the current sound"'
 		]
 	},

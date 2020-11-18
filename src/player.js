@@ -72,19 +72,23 @@ const Player = window.Player = module.exports = {
 				components[name].initialize && await components[name].initialize();
 			}
 
-			if (!is4chan) {
+			if (Site === 'FoolFuuka') {
 				// Add a sounds link in the nav for archives
 				const nav = document.querySelector('.navbar-inner .nav:nth-child(2)');
 				const li = createElement('<li><a href="javascript:;">Sounds</a></li>', nav);
 				li.children[0].addEventListener('click', Player.display.toggle);
+			} else if (Site === 'Fuuka') {
+				const br = document.querySelector('body > div > br');
+				br.parentNode.insertBefore(document.createTextNode('['), br);
+				createElementBefore('<a href="javascript:;">Sounds</a>', br, { click: Player.display.toggle });
+				br.parentNode.insertBefore(document.createTextNode(']'), br);
 			} else if (isChanX) {
 				// If it's already known that 4chan X is running then setup the button for it.
 				Player.display.initChanX();
 			} else {
 				// Add the [Sounds] link in the top and bottom nav.
 				document.querySelectorAll('#settingsWindowLink, #settingsWindowLinkBot').forEach(function (link) {
-					const showLink = createElement('<a href="javascript:;">Sounds</a>', null, { click: Player.display.toggle });
-					link.parentNode.insertBefore(showLink, link);
+					createElementBefore('<a href="javascript:;">Sounds</a>', link, { click: Player.display.toggle });
 					link.parentNode.insertBefore(document.createTextNode('] ['), link);
 				});
 			}

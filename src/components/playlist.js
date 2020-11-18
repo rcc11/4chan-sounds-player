@@ -1,4 +1,5 @@
 const { parseFiles, parseFileName } = require('../file_parser');
+const { postIdPrefix } = require('../selectors');
 
 module.exports = {
 	atRoot: [ 'add', 'remove' ],
@@ -49,7 +50,7 @@ module.exports = {
 			Player.$all(`.${ns}-list-item.playing`).forEach(el => el.classList.remove('playing'));
 			Player.$(`.${ns}-list-item[data-id="${Player.playing.id}"]`).classList.add('playing');
 			Player.playlist.scrollToPlaying('nearest');
-			Player.config.autoScrollThread && sound.post && (location.href = location.href.split('#')[0] + '#' + (is4chan ? 'p' : '') + sound.post);
+			Player.config.autoScrollThread && sound.post && (location.href = location.href.split('#')[0] + '#' + postIdPrefix + sound.post);
 		});
 
 		// Reapply filters when they change
@@ -254,7 +255,7 @@ module.exports = {
 		const parent = listContainer || Player.container;
 
 		// Create the menu.
-		const dialog = createElement(Player.templates.itemMenu({ sound }), parent);
+		const dialog = createElement(Player.templates.itemMenu({ sound, postIdPrefix }), parent);
 		Player.userTemplate._showMenu(e.clientX, e.clientY, dialog, parent);
 	},
 

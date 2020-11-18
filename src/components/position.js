@@ -1,3 +1,5 @@
+const selectors = require('../selectors');
+
 module.exports = {
 	delegatedEvents: {
 		mousedown: {
@@ -58,12 +60,11 @@ module.exports = {
 	 */
 	setPostWidths: function () {
 		const offset = (document.documentElement.clientWidth - Player.container.offsetLeft) + 10;
-		const selector = is4chan ? '.thread > .postContainer' : '.posts > article.post';
 		const enabled = !Player.isHidden && Player.config.limitPostWidths;
 		const startY = Player.container.offsetTop;
 		const endY = Player.container.getBoundingClientRect().height + startY;
 
-		document.querySelectorAll(selector).forEach(post => {
+		document.querySelectorAll(selectors.limitWidthOf).forEach(post => {
 			const rect = enabled && post.getBoundingClientRect();
 			const limitWidth = enabled && rect.top + rect.height > startY && rect.top < endY;
 			post.style.maxWidth = limitWidth ? `calc(100% - ${offset}px)` : null;

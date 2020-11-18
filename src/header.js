@@ -9,6 +9,7 @@
 // @match        *://desuarchive.org/*
 // @match        *://arch.b4k.co/*
 // @match        *://archived.moe/*
+// @match        *://warosu.org/*
 // @grant        GM.getValue
 // @grant        GM.setValue
 // @grant        GM.xmlHttpRequest

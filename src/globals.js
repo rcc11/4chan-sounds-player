@@ -8,6 +8,12 @@ window.is4chan = location.hostname.includes('4chan.org') || location.hostname.in
 window.isChanX = document.documentElement && document.documentElement.classList.contains('fourchan-x');
 window.Board = location.pathname.split('/')[1];
 
+// Determine what type of site this is. Default to FoolFuuka as the most common archiver.
+window.Site = is4chan ? '4chan'
+	: ((document.head.querySelector('meta[name="generator"]') || {}).content || '').includes('FoolFuuka') ? 'FoolFuuka'
+	: ((document.head.querySelector('meta[name="description"]') || {}).content || '').includes('Fuuka') ? 'Fuuka'
+	: 'FoolFuuka';
+
 window._set = function (object, path, value) {
 	const props = path.split('.');
 	const lastProp = props.pop();

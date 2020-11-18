@@ -1,3 +1,5 @@
+const selectors = require('./selectors')
+
 const protocolRE = /^(https?:)?\/\//;
 const filenameRE = /(.*?)[[({](?:audio|sound)[ =:|$](.*?)[\])}]/gi;
 
@@ -13,7 +15,7 @@ function parseFiles(target, postRender) {
 	let addedSounds = false;
 	let posts = target.classList.contains('post')
 		? [ target ]
-		: target.querySelectorAll(is4chan ? '.post' : 'article');
+		: target.querySelectorAll(selectors.posts);
 
 	posts.forEach(post => parsePost(post, postRender) && (addedSounds = true));
 
@@ -41,23 +43,7 @@ function parsePost(post, skipRender) {
 		}
 
 		let filename = null;
-		let filenameLocations;
-
-		// For the archive the OP and replies selector differs
-		// For 4chan there's native / 4chan X / 4chan X with file info formatting
-		if (!is4chan) {
-			filenameLocations = {
-				'.thread_image_box .post_file_filename': 'textContent',
-				'.post_file_filename': 'title'
-			};
-		} else {
-			filenameLocations = {
-				'.fileText .file-info .fnfull': 'textContent',
-				'.fileText .file-info > a': 'textContent',
-				'.fileText > a': 'title',
-				'.fileText': 'textContent'
-			};
-		}
+		let filenameLocations = selectors.filename;
 
 		Object.keys(filenameLocations).some(function (selector) {
 			const node = post.querySelector(selector);
@@ -68,12 +54,16 @@ function parsePost(post, skipRender) {
 			return;
 		}
 
-		const postID = post.id.slice(is4chan ? 1 : 0);
-		const fileThumb = post.querySelector(is4chan ? '.fileThumb' : '.thread_image_link');
+		selectors.filenameParser && (filename = selectors.filenameParser(filename));
+
+		const postID = post.id.slice(selectors.postIdPrefix.length);
+		const fileThumb = post.querySelector(selectors.thumb).closest('a');
 		const imageSrc = fileThumb && fileThumb.href;
 		const thumbImg = fileThumb && fileThumb.querySelector('img');
 		const thumbSrc = thumbImg && thumbImg.src;
-		const imageMD5 = thumbImg && thumbImg.getAttribute('data-md5');
+		const imageMD5 = Site === 'Fuuka'
+			? post.querySelector(':scope > a:nth-of-type(3)').href.split('/').pop()
+			: thumbImg && thumbImg.getAttribute('data-md5');
 
 		const sounds = parseFileName(filename, imageSrc, postID, thumbSrc, imageMD5);
 
@@ -83,16 +73,16 @@ function parsePost(post, skipRender) {
 
 		// Create a play link
 		const firstID = sounds[0].id;
-		const text = is4chan ? 'play' : 'Play';
-		const clss = `${ns}-play-link` + (is4chan ? '' : ' btnr');
-		let playLinkParent;
-		if (is4chan) {
-			playLinkParent = post.querySelector('.fileText');
-			playLinkParent.appendChild(document.createTextNode(' '));
-		} else {
-			playLinkParent = post.querySelector('.post_controls');
-		}
-		playLink = createElement(`<a href="javascript:;" class="${clss}" data-id="${firstID}">${text}</a>`, playLinkParent);
+		const linkInfo = selectors.playLink;
+		const content = `<a href="javascript:;" class="${linkInfo.class}" data-id="${firstID}">${linkInfo.text}</a>`;
+
+		const playLinkRelative = linkInfo.relative && post.querySelector(linkInfo.relative);
+
+		linkInfo.prependText && _addPlayLinkText(linkInfo.prependText, linkInfo.before, playLinkRelative);
+		playLink = linkInfo.before
+			? createElementBefore(content, playLinkRelative)
+			: createElement(content, playLinkRelative);
+		linkInfo.appendText && _addPlayLinkText(linkInfo.appendText, linkInfo.before, playLinkRelative);
 		playLink.onclick = () => Player.play(Player.sounds.find(sound => sound.id === firstID));
 
 		// Don't add sounds from inline quotes of posts in the thread
@@ -101,6 +91,15 @@ function parsePost(post, skipRender) {
 	} catch (err) {
 		Player.logError('There was an issue parsing the files. Please check the console for details.', err);
 		console.log('[4chan sounds player]', post);
+	}
+}
+
+function _addPlayLinkText(text, before, relative) {
+	const node = text && document.createTextNode(text);
+	if (before) {
+		relative.parentNode.insertBefore(node, relative);
+	} else {
+		relative.appendChild(node);
 	}
 }
 
