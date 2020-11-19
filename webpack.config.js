@@ -61,6 +61,10 @@ module.exports = (env, argv) => {
 		module: {
 			rules: [
 				{
+					test:/\.svg$/i,
+					use: 'raw-loader'
+				},
+				{
 					test: /\.tpl$/i,
 					use: [
 						tplLoader
@@ -80,7 +84,8 @@ module.exports = (env, argv) => {
 		plugins: [
 			new webpack.IgnorePlugin({ resourceRegExp: /fs/ }),
 			new webpack.BannerPlugin({ banner, raw: true }),
-			new webpack.DefinePlugin({ VERSION: JSON.stringify(version), MODE: JSON.stringify(argv.mode) })
+			new webpack.DefinePlugin({ VERSION: JSON.stringify(version), MODE: JSON.stringify(argv.mode) }),
+			new webpack.ProvidePlugin({ Icons: path.resolve(path.join(__dirname, 'src/icons')) })
 		]
 	};
 };

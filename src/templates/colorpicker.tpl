@@ -6,7 +6,7 @@
 		<div class="position"></div>
 	</div>
 	<div class="${ns}-output" style="text-align: right;">
-		<a href="#" class="${ns}-close-colorpicker"><span class="fa fa-times">X</span></a>
+		<a href="#" class="${ns}-close-colorpicker">${Icons.close}</a>
 		<div class="output-color" style="background: rgb(${data.rgb[0]}, ${data.rgb[1]}, ${data.rgb[2]});"></div>
 
 		<table>

@@ -117,7 +117,7 @@ module.exports = {
 		fileList && (fileList.innerHTML = files.length < 2 ? '' : files.map((file, i) =>
 			`<div class="${ns}-row">
 				<div class="${ns}-col ${ns}-truncate-text">${file.name}</div>
-				<a class="${ns}-col-auto ${ns}-remove-file" href="#" data-idx="${i}"><span class="fa fa-times">X</span></a>
+				<a class="${ns}-col-auto ${ns}-remove-file" href="#" data-idx="${i}">${Icons.close}</a>
 			</div>`
 		).join(''));
 	},

@@ -1,6 +1,7 @@
 'use strict';
 
 import './globals';
+import './icons';
 
 async function doInit() {
 	// Wait for 4chan X if it's installed and not finished initialising.

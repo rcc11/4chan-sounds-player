@@ -13,10 +13,3 @@
 html:not(.fourchan-x) .#{$ns}-header .#{$ns}-col-auto {
 	margin: 0 .075rem;
 }
-// Append a little 1 to indicate repeat one
-html.fourchan-x  .fa-repeat.fa-repeat-one::after {
-	content: '1';
-	font-size: .5rem;
-	visibility: visible;
-	margin-left: -1px;
-}

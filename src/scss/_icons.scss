@@ -1,0 +1,30 @@
+.#{$ns}-icon-close {
+	transform: rotate(45deg);
+}
+
+.#{$ns}-footer svg.bi {
+	margin-bottom: -.2rem
+}
+
+.#{$ns}-menu svg.bi {
+	margin-bottom: -.0625rem
+}
+
+.#{$ns}-header svg.bi {
+	margin: 0 .125rem;
+}
+
+.muted svg.bi {
+	opacity: .45;
+}
+
+
+// Append a little 1 to indicate repeat one
+.#{$ns}-repeat-one::after {
+	content: "1";
+	font-size: 0.5rem;
+	visibility: visible;
+	margin-left: -.7rem;
+	margin-top: .11rem;
+	margin-right: .42rem;
+}

@@ -70,22 +70,15 @@ module.exports = {
 				// Which value is to use is taken from the `property` in the base config of the player config.
 				// This gives us different state displays.
 				if (buttonConf.values) {
-					buttonConf = {
-						...buttonConf,
-						...buttonConf.values[_get(Player.config, buttonConf.property)] || buttonConf.values[Object.keys(buttonConf.values)[0]]
-					};
+					let topConf = buttonConf;
+					const valConf = buttonConf.values[_get(Player.config, buttonConf.property)] || buttonConf.values[Object.keys(buttonConf.values)[0]]
+					buttonConf = { ...topConf, ...valConf, class: ((topConf.class || '') + ' ' + (valConf.class || '')).trim() };
 				}
 				const attrs = typeof buttonConf.attrs === 'function' ? buttonConf.attrs(data) : buttonConf.attrs || [];
 				attrs.some(attr => attr.startsWith('href')) || attrs.push('href="javascript:;"');
 				(buttonConf.class || outerClass) && attrs.push(`class="${buttonConf.class || ''} ${outerClass || ''}"`);
 
-				if (!text) {
-					text = buttonConf.icon
-						? `<span class="fa ${buttonConf.icon}">${buttonConf.text}</span>`
-						: buttonConf.text;
-				}
-
-				return `<a ${attrs.join(' ')}>${text}</a>`;
+				return `<a ${attrs.join(' ')}>${text || buttonConf.icon || buttonConf.text}</a>`;
 			})
 			.replace(soundNameMarqueeRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem; text-overflow: clip;"><span title="${name}" class="${ns}-title-marquee" data-location="${data.location || ''}">${name}</span></div>` : '')
 			.replace(soundNameRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem"><span title="${name}">${name}</span></div>` : '')

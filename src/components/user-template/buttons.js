@@ -6,9 +6,9 @@ module.exports = [
 		tplName: 'repeat',
 		class: `${ns}-repeat-button`,
 		values: {
-			all: { attrs: [ 'title="Repeat All"' ], text: '[RA]', icon: 'fa-repeat' },
-			one: { attrs: [ 'title="Repeat One"' ], text: '[R1]', icon: 'fa-repeat fa-repeat-one' },
-			none: { attrs: [ 'title="No Repeat"' ], text: '[R0]', icon: 'fa-repeat disabled' }
+			all: { attrs: [ 'title="Repeat All"' ], icon: Icons.arrowRepeat },
+			one: { attrs: [ 'title="Repeat One"' ],icon: Icons.arrowClockwise },
+			none: { attrs: [ 'title="No Repeat"'], class: 'muted', icon: Icons.arrowRepeat }
 		}
 	},
 	{
@@ -16,8 +16,8 @@ module.exports = [
 		tplName: 'shuffle',
 		class: `${ns}-shuffle-button`,
 		values: {
-			true: { attrs: [ 'title="Shuffled"' ], text: '[S]', icon: 'fa-random' },
-			false: { attrs: [ 'title="Ordered"' ], text: '[O]', icon: 'fa-random disabled' }
+			true: { attrs: [ 'title="Shuffled"' ], icon: Icons.shuffle },
+			false: { attrs: [ 'title="Ordered"' ], class: 'muted', icon: Icons.shuffle }
 		}
 	},
 	{
@@ -25,8 +25,8 @@ module.exports = [
 		tplName: 'playlist',
 		class: `${ns}-viewStyle-button`,
 		values: {
-			playlist: { attrs: [ 'title="Hide Playlist"' ], text: '[+]', icon: 'fa-compress' },
-			image: { attrs: [ 'title="Show Playlist"' ], text: '[-]', icon: 'fa-expand' }
+			playlist: { attrs: [ 'title="Hide Playlist"' ], icon: Icons.arrowsExpand },
+			image: { attrs: [ 'title="Show Playlist"' ], icon: Icons.arrowsCollapse }
 		}
 	},
 	{
@@ -34,64 +34,57 @@ module.exports = [
 		tplName: 'hover-images',
 		class: `${ns}-hoverImages-button`,
 		values: {
-			true: { attrs: [ 'title="Hover Images Enabled"' ], text: '[H]', icon: 'fa-picture-o' },
-			false: { attrs: [ 'title="Hover Images Disabled"' ], text: '[-]', icon: 'fa-picture-o disabled' }
+			true: { attrs: [ 'title="Hover Images Enabled"' ], icon: Icons.image },
+			false: { attrs: [ 'title="Hover Images Disabled"'], class: 'muted', icon: Icons.image }
 		}
 	},
 	{
 		tplName: 'add',
 		class: `${ns}-add-button`,
-		icon: 'fa-plus',
-		text: '+',
+		icon: Icons.plus,
 		attrs: [ 'title="Add local files"' ]
 	},
 	{
 		tplName: 'reload',
 		class: `${ns}-reload-button`,
-		icon: 'fa-refresh',
-		text: '[R]',
+		icon: Icons.reboot,
 		attrs: [ 'title="Reload the playlist"' ]
 	},
 	{
 		tplName: 'settings',
 		class: `${ns}-config-button`,
-		icon: 'fa-wrench',
-		text: '[S]',
+		icon: Icons.gear,
 		attrs: [ 'title="Settings"' ]
 	},
 	{
 		tplName: 'threads',
 		class: `${ns}-threads-button`,
-		icon: 'fa-search',
-		text: '[T]',
+		icon: Icons.search,
 		attrs: [ 'title="Threads"' ]
 	},
 	{
 		tplName: 'tools',
 		class: `${ns}-tools-button`,
-		icon: 'fa-gears',
-		text: '[T]',
+		icon: Icons.tools,
 		attrs: [ 'title="Tools"' ]
 	},
 	{
 		tplName: 'close',
 		class: `${ns}-close-button`,
-		icon: 'fa-times',
-		text: 'X',
+		icon: Icons.close,
 		attrs: [ 'title="Hide the player"' ]
 	},
 	{
 		tplName: 'playing',
 		requireSound: true,
 		class: `${ns}-playing-jump-link`,
-		text: 'Playing',
+		icon: Icons.musicNoteList,
 		attrs: [ 'title="Scroll the playlist currently playing sound."' ]
 	},
 	{
 		tplName: 'post',
 		requireSound: true,
-		icon: 'fa-comment-o',
-		text: 'Post',
+		icon: Icons.chatRightQuote,
 		showIf: data => data.sound.post,
 		attrs: data => [
 			`class="${ns}-truncate-text"`,
@@ -102,8 +95,7 @@ module.exports = [
 	{
 		tplName: 'image',
 		requireSound: true,
-		icon: 'fa-image',
-		text: 'i',
+		icon: Icons.image,
 		attrs: data => [
 			`href=${data.sound.image}`,
 			'title="Open the image in a new tab"',
@@ -114,8 +106,7 @@ module.exports = [
 		tplName: 'sound',
 		requireSound: true,
 		href: data => data.sound.src,
-		icon: 'fa-volume-up',
-		text: 's',
+		icon: Icons.soundwave,
 		attrs: data => [
 			`href=${data.sound.src}`,
 			'title="Open the sound in a new tab"',
@@ -126,8 +117,7 @@ module.exports = [
 		tplName: 'dl-image',
 		requireSound: true,
 		class: `${ns}-download-link`,
-		icon: 'fa-file-image-o',
-		text: 'i',
+		icon: Icons.fileEarmarkImage,
 		attrs: data => [
 			'title="Download the image with the original filename"',
 			`data-src="${data.sound.image}"`,
@@ -138,8 +128,7 @@ module.exports = [
 		tplName: 'dl-sound',
 		requireSound: true,
 		class: `${ns}-download-link`,
-		icon: 'fa-file-sound-o',
-		text: 's',
+		icon: Icons.fileEarmarkMusic,
 		attrs: data => [
 			'title="Download the sound"',
 			`data-src="${data.sound.src}"`,
@@ -150,8 +139,7 @@ module.exports = [
 		tplName: 'filter-image',
 		requireSound: true,
 		class: `${ns}-filter-link`,
-		icon: 'fa-filter',
-		text: 'i',
+		icon: Icons.filter,
 		showIf: data => data.sound.imageMD5,
 		attrs: data => [
 			'title="Add the image MD5 to the filters."',
@@ -162,8 +150,7 @@ module.exports = [
 		tplName: 'filter-sound',
 		requireSound: true,
 		class: `${ns}-filter-link`,
-		icon: 'fa-filter',
-		text: 's',
+		icon: Icons.filter,
 		attrs: data => [
 			'title="Add the sound URL to the filters."',
 			`data-filter="${data.sound.src.replace(/^(https?:)?\/\//, '')}"`
@@ -173,8 +160,7 @@ module.exports = [
 		tplName: 'remove',
 		requireSound: true,
 		class: `${ns}-remove-link`,
-		icon: 'fa-trash-o',
-		text: 'r',
+		icon: Icons.trash,
 		attrs: data => [
 			'title="Filter the image."',
 			`data-id="${data.sound.id}"`
@@ -184,15 +170,13 @@ module.exports = [
 		tplName: 'menu',
 		requireSound: true,
 		class: `${ns}-item-menu-button`,
-		icon: 'fa-angle-down',
-		text: '▼',
+		icon: Icons.chevronDown,
 		attrs: data => [ `data-id=${data.sound.id}` ]
 	},
 	{
 		tplName: 'view-menu',
 		class: `${ns}-view-menu-button`,
-		icon: 'fa-angle-down',
-		text: '▾',
+		icon: Icons.chevronDown,
 		attrs: [ 'href="javascript:;"' ]
 	}
 ];

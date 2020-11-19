@@ -1,5 +1,5 @@
 `<div id="${ns}-container" data-view-style="${Player.config.viewStyle}" style="top: 30px; left: 0px; width: 360px; display: none;">
-	<div class="${ns}-header ${ns}-row">
+	<div class="${ns}-header ${ns}-row ${ns}-align-center">
 		${Player.templates.header(data)}
 	</div>
 	<div class="${ns}-view-container">

@@ -1,0 +1,23 @@
+module.exports = {
+	arrowClockwise: require('../node_modules/bootstrap-icons/icons/arrow-clockwise.svg').default,
+	arrowsCollapse: require('../node_modules/bootstrap-icons/icons/arrows-collapse.svg').default,
+	arrowsExpand: require('../node_modules/bootstrap-icons/icons/arrows-expand.svg').default,
+	arrowRepeat: require('../node_modules/bootstrap-icons/icons/arrow-repeat.svg').default,
+	chatRightQuote: require('../node_modules/bootstrap-icons/icons/chat-right-quote.svg').default,
+	chevronDown: require('../node_modules/bootstrap-icons/icons/chevron-down.svg').default,
+	close: require('../node_modules/bootstrap-icons/icons/plus.svg').default.replace('bi-plus', `bi-plus ${ns}-icon-close`).replace(/viewBox="[^"]+"/, 'viewBox="2 2 12 12"'),
+	gear: require('../node_modules/bootstrap-icons/icons/gear.svg').default,
+	fileEarmarkImage: require('../node_modules/bootstrap-icons/icons/file-earmark-image.svg').default,
+	fileEarmarkMusic: require('../node_modules/bootstrap-icons/icons/file-earmark-music.svg').default,
+	filter: require('../node_modules/bootstrap-icons/icons/filter.svg').default,
+	image: require('../node_modules/bootstrap-icons/icons/image.svg').default,
+	link: require('../node_modules/bootstrap-icons/icons/link-45deg.svg').default,
+	musicNoteList: require('../node_modules/bootstrap-icons/icons/music-note-list.svg').default,
+	plus: require('../node_modules/bootstrap-icons/icons/plus-circle.svg').default,
+	reboot: require('../node_modules/bootstrap-icons/icons/bootstrap-reboot.svg').default,
+	search: require('../node_modules/bootstrap-icons/icons/search.svg').default,
+	shuffle: require('../node_modules/bootstrap-icons/icons/shuffle.svg').default,
+	soundwave: require('../node_modules/bootstrap-icons/icons/soundwave.svg').default,
+	tools: require('../node_modules/bootstrap-icons/icons/tools.svg').default,
+	trash: require('../node_modules/bootstrap-icons/icons/trash.svg').default
+};

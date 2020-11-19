@@ -64,7 +64,7 @@
 					<span class="text"></span>
 					<div class="overfile ${ns}-input-append">
 						${Player.tools.hasFFmpeg && `<label class="${ns}-use-video-label" style="display: none;">Use video<input type="checkbox" class="${ns}-use-video"></label>` || ''}
-						<a href="#" class="${ns}-toggle-sound-input fa fa-link" data-type="url" title="Enter a URL of a previously uploaded file.">U</a>
+						<a href="#" class="${ns}-toggle-sound-input" data-type="url" title="Enter a URL of a previously uploaded file.">${Icons.link}</a>
 					</div>
 					<input class="${ns}-create-sound-snd" type="file" accept="audio/*,video/*" multiple>
 				</div>
@@ -72,7 +72,7 @@
 			</div>
 			<div class="${ns}-row ${ns}-align-center" style="position: relative; ${Player.tools.useSoundURL ? '' : 'display: none;'}">
 				<a href="#" class="${ns}-toggle-sound-input ${ns}-input-append" data-type="file" title="Select a file to upload.">
-					<span class="fa fa-file-sound-o" style="margin-right: .125rem">F</span>
+					${Icons.fileEarmarkMusic}
 				</a>
 				<input type="text" class="${ns}-create-sound-snd-url" placeholder="Sound URL/s" style="min-width: 100%;">
 			</div>
