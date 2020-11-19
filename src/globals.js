@@ -49,9 +49,8 @@ window._isEqual = function (a, b, strict = true) {
 		allKeys.push(...Object.keys(b).filter(k => !allKeys.includes(k)));
 		return allKeys.every(key => _isEqual(a[key], b[key]));
 	}
-	return strict
-		? a === b
-		: a == b;
+	// eslint-disable-next-line eqeqeq
+	return strict ? a === b : a == b;
 };
 
 window.toDuration = function (number) {

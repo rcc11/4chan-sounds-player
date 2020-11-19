@@ -1,4 +1,4 @@
-const selectors = require('./selectors')
+const selectors = require('./selectors');
 
 const protocolRE = /^(https?:)?\/\//;
 const filenameRE = /(.*?)[[({](?:audio|sound)[ =:|$](.*?)[\])}]/gi;

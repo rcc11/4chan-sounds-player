@@ -12,7 +12,7 @@ module.exports = {
 		thumb: '.fileThumb',
 		playLink: {
 			class: `${ns}-play-link`,
-			textContent: 'play',
+			text: 'play',
 			relative: '.fileText',
 			prependText: ' '
 		},
@@ -20,7 +20,7 @@ module.exports = {
 		styleFetcher: 'post reply style-fetcher',
 		limitWidthOf: '.thread > .postContainer'
 	},
-	'FoolFuuka': {
+	FoolFuuka: {
 		postIdPrefix: '',
 		posts: 'article',
 		// For the archive the OP and reply selector differs
@@ -37,7 +37,7 @@ module.exports = {
 		styleFetcher: 'post_wrapper style-fetcher',
 		limitWidthOf: '.posts > article.post'
 	},
-	'Fuuka': {
+	Fuuka: {
 		postIdPrefix: 'p',
 		posts: '.content > div, td.reply',
 		filename: {

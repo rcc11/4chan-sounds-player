@@ -44,10 +44,10 @@ module.exports = {
 		}
 
 		Player.display.closeDialogs();
-		
+
 		// Get the color from the preview.
 		const previewColor = window.getComputedStyle(preview).backgroundColor;
-		const rgbMatch = previewColor.match(/rgba?\((\d+), (\d+), (\d+)(?:, ([\d\.]+))?\)/);
+		const rgbMatch = previewColor.match(/rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)/);
 		const rgb = [ +rgbMatch[1], +rgbMatch[2], +rgbMatch[3], isNaN(+rgbMatch[4]) ? 1 : rgbMatch[4] ];
 
 		// Try and put the color picker aligned to the left under the input.
@@ -68,7 +68,7 @@ module.exports = {
 
 		input._colorpicker = colorpicker;
 		colorpicker._input = input;
-		
+
 		colorpicker._colorpicker = { hsv: [ 0, 1, 1, 1 ], rgb: rgb };
 
 		// If there's a color in the input then update the hue/saturation positions to show it.
@@ -91,7 +91,7 @@ module.exports = {
 		Player.colorpicker.updateOutput(colorpicker, true);
 	},
 
-	_handleSaturationMove: function(e) {
+	_handleSaturationMove: function (e) {
 		if (!e.eventTarget._mousedown) {
 			return;
 		}
@@ -100,7 +100,7 @@ module.exports = {
 		const saturationPosition = e.eventTarget.querySelector('.position');
 		const x = Math.max(0, e.clientX - e.eventTarget.getBoundingClientRect().left);
 		const y = Math.max(0, e.clientY - e.eventTarget.getBoundingClientRect().top);
-		
+
 		colorpicker._colorpicker.hsv[1] = x / WIDTH;
 		colorpicker._colorpicker.hsv[2] = 1 - y / HEIGHT;
 		saturationPosition.style.top = Math.min(HEIGHT - 3, Math.max(-3, (y - 6))) + 'px';
@@ -158,17 +158,17 @@ module.exports = {
 		input.focus();
 		input.blur();
 	},
-	
-	hsv2rgb: function(h, s, v, a) {
+
+	hsv2rgb: function (h, s, v, a) {
 		const i = Math.floor((h * 6));
 		const f = (h * 6) - i;
 		const p = v * (1 - s);
 		const q = v * (1 - f * s);
 		const t = v * (1 - (1 - f) * s);
 		const mod = i % 6;
-		const r = [v, q, p, p, t, v][mod];
-		const g = [t, v, v, q, p, p][mod];
-		const b = [p, p, t, v, v, q][mod];
+		const r = [ v, q, p, p, t, v ][mod];
+		const g = [ t, v, v, q, p, p ][mod];
+		const b = [ p, p, t, v, v, q ][mod];
 
 		return [
 			Math.round(r * 255),
@@ -179,19 +179,21 @@ module.exports = {
 	},
 
 	rgb2hsv: function (r, g, b, a) {
-		var max = Math.max(r, g, b),
-			min = Math.min(r, g, b),
-			d = max - min,
-			h,
-			s = (max === 0 ? 0 : d / max),
-			v = max / 255;
+		const max = Math.max(r, g, b);
+		const min = Math.min(r, g, b);
+		const d = max - min;
+		const s = (max === 0 ? 0 : d / max);
+		const v = max / 255;
+		let h;
 
+		/* eslint-disable max-statements-per-line */
 		switch (max) {
 			case min: h = 0; break;
-			case r: h = (g - b) + d * (g < b ? 6: 0); h /= 6 * d; break;
+			case r: h = (g - b) + d * (g < b ? 6 : 0); h /= 6 * d; break;
 			case g: h = (b - r) + d * 2; h /= 6 * d; break;
 			case b: h = (r - g) + d * 4; h /= 6 * d; break;
 		}
+		/* eslint-enable max-statements-per-line */
 
 		return [ h, s, v, a ];
 	},

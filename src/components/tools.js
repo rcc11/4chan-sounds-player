@@ -350,7 +350,7 @@ module.exports = {
 		const idx = Player.tools._uploadIdx++;
 
 		if (!host || host.invalid) {
-			throw new PlayerError('Invalid upload host: ' + hostId, 'error');
+			throw new PlayerError('Invalid upload host.', 'error');
 		}
 
 		const formData = new FormData();

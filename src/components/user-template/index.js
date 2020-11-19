@@ -71,7 +71,7 @@ module.exports = {
 				// This gives us different state displays.
 				if (buttonConf.values) {
 					let topConf = buttonConf;
-					const valConf = buttonConf.values[_get(Player.config, buttonConf.property)] || buttonConf.values[Object.keys(buttonConf.values)[0]]
+					const valConf = buttonConf.values[_get(Player.config, buttonConf.property)] || buttonConf.values[Object.keys(buttonConf.values)[0]];
 					buttonConf = { ...topConf, ...valConf, class: ((topConf.class || '') + ' ' + (valConf.class || '')).trim() };
 				}
 				const attrs = typeof buttonConf.attrs === 'function' ? buttonConf.attrs(data) : buttonConf.attrs || [];
@@ -252,8 +252,8 @@ module.exports = {
 
 	_setFocusedMenuItem: function (e) {
 		const submenu = e.currentTarget.querySelector('.submenu');
-		const menu = e.currentTarget.closest(`.dialog`);
-		const currentFocus = menu.querySelectorAll(`.focused`);
+		const menu = e.currentTarget.closest('.dialog');
+		const currentFocus = menu.querySelectorAll('.focused');
 		currentFocus.forEach(el => el.classList.remove('focused'));
 		e.currentTarget.classList.add('focused');
 		// Move the menu to the other side if there isn't room.

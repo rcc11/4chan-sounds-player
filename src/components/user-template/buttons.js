@@ -7,8 +7,8 @@ module.exports = [
 		class: `${ns}-repeat-button`,
 		values: {
 			all: { attrs: [ 'title="Repeat All"' ], icon: Icons.arrowRepeat },
-			one: { attrs: [ 'title="Repeat One"' ],icon: Icons.arrowClockwise },
-			none: { attrs: [ 'title="No Repeat"'], class: 'muted', icon: Icons.arrowRepeat }
+			one: { attrs: [ 'title="Repeat One"' ], icon: Icons.arrowClockwise },
+			none: { attrs: [ 'title="No Repeat"' ], class: 'muted', icon: Icons.arrowRepeat }
 		}
 	},
 	{
@@ -35,7 +35,7 @@ module.exports = [
 		class: `${ns}-hoverImages-button`,
 		values: {
 			true: { attrs: [ 'title="Hover Images Enabled"' ], icon: Icons.image },
-			false: { attrs: [ 'title="Hover Images Disabled"'], class: 'muted', icon: Icons.image }
+			false: { attrs: [ 'title="Hover Images Disabled"' ], class: 'muted', icon: Icons.image }
 		}
 	},
 	{

@@ -111,7 +111,7 @@ module.exports = {
 		settingsConfig.find(s => s.property === 'colors').settings.forEach(setting => {
 			const updateConfig = force || (setting.default === _get(Player.config, setting.property));
 			colorSettingMap[setting.property] && (setting.default = style[colorSettingMap[setting.property]]);
-			updateConfig && Player.set(setting.property, setting.default, { bypassSave: true, bypassRender: true, bypassStylesheet: true});
+			updateConfig && Player.set(setting.property, setting.default, { bypassSave: true, bypassRender: true, bypassStylesheet: true });
 		});
 
 		// Clean up the element.
@@ -302,12 +302,12 @@ module.exports = {
 				data.pause--;
 				return;
 			}
-			data.position = data.position - (20 * data.direction);
+			data.position -= (20 * data.direction);
 
 			// Pause then reverse direction when the end is reached.
 			if (data.position > 0 || data.position < offset) {
 				data.position = Math.min(0, Math.max(data.position, offset));
-				data.direction = data.direction * -1;
+				data.direction *= -1;
 				data.pause = 1;
 			}
 

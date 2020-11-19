@@ -87,7 +87,7 @@ module.exports = {
 		_set(Player.config, property, value);
 
 		// Trigger events, unless they are disabled in opts.
-		!bypassStylesheet && settingConfig && settingConfig.updateStylesheet && Player.display.updateStylesheet()
+		!bypassStylesheet && settingConfig && settingConfig.updateStylesheet && Player.display.updateStylesheet();
 		!silent && Player.trigger('config', property, value, previousValue);
 		!silent && Player.trigger('config:' + property, value, previousValue);
 		!bypassSave && Player.settings.save();

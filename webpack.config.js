@@ -1,3 +1,4 @@
+// eslint-disable-next-line security/detect-child-process
 const { execFileSync, execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -61,7 +62,7 @@ module.exports = (env, argv) => {
 		module: {
 			rules: [
 				{
-					test:/\.svg$/i,
+					test: /\.svg$/i,
 					use: 'raw-loader'
 				},
 				{

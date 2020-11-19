@@ -16,11 +16,11 @@ module.exports = {
 				[ 'seekbackward', evt => Player.audio.currentTime -= evt.seekOffset || 10 ],
 				[ 'seekforward', evt => Player.audio.currentTime += evt.seekOffset || 10 ],
 				[ 'seekto', evt => Player.audio.currentTime += evt.seekTime ]
-			]
+			];
 			for (let [ type, handler ] of actions) {
 				try {
 					navigator.mediaSession.setActionHandler(type, handler);
-				} catch(err) {
+				} catch (err) {
 					// not enabled...
 				}
 			}
@@ -28,7 +28,7 @@ module.exports = {
 			// Keep the media metadata updated.
 			Player.audio.addEventListener('pause', () => navigator.mediaSession.playbackState = 'paused');
 			Player.audio.addEventListener('ended', () => navigator.mediaSession.playbackState = 'paused');
-			Player.audio.addEventListener('play', function() {
+			Player.audio.addEventListener('play', function () {
 				navigator.mediaSession.playbackState = 'playing';
 				navigator.mediaSession.metadata = new MediaMetadata({
 					title: Player.playing.title,
