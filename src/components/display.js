@@ -47,20 +47,30 @@ module.exports = {
 	/**
 	 * Create the player show/hide button in to the 4chan X header.
 	 */
-	initChanX: function () {
-		if (Player.display._initedChanX) {
-			return;
+	createPlayerButton: function () {
+		if (Site === 'FoolFuuka') {
+			// Add a sounds link in the nav for archives
+			const nav = document.querySelector('.navbar-inner .nav:nth-child(2)');
+			const li = _.element('<li><a href="javascript:;">Sounds</a></li>', nav);
+			li.children[0].addEventListener('click', Player.display.toggle);
+		} else if (Site === 'Fuuka') {
+			const br = document.querySelector('body > div > br');
+			br.parentNode.insertBefore(document.createTextNode('['), br);
+			_.elementBefore('<a href="javascript:;">Sounds</a>', br, { click: Player.display.toggle });
+			br.parentNode.insertBefore(document.createTextNode(']'), br);
+		} else if (isChanX) {
+			// Add a button in the header for 4chan X.
+			const showIcon = _.elementBefore(`<span id="shortcut-sounds" class="shortcut brackets-wrap" data-index="0">
+				<a href="javascript:;" title="Sounds" class="fa fa-play-circle">Sounds</a>
+			</span>`, document.getElementById('shortcut-settings'));
+			showIcon.querySelector('a').addEventListener('click', Player.display.toggle);
+		} else {
+			// Add a [Sounds] link in the top and bottom nav for native 4chan.
+			document.querySelectorAll('#settingsWindowLink, #settingsWindowLinkBot').forEach(function (link) {
+				_.elementBefore('<a href="javascript:;">Sounds</a>', link, { click: Player.display.toggle });
+				link.parentNode.insertBefore(document.createTextNode('] ['), link);
+			});
 		}
-		const shortcuts = document.getElementById('shortcuts');
-		if (!shortcuts) {
-			return;
-		}
-		Player.display._initedChanX = true;
-		const showIcon = _.element(`<span id="shortcut-sounds" class="shortcut brackets-wrap" data-index="0">
-			<a href="javascript:;" title="Sounds" class="fa fa-play-circle">Sounds</a>
-		</span>`);
-		shortcuts.insertBefore(showIcon, document.getElementById('shortcut-settings'));
-		showIcon.querySelector('a').addEventListener('click', Player.display.toggle);
 	},
 
 	/**

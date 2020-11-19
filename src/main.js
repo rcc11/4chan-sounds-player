@@ -1,59 +1,50 @@
 'use strict';
 
-import './globals';
-import './icons';
-
 async function doInit() {
-	// Wait for 4chan X if it's installed and not finished initialising.
-	if (!isChanX && (isChanX = document.documentElement.classList.contains('fourchan-x'))) {
-		return;
-	}
+	// Require globals again here just in case 4chan X loaded before timeout below.
+	require('./globals');
 
 	// Require these here so every other require is sure of the 4chan X state.
 	const Player = require('./player');
 	const { parseFiles } = require('./file_parser');
 
-	// The player tends to be all black without this timeout.
-	// Something with the timing of the stylesheet loading and applying the board theme.
-	setTimeout(async function () {
-		await Player.initialize();
+	await Player.initialize();
 
-		parseFiles(document.body, true);
+	parseFiles(document.body, true);
 
-		const observer = new MutationObserver(function (mutations) {
-			mutations.forEach(function (mutation) {
-				if (mutation.type === 'childList') {
-					mutation.addedNodes.forEach(function (node) {
-						if (node.nodeType === Node.ELEMENT_NODE) {
-							parseFiles(node);
-						}
-					});
-				}
-			});
+	const observer = new MutationObserver(function (mutations) {
+		mutations.forEach(function (mutation) {
+			if (mutation.type === 'childList') {
+				mutation.addedNodes.forEach(function (node) {
+					if (node.nodeType === Node.ELEMENT_NODE) {
+						parseFiles(node);
+					}
+				});
+			}
 		});
+	});
 
-		observer.observe(document.body, {
-			childList: true,
-			subtree: true
-		});
-	}, 0);
+	observer.observe(document.body, {
+		childList: true,
+		subtree: true
+	});
 }
 
-document.addEventListener('4chanXInitFinished', function () {
-	const wasChanX = isChanX;
-	isChanX = true;
-	if (wasChanX) {
-		doInit();
-	}
-	Player.display.initChanX();
-});
+document.addEventListener('4chanXInitFinished', doInit);
 
-// If it's already known 4chan X is installed this can be skipped.
-if (!isChanX) {
-	if (document.readyState !== 'loading') {
-		doInit();
-	} else {
-		document.addEventListener('DOMContentLoaded', doInit);
+// The timeout makes sure 4chan X will have added it's classes and be identified.
+// The player also tends to be all black without a timeout.
+// Something with the timing of the stylesheet loading and applying the board theme.
+setTimeout(function () {
+	require('./globals');
+
+	// If it's already known 4chan X is installed this can be skipped.
+	if (!isChanX) {
+		if (document.readyState !== 'loading') {
+			doInit();
+		} else {
+			document.addEventListener('DOMContentLoaded', doInit);
+		}
 	}
-}
+}, 0);
 

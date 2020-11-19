@@ -72,26 +72,11 @@ const Player = window.Player = module.exports = {
 				components[name].initialize && await components[name].initialize();
 			}
 
-			if (Site === 'FoolFuuka') {
-				// Add a sounds link in the nav for archives
-				const nav = document.querySelector('.navbar-inner .nav:nth-child(2)');
-				const li = _.element('<li><a href="javascript:;">Sounds</a></li>', nav);
-				li.children[0].addEventListener('click', Player.display.toggle);
-			} else if (Site === 'Fuuka') {
-				const br = document.querySelector('body > div > br');
-				br.parentNode.insertBefore(document.createTextNode('['), br);
-				_.elementBefore('<a href="javascript:;">Sounds</a>', br, { click: Player.display.toggle });
-				br.parentNode.insertBefore(document.createTextNode(']'), br);
-			} else if (isChanX) {
-				// If it's already known that 4chan X is running then setup the button for it.
-				Player.display.initChanX();
-			} else {
-				// Add the [Sounds] link in the top and bottom nav.
-				document.querySelectorAll('#settingsWindowLink, #settingsWindowLinkBot').forEach(function (link) {
-					_.elementBefore('<a href="javascript:;">Sounds</a>', link, { click: Player.display.toggle });
-					link.parentNode.insertBefore(document.createTextNode('] ['), link);
-				});
-			}
+			// Show a button to open the player.
+			Player.display.createPlayerButton();
+
+			// Render the player, but not neccessarily show it.
+			Player.display.render();
 
 			// Expose some functionality via PlayerEvent custom events.
 			document.addEventListener('PlayerEvent', e => {
@@ -99,9 +84,6 @@ const Player = window.Player = module.exports = {
 					return _.get(Player, e.detail.action).apply(window, e.detail.arguments);
 				}
 			});
-
-			// Render the player, but not neccessarily show it.
-			Player.display.render();
 		} catch (err) {
 			Player.logError('There was an error initialzing the sound player. Please check the console for details.', err);
 			// Can't recover so throw this error.
