@@ -66,8 +66,8 @@ module.exports = {
 			Player.ui.loadedBar = Player.$(`.${ns}-seek-bar .${ns}-loaded-bar`);
 
 			// Add stylesheets to adjust the progress indicator of the seekbar and volume bar.
-			document.head.appendChild(progressBarStyleSheets[`.${ns}-seek-bar`] = document.createElement('style'));
-			document.head.appendChild(progressBarStyleSheets[`.${ns}-volume-bar`] = document.createElement('style'));
+			progressBarStyleSheets[`.${ns}-seek-bar`] = _.element('<style></style>', document.head);
+			progressBarStyleSheets[`.${ns}-volume-bar`] = _.element('<style></style>', document.head);
 			Player.controls.updateDuration();
 			Player.controls.updateVolume();
 		});
@@ -133,7 +133,7 @@ module.exports = {
 			Player.audio.removeEventListener('canplaythrough', Player.controls._playOnceLoaded);
 			Player.audio.play();
 			// Sometimes it just doesn't sync when the playback starts. Give it a second and then force a sync.
-			setTimeout(() => Player.controls.syncVideo, 100);
+			setTimeout(Player.controls.syncVideo, 100);
 		}
 	},
 
@@ -253,8 +253,8 @@ module.exports = {
 		if (!Player.container) {
 			return;
 		}
-		const currentTime = toDuration(Player.audio.currentTime);
-		const duration = toDuration(Player.audio.duration);
+		const currentTime = _.toDuration(Player.audio.currentTime);
+		const duration = _.toDuration(Player.audio.duration);
 		document.querySelectorAll(`.${ns}-current-time`).forEach(el => el.innerHTML = currentTime);
 		document.querySelectorAll(`.${ns}-duration`).forEach(el => el.innerHTML = duration);
 		Player.controls.updateProgressBarPosition(`.${ns}-seek-bar`, Player.ui.currentTimeBar, Player.audio.currentTime, Player.audio.duration);

@@ -8,8 +8,8 @@ Object.keys(Player.threads.displayThreads).reduce((rows, board) => {
 			</td>
 			<td>${thread.sub || ''}</td>
 			<td>${thread.replies} / ${thread.images}</td>
-			<td>${timeAgo(thread.time)}</td>
-			<td>${timeAgo(thread.last_modified)}</td>
+			<td>${_.timeAgo(thread.time)}</td>
+			<td>${_.timeAgo(thread.last_modified)}</td>
 		</tr>
 	`))
 }, []).join('')

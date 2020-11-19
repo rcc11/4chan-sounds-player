@@ -129,6 +129,6 @@ module.exports = {
 	 * @param {String|Function} handler Name to function on Player or a handler function.
 	 */
 	getHandler: function (handler) {
-		return typeof handler === 'string' ? _get(Player, handler) : handler;
+		return typeof handler === 'string' ? _.get(Player, handler) : handler;
 	}
 };

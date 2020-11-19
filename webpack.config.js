@@ -86,7 +86,10 @@ module.exports = (env, argv) => {
 			new webpack.IgnorePlugin({ resourceRegExp: /fs/ }),
 			new webpack.BannerPlugin({ banner, raw: true }),
 			new webpack.DefinePlugin({ VERSION: JSON.stringify(version), MODE: JSON.stringify(argv.mode) }),
-			new webpack.ProvidePlugin({ Icons: path.resolve(path.join(__dirname, 'src/icons')) })
+			new webpack.ProvidePlugin({
+				_: path.resolve(path.join(__dirname, 'src/_')),
+				Icons: path.resolve(path.join(__dirname, 'src/icons'))
+			})
 		]
 	};
 };

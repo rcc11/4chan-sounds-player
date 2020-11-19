@@ -6,7 +6,7 @@ module.exports = {
 		click: {
 			[`.${ns}-colorpicker-input, .${ns}-cp-preview`]: 'colorpicker.create',
 			[`.${ns}-apply-colorpicker`]: 'colorpicker._applyColorPicker',
-			[`.${ns}-close-colorpicker`]: noDefault(() => Player.display.closeDialogs())
+			[`.${ns}-close-colorpicker`]: _.noDefault(() => Player.display.closeDialogs())
 		},
 		change: {
 			[`.${ns}-rgb-input`]: 'colorpicker._handleRGBInput',
@@ -55,7 +55,7 @@ module.exports = {
 		const top = inputRect.top + inputRect.height;
 		const left = inputRect.left;
 
-		const colorpicker = createElement(Player.templates.colorpicker({ HEIGHT, WIDTH, top, left, rgb }), parent);
+		const colorpicker = _.element(Player.templates.colorpicker({ HEIGHT, WIDTH, top, left, rgb }), parent);
 
 		// Reposition around the input if the colorpicker is off screen.
 		const { width: cpWidth, height: cpHeight } = colorpicker.getBoundingClientRect();

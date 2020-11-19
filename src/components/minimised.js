@@ -4,9 +4,9 @@ module.exports = {
 	initialize: function () {
 		if (isChanX) {
 			// Create a reply element to gather the style from
-			const a = createElement('<a></a>', document.body);
+			const a = _.element('<a></a>', document.body);
 			const style = document.defaultView.getComputedStyle(a);
-			createElement(`<style>.${ns}-chan-x-controls .${ns}-media-control > div { background: ${style.color} }</style>`, document.head);
+			_.element(`<style>.${ns}-chan-x-controls .${ns}-media-control > div { background: ${style.color} }</style>`, document.head);
 			// Clean up the element.
 			document.body.removeChild(a);
 
@@ -25,7 +25,7 @@ module.exports = {
 			// Create the element if it doesn't exist.
 			// Set the user template and control events on it to make all the buttons work.
 			if (!container) {
-				container = createElementBefore(`<span class="${ns}-chan-x-controls ${ns}-col-auto"></span>`, document.querySelector('#shortcuts').firstElementChild);
+				container = _.elementBefore(`<span class="${ns}-chan-x-controls ${ns}-col-auto"></span>`, document.querySelector('#shortcuts').firstElementChild);
 				Player.events.addDelegatedListeners(container, {
 					click: [ Player.userTemplate.delegatedEvents.click, Player.controls.delegatedEvents.click ]
 				});

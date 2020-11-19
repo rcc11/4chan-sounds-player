@@ -59,13 +59,13 @@
 					}));
 				} else {
 
-					let value = _get(Player.config, setting.property, setting.default),
+					let value = _.get(Player.config, setting.property, setting.default),
 						attrs = (setting.attrs || '') + (setting.class ? ` class="${setting.class}"` : '') + ` data-property="${setting.property}"`,
 						displayMethod = setting.displayMethod,
-						displayMethodFunction = typeof displayMethod === 'function' ? displayMethod : _get(Player, displayMethod);
+						displayMethodFunction = typeof displayMethod === 'function' ? displayMethod : _.get(Player, displayMethod);
 
 					if (setting.format) {
-						value = _get(Player, setting.format)(value);
+						value = _.get(Player, setting.format)(value);
 					}
 					let type = typeof value;
 

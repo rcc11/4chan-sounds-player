@@ -25,13 +25,13 @@ module.exports = {
 			[`.${ns}-download-link`]: 'userTemplate._handleDownload',
 			[`.${ns}-shuffle-button`]: 'userTemplate._handleShuffle',
 			[`.${ns}-repeat-button`]: 'userTemplate._handleRepeat',
-			[`.${ns}-reload-button`]: noDefault('playlist.refresh'),
-			[`.${ns}-add-button`]: noDefault(() => Player.$(`.${ns}-add-local-file-input`).click()),
+			[`.${ns}-reload-button`]: _.noDefault('playlist.refresh'),
+			[`.${ns}-add-button`]: _.noDefault(() => Player.$(`.${ns}-add-local-file-input`).click()),
 			[`.${ns}-item-menu-button`]: 'playlist._handleItemMenu',
 			[`.${ns}-view-menu-button`]: 'userTemplate._handleViewsMenu',
 			[`.${ns}-threads-button`]: 'threads.toggle',
 			[`.${ns}-tools-button`]: 'tools.toggle',
-			[`.${ns}-config-button`]: noDefault(() => Player.settings.toggle()),
+			[`.${ns}-config-button`]: _.noDefault(() => Player.settings.toggle()),
 			[`.${ns}-favorites-button`]: 'favorites.toggle',
 			[`.${ns}-player-button`]: 'playlist.restore'
 		},
@@ -71,7 +71,7 @@ module.exports = {
 				// This gives us different state displays.
 				if (buttonConf.values) {
 					let topConf = buttonConf;
-					const valConf = buttonConf.values[_get(Player.config, buttonConf.property)] || buttonConf.values[Object.keys(buttonConf.values)[0]];
+					const valConf = buttonConf.values[_.get(Player.config, buttonConf.property)] || buttonConf.values[Object.keys(buttonConf.values)[0]];
 					buttonConf = { ...topConf, ...valConf, class: ((topConf.class || '') + ' ' + (valConf.class || '')).trim() };
 				}
 				const attrs = typeof buttonConf.attrs === 'function' ? buttonConf.attrs(data) : buttonConf.attrs || [];
@@ -113,7 +113,7 @@ module.exports = {
 	 * Find all the config dependent values in a template.
 	 */
 	findDependencies: function (property, template) {
-		template || (template = _get(Player.config, property));
+		template || (template = _.get(Player.config, property));
 		// Figure out what events should trigger a render.
 		const events = [];
 
@@ -219,7 +219,7 @@ module.exports = {
 	_handleViewsMenu: function (e) {
 		e.preventDefault();
 		e.stopPropagation();
-		const dialog = createElement(Player.templates.viewsMenu());
+		const dialog = _.element(Player.templates.viewsMenu());
 		Player.userTemplate._showMenu(e.clientX, e.clientY, dialog);
 	},
 
@@ -279,7 +279,7 @@ module.exports = {
 			url: src,
 			responseType: 'blob',
 			onload: response => {
-				const a = createElement(`<a href="${URL.createObjectURL(response.response)}" download="${name}" rel="noopener" target="_blank"></a>`);
+				const a = _.element(`<a href="${URL.createObjectURL(response.response)}" download="${name}" rel="noopener" target="_blank"></a>`);
 				a.click();
 				URL.revokeObjectURL(a.href);
 			},

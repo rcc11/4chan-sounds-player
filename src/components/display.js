@@ -56,7 +56,7 @@ module.exports = {
 			return;
 		}
 		Player.display._initedChanX = true;
-		const showIcon = createElement(`<span id="shortcut-sounds" class="shortcut brackets-wrap" data-index="0">
+		const showIcon = _.element(`<span id="shortcut-sounds" class="shortcut brackets-wrap" data-index="0">
 			<a href="javascript:;" title="Sounds" class="fa fa-play-circle">Sounds</a>
 		</span>`);
 		shortcuts.insertBefore(showIcon, document.getElementById('shortcut-settings'));
@@ -79,7 +79,7 @@ module.exports = {
 			// Create the main player. For native threads put it in the threads to get free quote previews.
 			const isThread = document.body.classList.contains('is_thread');
 			const parent = isThread && !isChanX && document.body.querySelector('.board') || document.body;
-			Player.container = createElement(Player.templates.body(), parent);
+			Player.container = _.element(Player.templates.body(), parent);
 
 			Player.trigger('rendered');
 		} catch (err) {
@@ -96,7 +96,7 @@ module.exports = {
 
 	applyBoardTheme: function (force) {
 		// Create a reply element to gather the style from
-		const div = createElement(`<div class="${selectors.styleFetcher}"></div>`, document.body);
+		const div = _.element(`<div class="${selectors.styleFetcher}"></div>`, document.body);
 		const style = document.defaultView.getComputedStyle(div);
 
 		// Apply the computed style to the color config.
@@ -109,7 +109,7 @@ module.exports = {
 			'colors.even_row': style.borderBottomColor === style.color ? 'backgroundColor' : 'borderBottomColor'
 		};
 		settingsConfig.find(s => s.property === 'colors').settings.forEach(setting => {
-			const updateConfig = force || (setting.default === _get(Player.config, setting.property));
+			const updateConfig = force || (setting.default === _.get(Player.config, setting.property));
 			colorSettingMap[setting.property] && (setting.default = style[colorSettingMap[setting.property]]);
 			updateConfig && Player.set(setting.property, setting.default, { bypassSave: true, bypassRender: true, bypassStylesheet: true });
 		});
@@ -126,7 +126,7 @@ module.exports = {
 
 	updateStylesheet: function () {
 		// Insert the stylesheet if it doesn't exist.
-		Player.stylesheet = Player.stylesheet || createElement('<style></style>', document.head);
+		Player.stylesheet = Player.stylesheet || _.element('<style></style>', document.head);
 		Player.stylesheet.innerHTML = Player.templates.css();
 	},
 
@@ -243,7 +243,7 @@ module.exports = {
 		if (restore && restoreIndex > -1) {
 			Player.display.dismissed.splice(restoreIndex, 1);
 			Player.$all(`[data-restore="${restore}"]`).forEach(el => {
-				createElementBefore(dismissedContentCache[restore], el);
+				_.elementBefore(dismissedContentCache[restore], el);
 				el.parentNode.removeChild(el);
 			});
 			await GM.setValue('dismissed', Player.display.dismissed.join(','));
@@ -256,7 +256,7 @@ module.exports = {
 		if (dismiss && !Player.display.dismissed.includes(dismiss)) {
 			Player.display.dismissed.push(dismiss);
 			Player.$all(`[data-dismiss-id="${dismiss}"]`).forEach(el => {
-				createElementBefore(`<a href="#" class="${ns}-restore-link" data-restore="${dismiss}">${dismissedRestoreCache[dismiss]}</a>`, el);
+				_.elementBefore(`<a href="#" class="${ns}-restore-link" data-restore="${dismiss}">${dismissedRestoreCache[dismiss]}</a>`, el);
 				el.parentNode.removeChild(el);
 			});
 			await GM.setValue('dismissed', Player.display.dismissed.join(','));

@@ -99,7 +99,7 @@ module.exports = {
 					// Create a board title
 					const boardConf = Player.threads.boardList.find(boardConf => boardConf.board === board);
 					const boardTitle = `/${boardConf.board}/ - ${boardConf.title}`;
-					createElement(`<div class="boardBanner"><div class="boardTitle">${boardTitle}</div></div>`, list);
+					_.element(`<div class="boardBanner"><div class="boardTitle">${boardTitle}</div></div>`, list);
 
 					// Add each thread for the board
 					const threads = Player.threads.displayThreads[board];
@@ -107,7 +107,7 @@ module.exports = {
 						list.appendChild(Parser.buildHTMLFromJSON.call(Parser, threads[i], threads[i].board, true, true));
 
 						// Add a line under each thread
-						createElement('<hr style="clear: both">', list);
+						_.element('<hr style="clear: both">', list);
 					}
 				}
 			} catch (err) {

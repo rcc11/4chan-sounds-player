@@ -14,8 +14,8 @@ module.exports = {
 			[`.${ns}-create-sound-post-link`]: 'tools._addCreatedToQR',
 			[`.${ns}-create-sound-add-link`]: 'tools._addCreatedToPlayer',
 			[`.${ns}-toggle-sound-input`]: 'tools._handleToggleSoundInput',
-			[`.${ns}-host-setting-link`]: noDefault(() => Player.settings.toggle('Hosts')),
-			[`.${ns}-remove-file`]: noDefault(e => Player.tools._handleFileRemove(e))
+			[`.${ns}-host-setting-link`]: _.noDefault(() => Player.settings.toggle('Hosts')),
+			[`.${ns}-remove-file`]: 'tools._handleFileRemove'
 		},
 		change: {
 			[`.${ns}-create-sound-img`]: 'tools._handleImageSelect',
@@ -126,6 +126,7 @@ module.exports = {
 	 * Handle a file being removed from a multi input
 	 */
 	_handleFileRemove: function (e) {
+		e.preventDefault();
 		const idx = +e.eventTarget.getAttribute('data-idx');
 		const input = e.eventTarget.closest(`.${ns}-file-input`).querySelector('input[type="file"]');
 		const dataTransfer = new DataTransfer();
@@ -374,7 +375,7 @@ module.exports = {
 						return reject(response);
 					}
 					const responseVal = host.responsePath
-						? _get(response.response, host.responsePath)
+						? _.get(response.response, host.responsePath)
 						: host.responseMatch
 							? (response.responseText.match(new RegExp(host.responseMatch)) || [])[1]
 							: response.responseText;

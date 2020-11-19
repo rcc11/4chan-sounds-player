@@ -33,11 +33,11 @@ module.exports = {
 			if (setting.settings) {
 				setting.settings.forEach(subSetting => {
 					let _setting = { ...setting, ...subSetting };
-					_set(config, _setting.property, _setting.default);
+					_.set(config, _setting.property, _setting.default);
 				});
 				return config;
 			}
-			return _set(config, setting.property, setting.default);
+			return _.set(config, setting.property, setting.default);
 		}, {});
 
 		// Load the user config.
@@ -76,15 +76,15 @@ module.exports = {
 	 */
 	set: function (property, value, { bypassValidation, bypassSave, bypassRender, silent, bypassStylesheet, settingConfig } = {}) {
 		settingConfig = settingConfig || Player.settings.findDefault(property);
-		const previousValue = _get(Player.config, property);
+		const previousValue = _.get(Player.config, property);
 
 		// Check if the value has actually changed.
-		if (!bypassValidation && _isEqual(previousValue, value)) {
+		if (!bypassValidation && _.isEqual(previousValue, value)) {
 			return;
 		}
 
 		// Set the new value.
-		_set(Player.config, property, value);
+		_.set(Player.config, property, value);
 
 		// Trigger events, unless they are disabled in opts.
 		!bypassStylesheet && settingConfig && settingConfig.updateStylesheet && Player.display.updateStylesheet();
@@ -116,18 +116,18 @@ module.exports = {
 						...subSetting
 					}));
 				} else {
-					let userVal = _get(Player.config, setting.property);
-					if (userVal !== undefined && !_isEqual(userVal, setting.default)) {
+					let userVal = _.get(Player.config, setting.property);
+					if (userVal !== undefined && !_.isEqual(userVal, setting.default)) {
 						// If the setting is a mixed in object only store items that differ from the default.
 						if (setting.mix) {
 							userVal = Object.keys(userVal).reduce((changed, key) => {
-								if (!_isEqual(setting.default[key], userVal[key])) {
+								if (!_.isEqual(setting.default[key], userVal[key])) {
 									changed[key] = userVal[key];
 								}
 								return changed;
 							}, {});
 						}
-						_set(settings, setting.property, userVal);
+						_.set(settings, setting.property, userVal);
 					}
 				}
 				return settings;
@@ -173,7 +173,7 @@ module.exports = {
 			if (opts.ignore && opts.ignore.includes(setting.property)) {
 				return;
 			}
-			let value = _get(settings, setting.property, opts.applyDefault ? setting.default : undefined);
+			let value = _.get(settings, setting.property, opts.applyDefault ? setting.default : undefined);
 			if (value !== undefined) {
 				if (setting.mix) {
 					// Mix in default.
@@ -299,18 +299,18 @@ module.exports = {
 			let settingConfig = Player.settings.findDefault(property);
 
 			// Get the new value of the setting.
-			const currentValue = _get(Player.config, property);
+			const currentValue = _.get(Player.config, property);
 			let newValue = input[input.getAttribute('type') === 'checkbox' ? 'checked' : 'value'];
 
 			if (settingConfig.parse) {
-				newValue = _get(Player, settingConfig.parse)(newValue, currentValue, e);
+				newValue = _.get(Player, settingConfig.parse)(newValue, currentValue, e);
 			}
 			if (settingConfig && settingConfig.split) {
 				newValue = newValue.split(decodeURIComponent(settingConfig.split));
 			}
 
 			// Not the most stringent check but enough to avoid some spamming.
-			if (!_isEqual(currentValue, newValue, !settingConfig.looseCompare)) {
+			if (!_.isEqual(currentValue, newValue, !settingConfig.looseCompare)) {
 				// Update the setting.
 				Player.set(property, newValue, { bypassValidation: true, bypassRender: true, settingConfig });
 			}
@@ -337,7 +337,7 @@ module.exports = {
 		e.preventDefault();
 		const property = e.eventTarget.getAttribute('data-property');
 		const handlerName = e.eventTarget.getAttribute('data-handler');
-		const handler = _get(Player, handlerName);
+		const handler = _.get(Player, handlerName);
 		handler && handler(property, e);
 	},
 
@@ -432,9 +432,9 @@ module.exports = {
 		}
 		hosts[name] = { invalid: true, data: { file: '$file' } };
 		if (container.children[0]) {
-			createElementBefore(Player.templates.hostInput(name), container.children[0]);
+			_.elementBefore(Player.templates.hostInput(name), container.children[0]);
 		} else {
-			createElement(Player.templates.hostInput(name), container);
+			_.element(Player.templates.hostInput(name), container);
 		}
 		Player.settings.set('uploadHosts', hosts, { bypassValidation: true, bypassRender: true, silent: true });
 	},

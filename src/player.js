@@ -75,12 +75,12 @@ const Player = window.Player = module.exports = {
 			if (Site === 'FoolFuuka') {
 				// Add a sounds link in the nav for archives
 				const nav = document.querySelector('.navbar-inner .nav:nth-child(2)');
-				const li = createElement('<li><a href="javascript:;">Sounds</a></li>', nav);
+				const li = _.element('<li><a href="javascript:;">Sounds</a></li>', nav);
 				li.children[0].addEventListener('click', Player.display.toggle);
 			} else if (Site === 'Fuuka') {
 				const br = document.querySelector('body > div > br');
 				br.parentNode.insertBefore(document.createTextNode('['), br);
-				createElementBefore('<a href="javascript:;">Sounds</a>', br, { click: Player.display.toggle });
+				_.elementBefore('<a href="javascript:;">Sounds</a>', br, { click: Player.display.toggle });
 				br.parentNode.insertBefore(document.createTextNode(']'), br);
 			} else if (isChanX) {
 				// If it's already known that 4chan X is running then setup the button for it.
@@ -88,7 +88,7 @@ const Player = window.Player = module.exports = {
 			} else {
 				// Add the [Sounds] link in the top and bottom nav.
 				document.querySelectorAll('#settingsWindowLink, #settingsWindowLinkBot').forEach(function (link) {
-					createElementBefore('<a href="javascript:;">Sounds</a>', link, { click: Player.display.toggle });
+					_.elementBefore('<a href="javascript:;">Sounds</a>', link, { click: Player.display.toggle });
 					link.parentNode.insertBefore(document.createTextNode('] ['), link);
 				});
 			}
@@ -96,7 +96,7 @@ const Player = window.Player = module.exports = {
 			// Expose some functionality via PlayerEvent custom events.
 			document.addEventListener('PlayerEvent', e => {
 				if (e.detail.action && (MODE === 'development' || Player._public.includes(e.detail.action))) {
-					return _get(Player, e.detail.action).apply(window, e.detail.arguments);
+					return _.get(Player, e.detail.action).apply(window, e.detail.arguments);
 				}
 			});
 
@@ -158,7 +158,7 @@ const Player = window.Player = module.exports = {
 	 */
 	alert: function (content, type = 'info', lifetime = 5) {
 		if (isChanX) {
-			content = createElement(`<span>${content}</span`);
+			content = _.element(`<span>${content}</span`);
 			document.dispatchEvent(new CustomEvent('CreateNotification', {
 				bubbles: true,
 				detail: { content, type, lifetime }

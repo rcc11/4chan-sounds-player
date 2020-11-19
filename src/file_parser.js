@@ -80,8 +80,8 @@ function parsePost(post, skipRender) {
 
 		linkInfo.prependText && _addPlayLinkText(linkInfo.prependText, linkInfo.before, playLinkRelative);
 		playLink = linkInfo.before
-			? createElementBefore(content, playLinkRelative)
-			: createElement(content, playLinkRelative);
+			? _.elementBefore(content, playLinkRelative)
+			: _.element(content, playLinkRelative);
 		linkInfo.appendText && _addPlayLinkText(linkInfo.appendText, linkInfo.before, playLinkRelative);
 		playLink.onclick = () => Player.play(Player.sounds.find(sound => sound.id === firstID));
 

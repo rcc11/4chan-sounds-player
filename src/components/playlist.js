@@ -142,15 +142,13 @@ module.exports = {
 				if (!skipRender) {
 					// Add the sound to the playlist.
 					const list = Player.$(`.${ns}-list-container`);
-					let rowContainer = document.createElement('div');
-					rowContainer.innerHTML = Player.templates.list({ sounds: [ sound ] });
+					let rowContainer = _.element(`<div>${Player.templates.list({ sounds: [ sound ] })}</div>`);
 					Player.events.addUndelegatedListeners(rowContainer, Player.playlist.undelegatedEvents);
-					let row = rowContainer.children[0];
 					if (index < Player.sounds.length - 1) {
 						const before = Player.$(`.${ns}-list-item[data-id="${Player.sounds[index + 1].id}"]`);
-						list.insertBefore(row, before);
+						list.insertBefore(rowContainer.children[0], before);
 					} else {
-						list.appendChild(row);
+						list.appendChild(rowContainer.children[0]);
 					}
 				}
 
@@ -255,7 +253,7 @@ module.exports = {
 		const parent = listContainer || Player.container;
 
 		// Create the menu.
-		const dialog = createElement(Player.templates.itemMenu({ sound, postIdPrefix }), parent);
+		const dialog = _.element(Player.templates.itemMenu({ sound, postIdPrefix }), parent);
 		Player.userTemplate._showMenu(e.clientX, e.clientY, dialog, parent);
 	},
 
