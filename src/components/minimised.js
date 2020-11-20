@@ -3,14 +3,6 @@ module.exports = {
 
 	initialize: function () {
 		if (isChanX) {
-			// Create a reply element to gather the style from
-			const a = _.element('<a></a>', document.body);
-			const style = document.defaultView.getComputedStyle(a);
-			_.element(`<style>.${ns}-chan-x-controls .${ns}-media-control > div { background: ${style.color} }</style>`, document.head);
-			// Clean up the element.
-			document.body.removeChild(a);
-
-			// Set up the contents and maintain user template changes.
 			Player.userTemplate.maintain(Player.minimised, 'chanXTemplate', [ 'chanXControls' ], [ 'show', 'hide' ]);
 		}
 		Player.on('rendered', Player.minimised.render);
@@ -25,7 +17,7 @@ module.exports = {
 			// Create the element if it doesn't exist.
 			// Set the user template and control events on it to make all the buttons work.
 			if (!container) {
-				container = _.elementBefore(`<span class="${ns}-chan-x-controls ${ns}-col-auto"></span>`, document.querySelector('#shortcuts').firstElementChild);
+				container = _.elementBefore(`<span class="${ns}-chan-x-controls ${ns}-col-auto ${ns}-align-center"></span>`, document.querySelector('#shortcuts').firstElementChild);
 				Player.events.addDelegatedListeners(container, {
 					click: [ Player.userTemplate.delegatedEvents.click, Player.controls.delegatedEvents.click ]
 				});
@@ -41,9 +33,9 @@ module.exports = {
 				location: '4chan-X-controls',
 				sound: Player.playing,
 				replacements: {
-					'prev-button': `<div class="${ns}-media-control ${ns}-previous-button"><div class="${ns}-previous-button-display"></div></div>`,
-					'play-button': `<div class="${ns}-media-control ${ns}-play-button"><div class="${ns}-play-button-display ${!Player.audio || Player.audio.paused ? `${ns}-play` : ''}"></div></div>`,
-					'next-button': `<div class="${ns}-media-control ${ns}-next-button"><div class="${ns}-next-button-display"></div></div>`,
+					'prev-button': `<a href="#" class="${ns}-media-control ${ns}-previous-button ${ns}-hover-fill">${Icons.skipStart} ${Icons.skipStartFill}</a>`,
+					'play-button': `<a href="#" class="${ns}-media-control ${ns}-play-button ${ns}-hover-fill ${!Player.audio || Player.audio.paused ? `${ns}-play` : ''}">${Icons.play} ${Icons.pause} ${Icons.playFill} ${Icons.pauseFill}</a>`,
+					'next-button': `<a href="#" class="${ns}-media-control ${ns}-next-button ${ns}-hover-fill">${Icons.skipEnd} ${Icons.skipEndFill} </a>`,
 					'sound-current-time': `<span class="${ns}-current-time">0:00</span>`,
 					'sound-duration': `<span class="${ns}-duration">0:00</span>`
 				}

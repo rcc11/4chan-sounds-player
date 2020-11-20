@@ -50,21 +50,8 @@ module.exports = {
 		const rgbMatch = previewColor.match(/rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)/);
 		const rgb = [ +rgbMatch[1], +rgbMatch[2], +rgbMatch[3], isNaN(+rgbMatch[4]) ? 1 : rgbMatch[4] ];
 
-		// Try and put the color picker aligned to the left under the input.
-		const inputRect = input.getBoundingClientRect();
-		const top = inputRect.top + inputRect.height;
-		const left = inputRect.left;
-
-		const colorpicker = _.element(Player.templates.colorpicker({ HEIGHT, WIDTH, top, left, rgb }), parent);
-
-		// Reposition around the input if the colorpicker is off screen.
-		const { width: cpWidth, height: cpHeight } = colorpicker.getBoundingClientRect();
-		if (e.clientX + cpWidth > document.documentElement.clientWidth) {
-			colorpicker.style.left = (inputRect.left + inputRect.width - cpWidth) + 'px';
-		}
-		if (e.clientY + cpHeight > document.documentElement.clientHeight - 40) {
-			colorpicker.style.top = (inputRect.top - cpHeight) + 'px';
-		}
+		const colorpicker = _.element(Player.templates.colorpicker({ HEIGHT, WIDTH, rgb }), parent);
+		Player.position.showRelativeTo(colorpicker, input);
 
 		input._colorpicker = colorpicker;
 		colorpicker._input = input;

@@ -220,28 +220,17 @@ module.exports = {
 		e.preventDefault();
 		e.stopPropagation();
 		const dialog = _.element(Player.templates.viewsMenu());
-		Player.userTemplate._showMenu(e.clientX, e.clientY, dialog);
+		Player.userTemplate._showMenu(e.eventTarget, dialog);
 	},
 
-	_showMenu: function (x, y, dialog, parent, alignRight) {
+	_showMenu: function (relative, dialog, parent) {
 		Player.display.closeDialogs();
-		dialog.style.top = y + 'px';
-		dialog.style.left = x + 'px';
 		parent || (parent = Player.container);
 		parent.appendChild(dialog);
 
-		// Make sure it's within the page.
-		const style = document.defaultView.getComputedStyle(dialog);
-		const width = parseInt(style.width, 10);
-		const height = parseInt(style.height, 10);
-		// Show the dialog to the left of the cursor if desired and there's room or it's off screen.
-		if ((alignRight && x - width > 0) || x + width > document.documentElement.clientWidth) {
-			dialog.style.left = x - width + 'px';
-		}
-		// Move the dialog above the cursor if it's off screen.
-		if (y + height > document.documentElement.clientHeight - 40) {
-			dialog.style.top = y - height + 'px';
-		}
+		// Position the menu.
+		Player.position.showRelativeTo(dialog, relative);
+
 		// Add the focused class handler
 		dialog.querySelectorAll('.entry').forEach(el => {
 			el.addEventListener('mouseenter', Player.userTemplate._setFocusedMenuItem);

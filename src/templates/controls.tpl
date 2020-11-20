@@ -1,12 +1,12 @@
-`<div class="${ns}-col-auto ${ns}-col-auto">
-	<div class="${ns}-media-control ${ns}-previous-button">
-		<div class="${ns}-previous-button-display"></div>
+`<div class="${ns}-col-auto">
+	<div class="${ns}-media-control ${ns}-previous-button ${ns}-hover-fill">
+		${Icons.skipStart} ${Icons.skipStartFill}
 	</div>
-	<div class="${ns}-media-control ${ns}-play-button">
-		<div class="${ns}-play-button-display ${!Player.audio || Player.audio.paused ? `${ns}-play` : ''}"></div>
+	<div class="${ns}-media-control ${ns}-play-button ${ns}-hover-fill ${!Player.audio || Player.audio.paused ? `${ns}-play` : ''}">
+		${Icons.play} ${Icons.pause} ${Icons.playFill} ${Icons.pauseFill}
 	</div>
-	<div class="${ns}-media-control ${ns}-next-button">
-		<div class="${ns}-next-button-display"></div>
+	<div class="${ns}-media-control ${ns}-next-button ${ns}-hover-fill">
+		${Icons.skipEnd} ${Icons.skipEndFill}
 	</div>
 </div>
 <div class="${ns}-col">
@@ -32,6 +32,6 @@
 </div>
 <div class="${ns}-col-auto">
 	<div class="${ns}-media-control ${ns}-fullscreen-button">
-		<div class="${ns}-fullscreen-button-display"></div>
+		${Icons.fullscreen} ${Icons.fullscreenExit}
 	</div>
 </div>`

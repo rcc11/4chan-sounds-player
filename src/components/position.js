@@ -203,5 +203,26 @@ module.exports = {
 		const bottom = hasChanXHeader && docClasses.contains('bottom-header') ? headerHeight : 0;
 
 		return { top, bottom };
+	},
+
+	/**
+	 * Position a fixed item with respect to an element or event.
+	 */
+	showRelativeTo: function (item, relative) {
+		// Try and put the item aligned to the left under the relative.
+		const relRect = relative instanceof Node
+			? relative.getBoundingClientRect()
+			: { top: relative.clientY, left: relative.clientX, width: 0, height: 0 };
+		item.style.top = relRect.top + relRect.height + 'px';
+		item.style.left = relRect.left + 'px';
+
+		// Reposition around the relative if the item is off screen.
+		const { width: width, height: height } = item.getBoundingClientRect();
+		if (relRect.left + width > document.documentElement.clientWidth) {
+			item.style.left = (relRect.left + relRect.width - width) + 'px';
+		}
+		if (relRect.top + relRect.height + height > document.documentElement.clientHeight - Player.position.getHeaderOffset().bottom) {
+			item.style.top = (relRect.top - height) + 'px';
+		}
 	}
 };

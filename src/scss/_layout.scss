@@ -28,6 +28,10 @@
 	flex-wrap: wrap;
 	min-width: 100%;
 	box-sizing: border-box;
+
+	&.nowrap {
+		flex-wrap: nowrap;
+	}
 }
 .#{$ns}-col-auto {
 	flex: 0 0 auto;

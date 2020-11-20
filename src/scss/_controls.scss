@@ -3,49 +3,74 @@
 	padding: .5rem;
 
 	background: #{map-get($colors, controls_background)};
+
+	& .#{$ns}-current-time {
+		color: #{map-get($colors, controls_inactive)};
+	}
+
+	& .#{$ns}-media-control {
+		width: 1.5rem;
+		height: 1.5rem;
+		font-size: 1rem;
+
+		color: #{map-get($colors, controls_inactive)};
+
+		&:hover {
+			color: #{map-get($colors, controls_active)};
+		}
+	}
 }
 
 .#{$ns}-media-control {
-	height: 1.5rem;
-	width: 1.5rem;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	cursor: pointer;
 
-	& > div {
-		height: 1rem;
-		width: .8rem;
-		background: #{map-get($colors, controls_inactive)};;
+	&.#{$ns}-hover-fill {
+		svg[class$="-fill"], svg[class*="-fill "] {
+			display: none;
+		}
+
+		&:hover {
+			svg {
+				display: none;
+			}
+			svg[class$="-fill"], svg[class*="-fill "] {
+				display: block;
+			}
+		}
 	}
 
-	&:hover > div {
-		background: #{map-get($colors, controls_active)};
+	&.#{$ns}-play-button {
+		// Paused state
+		&:not(.#{$ns}-play) {
+			svg.bi-play-fill, svg.bi-play {
+				display: none !important;
+			}
+		}
+	
+		// Play state
+		&.#{$ns}-play {
+			svg.bi-pause-fill, svg.bi-pause {
+				display: none !important;
+			}
+		}
 	}
-}
 
-.#{$ns}-play-button-display {
-	// Paused state
-	clip-path: polygon(10% 10%, 10% 90%, 35% 90%, 35% 10%, 65% 10%, 65% 90%, 90% 90%, 90% 10%, 10% 10%);
-
-	// Play state
-	&.#{$ns}-play {
-		clip-path: polygon(0 0, 0 100%, 100% 50%, 0 0);
+	&.#{$ns}-fullscreen-button {
+		svg.bi-fullscreen-exit {
+			display: none;
+		}
 	}
-}
-.#{$ns}-previous-button-display, .#{$ns}-next-button-display {
-	clip-path: polygon(10% 10%, 10% 90%, 30% 90%, 30% 50%, 90% 90%, 90% 10%, 30% 50%, 30% 10%, 10% 10%);
-}
-.#{$ns}-next-button-display {
-	transform: scale(-1, 1);
-}
-.#{$ns}-fullscreen-button-display {
-	width: 1rem !important;
-	clip-path: polygon(0% 35%, 0% 0%, 35% 0%, 35% 15%, 15% 15%, 15% 35%, 0% 35%, 0% 100%, 35% 100%, 35% 85%, 15% 85%, 15% 65%, 0% 65%, 100% 65%, 100% 100%, 65% 100%, 65% 85%, 85% 85%, 85% 15%, 65% 15%, 65% 0%, 100% 0%, 100% 35%, 85% 35%, 85% 65%, 0% 65%);
-}
-
-.#{$ns}-controls  .#{$ns}-current-time {
-	color: #{map-get($colors, controls_inactive)};
+	##{$ns}-container[data-view-style="fullscreen"] &.#{$ns}-fullscreen-button {
+		svg.bi-fullscreen-exit {
+			display: block;
+		}
+		svg.bi-fullscreen {
+			display: none;
+		}
+	}
 }
 
 .#{$ns}-progress-bar {
@@ -101,21 +126,6 @@
 	background: #{map-get($colors, controls_inactive)};;
 }
 
-.#{$ns}-chan-x-controls {
-	align-items: inherit;
-
-	.#{$ns}-current-time, .#{$ns}-duration {
-		margin: 0 .25rem;
-	}
-
-	.#{$ns}-media-control {
-		width: 1rem;
-		height: auto;
-		margin-top: -1px;
-
-		& > div {
-			height: .7rem;
-			width: .5rem;
-		}
-	}
+.#{$ns}-chan-x-controls .#{$ns}-current-time, .#{$ns}-duration {
+	margin: 0 .25rem;
 }

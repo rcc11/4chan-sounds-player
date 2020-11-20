@@ -254,7 +254,8 @@ module.exports = {
 
 		// Create the menu.
 		const dialog = _.element(Player.templates.itemMenu({ sound, postIdPrefix }), parent);
-		Player.userTemplate._showMenu(e.clientX, e.clientY, dialog, parent);
+		const relative = e.eventTarget.classList.contains(`${ns}-item-menu-button`) ? e.eventTarget : e;
+		Player.userTemplate._showMenu(relative, dialog, parent);
 	},
 
 	/**

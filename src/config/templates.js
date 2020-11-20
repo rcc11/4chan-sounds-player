@@ -30,7 +30,7 @@ module.exports = [
 		description: 'Template for the footer contents',
 		displayGroup: 'Templates',
 		displayMethod: 'textarea',
-		attrs: 'style="height:120px;"'
+		attrs: 'style="height:9em;"'
 	},
 	{
 		property: 'chanXTemplate',
@@ -38,6 +38,7 @@ module.exports = [
 		default: 'p:{\n\tpost-link:"sound-name"\n\tprev-button\n\tplay-button\n\tnext-button\n\tsound-current-time / sound-duration\n}',
 		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 		displayGroup: 'Templates',
-		displayMethod: 'textarea'
+		displayMethod: 'textarea',
+		attrs: 'style="height:9em;"'
 	}
 ];

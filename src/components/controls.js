@@ -6,9 +6,9 @@ module.exports = {
 
 	delegatedEvents: {
 		click: {
-			[`.${ns}-previous-button`]: () => Player.previous({ force: true }),
-			[`.${ns}-play-button`]: 'togglePlay',
-			[`.${ns}-next-button`]: () => Player.next({ force: true }),
+			[`.${ns}-previous-button`]: _.noDefault(() => Player.previous({ force: true })),
+			[`.${ns}-play-button`]: _.noDefault('togglePlay'),
+			[`.${ns}-next-button`]: _.noDefault(() => Player.next({ force: true })),
 			[`.${ns}-seek-bar`]: 'controls.handleSeek',
 			[`.${ns}-volume-bar`]: 'controls.handleVolume',
 			[`.${ns}-fullscreen-button`]: 'display.toggleFullScreen'
@@ -195,7 +195,7 @@ module.exports = {
 	handleAudioEvent: function () {
 		Player.controls.syncVideo();
 		Player.controls.updateDuration();
-		document.querySelectorAll(`.${ns}-play-button .${ns}-play-button-display`).forEach(el => {
+		document.querySelectorAll(`.${ns}-play-button`).forEach(el => {
 			el.classList[Player.audio.paused ? 'add' : 'remove'](`${ns}-play`);
 		});
 	},
