@@ -44,7 +44,7 @@ module.exports = {
 		seeked: 'controls.handleAudioEvent',
 		waiting: 'controls.handleAudioEvent',
 		timeupdate: 'controls.updateDuration',
-		loadedmetadata: 'controls.updateDuration',
+		loadedmetadata: [ 'controls.updateDuration', 'controls.preventWrapping' ],
 		durationchange: 'controls.updateDuration',
 		volumechange: 'controls.updateVolume',
 		loadstart: 'controls.pollForLoading'

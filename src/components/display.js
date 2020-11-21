@@ -246,6 +246,7 @@ module.exports = {
 			}
 			Player.playlist.restore();
 		}
+		Player.controls.preventWrapping();
 	},
 
 	_handleRestore: async function (e) {
@@ -303,7 +304,7 @@ module.exports = {
 			const location = title.getAttribute('data-location');
 			// Fall out if the title is fully visible.
 			if (offset >= 0) {
-				return;
+				return title.style.marginLeft = null;
 			}
 			const data = Player.display._marquees[location] = Player.display._marquees[location] || {
 				direction: 1,

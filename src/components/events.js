@@ -36,7 +36,8 @@ module.exports = {
 			// Wire up audio events.
 			for (let eventList of audio) {
 				for (let evt in eventList) {
-					Player.audio.addEventListener(evt, Player.events.getHandler(eventList[evt]));
+					let handlers = Array.isArray(eventList[evt]) ? eventList[evt] : [ eventList[evt] ];
+					handlers.forEach(handler => Player.audio.addEventListener(evt, Player.events.getHandler(handler)));
 				}
 			}
 		});
