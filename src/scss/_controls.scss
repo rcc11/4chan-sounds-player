@@ -1,8 +1,12 @@
 .#{$ns}-controls {
 	align-items: center;
-	padding: .5rem;
+	padding: .5rem 0;
 
 	background: #{map-get($colors, controls_background)};
+
+	& > div {
+		margin: 0 .5rem;
+	}
 
 	& .#{$ns}-current-time {
 		color: #{map-get($colors, controls_inactive)};
@@ -71,6 +75,12 @@
 			display: none;
 		}
 	}
+
+	&.#{$ns}-volume-button {
+		&.mute .bi:not(.bi-volume-mute):not(.bi-volume-mute-fill) { display: none; };
+		//&.down .bi:not(.bi-volume-mute):not(.bi-volume-mute-fill) { display: none; };
+		&.up .bi:not(.bi-volume-up):not(.bi-volume-up-fill) { display: none; };
+	}
 }
 
 .#{$ns}-progress-bar {
@@ -78,7 +88,6 @@
 	height: 1.5rem;
 	display: flex;
 	align-items:center;
-	margin: 0 1rem;
 
 	& .#{$ns}-full-bar {
 		height: .3rem;

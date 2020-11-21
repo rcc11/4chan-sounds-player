@@ -1,6 +1,6 @@
 module.exports = {
-	atRoot: [ 'togglePlay', 'play', 'pause', 'next', 'previous' ],
-	public: [ 'play', 'pause', 'next', 'previous' ],
+	atRoot: [ 'togglePlay', 'play', 'pause', 'next', 'previous', 'toggleMute' ],
+	public: [ 'togglePlay', 'play', 'pause', 'next', 'previous', 'toggleMute' ],
 
 	delegatedEvents: {
 		click: {
@@ -9,6 +9,7 @@ module.exports = {
 			[`.${ns}-next-button`]: _.noDefault(() => Player.next({ force: true })),
 			[`.${ns}-seek-bar`]: 'controls.handleSeek',
 			[`.${ns}-volume-bar`]: 'controls.handleVolume',
+			[`.${ns}-volume-button`]: _.noDefault('controls.toggleMute'),
 			[`.${ns}-fullscreen-button`]: 'display.toggleFullScreen'
 		},
 		mousedown: {
@@ -246,21 +247,30 @@ module.exports = {
 		const duration = _.toDuration(Player.audio.duration);
 		document.querySelectorAll(`.${ns}-current-time`).forEach(el => el.innerHTML = currentTime);
 		document.querySelectorAll(`.${ns}-duration`).forEach(el => el.innerHTML = duration);
-		Player.controls.updateProgressBarPosition(`.${ns}-seek-bar`, Player.ui.currentTimeBar, Player.audio.currentTime, Player.audio.duration);
+		Player.controls.updateProgressBarPosition(Player.ui.currentTimeBar, Player.audio.currentTime, Player.audio.duration);
 	},
 
 	/**
 	 * Update the volume bar.
 	 */
 	updateVolume: function () {
-		GM.setValue('volume', Player.audio.volume);
-		Player.controls.updateProgressBarPosition(`.${ns}-volume-bar`, Player.$(`.${ns}-volume-bar .${ns}-current-bar`), Player.audio.volume, 1);
+		const vol = Player.audio.volume;
+		vol > 0 && (Player._lastVolume = vol);
+		GM.setValue('volume', vol);
+		document.querySelectorAll(`.${ns}-volume-button`).forEach(el => {
+			el.classList[vol === 0 ? 'add' : 'remove']('mute');
+			el.classList[vol > 0 ? 'add' : 'remove']('up');
+		});
+		Player.controls.updateProgressBarPosition(Player.$(`.${ns}-volume-bar .${ns}-current-bar`), Player.audio.volume, 1);
 	},
 
 	/**
 	 * Update a progress bar width. Adjust the margin of the circle so it's contained within the bar at both ends.
 	 */
-	updateProgressBarPosition: function (id, bar, current, total) {
+	updateProgressBarPosition: function (bar, current, total) {
+		if (!bar) {
+			return;
+		}
 		current || (current = 0);
 		total || (total = 0);
 		const ratio = !total ? 0 : Math.max(0, Math.min(((current || 0) / total), 1));
@@ -297,5 +307,9 @@ module.exports = {
 
 	volumeDown: function () {
 		Player.audio.volume = Math.max(Player.audio.volume - 0.05, 0);
+	},
+
+	toggleMute: async function () {
+		Player.audio.volume = (Player._lastVolume || 0.5) * !Player.audio.volume;
 	}
 };

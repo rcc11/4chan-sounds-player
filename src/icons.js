@@ -29,5 +29,9 @@ module.exports = {
 	skipStartFill: require('../node_modules/bootstrap-icons/icons/skip-start-fill.svg').default.replace(/viewBox="[^"]+"/, 'viewBox="2 2 12 12"'),
 	soundwave: require('../node_modules/bootstrap-icons/icons/soundwave.svg').default,
 	tools: require('../node_modules/bootstrap-icons/icons/tools.svg').default,
-	trash: require('../node_modules/bootstrap-icons/icons/trash.svg').default
+	trash: require('../node_modules/bootstrap-icons/icons/trash.svg').default,
+	volumeMute: require('../node_modules/bootstrap-icons/icons/volume-mute.svg').default.replace(/viewBox="[^"]+"/, 'viewBox="1 1 14 14"'),
+	volumeMuteFill: require('../node_modules/bootstrap-icons/icons/volume-mute-fill.svg').default.replace(/viewBox="[^"]+"/, 'viewBox="1 1 14 14"'),
+	volumeUp: require('../node_modules/bootstrap-icons/icons/volume-up.svg').default.replace(/viewBox="[^"]+"/, 'viewBox="1 1 14 14"'),
+	volumeUpFill: require('../node_modules/bootstrap-icons/icons/volume-up-fill.svg').default.replace(/viewBox="[^"]+"/, 'viewBox="1 1 14 14"')
 };

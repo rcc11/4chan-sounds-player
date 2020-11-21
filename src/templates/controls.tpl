@@ -24,6 +24,10 @@
 	</span>
 </div>
 <div class="${ns}-col-auto">
+	<div class="${ns}-media-control ${ns}-volume-button ${ns}-hover-fill up">
+		${Icons.volumeMute} ${Icons.volumeMuteFill}
+		${Icons.volumeUp} ${Icons.volumeUpFill}
+	</div>
 	<div class="${ns}-volume-bar ${ns}-progress-bar">
 		<div class="${ns}-full-bar">
 			<div class="${ns}-current-bar" style="width: ${Player.audio.volume * 100}%"></div>
