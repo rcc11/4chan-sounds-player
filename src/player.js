@@ -1,10 +1,10 @@
 const components = {
 	// Settings must be first.
 	settings: require('./components/settings'),
+	events: require('./components/events'),
 	colorpicker: require('./components/colorpicker'),
 	controls: require('./components/controls'),
 	display: require('./components/display'),
-	events: require('./components/events'),
 	footer: require('./components/footer'),
 	header: require('./components/header'),
 	hotkeys: require('./components/hotkeys'),

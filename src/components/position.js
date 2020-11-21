@@ -131,6 +131,8 @@ module.exports = {
 
 		const offset = Player.container.getBoundingClientRect().height - heightElement.getBoundingClientRect().height;
 		heightElement.style.height = (height - offset) + 'px';
+
+		Player.controls.preventWrapping();
 	},
 
 	/**

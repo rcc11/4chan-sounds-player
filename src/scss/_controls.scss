@@ -1,8 +1,9 @@
 .#{$ns}-controls {
 	align-items: center;
 	padding: .5rem 0;
-
+	position: relative;
 	background: #{map-get($colors, controls_background)};
+	justify-content: space-between;
 
 	& > div {
 		margin: 0 .5rem;

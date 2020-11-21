@@ -311,5 +311,24 @@ module.exports = {
 
 	toggleMute: async function () {
 		Player.audio.volume = (Player._lastVolume || 0.5) * !Player.audio.volume;
+	},
+
+	/**
+	 * Hide elements in the controls instead of wrapping
+	 */
+	preventWrapping: function () {
+		const controls = Player.$(`.${ns}-controls`);
+		const expectedOffsetTop = parseFloat(window.getComputedStyle(controls).paddingTop);
+		const hideElements = Array.prototype.slice.call(controls.querySelectorAll('[data-hide-order]'));
+		hideElements.sort((a, b) => a.dataset.hideOrder - b.dataset.hideOrder);
+		let visibleChildren = Array.prototype.slice.call(controls.children);
+		let lastChild = visibleChildren.pop();
+		hideElements.forEach(el => el.style.display = null);
+		while (lastChild.offsetTop > expectedOffsetTop && hideElements.length) {
+			const hide = hideElements.shift();
+			hide.style.display = 'none';
+			visibleChildren = visibleChildren.filter(el => el !== hide);
+			hide === lastChild && (lastChild = visibleChildren.pop());
+		}
 	}
 };

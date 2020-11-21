@@ -2,7 +2,7 @@
 	position: fixed;
 	background: #{map-get($colors, background)};
 	border: 1px solid #{map-get($colors, border)};
-	min-width: 100px;
+	min-width: 7rem;
 	color: #{map-get($colors, text)};
 }
 .#{$ns}-panel {
