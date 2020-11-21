@@ -1,5 +1,3 @@
-const progressBarStyleSheets = {};
-
 module.exports = {
 	atRoot: [ 'togglePlay', 'play', 'pause', 'next', 'previous' ],
 	public: [ 'play', 'pause', 'next', 'previous' ],
@@ -65,9 +63,6 @@ module.exports = {
 			Player.ui.currentTimeBar = Player.$(`.${ns}-seek-bar .${ns}-current-bar`);
 			Player.ui.loadedBar = Player.$(`.${ns}-seek-bar .${ns}-loaded-bar`);
 
-			// Add stylesheets to adjust the progress indicator of the seekbar and volume bar.
-			progressBarStyleSheets[`.${ns}-seek-bar`] = _.element('<style></style>', document.head);
-			progressBarStyleSheets[`.${ns}-volume-bar`] = _.element('<style></style>', document.head);
 			Player.controls.updateDuration();
 			Player.controls.updateVolume();
 		});
@@ -159,9 +154,6 @@ module.exports = {
 	},
 
 	_movePlaying: function (direction, { force, group, paused } = {}) {
-		if (!Player.audio) {
-			return;
-		}
 		// If there's no sound fall out.
 		if (!Player.sounds.length) {
 			return;
@@ -250,9 +242,6 @@ module.exports = {
 	 * Update the seek bar and the duration labels.
 	 */
 	updateDuration: function () {
-		if (!Player.container) {
-			return;
-		}
 		const currentTime = _.toDuration(Player.audio.currentTime);
 		const duration = _.toDuration(Player.audio.duration);
 		document.querySelectorAll(`.${ns}-current-time`).forEach(el => el.innerHTML = currentTime);
@@ -275,12 +264,7 @@ module.exports = {
 		current || (current = 0);
 		total || (total = 0);
 		const ratio = !total ? 0 : Math.max(0, Math.min(((current || 0) / total), 1));
-		bar.style.width = (ratio * 100) + '%';
-		if (progressBarStyleSheets[id]) {
-			progressBarStyleSheets[id].innerHTML = `${id} .${ns}-current-bar:after {
-				margin-right: ${-0.8 * (1 - ratio)}rem;
-			}`;
-		}
+		bar.style.width = `calc(${ratio * 100}% - ${(0.8 * ratio) - 0.4}rem)`;
 	},
 
 	/**
@@ -288,9 +272,8 @@ module.exports = {
 	 */
 	handleSeek: function (e) {
 		e.preventDefault();
-		if (Player.container && Player.audio.duration && Player.audio.duration !== Infinity) {
-			const ratio = e.offsetX / parseInt(document.defaultView.getComputedStyle(e.eventTarget || e.target).width, 10);
-			Player.audio.currentTime = Player.audio.duration * ratio;
+		if (Player.audio.duration && Player.audio.duration !== Infinity) {
+			Player.audio.currentTime = Player.audio.duration * Player.controls._getBarXRatio(e);
 		}
 	},
 
@@ -299,12 +282,13 @@ module.exports = {
 	 */
 	handleVolume: function (e) {
 		e.preventDefault();
-		if (!Player.container) {
-			return;
-		}
-		const ratio = e.offsetX / parseInt(document.defaultView.getComputedStyle(e.eventTarget || e.target).width, 10);
-		Player.audio.volume = Math.max(0, Math.min(ratio, 1));
+		Player.audio.volume = Player.controls._getBarXRatio(e);
 		Player.controls.updateVolume();
+	},
+
+	_getBarXRatio: function (e) {
+		const offset = 0.4 * Player.remSize;
+		return Math.max(0, Math.min(1, (e.offsetX - offset) / (parseInt(getComputedStyle(e.eventTarget || e.target).width, 10) - (2 * offset))));
 	},
 
 	volumeUp: function () {

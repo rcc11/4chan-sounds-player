@@ -42,6 +42,8 @@ module.exports = {
 			Player.display._marquees = {};
 			!Player.display._marqueeTO && Player.display.runTitleMarquee();
 		});
+		// Store the rem size
+		Player.remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
 	},
 
 	/**

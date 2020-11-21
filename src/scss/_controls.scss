@@ -110,6 +110,7 @@
 				min-width: .8rem;
 				border-radius: 1rem;
 				box-shadow: rgba(0, 0, 0, 0.76) 0 0 3px 0;
+				margin-right: -.4rem
 			}
 		}
 	}
@@ -126,6 +127,8 @@
 	background: #{map-get($colors, controls_inactive)};;
 }
 
-.#{$ns}-chan-x-controls .#{$ns}-current-time, .#{$ns}-duration {
-	margin: 0 .25rem;
+.#{$ns}-chan-x-controls {
+	.#{$ns}-current-time, .#{$ns}-duration {
+		margin: 0 .25rem;
+	}
 }
