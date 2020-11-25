@@ -43,6 +43,7 @@ const Player = window.Player = module.exports = {
 		colorpicker: require('./templates/colorpicker.tpl'),
 		controls: require('./templates/controls.tpl'),
 		css: require('./scss/style.scss'),
+		css4chanXPolyfill: require('./scss/4chan-x-polyfill.scss'),
 		footer: require('./templates/footer.tpl'),
 		header: require('./templates/header.tpl'),
 		hostInput: require('./templates/host_input.tpl'),

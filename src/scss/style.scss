@@ -1,23 +1,4 @@
-$ns : "__ns__";
-$max-pip-size: '${Player.config.maxPIPWidth}';
-$colors: (
-	text: '${Player.config.colors.text}',
-	background: '${Player.config.colors.background}',
-	border: '${Player.config.colors.border}',
-	odd_row: '${Player.config.colors.odd_row}',
-	even_row: '${Player.config.colors.even_row}',
-	playing: '${Player.config.colors.playing}',
-	dragging: '${Player.config.colors.dragging}',
-	expander: '${Player.config.colors.expander}',
-
-	controls_background: '${Player.config.colors.controls_background}',
-	controls_active: '${Player.config.colors.controls_active}',
-	controls_inactive: '${Player.config.colors.controls_inactive}',
-	controls_empty_bar: '${Player.config.colors.controls_empty_bar}',
-	controls_loaded_bar: '${Player.config.colors.controls_loaded_bar}',
-
-	muted: #909090
-);
+@import "_vars.scss";
 
 @import "_colorpicker.scss";
 @import "_colors.scss";

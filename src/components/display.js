@@ -137,6 +137,11 @@ module.exports = {
 	},
 
 	updateStylesheet: function () {
+		// Add styles to handle 4chan X style not being available.
+		if (!isChanX) {
+			Player.chanXPFStylesheet = Player.chanXPFStylesheet ||  _.element('<style></style>', document.head);
+			Player.chanXPFStylesheet.innerHTML = Player.templates.css4chanXPolyfill();
+		}
 		// Insert the stylesheet if it doesn't exist.
 		Player.stylesheet = Player.stylesheet || _.element('<style></style>', document.head);
 		Player.stylesheet.innerHTML = Player.templates.css();
