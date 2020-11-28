@@ -25,6 +25,7 @@ module.exports = [
 		tplName: 'playlist',
 		class: `${ns}-viewStyle-button`,
 		values: {
+			default: { attrs: [ 'title="Player"' ], class: 'muted', icon: () => (Player.playlist._lastView === 'playlist' ? Icons.arrowsExpand : Icons.arrowsCollapse) },
 			playlist: { attrs: [ 'title="Hide Playlist"' ], icon: Icons.arrowsExpand },
 			image: { attrs: [ 'title="Show Playlist"' ], icon: Icons.arrowsCollapse }
 		}
@@ -51,22 +52,37 @@ module.exports = [
 		attrs: [ 'title="Reload the playlist"' ]
 	},
 	{
+		property: 'viewStyle',
 		tplName: 'settings',
 		class: `${ns}-config-button`,
 		icon: Icons.gear,
-		attrs: [ 'title="Settings"' ]
+		attrs: [ 'title="Settings"' ],
+		values: {
+			default: { class: 'muted' },
+			settings: { }
+		}
 	},
 	{
+		property: 'viewStyle',
 		tplName: 'threads',
 		class: `${ns}-threads-button`,
 		icon: Icons.search,
-		attrs: [ 'title="Threads"' ]
+		attrs: [ 'title="Threads"' ],
+		values: {
+			default: { class: 'muted' },
+			threads: { }
+		}
 	},
 	{
+		property: 'viewStyle',
 		tplName: 'tools',
 		class: `${ns}-tools-button`,
 		icon: Icons.tools,
-		attrs: [ 'title="Tools"' ]
+		attrs: [ 'title="Tools"' ],
+		values: {
+			default: { class: 'muted' },
+			tools: { }
+		}
 	},
 	{
 		tplName: 'close',

@@ -112,11 +112,10 @@ module.exports = {
 	 * Switch between playlist and image view.
 	 */
 	toggleView: function (e) {
-		if (!Player.container) {
-			return;
-		}
 		e && e.preventDefault();
-		let style = Player.config.viewStyle === 'playlist' ? 'image' : 'playlist';
+		let style = Player.config.viewStyle === 'playlist' ? 'image'
+			: Player.config.viewStyle === 'image' ? 'playlist'
+			: Player.playlist._lastView;
 		Player.display.setViewStyle(style);
 	},
 

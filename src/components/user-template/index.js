@@ -57,6 +57,9 @@ module.exports = {
 		const outerClass = data.outerClass || '';
 		const name = data.sound && data.sound.title || data.defaultName;
 
+		const _confFuncOrText = v => (typeof v === 'function' ? v(data) : v);
+
+		console.log(Player.config.viewStyle);
 		// Apply common template replacements
 		let html = data.template
 			.replace(playingRE, Player.playing && Player.playing === data.sound ? '$1' : '')
@@ -74,11 +77,11 @@ module.exports = {
 					const valConf = buttonConf.values[_.get(Player.config, buttonConf.property)] || buttonConf.values[Object.keys(buttonConf.values)[0]];
 					buttonConf = { ...topConf, ...valConf, class: ((topConf.class || '') + ' ' + (valConf.class || '')).trim() };
 				}
-				const attrs = typeof buttonConf.attrs === 'function' ? buttonConf.attrs(data) : buttonConf.attrs || [];
+				const attrs = [ ...(_confFuncOrText(buttonConf.attrs) || []) ];
 				attrs.some(attr => attr.startsWith('href')) || attrs.push('href="javascript:;"');
 				(buttonConf.class || outerClass) && attrs.push(`class="${buttonConf.class || ''} ${outerClass || ''}"`);
 
-				return `<a ${attrs.join(' ')}>${text || buttonConf.icon || buttonConf.text}</a>`;
+				return `<a ${attrs.join(' ')}>${text || _confFuncOrText(buttonConf.icon) || _confFuncOrText(buttonConf.text)}</a>`;
 			})
 			.replace(soundNameMarqueeRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem; text-overflow: clip;"><span title="${name}" class="${ns}-title-marquee" data-location="${data.location || ''}">${name}</span></div>` : '')
 			.replace(soundNameRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem"><span title="${name}">${name}</span></div>` : '')

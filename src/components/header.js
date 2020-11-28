@@ -4,8 +4,6 @@ module.exports = {
 	},
 
 	render: function () {
-		if (Player.container) {
-			Player.$(`.${ns}-header`).innerHTML = Player.templates.header();
-		}
+		Player.$(`.${ns}-header`).innerHTML = Player.templates.header();
 	}
 };
