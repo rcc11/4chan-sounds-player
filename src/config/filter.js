@@ -1,5 +1,17 @@
 module.exports = [
 	{
+		property: 'addWebm',
+		title: 'Include WebM',
+		description: 'Whether to add all WebM files regardless of a sound filename.',
+		default: 'true',
+		displayGroup: 'Filter',
+		options: {
+			always: 'Always',
+			soundBoards: 'Boards with sound',
+			never: 'Never'
+		}
+	},
+	{
 		property: 'allow',
 		title: 'Allowed Hosts',
 		description: 'Which domains sources are allowed to be loaded from.',

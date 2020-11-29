@@ -47,10 +47,18 @@ module.exports = {
 		loadedmetadata: [ 'controls.updateDuration', 'controls.preventWrapping' ],
 		durationchange: 'controls.updateDuration',
 		volumechange: 'controls.updateVolume',
-		loadstart: 'controls.pollForLoading'
+		loadstart: 'controls.pollForLoading',
+		error: 'controls.handleAudioError'
+	},
+
+	handleAudioError: function (err) {
+		console.error(err);
 	},
 
 	initialize: async function () {
+		// Keep this reference to switch Player.audio to standalone videos and back.
+		Player.controls._audio = Player.audio;
+
 		// Apply the previous volume
 		GM.getValue('volume').then(volume => volume >= 0 && volume <= 1 && (Player.audio.volume = volume));
 
@@ -99,15 +107,28 @@ module.exports = {
 				if (Player.playing) {
 					Player.playing.playing = false;
 				}
+				// Remove audio events from the video, and add them back for standalone video.
+				const audioEvents = Player.controls.audioEvents;
+				for (let evt in audioEvents) {
+					let handlers = Array.isArray(audioEvents[evt]) ? audioEvents[evt] : [ audioEvents[evt] ];
+					handlers.forEach(handler => {
+						const handlerFunction = Player.events.getHandler(handler);
+						video.removeEventListener(evt, handlerFunction);
+						sound.standaloneVideo && video.addEventListener(evt, handlerFunction);
+					});
+				}
 				sound.playing = true;
 				Player.playing = sound;
 				Player.audio.src = sound.src;
+				Player.isVideo = sound.image.endsWith('.webm');
+				Player.isStandalone = sound.standaloneVideo;
+				Player.audio = sound.standaloneVideo ? video : Player.controls._audio;
 				await Player.trigger('playsound', sound);
 			}
 
 			if (!paused) {
-				// If there's a video wait for it and the sound to load before playing.
-				if (Player.playlist.isVideo && (video.readyState < 3 || Player.audio.readyState < 3)) {
+				// If there's a video and sound wait for both to load before playing.
+				if (!Player.isStandalone && Player.isVideo && (video.readyState < 3 || Player.audio.readyState < 3)) {
 					video.addEventListener('canplaythrough', Player.controls._playOnceLoaded);
 					Player.audio.addEventListener('canplaythrough', Player.controls._playOnceLoaded);
 				} else {
@@ -197,7 +218,7 @@ module.exports = {
 	 * Sync the webm to the audio. Matches the videos time and play state to the audios.
 	 */
 	syncVideo: function () {
-		if (Player.playlist.isVideo) {
+		if (Player.isVideo && !Player.isStandalone) {
 			const paused = Player.audio.paused;
 			const video = document.querySelector(`.${ns}-video`);
 			if (video) {

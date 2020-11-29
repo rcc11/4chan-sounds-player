@@ -72,9 +72,6 @@ module.exports = {
 	 * Render the playlist.
 	 */
 	render: function () {
-		if (!Player.container) {
-			return;
-		}
 		const container = Player.$(`.${ns}-list-container`);
 		container.innerHTML = Player.templates.list();
 		Player.events.addUndelegatedListeners(document.body, Player.playlist.undelegatedEvents);
@@ -92,10 +89,7 @@ module.exports = {
 	 * Update the image displayed in the player.
 	 */
 	showImage: function (sound, thumb) {
-		if (!Player.container) {
-			return;
-		}
-		let isVideo = Player.playlist.isVideo = !thumb && (sound.image.endsWith('.webm') || sound.type === 'video/webm');
+		let isVideo = !thumb && sound.image.endsWith('.webm');
 		const container = document.querySelector(`.${ns}-image-link`);
 		const img = container.querySelector(`.${ns}-image`);
 		const video = container.querySelector(`.${ns}-video`);
@@ -153,11 +147,11 @@ module.exports = {
 
 				// If nothing else has been added yet show the image for this sound.
 				if (Player.sounds.length === 1) {
-					// If we're on a thread with autoshow enabled then make sure the player is displayed
-					if (/\/thread\//.test(location.href) && Player.config.autoshow) {
-						Player.show();
-					}
 					Player.playlist.showImage(sound);
+				}
+				// Auto show if enabled, we're on a thread, and this is the first non-standlone item.
+				if (Player.config.autoshow && /\/thread\//.test(location.href) && Player.sounds.filter(s => !s.standaloneVideo).length === 1) {
+					Player.show();
 				}
 				Player.trigger('add', sound);
 			}

@@ -59,7 +59,6 @@ module.exports = {
 
 		const _confFuncOrText = v => (typeof v === 'function' ? v(data) : v);
 
-		console.log(Player.config.viewStyle);
 		// Apply common template replacements
 		let html = data.template
 			.replace(playingRE, Player.playing && Player.playing === data.sound ? '$1' : '')

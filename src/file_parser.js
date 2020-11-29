@@ -83,7 +83,7 @@ function parsePost(post, skipRender) {
 			? _.elementBefore(content, playLinkRelative)
 			: _.element(content, playLinkRelative);
 		linkInfo.appendText && _addPlayLinkText(linkInfo.appendText, linkInfo.before, playLinkRelative);
-		playLink.onclick = () => Player.play(Player.sounds.find(sound => sound.id === firstID));
+		playLink.onclick = () => Player.play(sounds[0]);
 
 		// Don't add sounds from inline quotes of posts in the thread
 		sounds.forEach(sound => Player.add(sound, skipRender));
@@ -113,6 +113,10 @@ function parseFileName(filename, image, post, thumb, imageMD5, bypassVerificatio
 	while ((match = filenameRE.exec(filename)) !== null) {
 		matches.push(match);
 	}
+	// Add webms without a sound filename as a standable video if enabled
+	if (!matches.length && (Player.config.addWebm === 'always' || (Player.config.addWebm === 'soundBoards' && (Board === 'gif' || Board === 'wsg'))) && filename.endsWith('.webm')) {
+		matches.push([ null, filename.slice(0, -5), image ]);
+	}
 	const defaultName = matches[0] && matches[0][1] || post || 'Local Sound ' + localCounter;
 	matches.length && !post && localCounter++;
 
@@ -120,6 +124,7 @@ function parseFileName(filename, image, post, thumb, imageMD5, bypassVerificatio
 		let src = match[2];
 		const id = (post || 'local' + localCounter) + ':' + i;
 		const title = match[1].trim() || defaultName + (matches.length > 1 ? ` (${i + 1})` : '');
+		const standaloneVideo = src === image;
 
 		try {
 			if (src.includes('%')) {
@@ -133,7 +138,7 @@ function parseFileName(filename, image, post, thumb, imageMD5, bypassVerificatio
 			return sounds;
 		}
 
-		const sound = { src, id, title, post, image, filename, thumb, imageMD5 };
+		const sound = { src, id, title, post, image, filename, thumb, imageMD5, standaloneVideo };
 		if (bypassVerification || Player.acceptedSound(sound)) {
 			sounds.push(sound);
 		}

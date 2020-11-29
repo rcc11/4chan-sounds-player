@@ -16,7 +16,7 @@ module.exports = [
 	{
 		property: 'showUpdatedNotification',
 		default: true,
-		title: 'Show Updated Notifications',
+		title: 'Show Update Notifications',
 		description: 'Show notifications when the player is successfully updated.',
 		displayGroup: 'Display'
 	},
