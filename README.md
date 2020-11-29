@@ -9,26 +9,26 @@ There's also an [FFmpeg version](#ffmpeg-version).
 
 ## Sound Player UI
 
-A link to open the player is shown at the top and bottom of the page, next to settings. For [4chan X](#with-4chan-x) the link is in the header.
+A link to open the player is shown at the top and bottom of the page, next to settings.
 
 ![Native Button](./images/button-native.png)
 
+For 4chan X the link is in the header.
+![4chan X Button](./images/button-4chan-x.png)
+
 #### Display Modes
 
-The playlist view will list all the sounds in the thread in the order they're playing, with the ability to drag items to modify the order. When hovering over an item the dropdown menu button will show on the right. The menu has an option to remove the item and links to post, image and sound file. It can also be opened by right clicking an item.
+The playlist view lists all the sounds in the thread. You can drag items to adjust the play order.
 
 ![Playlist UI](./images/playlist.png)
 
-The image only view hides the playlist allowing the image to be expanded.
+The playlist can be toggled by a button in the heading. With it hidden the image/video will fill the player.
 
 ![Image UI](./images/green-tea.png)
 
-#### With 4chan X
+You can opt to display a thumbnail in the bottom right of the page while the player is hidden. The example here shows a rather large image but the size is customisable. If you have 4chan X you can also have the sound controls be displayed in header.
 
-Elements of the display, such as icons, are dependent on having 4chan X installed, but it's not a requirement. The icons will fall back to text displays and everything else is purely cosmetic. With it installed the button to open the player is included in the header. You can also choose to show playback controls in the 4chan X header.
-
-![4chan X Button](./images/button-4chan-x.png)
-![4chan X Controls](./images/4chan-x-controls.png)
+![Minimised Thumbnail](./images/minimised-image.png)
 
 #### Position/Resizing
 
@@ -40,12 +40,6 @@ To add local files (images with `[sound=url]` filenames) you can either click th
 
 If you want to test out a sound before you post it this is a good method of doing so.
 
-#### Minimised Thumbnail
-
-You can opt to display a thumbnail in the bottom right of the page while the player is hidden. The example here shows a rather large image but the size is customisable.
-
-![Minimised Thumbnail](./images/minimised-image.png)
-
 ## Tools
 
 #### Encode/Decode URLS
@@ -54,7 +48,7 @@ Just two inputs that let you paste encoded and decoded URLs.
 
 #### Create Sound Image
 
-This form allows you to select/drop and image and sound. The sound will be uploaded to the selected host and the image will be renamed to include a `[sound=url]` link to it. You can also select multiple sounds to add to a single image, but keep in mind the filename length limit when doing so. Once complete you can choose to post the created image, download it, or add it to the player. Refer to [Hosts](#hosts) for the configuration.
+This form allows you to select/drop an image and sound. The sound will be uploaded to the selected host and the image will be renamed to include a `[sound=url]` link to it. You can also select multiple sounds to add to a single image, but keep in mind the filename length limit when doing so. Once complete you can choose to post the created image, download it, or add it to the player. Refer to [Hosts](#hosts) for the configuration.
 
 ![Tools View](./images/tools.png)
 
@@ -67,17 +61,14 @@ The threads can be displayed in a table or a pseudo-board.
 ![Threads Search Board View](./images/threads-board.png)
 ![Threads Search Table View](./images/threads-table.png)
 
-
 ## Settings
 
 #### Display
 
-- __4chan X Header Controls__ - When to display the playback controls in the 4chan X header. The available options are always, only with the player hidden, and never.
 - __Autoshow__ - Open the player automatically for threads that contain sounds.
 - __Colors__ - By default the player will attempt to match the board theme, but you can set your own colors. Selecting "Match Theme" will revert to matching the board theme after making any modifications.
 - __Limit Post Width__ - Reduces the widths of posts that are next to the player so they're not hidden beneath it.
 - __Minimised Display__ - What is displayed when the player is hidden. You can choose to display a thumnail image (described above) and/or show playback controls in the 4chan X header.
-- __Threads View Display__ - How the threads in the thread view are displayed.
 - __Pause on hide__ - Pauses the player when it's hidden.
 
 #### Keybinds
@@ -86,6 +77,7 @@ The threads can be displayed in a table or a pseudo-board.
 
 #### Filter
 
+- __Include WebM__ - Add WebM files to the player, regardless of sound filenames. Intended more for /gif/ and /wsg/.
 - __Allowed Hosts__ - Which hosts the player will add sounds from.
 - __Filters__ - Sounds or images to ignore. On each line add the URL of the sound or the MD5 of the image you want to filter and they will no longer be added to the player. Lines starting with a `#` are ignored. The menu for playlist items has links to add the sound or image to the filters.
 

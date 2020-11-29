@@ -3,7 +3,7 @@ module.exports = [
 		property: 'addWebm',
 		title: 'Include WebM',
 		description: 'Whether to add all WebM files regardless of a sound filename.',
-		default: 'true',
+		default: 'soundBoards',
 		displayGroup: 'Filter',
 		options: {
 			always: 'Always',
