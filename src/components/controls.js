@@ -120,7 +120,7 @@ module.exports = {
 				sound.playing = true;
 				Player.playing = sound;
 				Player.audio.src = sound.src;
-				Player.isVideo = sound.image.endsWith('.webm');
+				Player.isVideo = sound.image.endsWith('.webm') || sound.type === 'video/webm';
 				Player.isStandalone = sound.standaloneVideo;
 				Player.audio = sound.standaloneVideo ? video : Player.controls._audio;
 				await Player.trigger('playsound', sound);
