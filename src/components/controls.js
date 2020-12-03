@@ -51,10 +51,6 @@ module.exports = {
 		error: 'controls.handleAudioError'
 	},
 
-	handleAudioError: function (err) {
-		console.error(err);
-	},
-
 	initialize: async function () {
 		// Keep this reference to switch Player.audio to standalone videos and back.
 		Player.controls._audio = Player.audio;
@@ -201,6 +197,16 @@ module.exports = {
 			} while (group && nextSound && newIndex !== currentIndex && (!nextSound.post || nextSound.post === Player.playing.post));
 		}
 		nextSound && Player.play(nextSound, { paused });
+	},
+
+	/**
+	 * Handle audio errors
+	 */
+	handleAudioError: function (err) {
+		if (Player.playing) {
+			Player.logError(`Failed to play ${Player.playing.title}. Please check the console for details.`, err, 'warning');
+			Player.next();
+		}
 	},
 
 	/**
