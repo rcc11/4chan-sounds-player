@@ -71,6 +71,10 @@ module.exports = {
 			Player.controls.updateDuration();
 			Player.controls.updateVolume();
 		});
+		// Show all the controls when wrapping is not prevented.
+		Player.on('config:preventControlsWrapping', newValue => {
+			!newValue && Player.$(`.${ns}-controls [data-hide-order]`).forEach(el => el.style.display = null);
+		});
 	},
 
 	/**
@@ -350,6 +354,9 @@ module.exports = {
 	 * Hide elements in the controls instead of wrapping
 	 */
 	preventWrapping: function () {
+		if (!Player.config.preventControlWrapping) {
+			return;
+		}
 		const controls = Player.$(`.${ns}-controls`);
 		const expectedOffsetTop = parseFloat(window.getComputedStyle(controls).paddingTop);
 		const hideElements = Array.prototype.slice.call(controls.querySelectorAll('[data-hide-order]'));

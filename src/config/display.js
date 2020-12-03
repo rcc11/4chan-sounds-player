@@ -21,6 +21,18 @@ module.exports = [
 		displayGroup: 'Display'
 	},
 	{
+		title: 'Controls',
+		displayGroup: 'Display',
+		settings: [
+			{
+				property: 'preventControlWrapping',
+				title: 'Prevent Wrapping',
+				description: 'Hide controls to prevent wrapping when the player is too small',
+				default: true
+			}
+		]
+	},
+	{
 		title: 'Minimised Display',
 		description: 'Optional displays for when the player is minimised.',
 		displayGroup: 'Display',
