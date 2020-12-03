@@ -53,6 +53,12 @@ module.exports = {
 			Player.config.autoScrollThread && sound.post && (location.href = location.href.split('#')[0] + '#' + postIdPrefix + sound.post);
 		});
 
+		// Reset to the placeholder image when the player is stopped.
+		Player.on('stop', () => {
+			Player.$all(`.${ns}-list-item.playing`).forEach(el => el.classList.remove('playing'));
+			Player.playlist.showImage({ image: `data:image/svg+xml;base64,${btoa(Icons.fcSounds)}` });
+		});
+
 		// Reapply filters when they change
 		Player.on('config:filters', Player.playlist.applyFilters);
 

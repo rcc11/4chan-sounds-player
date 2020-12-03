@@ -1,6 +1,6 @@
 module.exports = {
-	atRoot: [ 'togglePlay', 'play', 'pause', 'next', 'previous', 'toggleMute' ],
-	public: [ 'togglePlay', 'play', 'pause', 'next', 'previous', 'toggleMute' ],
+	atRoot: [ 'togglePlay', 'play', 'pause', 'next', 'previous', 'stop', 'toggleMute' ],
+	public: [ 'togglePlay', 'play', 'pause', 'next', 'previous', 'stop', 'toggleMute' ],
 
 	delegatedEvents: {
 		click: {
@@ -155,6 +155,12 @@ module.exports = {
 	 */
 	pause: function () {
 		Player.audio && Player.audio.pause();
+	},
+
+	stop: function () {
+		Player.audio.src = null;
+		Player.playing = null;
+		Player.trigger('stop');
 	},
 
 	/**

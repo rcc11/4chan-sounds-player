@@ -3,11 +3,12 @@ module.exports = {
 
 	initialize: function () {
 		if (isChanX) {
-			Player.userTemplate.maintain(Player.minimised, 'chanXTemplate', [ 'chanXControls' ], [ 'show', 'hide' ]);
+			Player.userTemplate.maintain(Player.minimised, 'chanXTemplate', [ 'chanXControls' ], [ 'show', 'hide', 'stop' ]);
 		}
 		Player.on('rendered', Player.minimised.render);
 		Player.on('show', Player.minimised.hidePIP);
 		Player.on('hide', Player.minimised.showPIP);
+		Player.on('stop', Player.minimised.hidePIP);
 		Player.on('playsound', Player.minimised.showPIP);
 	},
 

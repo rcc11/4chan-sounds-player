@@ -43,11 +43,9 @@ module.exports = {
 	initialize: function () {
 		Player.on('config', Player.userTemplate._handleConfig);
 		Player.on('playsound', () => Player.userTemplate._handleEvent('playsound'));
-		Player.on('add', () => Player.userTemplate._handleEvent('add'));
-		Player.on('remove', () => Player.userTemplate._handleEvent('remove'));
-		Player.on('order', () => Player.userTemplate._handleEvent('order'));
-		Player.on('show', () => Player.userTemplate._handleEvent('show'));
-		Player.on('hide', () => Player.userTemplate._handleEvent('hide'));
+		[ 'add', 'remove', 'order', 'show', 'hide', 'stop' ].forEach(evt => {
+			Player.on(evt, Player.userTemplate._handleEvent.bind(null, evt));
+		});
 	},
 
 	/**
@@ -120,14 +118,14 @@ module.exports = {
 		const events = [];
 
 		// add/remove should render templates showing the count.
-		// playsound should render templates showing the playing sounds name/index or dependent on something playing.
+		// playsound/stop should render templates showing the playing sounds name/index or dependent on something playing.
 		// order should render templates showing a sounds index.
 		const hasCount = soundCountRE.test(template);
 		const hasName = soundNameRE.test(template);
 		const hasIndex = soundIndexRE.test(template);
 		const hasPlaying = playingRE.test(template);
 		hasCount && events.push('add', 'remove');
-		(hasPlaying || property !== 'rowTemplate' && (hasName || hasIndex)) && events.push('playsound');
+		(hasPlaying || property !== 'rowTemplate' && (hasName || hasIndex)) && events.push('playsound', 'stop');
 		hasIndex && events.push('order');
 
 		// Find which buttons the template includes that are dependent on config values.

@@ -80,9 +80,9 @@ module.exports = [
 				default: { shiftKey: true, key: 'arrowdown' }
 			},
 			{
-				property: 'hotkey_bindings.toggleFullscreen',
-				title: 'Toggle Fullscreen',
-				keyHandler: 'display.toggleFullScreen',
+				property: 'hotkey_bindings.closePlayer',
+				title: 'Close',
+				keyHandler: 'display.close',
 				default: { key: '' }
 			},
 			{
@@ -90,6 +90,12 @@ module.exports = [
 				title: 'Show/Hide',
 				keyHandler: 'display.toggle',
 				default: { key: 'h' }
+			},
+			{
+				property: 'hotkey_bindings.toggleFullscreen',
+				title: 'Toggle Fullscreen',
+				keyHandler: 'display.toggleFullScreen',
+				default: { key: '' }
 			},
 			{
 				property: 'hotkey_bindings.togglePlaylist',

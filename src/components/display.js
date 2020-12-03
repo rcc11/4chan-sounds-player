@@ -187,9 +187,6 @@ module.exports = {
 	 * Hide the player. Stops polling for changes, and pauses the aduio if set to.
 	 */
 	hide: function (e) {
-		if (!Player.container) {
-			return;
-		}
 		e && e.preventDefault();
 		Player.container.style.display = 'none';
 
@@ -201,9 +198,6 @@ module.exports = {
 	 * Show the player. Reapplies the saved position/size, and resumes loaded amount polling if it was paused.
 	 */
 	show: async function (e) {
-		if (!Player.container) {
-			return;
-		}
 		e && e.preventDefault();
 		if (!Player.container.style.display) {
 			return;
@@ -212,6 +206,14 @@ module.exports = {
 
 		Player.isHidden = false;
 		await Player.trigger('show');
+	},
+
+	/**
+	 * Stop playback and close the player.
+	 */
+	close: async function (e) {
+		Player.stop();
+		Player.hide();
 	},
 
 	/**
