@@ -2,6 +2,7 @@ const components = {
 	// Settings must be first.
 	settings: require('./components/settings'),
 	events: require('./components/events'),
+	actions: require('./components/actions'),
 	colorpicker: require('./components/colorpicker'),
 	controls: require('./components/controls'),
 	display: require('./components/display'),
@@ -90,6 +91,14 @@ const Player = window.Player = module.exports = {
 			// Can't recover so throw this error.
 			throw err;
 		}
+	},
+
+	/**
+	 * Returns the function of Player referenced by name or a given handler function.
+	 * @param {String|Function} handler Name to function on Player or a handler function.
+	 */
+	getHandler: function (handler) {
+		return typeof handler === 'string' ? _.get(Player, handler) : handler;
 	},
 
 	/**

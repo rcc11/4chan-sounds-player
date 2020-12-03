@@ -29,6 +29,15 @@ module.exports = [
 				title: 'Prevent Wrapping',
 				description: 'Hide controls to prevent wrapping when the player is too small',
 				default: true
+			},
+			{
+				property: 'controlsHideOrder',
+				title: 'Hide Order',
+				description: 'Order controls are hidden in to prevent wrapping. Available controls are previous, next, seek-bar, time, duration, volume, mute, volume-bar, and fullscreen.',
+				default: [ 'fullscreen', 'duration', 'volume-bar', 'seek-bar', 'time', 'previous' ],
+				displayMethod: (value, attrs) => `<div class="${ns}-col"><textarea ${attrs}>${value}</textarea></div>`,
+				format: v => v.join('\n'),
+				parse: v => v.split(/\s+/)
 			}
 		]
 	},

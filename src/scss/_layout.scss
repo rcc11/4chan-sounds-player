@@ -51,6 +51,11 @@
 	align-content: center;
 	align-self: center;
 }
+.#{$ns}-align-start {
+	align-items: start;
+	align-content: start;
+	align-self: start;
+}
 .#{$ns}-space-between {
 	justify-content: space-between;
 }

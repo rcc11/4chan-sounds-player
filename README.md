@@ -66,10 +66,17 @@ The threads can be displayed in a table or a pseudo-board.
 #### Display
 
 - __Autoshow__ - Open the player automatically for threads that contain sounds.
-- __Colors__ - By default the player will attempt to match the board theme, but you can set your own colors. Selecting "Match Theme" will revert to matching the board theme after making any modifications.
-- __Limit Post Width__ - Reduces the widths of posts that are next to the player so they're not hidden beneath it.
-- __Minimised Display__ - What is displayed when the player is hidden. You can choose to display a thumnail image (described above) and/or show playback controls in the 4chan X header.
 - __Pause on hide__ - Pauses the player when it's hidden.
+- __Colors__ - By default the player will attempt to match the board theme, but you can set your own colors. Selecting "Match Theme" will revert to matching the board theme after making any modifications.
+- __Controls__
+	- _Prevent Wrapping_ - Progressively hide controls as the player shrinks to prevent them wrapping on to a new line.
+	- _Hide Order_ - The order in which controls hide.
+- __Threads__
+	- _Auto Scroll_ - Automatically scroll the thread to posts when they are played.
+	- _Limit Post Widths_ - Reduces the widths of posts that are next to the player so they're not hidden beneath it. A minimum width can be set.
+- __Minimised Display__
+	- _Thumbnail_ - Whether to display a thumbnail of the playing sound in the bottom right corner of the window when the player hidden. The thumbnail size can be set.
+	- _4chan X Header Controls_ - Whether to show playback controls in the 4chan X header. They be set to show always, only with the player hidden, or never.
 
 #### Keybinds
 

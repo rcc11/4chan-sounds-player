@@ -1,6 +1,4 @@
 module.exports = {
-	atRoot: [ 'togglePlay', 'play', 'pause', 'next', 'previous', 'stop', 'toggleMute' ],
-	public: [ 'togglePlay', 'play', 'pause', 'next', 'previous', 'stop', 'toggleMute' ],
 
 	delegatedEvents: {
 		click: {
@@ -9,7 +7,7 @@ module.exports = {
 			[`.${ns}-next-button`]: _.noDefault(() => Player.next({ force: true })),
 			[`.${ns}-seek-bar`]: 'controls.handleSeek',
 			[`.${ns}-volume-bar`]: 'controls.handleVolume',
-			[`.${ns}-volume-button`]: _.noDefault('controls.toggleMute'),
+			[`.${ns}-volume-button`]: _.noDefault('toggleMute'),
 			[`.${ns}-fullscreen-button`]: 'display.toggleFullScreen'
 		},
 		mousedown: {
@@ -58,6 +56,7 @@ module.exports = {
 		// Apply the previous volume
 		GM.getValue('volume').then(volume => volume >= 0 && volume <= 1 && (Player.audio.volume = volume));
 
+		// Only poll for the loaded data when the player is open.
 		Player.on('show', () => Player._hiddenWhilePolling && Player.controls.pollForLoading());
 		Player.on('hide', () => {
 			Player._hiddenWhilePolling = !!Player._loadingPoll;
@@ -68,145 +67,18 @@ module.exports = {
 			Player.ui.currentTimeBar = Player.$(`.${ns}-seek-bar .${ns}-current-bar`);
 			Player.ui.loadedBar = Player.$(`.${ns}-seek-bar .${ns}-loaded-bar`);
 
+			// Set the initial volume/seek bar positions and hidden controls.
 			Player.controls.updateDuration();
 			Player.controls.updateVolume();
+			Player.controls.preventWrapping();
 		});
-		// Show all the controls when wrapping is not prevented.
-		Player.on('config:preventControlsWrapping', newValue => {
-			!newValue && Player.$(`.${ns}-controls [data-hide-order]`).forEach(el => el.style.display = null);
+		// Show all the controls when wrapping prevention is disabled.
+		Player.on('config:preventControlsWrapping', newValue => !newValue && Player.controls.showAllControls());
+		// Reset the hidden controls when the hide order is changed.
+		Player.on('config:controlsHideOrder', () => {
+			Player.controls.setHideOrder();
+			Player.controls.preventWrapping();
 		});
-	},
-
-	/**
-	 * Switching being playing and paused.
-	 */
-	togglePlay: function () {
-		if (Player.audio.paused) {
-			Player.play();
-		} else {
-			Player.pause();
-		}
-	},
-
-	/**
-	 * Start playback.
-	 */
-	play: async function (sound, { paused } = {}) {
-		try {
-			// If nothing is currently selected to play start playing the first sound.
-			if (!sound && !Player.playing && Player.sounds.length) {
-				sound = Player.sounds[0];
-			}
-
-			const video = document.querySelector(`.${ns}-video`);
-			video.removeEventListener('canplaythrough', Player.controls.playOnceLoaded);
-			Player.audio.removeEventListener('canplaythrough', Player.controls._playOnceLoaded);
-
-			// If a new sound is being played update the display.
-			if (sound) {
-				if (Player.playing) {
-					Player.playing.playing = false;
-				}
-				// Remove audio events from the video, and add them back for standalone video.
-				const audioEvents = Player.controls.audioEvents;
-				for (let evt in audioEvents) {
-					let handlers = Array.isArray(audioEvents[evt]) ? audioEvents[evt] : [ audioEvents[evt] ];
-					handlers.forEach(handler => {
-						const handlerFunction = Player.events.getHandler(handler);
-						video.removeEventListener(evt, handlerFunction);
-						sound.standaloneVideo && video.addEventListener(evt, handlerFunction);
-					});
-				}
-				sound.playing = true;
-				Player.playing = sound;
-				Player.audio.src = sound.src;
-				Player.isVideo = sound.image.endsWith('.webm') || sound.type === 'video/webm';
-				Player.isStandalone = sound.standaloneVideo;
-				Player.audio = sound.standaloneVideo ? video : Player.controls._audio;
-				await Player.trigger('playsound', sound);
-			}
-
-			if (!paused) {
-				// If there's a video and sound wait for both to load before playing.
-				if (!Player.isStandalone && Player.isVideo && (video.readyState < 3 || Player.audio.readyState < 3)) {
-					video.addEventListener('canplaythrough', Player.controls._playOnceLoaded);
-					Player.audio.addEventListener('canplaythrough', Player.controls._playOnceLoaded);
-				} else {
-					Player.audio.play();
-				}
-			}
-		} catch (err) {
-			Player.logError('There was an error playing the sound. Please check the console for details.', err);
-		}
-	},
-
-	/**
-	 * Handler to start playback once the video and audio are both loaded.
-	 */
-	_playOnceLoaded: function () {
-		const video = document.querySelector(`.${ns}-video`);
-		if (video.readyState > 2 && Player.audio.readyState > 2) {
-			video.removeEventListener('canplaythrough', Player.controls._playOnceLoaded);
-			Player.audio.removeEventListener('canplaythrough', Player.controls._playOnceLoaded);
-			Player.audio.play();
-			// Sometimes it just doesn't sync when the playback starts. Give it a second and then force a sync.
-			setTimeout(Player.controls.syncVideo, 100);
-		}
-	},
-
-	/**
-	 * Pause playback.
-	 */
-	pause: function () {
-		Player.audio && Player.audio.pause();
-	},
-
-	stop: function () {
-		Player.audio.src = null;
-		Player.playing = null;
-		Player.trigger('stop');
-	},
-
-	/**
-	 * Play the next sound.
-	 */
-	next: function (opts) {
-		Player.controls._movePlaying(1, opts);
-	},
-
-	/**
-	 * Play the previous sound.
-	 */
-	previous: function (opts) {
-		Player.controls._movePlaying(-1, opts);
-	},
-
-	_movePlaying: function (direction, { force, group, paused } = {}) {
-		// If there's no sound fall out.
-		if (!Player.sounds.length) {
-			return;
-		}
-		// If there's no sound currently playing or it's not in the list then just play the first sound.
-		const currentIndex = Player.sounds.indexOf(Player.playing);
-		if (currentIndex === -1) {
-			return Player.play(Player.sounds[0]);
-		}
-		// Get the next index, either repeating the same, wrapping round to repeat all or just moving the index.
-		let nextSound;
-		if (!force && Player.config.repeat === 'one') {
-			nextSound = Player.sounds[currentIndex];
-		} else {
-			let newIndex = currentIndex;
-			// Get the next index wrapping round if repeat all is selected
-			// Keep going if it's group move, there's still more sounds to check, and the next sound is still in the same group.
-			do {
-				newIndex = Player.config.repeat === 'all'
-					? ((newIndex + direction) + Player.sounds.length) % Player.sounds.length
-					: newIndex + direction;
-				nextSound = Player.sounds[newIndex];
-			} while (group && nextSound && newIndex !== currentIndex && (!nextSound.post || nextSound.post === Player.playing.post));
-		}
-		nextSound && Player.play(nextSound, { paused });
 	},
 
 	/**
@@ -338,16 +210,11 @@ module.exports = {
 		return Math.max(0, Math.min(1, (e.offsetX - offset) / (parseInt(getComputedStyle(e.eventTarget || e.target).width, 10) - (2 * offset))));
 	},
 
-	volumeUp: function () {
-		Player.audio.volume = Math.min(Player.audio.volume + 0.05, 1);
-	},
-
-	volumeDown: function () {
-		Player.audio.volume = Math.max(Player.audio.volume - 0.05, 0);
-	},
-
-	toggleMute: async function () {
-		Player.audio.volume = (Player._lastVolume || 0.5) * !Player.audio.volume;
+	/**
+	 * Set all controls visible.
+	 */
+	showAllControls: function () {
+		Player.$all(`.${ns}-controls [data-hide-id]`).forEach(el => el.style.display = null);
 	},
 
 	/**
@@ -358,17 +225,34 @@ module.exports = {
 			return;
 		}
 		const controls = Player.$(`.${ns}-controls`);
+		// If the offset top of the last visible child than this value it indicates wrapping.
 		const expectedOffsetTop = parseFloat(window.getComputedStyle(controls).paddingTop);
-		const hideElements = Array.prototype.slice.call(controls.querySelectorAll('[data-hide-order]'));
-		hideElements.sort((a, b) => a.dataset.hideOrder - b.dataset.hideOrder);
+		const hideElements = Player.controls.hideOrder || Player.controls.setHideOrder();
 		let visibleChildren = Array.prototype.slice.call(controls.children);
 		let lastChild = visibleChildren.pop();
-		hideElements.forEach(el => el.style.display = null);
-		while (lastChild.offsetTop > expectedOffsetTop && hideElements.length) {
-			const hide = hideElements.shift();
+		let hidden = 0;
+		// Show everything to check what has wrapped.
+		Player.controls.showAllControls();
+		// Keep hiding elements until the last visible child has not wrapped, or there's nothing left to hide.
+		while (lastChild.offsetTop > expectedOffsetTop && hidden < hideElements.length) {
+			const hide = hideElements[hidden++];
 			hide.style.display = 'none';
 			visibleChildren = visibleChildren.filter(el => el !== hide);
 			hide === lastChild && (lastChild = visibleChildren.pop());
 		}
+	},
+
+	/**
+	 * Set the hide order from the user config.
+	 */
+	setHideOrder: function () {
+		if (!Array.isArray(Player.config.controlsHideOrder)) {
+			Player.settings.reset('controlsHideOrder');
+		}
+		const controls = Player.$(`.${ns}-controls`);
+		return Player.controls.hideOrder = Player.config.controlsHideOrder
+			.map(id => controls.querySelector(`[data-hide-id="${id}"]`))
+			.filter(el => el)
+			.sort((a, b) => a.dataset.hideOrder - b.dataset.hideOrder);
 	}
 };

@@ -37,7 +37,7 @@ module.exports = {
 			for (let eventList of audio) {
 				for (let evt in eventList) {
 					let handlers = Array.isArray(eventList[evt]) ? eventList[evt] : [ eventList[evt] ];
-					handlers.forEach(handler => Player.audio.addEventListener(evt, Player.events.getHandler(handler)));
+					handlers.forEach(handler => Player.audio.addEventListener(evt, Player.getHandler(handler)));
 				}
 			}
 		});
@@ -58,7 +58,7 @@ module.exports = {
 						for (let selector in eventList) {
 							if (node.matches && node.matches(selector)) {
 								e.eventTarget = node;
-								let handler = Player.events.getHandler(eventList[selector]);
+								let handler = Player.getHandler(eventList[selector]);
 								// If the handler returns false stop propogation
 								if (handler && handler(e) === false) {
 									return;
@@ -79,7 +79,7 @@ module.exports = {
 			for (let eventList of [].concat(events[evt])) {
 				for (let selector in eventList) {
 					target.querySelectorAll(selector).forEach(element => {
-						const handler = Player.events.getHandler(eventList[selector]);
+						const handler = Player.getHandler(eventList[selector]);
 						element.removeEventListener(evt, handler);
 						element.addEventListener(evt, handler);
 					});
@@ -123,13 +123,5 @@ module.exports = {
 		for (let handler of events) {
 			await handler(...data);
 		}
-	},
-
-	/**
-	 * Returns the function of Player referenced by name or a given handler function.
-	 * @param {String|Function} handler Name to function on Player or a handler function.
-	 */
-	getHandler: function (handler) {
-		return typeof handler === 'string' ? _.get(Player, handler) : handler;
 	}
 };

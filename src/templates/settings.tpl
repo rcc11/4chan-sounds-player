@@ -26,12 +26,12 @@
 			const desc = setting.description;
 
 			tpl += `
-			<div class="${ns}-row ${ns}-align-center ${setting.isSubSetting ? `${ns}-sub-settings` : ''}">
+			<div class="${ns}-row ${ns}-align-${setting.isSubSetting ? 'start' : 'center'} ${setting.isSubSetting ? `${ns}-sub-settings` : ''}">
 				<div class="${ns}-col ${!setting.isSubSetting ? `${ns}-heading` : `${ns}-space-between`} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc.replace(/"/g, '&quot;')}"` : ''}>
 					${setting.title}
-					<div style="display: inline-block; margin-right: .25rem">
+					${!setting.actions || !setting.actions.length ? '' : `<div style="display: inline-block; margin-right: .25rem">
 						${(setting.actions || []).map(action => `<a href="#" class="${ns}-heading-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`).join(' ')}
-					</div>
+					</div>`}
 				</div>`;
 				if (setting.text) {
 					tpl += setting.dismissTextId
@@ -65,7 +65,7 @@
 						displayMethodFunction = typeof displayMethod === 'function' ? displayMethod : _.get(Player, displayMethod);
 
 					if (setting.format) {
-						value = _.get(Player, setting.format)(value);
+						value = Player.getHandler(setting.format)(value);
 					}
 					let type = typeof value;
 

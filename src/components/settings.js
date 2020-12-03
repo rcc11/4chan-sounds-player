@@ -303,7 +303,7 @@ module.exports = {
 			let newValue = input[input.getAttribute('type') === 'checkbox' ? 'checked' : 'value'];
 
 			if (settingConfig.parse) {
-				newValue = _.get(Player, settingConfig.parse)(newValue, currentValue, e);
+				newValue = Player.getHandler(settingConfig.parse)(newValue, currentValue, e);
 			}
 			if (settingConfig && settingConfig.split) {
 				newValue = newValue.split(decodeURIComponent(settingConfig.split));
