@@ -12,7 +12,7 @@
 		Download
 		<div class="dialog submenu" style="inset: 0px auto auto 100%;">
 			<a class="${ns}-download-link entry" href="javascript:;" data-src="${data.sound.image}" data-name="${data.sound.filename}">Image</a>
-			<a class="${ns}-download-link entry" href="javascript:;" data-src="${data.sound.src}">Sound</a>
+			<a class="${ns}-download-link entry" href="javascript:;" data-src="${data.sound.src}" data-name="${data.sound.name}">Sound</a>
 		</div>
 	</div>
 	<div class="entry has-submenu">

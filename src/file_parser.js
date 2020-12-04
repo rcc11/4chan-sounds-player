@@ -123,7 +123,8 @@ function parseFileName(filename, image, post, thumb, imageMD5, bypassVerificatio
 	return matches.reduce((sounds, match, i) => {
 		let src = match[2];
 		const id = (post || 'local' + localCounter) + ':' + i;
-		const title = match[1].trim() || defaultName + (matches.length > 1 ? ` (${i + 1})` : '');
+		const name = match[1].trim();
+		const title = name || defaultName + (matches.length > 1 ? ` (${i + 1})` : '');
 		const standaloneVideo = src === image;
 
 		try {
@@ -138,7 +139,7 @@ function parseFileName(filename, image, post, thumb, imageMD5, bypassVerificatio
 			return sounds;
 		}
 
-		const sound = { src, id, title, post, image, filename, thumb, imageMD5, standaloneVideo };
+		const sound = { src, id, title, name, post, image, filename, thumb, imageMD5, standaloneVideo };
 		if (bypassVerification || Player.acceptedSound(sound)) {
 			sounds.push(sound);
 		}

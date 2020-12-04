@@ -148,7 +148,7 @@ module.exports = [
 		attrs: data => [
 			'title="Download the sound"',
 			`data-src="${data.sound.src}"`,
-			`data-name="${data.sound.title}"`
+			`data-name="${data.sound.name}"`
 		]
 	},
 	{
