@@ -103,7 +103,6 @@ module.exports = [
 		icon: Icons.chatRightQuote,
 		showIf: data => data.sound.post,
 		attrs: data => [
-			`class="${ns}-truncate-text"`,
 			`href=${'#' + postIdPrefix + data.sound.post}`,
 			'title="Jump to the post for the current sound"'
 		]
