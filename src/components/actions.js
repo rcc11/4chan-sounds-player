@@ -99,14 +99,14 @@ module.exports = {
 	 * Play the next sound.
 	 */
 	next: function (opts) {
-		Player.controls._movePlaying(1, opts);
+		Player.actions._movePlaying(1, opts);
 	},
 
 	/**
 	 * Play the previous sound.
 	 */
 	previous: function (opts) {
-		Player.controls._movePlaying(-1, opts);
+		Player.actions._movePlaying(-1, opts);
 	},
 
 	_movePlaying: function (direction, { force, group, paused } = {}) {
