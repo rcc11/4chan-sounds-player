@@ -26,11 +26,10 @@ function parseFiles(target, postRender) {
 
 function parsePost(post, skipRender) {
 	try {
-		if (post.classList.contains('style-fetcher')) {
-			return;
-		}
-		const parentParent = post.parentElement.parentElement;
-		if (parentParent.id === 'qp' || post.parentElement.classList.contains('noFile')) {
+		// Ignore the style fetcher post created by this script, quoted posts, and posts with no file.
+		let parent = post.parentElement;
+		let parentParent = parent && parent.parentElement;
+		if (post.classList.contains('style-fetcher') || parentParent && parentParent.id === 'qp' || parent && parent.classList.contains('noFile')) {
 			return;
 		}
 
