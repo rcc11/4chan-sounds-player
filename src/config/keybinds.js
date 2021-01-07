@@ -70,13 +70,13 @@ module.exports = [
 			{
 				property: 'hotkey_bindings.volumeUp',
 				title: 'Volume Up',
-				keyHandler: 'controls.volumeUp',
+				keyHandler: 'actions.volumeUp',
 				default: { shiftKey: true, key: 'arrowup' }
 			},
 			{
 				property: 'hotkey_bindings.volumeDown',
 				title: 'Volume Down',
-				keyHandler: 'controls.volumeDown',
+				keyHandler: 'actions.volumeDown',
 				default: { shiftKey: true, key: 'arrowdown' }
 			},
 			{
