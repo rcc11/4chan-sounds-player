@@ -154,8 +154,9 @@ module.exports = {
 	updateDuration: function () {
 		const currentTime = _.toDuration(Player.audio.currentTime);
 		const duration = _.toDuration(Player.audio.duration);
-		document.querySelectorAll(`.${ns}-current-time`).forEach(el => el.innerHTML = currentTime);
-		document.querySelectorAll(`.${ns}-duration`).forEach(el => el.innerHTML = duration);
+		// Gross use of childNodes to avoid textContent triggering mutation observers of other scripts.
+		document.querySelectorAll(`.${ns}-current-time`).forEach(el => el.childNodes[0].textContent = currentTime);
+		document.querySelectorAll(`.${ns}-duration`).forEach(el => el.childNodes[0].textContent = duration);
 		Player.controls.updateProgressBarPosition(Player.ui.currentTimeBar, Player.audio.currentTime, Player.audio.duration);
 	},
 
