@@ -9,7 +9,10 @@ module.exports = {
 	delegatedEvents: {
 		click: {
 			[`.${ns}-settings .${ns}-heading-action`]: 'settings._handleAction',
-			[`.${ns}-settings-tab`]: 'settings._handleTab'
+			[`.${ns}-settings-tab`]: 'settings._handleTab',
+			[`.${ns}-settings-reset-all`]: _.noDefault(() => Player.settings.load({}, { applyDefault: true, ignore: [ 'viewStyle' ] })),
+			[`.${ns}-settings-export`]: 'settings._handleExport',
+			[`.${ns}-settings-import`]: 'settings._handleImport',
 		},
 		focusout: {
 			[`.${ns}-settings input, .${ns}-settings textarea`]: 'settings._handleChange'
@@ -28,27 +31,16 @@ module.exports = {
 		// Apply the default board theme as default.
 		Player.display.applyBoardTheme();
 
-		// Apply the default config.
-		Player.config = settingsConfig.reduce(function reduceSettings(config, setting) {
-			if (setting.settings) {
-				setting.settings.forEach(subSetting => {
-					let _setting = { ...setting, ...subSetting };
-					_.set(config, _setting.property, _setting.default);
-				});
-				return config;
-			}
-			return _.set(config, setting.property, setting.default);
-		}, {});
+		// Load the config.
+		await Player.settings.load(await GM.getValue('settings') || {}, {
+			applyDefault: true,
+			bypassAll: true
+		});
 
-		// Load the user config.
-		await Player.settings.load();
-
+		// Show update notifications.
 		if (Player.config.showUpdatedNotification && Player.config.VERSION && Player.config.VERSION !== VERSION) {
 			Player.alert(`4chan Sounds Player has been updated to <a href="${Player.settings.changelog}" target="_blank">version ${VERSION}</a>.`);
 		}
-
-		// Run any migrations.
-		await Player.settings.migrate(Player.config.VERSION);
 
 		// Listen for the player closing to apply the pause on hide setting.
 		Player.on('hide', function () {
@@ -58,7 +50,7 @@ module.exports = {
 		});
 
 		// Listen for changes from other tabs
-		Player.syncTab('settings', value => Player.settings.apply(value, {
+		Player.syncTab('settings', value => Player.settings.load(value, {
 			bypassSave: true,
 			applyDefault: true,
 			ignore: [ 'viewStyle' ]
@@ -74,12 +66,12 @@ module.exports = {
 	/**
 	 * Update a setting.
 	 */
-	set: function (property, value, { bypassValidation, bypassSave, bypassRender, silent, bypassStylesheet, settingConfig } = {}) {
+	set: function (property, value, { bypassAll, bypassValidation, bypassSave, bypassRender, silent, bypassStylesheet, settingConfig } = {}) {
 		settingConfig = settingConfig || Player.settings.findDefault(property);
-		const previousValue = _.get(Player.config, property);
+		const previous = _.get(Player.config, property);
 
 		// Check if the value has actually changed.
-		if (!bypassValidation && _.isEqual(previousValue, value)) {
+		if (!bypassValidation && _.isEqual(previous, value)) {
 			return;
 		}
 
@@ -87,11 +79,14 @@ module.exports = {
 		_.set(Player.config, property, value);
 
 		// Trigger events, unless they are disabled in opts.
-		!bypassStylesheet && settingConfig && settingConfig.updateStylesheet && Player.display.updateStylesheet();
-		!silent && Player.trigger('config', property, value, previousValue);
-		!silent && Player.trigger('config:' + property, value, previousValue);
-		!bypassSave && Player.settings.save();
-		!bypassRender && settingConfig.displayGroup && Player.settings.render();
+		if (!bypassAll) {
+			!bypassStylesheet && settingConfig && settingConfig.updateStylesheet && Player.display.updateStylesheet();
+			!silent && Player.trigger('config', property, value, previous);
+			!silent && Player.trigger('config:' + property, value, previous);
+			!bypassSave && Player.settings.save();
+			!bypassRender && settingConfig.displayGroup && Player.settings.render();
+		}
+		return [ previous, value ];
 	},
 
 	/**
@@ -100,6 +95,53 @@ module.exports = {
 	reset: function (property) {
 		let settingConfig = Player.settings.findDefault(property);
 		Player.set(property, settingConfig.default, { settingConfig });
+	},
+
+	/**
+	 * Load a configuration object.
+	 *
+	 * @param {Object} settings Config to load
+	 * @param {Object} opts Same as Player.set, and applyDefault to reset defaults instead mixing current values.
+	 */
+	load: async function (settings, opts = {}) {
+		if (typeof settings === 'string') {
+			settings = JSON.parse(settings);
+		}
+		const changes = {};
+		settingsConfig.forEach(function _handleSetting(setting) {
+			if (setting.settings) {
+				return setting.settings.forEach(subSetting => _handleSetting({
+					property: setting.property,
+					default: setting.default,
+					...subSetting
+				}));
+			}
+			if (opts.ignore && opts.ignore.includes(setting.property)) {
+				return;
+			}
+			let value = _.get(settings, setting.property, opts.applyDefault ? setting.default : undefined);
+			if (value !== undefined) {
+				// Mix in default.
+				setting.mix && (value = { ...setting.default, ...(value || {}) });
+				const data = Player.set(setting.property, value, { bypassAll: true, settingConfig: setting });
+				data && (changes[setting.property] = data);
+			}
+		});
+		// Run any migrations to get up to date, and update the stored changes for event triggering.
+		Object.entries(await Player.settings.migrate(settings.VERSION)).forEach(([ prop, [ current, previous ] ]) => {
+			changes[prop] = [ current, changes[prop] ? changes[prop][1] : previous ]
+		});
+		// Finally, trigger events.
+		if (!opts.bypassAll) {
+			!opts.bypassStylesheet && Player.display.updateStylesheet();
+			console.log(changes);
+			!opts.silent && Object.entries(changes).forEach(([ prop, [ current, previous ] ]) => {
+				Player.trigger('config', prop, current, previous);
+				Player.trigger('config:' + prop, current, previous);
+			});
+			!opts.bypassSave && Player.settings.save();
+			!opts.bypassRender && Player.settings.render();
+		}
 	},
 
 	/**
@@ -144,66 +186,28 @@ module.exports = {
 	},
 
 	/**
-	 * Restore the saved player settings.
-	 */
-	load: async function () {
-		try {
-			let settings = await GM.getValue('settings') || await GM.getValue(ns + '.settings');
-			if (settings) {
-				Player.settings.apply(settings, { bypassSave: true, silent: true });
-			}
-		} catch (err) {
-			Player.logError('There was an error loading the sound player settings.', err);
-		}
-	},
-
-	apply: function (settings, opts = {}) {
-		if (typeof settings === 'string') {
-			settings = JSON.parse(settings);
-		}
-		settings.VERSION && (Player.config.VERSION = settings.VERSION);
-		settingsConfig.forEach(function _handleSetting(setting) {
-			if (setting.settings) {
-				return setting.settings.forEach(subSetting => _handleSetting({
-					property: setting.property,
-					default: setting.default,
-					...subSetting
-				}));
-			}
-			if (opts.ignore && opts.ignore.includes(setting.property)) {
-				return;
-			}
-			let value = _.get(settings, setting.property, opts.applyDefault ? setting.default : undefined);
-			if (value !== undefined) {
-				if (setting.mix) {
-					// Mix in default.
-					value = { ...setting.default, ...(value || {}) };
-				}
-				Player.set(setting.property, value, { ...opts, settingConfig: setting });
-			}
-		});
-	},
-
-	/**
 	 * Run migrations when the player is updated.
 	 */
 	migrate: async function (fromVersion) {
 		// Fall out if the player hasn't updated.
 		if (!fromVersion || fromVersion === VERSION) {
-			return;
+			return {};
 		}
+		const changes = {};
 		for (let i = 0; i < migrations.length; i++) {
 			let mig = migrations[i];
 			if (Player.settings.compareVersions(fromVersion, mig.version) < 0) {
 				try {
 					console.log('[4chan sound player] Migrate:', mig.name);
-					await mig.run();
+					Object.entries(await mig.run()).forEach(([ prop, [ current, previous ] ]) => {
+						changes[prop] = [ current, changes[prop] ? changes[prop][1] : previous ]
+					});
 				} catch (err) {
 					console.error(err);
 				}
 			}
 		}
-		Player.settings.save();
+		return changes;
 	},
 
 	/**
@@ -284,6 +288,33 @@ module.exports = {
 		currentTab && currentTab.classList.remove('active');
 		Player.$(`.${ns}-settings-group[data-group="${group}"]`).classList.add('active');
 		Player.$(`.${ns}-settings-tab[data-group="${group}"]`).classList.add('active');
+	},
+
+	_handleImport: async function (e) {
+		e.preventDefault();
+		const fileInput = _.element('<input type="file">');
+		const _import = async e => {
+			let config;
+			try {
+				config = await (await fetch(URL.createObjectURL(fileInput.files[0]))).json();
+			} catch (err) {
+				Player.logError(`Expected a JSON config file and got ${fileInput.files[0].type}.`, err, 'warning');
+			}
+			fileInput.removeEventListener('change', _import);
+			Player.settings.load(config);
+		};
+		fileInput.addEventListener('change', _import);
+		fileInput.click();
+	},
+
+	_handleExport: async function (e) {
+		e.preventDefault();
+		// Use the saved settings to only export non-default user settings. Shift click exports everything for testing.
+		const settings = e.shiftKey ? JSON.stringify(Player.config, null, 4) : await GM.getValue('settings') || '{}';
+		const blob = new Blob([ settings ], { type: 'application/json' });
+		const a = _.element(`<a href="${URL.createObjectURL(blob)}" download="4chan-sp-config.json" rel="noopener" target="_blank"></a>`);
+		a.click();
+		URL.revokeObjectURL(a.href);
 	},
 
 	/**

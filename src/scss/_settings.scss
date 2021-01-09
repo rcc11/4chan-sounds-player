@@ -15,9 +15,14 @@
 	}
 
 	& .#{$ns}-settings-tabs {
+		justify-content: space-between;
+		flex-direction: row-reverse;
+		margin: 0 -.25rem;
+	}
+	& .#{$ns}-settings-tab-group {
+		text-align: center;
+		white-space: nowrap;
 		align-items: center;
-		align-content: center;
-		justify-content: center;
 	}
 	& .#{$ns}-settings-tab {
 		margin: .25rem;

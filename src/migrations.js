@@ -1,3 +1,4 @@
+// Migrations must return { [prop]: [ previous, updated ], ... }
 module.exports = [
 	{
 		version: '3.0.0',
@@ -7,6 +8,7 @@ module.exports = [
 			Object.keys(defaultHosts).forEach(host => {
 				Player.config.uploadHosts[host].filenameLength = defaultHosts[host].filenameLength;
 			});
+			return {};
 		}
 	}
 ];

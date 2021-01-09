@@ -9,10 +9,17 @@
 	}, {});
 
 	let tpl = `<div class="${ns}-settings-tabs ${ns}-row">
-		${Object.keys(groups).map(name => 
-			`<a href="javascript:;" class="${ns}-col-auto ${ns}-settings-tab ${Player.settings.view !== name ? '' : 'active'}" data-group="${name}">${name}</a>`
-		).join(' | ')}
-		| <a href="${Player.settings.changelog}" class="${ns}-col-auto ${ns}-settings-tab" target="_blank">v${VERSION}</a>
+		<div class="${ns}-settings-tab-group ${ns}-col-auto">
+			<a href="#" class="${ns}-settings-reset-all ${ns}-settings-tab" title="Reset all settings to their default values.">Reset</a>
+			| <a href="#" class="${ns}-settings-export ${ns}-settings-tab" title="Shift click to export all settings. Otherwise only modified settings are included in the export.">Export</a>
+			| <a href="#" class="${ns}-settings-import ${ns}-settings-tab" title="Settings not included in the import will be left as their current value.">Import</a>
+			| <a href="${Player.settings.changelog}" class="${ns}-settings-tab" target="_blank">v${VERSION}</a>
+		</div>
+		<div class="${ns}-settings-tab-group ${ns}-col-auto">
+			${Object.keys(groups).map(name => 
+				`<a href="javascript:;" class="${ns}-settings-tab ${Player.settings.view !== name ? '' : 'active'}" data-group="${name}">${name}</a>`
+			).join(' | ')}
+		</div>
 	</div>`;
 
 	Object.keys(groups).forEach(name => {
