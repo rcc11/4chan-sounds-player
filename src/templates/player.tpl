@@ -1,5 +1,5 @@
 `<a class="${ns}-image-link" target="_blank">
-	<img class="${ns}-image" src="data:image/svg+xml;base64,${btoa(Icons.fcSounds)}"></img>
+	<img id="fcspImage" class="${ns}-image" src="data:image/svg+xml;base64,${btoa(Icons.fcSounds)}"></img>
 	<video class="${ns}-video"></video>
 </a>
 <div class="${ns}-controls ${ns}-row">
