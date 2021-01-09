@@ -85,3 +85,7 @@ For the 4chan X Header Controls template there are extra replacements, in additi
 - `next-button` -  Play the next sound,
 - `sound-current-time` -  Display the playback time,
 - `sound-duration` -  Display the track duration.
+
+__Custom CSS__
+
+The only replacements made to custom CSS are config values.
