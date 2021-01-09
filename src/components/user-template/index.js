@@ -8,6 +8,8 @@ const soundNameRE = /sound-name/g;
 const soundNameMarqueeRE = /sound-name-marquee/g;
 const soundIndexRE = /sound-index/g;
 const soundCountRE = /sound-count/g;
+const soundPropRE = /sound-(src|id|title|post|imageOrThumb|image|thumb|filename|imageMD5)/g;
+const configRE = /\$config\[([^\]]+)\]/g;
 
 // Hold information on which config values components templates depend on.
 const componentDeps = [ ];
@@ -57,8 +59,10 @@ module.exports = {
 
 		const _confFuncOrText = v => (typeof v === 'function' ? v(data) : v);
 
-		// Apply common template replacements
+		// Apply common template replacements, checking for config only.
 		let html = data.template
+			.replace(configRE, (...args) => _.get(Player.config, args[1]));
+		!data.configOnly && (html = html
 			.replace(playingRE, Player.playing && Player.playing === data.sound ? '$1' : '')
 			.replace(hoverRE, `<span class="${ns}-hover-display ${outerClass}">$1</span>`)
 			.replace(buttonRE, function (full, type, text) {
@@ -82,9 +86,10 @@ module.exports = {
 			})
 			.replace(soundNameMarqueeRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem; text-overflow: clip;"><span title="${name}" class="${ns}-title-marquee" data-location="${data.location || ''}">${name}</span></div>` : '')
 			.replace(soundNameRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem"><span title="${name}">${name}</span></div>` : '')
+			.replace(soundPropRE, (...args) => data.sound ? data.sound[args[1]] : '')
 			.replace(soundIndexRE, data.sound ? Player.sounds.indexOf(data.sound) + 1 : 0)
 			.replace(soundCountRE, Player.sounds.length)
-			.replace(/%v/g, VERSION);
+			.replace(/%v/g, VERSION));
 
 		// Apply any specific replacements
 		if (data.replacements) {
@@ -140,6 +145,10 @@ module.exports = {
 					config.push(buttonConf.property);
 				}
 			}
+		}
+		// Find config references.
+		while ((match = configRE.exec(template)) !== null) {
+			config.push(match[1]);
 		}
 
 		return { events, config };

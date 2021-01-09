@@ -1,8 +1,9 @@
 .#{$ns}-image-link {
 	text-align: center;
 	display: flex;
-	justify-items: center;
+	flex-grow: 1;
 	justify-content: center;
+	overflow: auto;
 
 	&.#{$ns}-pip {
 		position: fixed;

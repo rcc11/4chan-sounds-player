@@ -66,7 +66,8 @@ module.exports = {
 	hidePIP: function () {
 		Player.minimised._showingPIP = false;
 		const image = document.querySelector(`.${ns}-image-link`);
-		Player.$(`.${ns}-media`).insertBefore(document.querySelector(`.${ns}-image-link`), Player.$(`.${ns}-controls`));
+		const controls = Player.$(`.${ns}-controls`);
+		controls.parentNode.insertBefore(document.querySelector(`.${ns}-image-link`), controls);
 		image.classList.remove(`${ns}-pip`);
 		image.style.bottom = null;
 		image.removeEventListener('click', Player.show);

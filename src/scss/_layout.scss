@@ -1,9 +1,12 @@
 ##{$ns}-container {
 	position: fixed;
+	display: flex;
+	flex-direction: column;
 	background: #{map-get($colors, background)};
-	border: 1px solid #{map-get($colors, border)};
-	min-width: 7rem;
 	color: #{map-get($colors, text)};
+	border: 1px solid #{map-get($colors, border)};
+	box-sizing: border-box;
+	min-width: 7rem;
 }
 .#{$ns}-panel {
 	padding: 0 .25rem;

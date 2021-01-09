@@ -15,7 +15,7 @@ module.exports = {
 			[`.${ns}-restore-link`]: 'display._handleRestore'
 		},
 		fullscreenchange: {
-			[`.${ns}-media`]: 'display._handleFullScreenChange'
+			[`.${ns}-player`]: 'display._handleFullScreenChange'
 		},
 		drop: {
 			[`#${ns}-container`]: 'display._handleDrop'
@@ -87,6 +87,9 @@ module.exports = {
 
 			// Create the main stylesheet.
 			Player.display.updateStylesheet();
+			// Create the user stylesheet and update it when dependent config values are changed.
+			Player.display.updateUserStylesheet();
+			Player.userTemplate.maintain({ render: Player.display.updateUserStylesheet }, 'customCSS');
 
 			// Create the main player. For native threads put it in the threads to get free quote previews.
 			const isThread = document.body.classList.contains('is_thread');
@@ -111,6 +114,14 @@ module.exports = {
 		const div = _.element(`<div class="${selectors.styleFetcher}"></div>`, document.body);
 		const style = document.defaultView.getComputedStyle(div);
 
+		// Make sure the style is loaded.
+		// TODO: This sucks. Should observe the stylesheets for changes to make it work.
+		// That would also make theme changes apply without a reload.
+		if (style.backgroundColor === 'rgba(0, 0, 0, 0)') {
+			return setTimeout(Player.display.applyBoardTheme, 0);
+		}
+		Object.assign(style, { page_background: window.getComputedStyle(document.body).backgroundColor });
+
 		// Apply the computed style to the color config.
 		const colorSettingMap = {
 			'colors.text': 'color',
@@ -118,7 +129,9 @@ module.exports = {
 			'colors.odd_row': 'backgroundColor',
 			'colors.border': 'borderBottomColor',
 			// If the border is the same color as the text don't use it as a background color.
-			'colors.even_row': style.borderBottomColor === style.color ? 'backgroundColor' : 'borderBottomColor'
+			'colors.even_row': style.borderBottomColor === style.color ? 'backgroundColor' : 'borderBottomColor',
+			// Set this for use in custom css and templates
+			'colors.page_background': 'page_background'
 		};
 		settingsConfig.find(s => s.property === 'colors').settings.forEach(setting => {
 			const updateConfig = force || (setting.default === _.get(Player.config, setting.property));
@@ -137,23 +150,27 @@ module.exports = {
 	},
 
 	updateStylesheet: function () {
-		// Add styles to handle 4chan X style not being available.
-		if (!isChanX) {
-			Player.chanXPFStylesheet = Player.chanXPFStylesheet ||  _.element('<style></style>', document.head);
-			Player.chanXPFStylesheet.innerHTML = Player.templates.css4chanXPolyfill();
-		}
-		// Insert the stylesheet if it doesn't exist.
-		Player.stylesheet = Player.stylesheet || _.element('<style></style>', document.head);
-		Player.stylesheet.innerHTML = Player.templates.css();
+		// Insert the stylesheet if it doesn't exist. 4chan X polyfill, sound player styling, and user styling.
+		Player.stylesheet = Player.stylesheet || _.element('<style id="sound-player-css"></style>', document.head);
+		Player.stylesheet.innerHTML = (!isChanX ? '/* 4chanX Polyfill */\n\n' + Player.templates.css4chanXPolyfill() : '')
+			+ '\n\n/* Sounds Player CSS */\n\n' + Player.templates.css();
+	},
+
+	updateUserStylesheet: function () {
+		Player.userStylesheet = Player.userStylesheet || _.element('<style id="sound-player-user-css"></style>', document.head);
+		Player.userStylesheet.innerHTML = Player.userTemplate.build({
+			template: '/* Sounds Player User CSS */\n\n' + Player.config.customCSS,
+			sound: Player.playing,
+			configOnly: true
+		});
 	},
 
 	/**
 	 * Change what view is being shown
 	 */
-	setViewStyle: function (style) {
+	setViewStyle: async function (style) {
 		// Get the size and style prior to switching.
 		const previousStyle = Player.config.viewStyle;
-		const { width, height } = Player.container.getBoundingClientRect();
 
 		// Exit fullscreen before changing to a different view.
 		if (style !== 'fullscreen') {
@@ -164,10 +181,16 @@ module.exports = {
 		Player.set('viewStyle', style);
 		Player.container.setAttribute('data-view-style', style);
 
+		if (style === 'playlist' || style === 'image') {
+			Player.controls.preventWrapping();
+		}
 		// Try to reapply the pre change sizing unless it was fullscreen.
 		if (previousStyle !== 'fullscreen' || style === 'fullscreen') {
-			Player.position.resize(parseInt(width, 10), parseInt(height, 10));
+			const [ width, height ] = (await GM.getValue('size') || '').split(':');
+			width && height && Player.position.resize(parseInt(width, 10), parseInt(height, 10));
+			Player.position.setPostWidths();
 		}
+
 		Player.trigger('view', style, previousStyle);
 	},
 
@@ -211,7 +234,7 @@ module.exports = {
 	/**
 	 * Stop playback and close the player.
 	 */
-	close: async function (e) {
+	close: async function () {
 		Player.stop();
 		Player.hide();
 	},
@@ -225,7 +248,7 @@ module.exports = {
 			if (Player.isHidden) {
 				Player.show();
 			}
-			Player.$(`.${ns}-media`).requestFullscreen();
+			Player.$(`.${ns}-player`).requestFullscreen();
 		} else if (document.exitFullscreen) {
 			document.exitFullscreen();
 		}

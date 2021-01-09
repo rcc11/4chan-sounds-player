@@ -73,7 +73,7 @@ module.exports = [
 		]
 	},
 	{
-		title: 'Threads',
+		title: 'Thread',
 		displayGroup: 'Display',
 		settings: [
 			{
@@ -99,7 +99,6 @@ module.exports = [
 		property: 'threadsViewStyle',
 		title: 'Threads View',
 		description: 'How threads in the threads view are listed.',
-		displayGroup: 'Display',
 		settings: [ {
 			title: 'Display',
 			default: 'table',
@@ -122,7 +121,7 @@ module.exports = [
 		actions: [
 			{ title: 'Match Theme', handler: 'display.forceBoardTheme' }
 		],
-		// These colors will be overriden with the theme defaults at initialization.
+		// These colors will be overriden with the theme defaults at initialization. They're set to yotsuba b here.
 		settings: [
 			{
 				property: 'colors.text',
@@ -193,6 +192,12 @@ module.exports = [
 				title: 'Loaded Bar Background',
 				description: 'The loaded bar within the seek bar.',
 				actions: [ { title: 'Reset', handler: 'settings.reset' } ],
+			},
+			// Not configurable but here for access in templates.
+			{
+				property: 'colors.page_background',
+				default: 'rgb(238, 242, 255)',
+				displayMethod: null
 			}
 		]
 	}

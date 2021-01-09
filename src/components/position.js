@@ -82,6 +82,14 @@ module.exports = {
 		let { width, height } = Player.container.getBoundingClientRect();
 		Player._startWidth = width;
 		Player._startHeight = height;
+		Player._startTop = Player.container.offsetTop;
+		Player._startLeft = Player.container.offsetLeft;
+		const dir = e.eventTarget.dataset.direction || 'se';
+		Player._resizeX = dir.includes('e') ? 1 : dir.includes('w') ? -1 : 0;
+		Player._resizeY = dir.includes('s') ? 1 : dir.includes('n') ? -1 : 0;
+		Player._resizeMoveX = dir.includes('w') ? -1 : 0;
+		Player._resizeMoveY = dir.includes('n') ? -1 : 0;
+		Player._resizeTarget = e.eventTarget;
 		document.documentElement.addEventListener('mousemove', Player.position.doResize, false);
 		document.documentElement.addEventListener('mouseup', Player.position.stopResize, false);
 	},
@@ -91,7 +99,17 @@ module.exports = {
 	 */
 	doResize: function (e) {
 		e.preventDefault();
-		Player.position.resize(Player._startWidth + e.clientX - Player._startX, Player._startHeight + e.clientY - Player._startY);
+
+		const xDelta = (e.clientX - Player._startX) * Player._resizeX;
+		const yDelta = (e.clientY - Player._startY) * Player._resizeY;
+		const reposition = Player._resizeTarget.dataset.bypassPosition !== 'true' && (Player._resizeMoveX || Player._resizeMoveY);
+
+		Player.position.resize(Player._startWidth + xDelta, Player._startHeight + yDelta, reposition || Player._resizeTarget.dataset.allowOffscreen);
+
+		// If the direction is north or east then the player will need moving first.
+		if (reposition) {
+			Player.position.move(Player._startLeft + (xDelta * Player._resizeMoveX), Player._startTop + (yDelta * Player._resizeMoveY));
+		}
 	},
 
 	/**
@@ -101,37 +119,31 @@ module.exports = {
 		const { width, height } = Player.container.getBoundingClientRect();
 		document.documentElement.removeEventListener('mousemove', Player.position.doResize, false);
 		document.documentElement.removeEventListener('mouseup', Player.position.stopResize, false);
-		GM.setValue('size', width + ':' + height);
+
+		if (Player._resizeTarget.dataset.bypassSave !== 'true') {
+			GM.setValue('size', width + ':' + height);
+			if (Player._resizeMoveX || Player._resizeMoveY) {
+				GM.setValue('position', parseInt(Player.container.style.left, 10) + ':' + parseInt(Player.container.style.top, 10));
+			}
+		}
 	},
 
 	/**
 	 * Resize the player.
 	 */
-	resize: function (width, height) {
+	resize: function (width, height, allowOffscreen) {
 		if (!Player.container || Player.config.viewStyle === 'fullscreen') {
 			return;
 		}
 		const { bottom } = Player.position.getHeaderOffset();
 		// Make sure the player isn't going off screen.
-		height = Math.min(height, document.documentElement.clientHeight - Player.container.offsetTop - bottom);
-		width = Math.min(width - 2, document.documentElement.clientWidth - Player.container.offsetLeft);
-
-		Player.container.style.width = width + 'px';
-
-		// Which element to change the height of depends on the view being displayed.
-		const heightElement = Player.config.viewStyle === 'playlist' ? Player.$(`.${ns}-list-container`)
-			: Player.config.viewStyle === 'image' ? Player.$(`.${ns}-image-link`)
-			: Player.config.viewStyle === 'settings' ? Player.$(`.${ns}-settings`)
-			: Player.config.viewStyle === 'threads' ? Player.$(`.${ns}-threads`)
-			: Player.config.viewStyle === 'tools' ? Player.$(`.${ns}-tools`) : null;
-
-		if (!heightElement) {
-			return;
+		if (!allowOffscreen) {
+			height = Math.min(height, document.documentElement.clientHeight - Player.container.offsetTop - bottom);
+			width = Math.min(width, document.documentElement.clientWidth - Player.container.offsetLeft);
 		}
 
-		const offset = Player.container.getBoundingClientRect().height - heightElement.getBoundingClientRect().height;
-		heightElement.style.height = (height - offset) + 'px';
-
+		Player.container.style.width = width + 'px';
+		Player.container.style.height = height + 'px';
 		Player.controls.preventWrapping();
 	},
 
@@ -140,6 +152,9 @@ module.exports = {
 	 */
 	initMove: function (e) {
 		e.preventDefault();
+		if (e.target.nodeName === 'A' || e.target.classList.contains(`${ns}-expander`)) {
+			return;
+		}
 		Player.$(`.${ns}-header`).style.cursor = 'grabbing';
 
 		// Try to reapply the current sizing to fix oversized winows.

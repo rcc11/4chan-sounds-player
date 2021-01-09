@@ -33,8 +33,6 @@ async function doInit() {
 document.addEventListener('4chanXInitFinished', doInit);
 
 // The timeout makes sure 4chan X will have added it's classes and be identified.
-// The player also tends to be all black without a timeout.
-// Something with the timing of the stylesheet loading and applying the board theme.
 setTimeout(function () {
 	require('./globals');
 

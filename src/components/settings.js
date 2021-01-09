@@ -129,12 +129,11 @@ module.exports = {
 		});
 		// Run any migrations to get up to date, and update the stored changes for event triggering.
 		Object.entries(await Player.settings.migrate(settings.VERSION)).forEach(([ prop, [ current, previous ] ]) => {
-			changes[prop] = [ current, changes[prop] ? changes[prop][1] : previous ]
+			changes[prop] = [ current, changes[prop] ? changes[prop][1] : previous ];
 		});
 		// Finally, trigger events.
 		if (!opts.bypassAll) {
 			!opts.bypassStylesheet && Player.display.updateStylesheet();
-			console.log(changes);
 			!opts.silent && Object.entries(changes).forEach(([ prop, [ current, previous ] ]) => {
 				Player.trigger('config', prop, current, previous);
 				Player.trigger('config:' + prop, current, previous);
@@ -200,7 +199,7 @@ module.exports = {
 				try {
 					console.log('[4chan sound player] Migrate:', mig.name);
 					Object.entries(await mig.run()).forEach(([ prop, [ current, previous ] ]) => {
-						changes[prop] = [ current, changes[prop] ? changes[prop][1] : previous ]
+						changes[prop] = [ current, changes[prop] ? changes[prop][1] : previous ];
 					});
 				} catch (err) {
 					console.error(err);
@@ -293,7 +292,7 @@ module.exports = {
 	_handleImport: async function (e) {
 		e.preventDefault();
 		const fileInput = _.element('<input type="file">');
-		const _import = async e => {
+		const _import = async () => {
 			let config;
 			try {
 				config = await (await fetch(URL.createObjectURL(fileInput.files[0]))).json();

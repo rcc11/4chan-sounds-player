@@ -20,13 +20,13 @@ module.exports = [
 		title: 'Footer',
 		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 		default: 'playing-button:"sound-index /" sound-count sounds\n'
+			+ '<div class="fcsp-col-auto"></col>'
 			+ 'p:{\n'
-			+ '	<div style="float: right; margin-right: .5rem">\n'
 			+ '		post-link\n'
 			+ '		Open [ image-link sound-link ]\n'
 			+ '		Download [ dl-image-button dl-sound-button ]\n'
-			+ '	</div>\n'
-			+ '}',
+			+ '}\n'
+			+ `<div class="${ns}-expander" data-direction="se"></div>\n`,
 		description: 'Template for the footer contents',
 		displayGroup: 'Templates',
 		displayMethod: 'textarea',
@@ -40,5 +40,13 @@ module.exports = [
 		displayGroup: 'Templates',
 		displayMethod: 'textarea',
 		attrs: 'style="height:9em;"'
+	},
+	{
+		property: 'customCSS',
+		title: 'Custom CSS',
+		default: '',
+		displayGroup: 'Templates',
+		displayMethod: 'textarea',
+		attrs: 'style="height:9em"'
 	}
 ];

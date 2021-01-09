@@ -15,7 +15,7 @@
 ##{$ns}-container[data-view-style="image"] .#{$ns}-player,
 ##{$ns}-container[data-view-style="playlist"] .#{$ns}-player,
 ##{$ns}-container[data-view-style="fullscreen"] .#{$ns}-player  {
-	display: block;
+	display: flex;
 }
 
 ##{$ns}-container[data-view-style="image"] {
@@ -29,7 +29,8 @@
 
 ##{$ns}-container[data-view-style="playlist"] {
 	& .#{$ns}-image-link {
-		height: 125px !important;
+		height: 125px;
+		flex-shrink: 0;
 	}
 }
 
@@ -46,5 +47,10 @@
 	}
 	& .#{$ns}-controls:hover {
 		bottom: 0;
+	}
+	& .#{$ns}-list-container {
+		position: absolute;
+		top: 100%;
+		width: 100%;
 	}
 }

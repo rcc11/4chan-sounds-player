@@ -48,6 +48,8 @@ module.exports = {
 				Player.isVideo = sound.image.endsWith('.webm') || sound.type === 'video/webm';
 				Player.isStandalone = sound.standaloneVideo;
 				Player.audio = sound.standaloneVideo ? video : Player.controls._audio;
+				Player.container.classList[Player.isVideo ? 'add' : 'remove']('playing-video');
+				Player.container.classList[Player.isVideo || sound.image.endsWith('gif') ? 'add' : 'remove']('playing-animated');
 				await Player.trigger('playsound', sound);
 			}
 

@@ -1,4 +1,9 @@
 .#{$ns}-player {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	overflow: auto;
+
 	& .#{$ns}-hover-image {
 		position: fixed;
 		max-height: 125px;
@@ -10,7 +15,8 @@
 }
 
 .#{$ns}-list-container {
-	overflow-y: auto;
+	flex-grow: 1;
+	overflow: auto;
 
 	& .#{$ns}-list-item {
 		list-style-type: none;
@@ -23,11 +29,12 @@
 		overflow: hidden;
 		height: 1.3rem;
 
-		&.playing {
-			background: #{map-get($colors, playing)} !important;
-		}
 		&:nth-child(2n) {
 			background: #{map-get($colors, even_row)};
+		}
+		// nth-child of every child just so it overrides the above without !important
+		&:nth-child(n).playing {
+			background: #{map-get($colors, playing)};
 		}
 
 		& .#{$ns}-item-menu-button {

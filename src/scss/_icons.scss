@@ -2,16 +2,14 @@
 	transform: rotate(45deg);
 }
 
-.#{$ns}-footer svg.bi {
-	margin-bottom: -.2rem
-}
-
 .#{$ns}-menu svg.bi {
 	margin: 0 -.25rem 0 0.25rem;
 }
 
-.#{$ns}-header svg.bi {
-	margin: 0 .125rem;
+.#{$ns}-header, .#{$ns}-footer {
+	svg.bi {
+		margin: 0 .125rem;
+	}
 }
 
 .muted svg.bi {

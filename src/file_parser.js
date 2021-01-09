@@ -106,6 +106,8 @@ function parseFileName(filename, image, post, thumb, imageMD5, bypassVerificatio
 	if (!filename) {
 		return [];
 	}
+	// Best quality image. For webms this has to be the thumbnail still. SAD!
+	const imageOrThumb = image.endsWith('webm') ? thumb : image;
 	filename = filename.replace(/-/, '/');
 	const matches = [];
 	let match;
@@ -138,7 +140,7 @@ function parseFileName(filename, image, post, thumb, imageMD5, bypassVerificatio
 			return sounds;
 		}
 
-		const sound = { src, id, title, name, post, image, filename, thumb, imageMD5, standaloneVideo };
+		const sound = { src, id, title, name, post, image, imageOrThumb, filename, thumb, imageMD5, standaloneVideo };
 		if (bypassVerification || Player.acceptedSound(sound)) {
 			sounds.push(sound);
 		}

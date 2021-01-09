@@ -2,7 +2,7 @@
  * Global variables and helpers.
  */
 
-window.ns = 'fc-sounds';
+window.ns = 'fcsp';
 
 window.is4chan = location.hostname.includes('4chan.org') || location.hostname.includes('4channel.org');
 window.isChanX = document.documentElement && document.documentElement.classList.contains('fourchan-x');
