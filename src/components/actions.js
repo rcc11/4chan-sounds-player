@@ -106,7 +106,12 @@ module.exports = {
 	 * Play the previous sound.
 	 */
 	previous: function (opts) {
-		Player.actions._movePlaying(-1, opts);
+		// Over three seconds into a sound restarts it instead.
+		if (Player.audio.currentTime > 3) {
+			Player.audio.currentTime = 0;
+		} else {
+			Player.actions._movePlaying(-1, opts);
+		}
 	},
 
 	_movePlaying: function (direction, { force, group, paused } = {}) {
