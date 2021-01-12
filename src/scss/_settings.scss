@@ -25,11 +25,15 @@
 		align-items: center;
 	}
 	& .#{$ns}-settings-tab {
+		display: flex;
 		margin: .25rem;
 		text-decoration: underline;
 		text-align: center;
 		&.active {
 			font-weight: bold;
+		}
+		& svg.bi {
+			margin: 0 -.125rem;
 		}
 	}
 
@@ -59,4 +63,31 @@
 			box-sizing: border-box
 		}
 	}
+}
+
+.#{$ns}-theme-save-options {
+	position: fixed;
+	max-height: 20rem;
+	overflow: auto;
+	padding: .25rem;
+
+	&:not(.fields-collapsed) .bi-chevron-down,
+	&.fields-collapsed .bi-chevron-up,
+	&.fields-collapsed input[type="checkbox"]:not(:checked),
+	&.fields-collapsed input[type="checkbox"]:not(:checked) + label {
+		display: none;
+	}
+}
+
+.#{$ns}-info-circle {
+	height: .8em;
+	cursor: pointer;
+}
+
+.#{$ns}-popover {
+	position: fixed;
+	padding: .25rem;
+	max-width: 12rem;
+	text-align: center;
+	border-radius: .3rem;
 }

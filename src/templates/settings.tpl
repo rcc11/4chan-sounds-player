@@ -10,10 +10,10 @@
 
 	let tpl = `<div class="${ns}-settings-tabs ${ns}-row">
 		<div class="${ns}-settings-tab-group ${ns}-col-auto">
-			<a href="#" class="${ns}-settings-reset-all ${ns}-settings-tab" title="Reset all settings to their default values.">Reset</a>
-			| <a href="#" class="${ns}-settings-export ${ns}-settings-tab" title="Shift click to export all settings. Otherwise only modified settings are included in the export.">Export</a>
-			| <a href="#" class="${ns}-settings-import ${ns}-settings-tab" title="Settings not included in the import will be left as their current value.">Import</a>
-			| <a href="${Player.settings.changelog}" class="${ns}-settings-tab" target="_blank">v${VERSION}</a>
+			<a href="#" class="${ns}-settings-reset-all ${ns}-settings-tab" title="Reset all settings to their default values." title="Reset all to default.">${Icons.reboot}</a>
+			<a href="#" class="${ns}-settings-export ${ns}-settings-tab" title="Export. Shift click to export all settings. Otherwise only modified settings are included in the export.">${Icons.boxArrowRight}</a>
+			<a href="#" class="${ns}-settings-import ${ns}-settings-tab" title="Import. Settings not included in the import will be left as their current value.">${Icons.boxArrowInLeft}</a>
+			<a href="${Player.settings.changelog}" class="${ns}-settings-tab" target="_blank" title="v${VERSION}">${Icons.github}</a>
 		</div>
 		<div class="${ns}-settings-tab-group ${ns}-col-auto">
 			${Object.keys(groups).map(name => 
@@ -30,13 +30,15 @@
 			if (setting.displayMethod === null) {
 				return;
 			}
-			const desc = setting.description;
 
 			tpl += `
 			<div class="${ns}-row ${ns}-align-${setting.isSubSetting ? 'start' : 'center'} ${setting.isSubSetting ? `${ns}-sub-settings` : ''}">
-				<div class="${ns}-col ${!setting.isSubSetting ? `${ns}-heading` : `${ns}-space-between`} ${desc ? `${ns}-has-description` : ''}" ${desc ? `title="${desc.replace(/"/g, '&quot;')}"` : ''}>
-					${setting.title}
-					${!setting.actions || !setting.actions.length ? '' : `<div style="display: inline-block; margin-right: .25rem">
+				<div class="${ns}-col ${!setting.isSubSetting ? `${ns}-heading` : `${ns}-space-between`}">
+					<span>
+						${setting.title}
+						${setting.description ? `<i class="${ns}-info-circle" data-content="${setting.description}">${Icons.infoCircle}</i>` : ''}
+					</span>
+					${!setting.actions || !setting.actions.length ? '' : `<div style="display: inline-block; margin: 0 .25rem">
 						${(setting.actions || []).map(action => `<a href="#" class="${ns}-heading-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`).join(' ')}
 					</div>`}
 				</div>`;

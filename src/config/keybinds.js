@@ -1,37 +1,43 @@
 const hasMediaSession = 'mediaSession' in navigator;
+const keybindOpts = {
+	displayGroup: 'Keybinds',
+	format: 'hotkeys.stringifyKey',
+	parse: 'hotkeys.parseKey',
+	class: `${ns}-key-input`,
+	property: 'hotkey_bindings',
+	allowInTheme: true
+};
 
 module.exports = [
 	{
-		property: 'hardwareMediaKeys',
-		title: 'Hardware Media Keys',
-		displayGroup: 'Keybinds',
-		description: 'Enable playback control via hardware media keys.'
-			+ (!hasMediaSession ? ' Your browser does not support this feature.' : ''),
-		default: hasMediaSession,
-		attrs: !hasMediaSession && 'disabled'
-	},
-	{
 		title: 'Keybinds',
 		displayGroup: 'Keybinds',
-		description: 'Enable keyboard shortcuts.',
-		format: 'hotkeys.stringifyKey',
-		parse: 'hotkeys.parseKey',
-		class: `${ns}-key-input`,
-		property: 'hotkey_bindings',
 		settings: [
 			{
 				property: 'hotkeys',
 				default: 'open',
 				title: 'Enabled',
-				format: null,
-				parse: null,
-				class: null,
 				options: {
 					always: 'Always',
 					open: 'Only with the player open',
 					never: 'Never'
 				}
 			},
+			{
+				property: 'hardwareMediaKeys',
+				title: 'Hardware Media Keys',
+				displayGroup: 'Keybinds',
+				description: 'Enable playback control via hardware media keys.'
+					+ (!hasMediaSession ? ' Your browser does not support this feature.' : ''),
+				default: hasMediaSession,
+				attrs: !hasMediaSession && 'disabled'
+			}
+		]
+	},
+	{
+		title: 'Playback',
+		...keybindOpts,
+		settings: [
 			{
 				property: 'hotkey_bindings.playPause',
 				title: 'Play/Pause',
@@ -78,7 +84,13 @@ module.exports = [
 				title: 'Volume Down',
 				keyHandler: 'actions.volumeDown',
 				default: { shiftKey: true, key: 'arrowdown' }
-			},
+			}
+		]
+	},
+	{
+		title: 'Display',
+		...keybindOpts,
+		settings: [
 			{
 				property: 'hotkey_bindings.closePlayer',
 				title: 'Close',
@@ -123,7 +135,7 @@ module.exports = [
 			},
 			{
 				property: 'hotkey_bindings.toggleAutoScroll',
-				title: 'Toggle Auto Scroll',
+				title: 'Toggle Thread Scroll',
 				keyHandler:  () => Player.set('autoScrollThread', !Player.config.autoScrollThread),
 				default: { key: '' }
 			}

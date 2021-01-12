@@ -1,9 +1,13 @@
 const settingsConfig = require('config');
 
+let keyConfigs;
+
 module.exports = {
 	initialize: function () {
 		Player.on('rendered', Player.hotkeys.apply);
 		Player.on('config:hotkeys', Player.hotkeys.apply);
+
+		keyConfigs = settingsConfig.reduce((c, s) => s.property === 'hotkey_bindings' ? c.concat(s.settings) : c, []);
 
 		// Setup up hardware media keys.
 		if ('mediaSession' in navigator && Player.config.hardwareMediaKeys) {
@@ -97,7 +101,7 @@ module.exports = {
 			const bindingConfig = k === keyDef.key
 				&& (!!keyDef.shiftKey === !!e.shiftKey) && (!!keyDef.ctrlKey === !!e.ctrlKey) && (!!keyDef.metaKey === !!e.metaKey)
 				&& (!keyDef.ignoreRepeat || !e.repeat)
-				&& settingsConfig.find(s => s.property === 'hotkey_bindings').settings.find(s => s.property === 'hotkey_bindings.' + key);
+				&& keyConfigs.find(s => s.property === 'hotkey_bindings.' + key);
 
 			if (bindingConfig) {
 				e.preventDefault();
