@@ -5,6 +5,10 @@ module.exports = {
 		mousedown: {
 			[`.${ns}-header`]: 'position.initMove',
 			[`.${ns}-expander`]: 'position.initResize'
+		},
+		touchstart: {
+			[`.${ns}-header`]: 'position.initMove',
+			[`.${ns}-expander`]: 'position.initResize'
 		}
 	},
 
@@ -75,10 +79,10 @@ module.exports = {
 	/**
 	 * Handle the user grabbing the expander.
 	 */
-	initResize: function initDrag(e) {
-		e.preventDefault();
-		Player._startX = e.clientX;
-		Player._startY = e.clientY;
+	initResize: function (e) {
+		try { e.preventDefault(); } catch (e) { }
+		Player._startX = (e.touches && e.touches[0] || e).clientX;
+		Player._startY = (e.touches && e.touches[0] || e).clientY;
 		let { width, height } = Player.container.getBoundingClientRect();
 		Player._startWidth = width;
 		Player._startHeight = height;
@@ -91,17 +95,19 @@ module.exports = {
 		Player._resizeMoveY = dir.includes('n') ? -1 : 0;
 		Player._resizeTarget = e.eventTarget;
 		document.documentElement.addEventListener('mousemove', Player.position.doResize, false);
+		document.documentElement.addEventListener('touchmove', Player.position.doResize, false);
 		document.documentElement.addEventListener('mouseup', Player.position.stopResize, false);
+		document.documentElement.addEventListener('touchend', Player.position.stopResize, false);
 	},
 
 	/**
 	 * Handle the user dragging the expander.
 	 */
 	doResize: function (e) {
-		e.preventDefault();
+		try { e.preventDefault(); } catch (e) { }
 
-		const xDelta = (e.clientX - Player._startX) * Player._resizeX;
-		const yDelta = (e.clientY - Player._startY) * Player._resizeY;
+		const xDelta = ((e.touches && e.touches[0] || e).clientX - Player._startX) * Player._resizeX;
+		const yDelta = ((e.touches && e.touches[0] || e).clientY - Player._startY) * Player._resizeY;
 		const reposition = Player._resizeTarget.dataset.bypassPosition !== 'true' && (Player._resizeMoveX || Player._resizeMoveY);
 
 		Player.position.resize(Player._startWidth + xDelta, Player._startHeight + yDelta, reposition || Player._resizeTarget.dataset.allowOffscreen);
@@ -116,9 +122,13 @@ module.exports = {
 	 * Handle the user releasing the expander.
 	 */
 	stopResize: function () {
+		try { e.preventDefault(); } catch (e) { }
+
 		const { width, height } = Player.container.getBoundingClientRect();
 		document.documentElement.removeEventListener('mousemove', Player.position.doResize, false);
+		document.documentElement.removeEventListener('touchmove', Player.position.doResize, false);
 		document.documentElement.removeEventListener('mouseup', Player.position.stopResize, false);
+		document.documentElement.removeEventListener('touchend', Player.position.stopResize, false);
 
 		if (Player._resizeTarget.dataset.bypassSave !== 'true') {
 			GM.setValue('size', width + ':' + height);
@@ -151,36 +161,45 @@ module.exports = {
 	 * Handle the user grabbing the header.
 	 */
 	initMove: function (e) {
-		e.preventDefault();
 		if (e.target.nodeName === 'A' || e.target.classList.contains(`${ns}-expander`)) {
 			return;
 		}
+		try { e.preventDefault(); } catch (e) { }
 		Player.$(`.${ns}-header`).style.cursor = 'grabbing';
 
 		// Try to reapply the current sizing to fix oversized winows.
 		const { width, height } = Player.container.getBoundingClientRect();
 		Player.position.resize(width, height);
 
-		Player._offsetX = e.clientX - Player.container.offsetLeft;
-		Player._offsetY = e.clientY - Player.container.offsetTop;
+		const clientX = (e.touches && e.touches[0] || e).clientX;
+		const clientY = (e.touches && e.touches[0] || e).clientY;
+		Player._offsetX = clientX - Player.container.offsetLeft;
+		Player._offsetY = clientY - Player.container.offsetTop;
 		document.documentElement.addEventListener('mousemove', Player.position.doMove, false);
+		document.documentElement.addEventListener('touchmove', Player.position.doMove, false);
 		document.documentElement.addEventListener('mouseup', Player.position.stopMove, false);
+		document.documentElement.addEventListener('touchend', Player.position.stopMove, false);
 	},
 
 	/**
 	 * Handle the user dragging the header.
 	 */
 	doMove: function (e) {
-		e.preventDefault();
-		Player.position.move(e.clientX - Player._offsetX, e.clientY - Player._offsetY);
+		try { e.preventDefault(); } catch (e) { }
+		const clientX = (e.touches && e.touches[0] || e).clientX;
+		const clientY = (e.touches && e.touches[0] || e).clientY;
+		Player.position.move(clientX - Player._offsetX, clientY - Player._offsetY);
 	},
 
 	/**
 	 * Handle the user releasing the heaer.
 	 */
-	stopMove: function () {
+	stopMove: function (e) {
+		try { e.preventDefault(); } catch (e) { }
 		document.documentElement.removeEventListener('mousemove', Player.position.doMove, false);
+		document.documentElement.removeEventListener('touchmove', Player.position.doMove, false);
 		document.documentElement.removeEventListener('mouseup', Player.position.stopMove, false);
+		document.documentElement.removeEventListener('touchend', Player.position.stopMove, false);
 		Player.$(`.${ns}-header`).style.cursor = null;
 		GM.setValue('position', parseInt(Player.container.style.left, 10) + ':' + parseInt(Player.container.style.top, 10));
 	},
