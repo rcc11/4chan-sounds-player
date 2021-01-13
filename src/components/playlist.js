@@ -49,7 +49,7 @@ module.exports = {
 			Player.playlist.showImage(sound);
 			Player.$all(`.${ns}-list-item.playing`).forEach(el => el.classList.remove('playing'));
 			Player.$(`.${ns}-list-item[data-id="${Player.playing.id}"]`).classList.add('playing');
-			Player.playlist.scrollToPlaying('nearest');
+			Player.config.viewStyle !== 'fullscreen' && Player.playlist.scrollToPlaying('nearest');
 			Player.config.autoScrollThread && sound.post && (location.href = location.href.split('#')[0] + '#' + postIdPrefix + sound.post);
 		});
 
