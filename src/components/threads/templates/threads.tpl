@@ -12,7 +12,7 @@
 		Boards - <a class="${ns}-all-boards-link ${ns}-heading-action" href="#">${Player.threads.showAllBoards ? 'Selected Only' : 'Show All'}</a>
 	</div>
 	<div class="${ns}-thread-board-list">
-		${Player.templates.threadBoards(data)}
+		${Player.threads.boardsTemplate(data)}
 	</div>
 	${!Player.threads.hasParser
 		? ''

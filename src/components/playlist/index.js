@@ -1,9 +1,13 @@
-const { parseFiles, parseFileName } = require('../file_parser');
-const { postIdPrefix } = require('../selectors');
+const { parseFiles, parseFileName } = require('../../file_parser');
+const { postIdPrefix } = require('../../selectors');
+
+const itemMenuTemplate = require('./templates/item_menu.tpl');
 
 module.exports = {
 	atRoot: [ 'add', 'remove' ],
 	public: [ 'search' ],
+
+	template: require('./templates/list.tpl'),
 
 	delegatedEvents: {
 		click: { [`.${ns}-list-item`]: 'playlist.handleSelect' },
@@ -79,7 +83,7 @@ module.exports = {
 	 */
 	render: function () {
 		const container = Player.$(`.${ns}-list-container`);
-		container.innerHTML = Player.templates.list();
+		container.innerHTML = Player.playlist.template();
 		Player.events.addUndelegatedListeners(document.body, Player.playlist.undelegatedEvents);
 		Player.playlist.hoverImage = Player.$(`.${ns}-hover-image`);
 	},
@@ -141,7 +145,7 @@ module.exports = {
 				if (!skipRender) {
 					// Add the sound to the playlist.
 					const list = Player.$(`.${ns}-list-container`);
-					let rowContainer = _.element(`<div>${Player.templates.list({ sounds: [ sound ] })}</div>`);
+					let rowContainer = _.element(`<div>${Player.playlist.template({ sounds: [ sound ] })}</div>`);
 					Player.events.addUndelegatedListeners(rowContainer, Player.playlist.undelegatedEvents);
 					if (index < Player.sounds.length - 1) {
 						const before = Player.$(`.${ns}-list-item[data-id="${Player.sounds[index + 1].id}"]`);
@@ -252,7 +256,7 @@ module.exports = {
 		const parent = listContainer || Player.container;
 
 		// Create the menu.
-		const dialog = _.element(Player.templates.itemMenu({ sound, postIdPrefix }), parent);
+		const dialog = _.element(itemMenuTemplate({ sound, postIdPrefix }), parent);
 		const relative = e.eventTarget.classList.contains(`${ns}-item-menu-button`) ? e.eventTarget : e;
 		Player.userTemplate._showMenu(relative, dialog, parent);
 	},

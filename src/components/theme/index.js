@@ -1,8 +1,13 @@
-const selectors = require('../selectors');
+const selectors = require('../../selectors');
 const settingsConfig = require('config');
+
+const saveMenuTemplate = require('./templates/save_theme_menu.tpl');
 
 module.exports = {
 	public: [ 'switch', 'next', 'previous' ],
+
+	savedThemesTemplate: require('./templates/saved_themes.tpl'),
+	themeKeybindsTemplate: require('./templates/theme_keybinds.tpl'),
 
 	delegatedEvents: {
 		click: {
@@ -194,7 +199,7 @@ module.exports = {
 		if (open) {
 			return Player.container.removeChild(open);
 		}
-		const el = _.element(Player.templates.saveThemeMenu({ settingsConfig }), Player.container);
+		const el = _.element(saveMenuTemplate({ settingsConfig }), Player.container);
 		Player.position.showRelativeTo(el, e.eventTarget);
 		Player.$(`.${ns}-save-theme-name`).focus();
 	},

@@ -3,7 +3,7 @@ const components = {
 	settings: require('./components/settings'),
 	events: require('./components/events'),
 	actions: require('./components/actions'),
-	colorpicker: require('./components/colorpicker'),
+	colorpicker: require('./components/settings/colorpicker'),
 	controls: require('./components/controls'),
 	display: require('./components/display'),
 	footer: require('./components/footer'),
@@ -38,30 +38,6 @@ const Player = window.Player = module.exports = {
 
 	// Store a ref to the components so they can be iterated.
 	components,
-
-	// Get all the templates.
-	templates: {
-		body: require('./templates/body.tpl'),
-		colorpicker: require('./templates/colorpicker.tpl'),
-		controls: require('./templates/controls.tpl'),
-		css: require('./scss/style.scss'),
-		css4chanXPolyfill: require('./scss/4chan-x-polyfill.scss'),
-		footer: require('./templates/footer.tpl'),
-		header: require('./templates/header.tpl'),
-		hostInput: require('./templates/host_input.tpl'),
-		itemMenu: require('./templates/item_menu.tpl'),
-		list: require('./templates/list.tpl'),
-		player: require('./templates/player.tpl'),
-		savedThemes: require('./templates/saved_themes.tpl'),
-		saveThemeMenu: require('./templates/save_theme_menu.tpl'),
-		settings: require('./templates/settings.tpl'),
-		themeKeybinds: require('./templates/theme_keybinds.tpl'),
-		threads: require('./templates/threads.tpl'),
-		threadBoards: require('./templates/thread_boards.tpl'),
-		threadList: require('./templates/thread_list.tpl'),
-		tools: require('./templates/tools.tpl'),
-		viewsMenu: require('./templates/views_menu.tpl')
-	},
 
 	/**
 	 * Set up the player.

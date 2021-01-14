@@ -2,18 +2,18 @@ module.exports = [
 	{
 		property: 'defaultUploadHost',
 		default: 'catbox',
-		parse: 'settings.setDefaultHost'
+		parse: 'settings.hosts.setDefault'
 	},
 	{
 		property: 'uploadHosts',
 		title: 'Hosts',
 		actions: [
-			{ title: 'Add', handler: 'settings.addUploadHost' },
-			{ title: 'Restore Defaults', handler: 'settings.restoreDefaultHosts' }
+			{ title: 'Add', handler: 'settings.hosts.add' },
+			{ title: 'Restore Defaults', handler: 'settings.hosts.restoreDefaults' }
 		],
 		displayGroup: 'Hosts',
-		displayMethod: 'settings.renderHosts',
-		parse: 'settings.parseHosts',
+		displayMethod: () => `<div class="${ns}-host-inputs">${Object.entries(Player.config.uploadHosts).map(Player.settings.hosts.template).join('')}</div>`,
+		parse: 'settings.hosts.parse',
 		looseCompare: true,
 		dismissTextId: 'uplodHostSettings',
 		dismissRestoreText: 'Show Help',

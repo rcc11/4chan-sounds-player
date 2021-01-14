@@ -4,6 +4,7 @@ const promoteFFmpegVersion = false;
 const maxFilenameLength = 218;
 
 module.exports = {
+	template: require('./templates/tools.tpl'),
 	hasFFmpeg: typeof ffmpeg === 'function',
 	_uploadIdx: 0,
 	createStatusText: '',
@@ -38,7 +39,7 @@ module.exports = {
 	},
 
 	render: function () {
-		Player.$(`.${ns}-tools`).innerHTML = Player.templates.tools();
+		Player.$(`.${ns}-tools`).innerHTML = Player.tools.template();
 		Player.tools.afterRender();
 	},
 

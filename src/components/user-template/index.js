@@ -1,4 +1,5 @@
 const buttons = require('./buttons');
+const viewsMenuTemplate = require('./templates/views_menu.tpl');
 
 // Regex for replacements
 const playingRE = /p: ?{([^}]*)}/g;
@@ -228,7 +229,7 @@ module.exports = {
 	_handleViewsMenu: function (e) {
 		e.preventDefault();
 		e.stopPropagation();
-		const dialog = _.element(Player.templates.viewsMenu());
+		const dialog = _.element(viewsMenuTemplate());
 		Player.userTemplate._showMenu(e.eventTarget, dialog);
 	},
 

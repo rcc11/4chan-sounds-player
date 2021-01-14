@@ -1,4 +1,5 @@
 module.exports = {
+	template: require('./templates/controls.tpl'),
 
 	delegatedEvents: {
 		click: {

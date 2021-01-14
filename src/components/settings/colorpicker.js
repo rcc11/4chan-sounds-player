@@ -1,3 +1,5 @@
+const colorpickerTemplate = require('./templates/colorpicker.tpl');
+
 const HEIGHT = 200;
 const WIDTH = 200;
 
@@ -50,7 +52,7 @@ module.exports = {
 		const rgbMatch = previewColor.match(/rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)/);
 		const rgb = [ +rgbMatch[1], +rgbMatch[2], +rgbMatch[3], isNaN(+rgbMatch[4]) ? 1 : rgbMatch[4] ];
 
-		const colorpicker = _.element(Player.templates.colorpicker({ HEIGHT, WIDTH, rgb }), parent);
+		const colorpicker = _.element(colorpickerTemplate({ HEIGHT, WIDTH, rgb }), parent);
 		Player.position.showRelativeTo(colorpicker, input);
 
 		input._colorpicker = colorpicker;

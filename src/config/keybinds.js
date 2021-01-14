@@ -165,7 +165,7 @@ module.exports = [
 				title: 'Select Theme',
 				keyHandler: 'theme._handleSwitch',
 				default: [ ],
-				displayMethod: 'templates.themeKeybinds',
+				displayMethod: 'theme.themeKeybindsTemplate',
 				parse: 'theme._parseSwitch',
 				format: null
 			}

@@ -1,9 +1,13 @@
+const cssTemplate = require('../../scss/style.scss');
+const css4chanXPolyfillTemplate = require('../../scss/4chan-x-polyfill.scss');
+
 const dismissedContentCache = {};
 const dismissedRestoreCache = {};
 
 module.exports = {
 	atRoot: [ 'show', 'hide' ],
 	public: [ 'show', 'hide' ],
+	template: require('./templates/body.tpl'),
 
 	delegatedEvents: {
 		click: {
@@ -88,7 +92,7 @@ module.exports = {
 			// Create the main player. For native threads put it in the threads to get free quote previews.
 			const isThread = document.body.classList.contains('is_thread');
 			const parent = isThread && !isChanX && document.body.querySelector('.board') || document.body;
-			Player.container = _.element(Player.templates.body(), parent);
+			Player.container = _.element(Player.display.template(), parent);
 
 			Player.trigger('rendered');
 		} catch (err) {
@@ -101,8 +105,8 @@ module.exports = {
 	updateStylesheet: function () {
 		// Insert the stylesheet if it doesn't exist. 4chan X polyfill, sound player styling, and user styling.
 		Player.stylesheet = Player.stylesheet || _.element('<style id="sound-player-css"></style>', document.head);
-		Player.stylesheet.innerHTML = (!isChanX ? '/* 4chanX Polyfill */\n\n' + Player.templates.css4chanXPolyfill() : '')
-			+ '\n\n/* Sounds Player CSS */\n\n' + Player.templates.css();
+		Player.stylesheet.innerHTML = (!isChanX ? '/* 4chanX Polyfill */\n\n' + css4chanXPolyfillTemplate() : '')
+			+ '\n\n/* Sounds Player CSS */\n\n' + cssTemplate();
 	},
 
 	/**

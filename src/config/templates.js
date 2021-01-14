@@ -7,7 +7,7 @@ module.exports = [
 			{ title: 'Save Current', handler: 'theme._showSaveOptions' }
 		],
 		displayGroup: 'Theme',
-		displayMethod: 'templates.savedThemes',
+		displayMethod: 'theme.savedThemesTemplate',
 		mix: true,
 		default:  { }
 	},

@@ -1,11 +1,15 @@
-const { parseFileName } = require('../file_parser');
-const { get } = require('../api');
+const { parseFileName } = require('../../file_parser');
+const { get } = require('../../api');
 
 const maxSavedBoards = 10;
 const boardsURL = 'https://a.4cdn.org/boards.json';
 const catalogURL = 'https://a.4cdn.org/%s/catalog.json';
 
 module.exports = {
+	template: require('./templates/threads.tpl'),
+	boardsTemplate: require('./templates/boards.tpl'),
+	listsTemplate: require('./templates/list.tpl'),
+
 	boardList: null,
 	soundThreads: null,
 	displayThreads: {},
@@ -57,7 +61,7 @@ module.exports = {
 
 	render: function () {
 		if (Player.container) {
-			Player.$(`.${ns}-threads`).innerHTML = Player.templates.threads();
+			Player.$(`.${ns}-threads`).innerHTML = Player.threads.template();
 			Player.threads.afterRender();
 		}
 	},
@@ -90,7 +94,7 @@ module.exports = {
 	 */
 	renderThreads: function () {
 		if (!Player.threads.hasParser || Player.config.threadsViewStyle === 'table') {
-			Player.$(`.${ns}-threads-body`).innerHTML = Player.templates.threadList();
+			Player.$(`.${ns}-threads-body`).innerHTML = Player.threads.listTemplate();
 		} else {
 			try {
 				const list = Player.$(`.${ns}-thread-list`);
@@ -123,7 +127,7 @@ module.exports = {
 	 * Render just the board selection.
 	 */
 	renderBoards: function () {
-		Player.$(`.${ns}-thread-board-list`).innerHTML = Player.templates.threadBoards();
+		Player.$(`.${ns}-thread-board-list`).innerHTML = Player.threads.boardsTemplate();
 	},
 
 	/**
