@@ -25,11 +25,26 @@ module.exports = {
 		}
 	},
 
+	undelegatedEvents: {
+		mouseenter: {
+			[`.${ns}-info-circle`]: e => {
+				const el = _.element(`<div class="${ns}-popover dialog">${e.currentTarget.dataset.content}</div>`, Player.container);
+				e.currentTarget.infoEl = el;
+				Player.position.showRelativeTo(el, e.currentTarget)
+			}
+		},
+		mouseleave: {
+			[`.${ns}-info-circle`]: e => {
+				e.currentTarget.infoEl && Player.container.removeChild(e.currentTarget.infoEl);
+			}
+		}
+	},
+
 	initialize: async function () {
 		Player.settings.view = 'Display';
 
-		// Apply the default board theme as default.
-		Player.display.applyBoardTheme();
+		// Apply the board theme as default.
+		Player.theme.applyBoardTheme({ bypassRender: true });
 
 		// Load the config.
 		await Player.settings.load(await GM.getValue('settings') || {}, {
@@ -58,9 +73,9 @@ module.exports = {
 	},
 
 	render: function () {
-		if (Player.container) {
-			Player.$(`.${ns}-settings`).innerHTML = Player.templates.settings();
-		}
+		const settingsContainer = Player.$(`.${ns}-settings`)
+		settingsContainer.innerHTML = Player.templates.settings();
+		Player.events.addUndelegatedListeners(settingsContainer, Player.settings.undelegatedEvents);
 	},
 
 	/**
@@ -92,9 +107,9 @@ module.exports = {
 	/**
 	 * Reset a setting to the default value
 	 */
-	reset: function (property) {
+	reset: function (property, opts) {
 		let settingConfig = Player.settings.findDefault(property);
-		Player.set(property, settingConfig.default, { settingConfig });
+		Player.set(property, settingConfig.default, { ...opts, settingConfig });
 	},
 
 	/**

@@ -80,7 +80,7 @@
 }
 
 .#{$ns}-info-circle {
-	height: .8em;
+	& svg { height: .8em; width: .8em; }
 	cursor: pointer;
 }
 

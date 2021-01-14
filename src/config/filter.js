@@ -14,7 +14,7 @@ module.exports = [
 	{
 		property: 'allow',
 		title: 'Allowed Hosts',
-		description: 'Which domains sources are allowed to be loaded from.',
+		description: 'Which domains sounds are allowed to be loaded from.',
 		default: [
 			'4cdn.org',
 			'catbox.moe',

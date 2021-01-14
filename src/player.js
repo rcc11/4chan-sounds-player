@@ -12,6 +12,7 @@ const components = {
 	minimised: require('./components/minimised'),
 	playlist: require('./components/playlist'),
 	position: require('./components/position'),
+	theme: require('./components/theme'),
 	threads: require('./components/threads'),
 	tools: require('./components/tools'),
 	userTemplate: require('./components/user-template')
@@ -51,7 +52,10 @@ const Player = window.Player = module.exports = {
 		itemMenu: require('./templates/item_menu.tpl'),
 		list: require('./templates/list.tpl'),
 		player: require('./templates/player.tpl'),
+		savedThemes: require('./templates/saved_themes.tpl'),
+		saveThemeMenu: require('./templates/save_theme_menu.tpl'),
 		settings: require('./templates/settings.tpl'),
+		themeKeybinds: require('./templates/theme_keybinds.tpl'),
 		threads: require('./templates/threads.tpl'),
 		threadBoards: require('./templates/thread_boards.tpl'),
 		threadList: require('./templates/thread_list.tpl'),
@@ -128,7 +132,7 @@ const Player = window.Player = module.exports = {
 	/**
 	 * Listen for changes
 	 */
-	syncTab: (property, callback) => typeof GM_addValueChangeListener !== 'undefined' && GM_addValueChangeListener(property, (_prop, oldValue, newValue, remote) => {
+	syncTab: (property, callback) => 0 && typeof GM_addValueChangeListener !== 'undefined' && GM_addValueChangeListener(property, (_prop, oldValue, newValue, remote) => {
 		remote && callback(newValue, oldValue);
 	}),
 

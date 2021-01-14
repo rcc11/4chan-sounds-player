@@ -3,7 +3,7 @@
 	display: flex;
 	flex-grow: 1;
 	justify-content: center;
-	overflow: auto;
+	overflow: hidden;
 
 	&.#{$ns}-pip {
 		position: fixed;

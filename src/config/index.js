@@ -19,10 +19,6 @@ module.exports = [
 		default: 'playlist'
 	},
 	{
-		property: 'hoverImages',
-		default: false
-	},
-	{
 		property: 'showPlaylistSearch',
 		default: true
 	}

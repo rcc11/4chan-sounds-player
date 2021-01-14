@@ -9,7 +9,7 @@ module.exports = [
 		title: 'Hosts',
 		actions: [
 			{ title: 'Add', handler: 'settings.addUploadHost' },
-			{ title: 'Restore Defaults', handler: 'settings.restoreDefaultHosts' },
+			{ title: 'Restore Defaults', handler: 'settings.restoreDefaultHosts' }
 		],
 		displayGroup: 'Hosts',
 		displayMethod: 'settings.renderHosts',

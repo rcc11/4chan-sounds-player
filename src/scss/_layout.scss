@@ -24,7 +24,7 @@
 .#{$ns}-heading-action {
 	font-weight: normal;
 	text-decoration: underline;
-	margin-left: .25rem;
+	display: inline-flex;
 }
 .#{$ns}-row {
 	display: flex;

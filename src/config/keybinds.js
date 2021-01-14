@@ -36,6 +36,7 @@ module.exports = [
 	},
 	{
 		title: 'Playback',
+		themeFieldTitle: 'Playback Keybinds',
 		...keybindOpts,
 		settings: [
 			{
@@ -89,6 +90,7 @@ module.exports = [
 	},
 	{
 		title: 'Display',
+		themeFieldTitle: 'Display Keybinds',
 		...keybindOpts,
 		settings: [
 			{
@@ -124,7 +126,7 @@ module.exports = [
 			{
 				property: 'hotkey_bindings.scrollToPlaying',
 				title: 'Jump To Playing',
-				keyHandler: 'playlist.scrollToPlaying',
+				keyHandler: () => Player.playlist.scrollToPlaying(),
 				default: { key: '' }
 			},
 			{
@@ -138,6 +140,34 @@ module.exports = [
 				title: 'Toggle Thread Scroll',
 				keyHandler:  () => Player.set('autoScrollThread', !Player.config.autoScrollThread),
 				default: { key: '' }
+			}
+		]
+	},
+	{
+		title: 'Theme',
+		themeFieldTitle: 'Theme Keybinds',
+		...keybindOpts,
+		settings: [
+			{
+				property: 'hotkey_bindings.nextTheme',
+				title: 'Next Theme',
+				keyHandler: 'theme.next',
+				default: { key: '' }
+			},
+			{
+				property: 'hotkey_bindings.previousTheme',
+				title: 'Previous Theme',
+				keyHandler: 'theme.previous',
+				default: { key: '' }
+			},
+			{
+				property: 'hotkey_bindings.switchTheme',
+				title: 'Select Theme',
+				keyHandler: 'theme._handleSwitch',
+				default: [ ],
+				displayMethod: 'templates.themeKeybinds',
+				parse: 'theme._parseSwitch',
+				format: null
 			}
 		]
 	}

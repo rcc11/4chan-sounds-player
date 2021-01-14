@@ -1,6 +1,3 @@
-const selectors = require('../selectors');
-const settingsConfig = require('config');
-
 const dismissedContentCache = {};
 const dismissedRestoreCache = {};
 
@@ -87,9 +84,6 @@ module.exports = {
 
 			// Create the main stylesheet.
 			Player.display.updateStylesheet();
-			// Create the user stylesheet and update it when dependent config values are changed.
-			Player.display.updateUserStylesheet();
-			Player.userTemplate.maintain({ render: Player.display.updateUserStylesheet }, 'customCSS');
 
 			// Create the main player. For native threads put it in the threads to get free quote previews.
 			const isThread = document.body.classList.contains('is_thread');
@@ -104,65 +98,11 @@ module.exports = {
 		}
 	},
 
-	forceBoardTheme: function () {
-		Player.display.applyBoardTheme(true);
-		Player.settings.save();
-	},
-
-	applyBoardTheme: function (force) {
-		// Create a reply element to gather the style from
-		const div = _.element(`<div class="${selectors.styleFetcher}"></div>`, document.body);
-		const style = document.defaultView.getComputedStyle(div);
-
-		// Make sure the style is loaded.
-		// TODO: This sucks. Should observe the stylesheets for changes to make it work.
-		// That would also make theme changes apply without a reload.
-		if (style.backgroundColor === 'rgba(0, 0, 0, 0)') {
-			return setTimeout(Player.display.applyBoardTheme, 0);
-		}
-		Object.assign(style, { page_background: window.getComputedStyle(document.body).backgroundColor });
-
-		// Apply the computed style to the color config.
-		const colorSettingMap = {
-			'colors.text': 'color',
-			'colors.background': 'backgroundColor',
-			'colors.odd_row': 'backgroundColor',
-			'colors.border': 'borderBottomColor',
-			// If the border is the same color as the text don't use it as a background color.
-			'colors.even_row': style.borderBottomColor === style.color ? 'backgroundColor' : 'borderBottomColor',
-			// Set this for use in custom css and templates
-			'colors.page_background': 'page_background'
-		};
-		settingsConfig.find(s => s.property === 'colors').settings.forEach(setting => {
-			const updateConfig = force || (setting.default === _.get(Player.config, setting.property));
-			colorSettingMap[setting.property] && (setting.default = style[colorSettingMap[setting.property]]);
-			updateConfig && Player.set(setting.property, setting.default, { bypassSave: true, bypassRender: true, bypassStylesheet: true });
-		});
-
-		// Clean up the element.
-		document.body.removeChild(div);
-
-		// Updated the stylesheet if it exists.
-		Player.stylesheet && Player.display.updateStylesheet();
-
-		// Re-render the settings if needed.
-		Player.settings.render();
-	},
-
 	updateStylesheet: function () {
 		// Insert the stylesheet if it doesn't exist. 4chan X polyfill, sound player styling, and user styling.
 		Player.stylesheet = Player.stylesheet || _.element('<style id="sound-player-css"></style>', document.head);
 		Player.stylesheet.innerHTML = (!isChanX ? '/* 4chanX Polyfill */\n\n' + Player.templates.css4chanXPolyfill() : '')
 			+ '\n\n/* Sounds Player CSS */\n\n' + Player.templates.css();
-	},
-
-	updateUserStylesheet: function () {
-		Player.userStylesheet = Player.userStylesheet || _.element('<style id="sound-player-user-css"></style>', document.head);
-		Player.userStylesheet.innerHTML = Player.userTemplate.build({
-			template: '/* Sounds Player User CSS */\n\n' + Player.config.customCSS,
-			sound: Player.playing,
-			configOnly: true
-		});
 	},
 
 	/**
@@ -318,9 +258,10 @@ module.exports = {
 	 * Close any open menus.
 	 */
 	closeDialogs: function (e) {
-		document.querySelectorAll(`.${ns}-menu, .${ns}-colorpicker`).forEach(menu => {
+		document.querySelectorAll(`.${ns}-menu, .${ns}-colorpicker, .${ns}-theme-save-options`).forEach(menu => {
 			// Don't close colorpickers when you click inside them.
-			if (!e || !menu.classList.contains(`${ns}-colorpicker`) || !menu.contains(e.target)) {
+			const isClickable = menu.classList.contains(`${ns}-colorpicker`) || menu.classList.contains(`${ns}-theme-save-options`);
+			if (!e || !isClickable || !menu.contains(e.target)) {
 				menu.parentNode.removeChild(menu);
 				Player.trigger('menu-close', menu);
 			}

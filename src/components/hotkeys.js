@@ -3,11 +3,22 @@ const settingsConfig = require('config');
 let keyConfigs;
 
 module.exports = {
+	_keyMap: {
+		' ': 'space',
+		arrowleft: 'left',
+		arrowright: 'right',
+		arrowup: 'up',
+		arrowdown: 'down'
+	},
+
 	initialize: function () {
 		Player.on('rendered', Player.hotkeys.apply);
 		Player.on('config:hotkeys', Player.hotkeys.apply);
 
-		keyConfigs = settingsConfig.reduce((c, s) => s.property === 'hotkey_bindings' ? c.concat(s.settings) : c, []);
+		keyConfigs = settingsConfig.reduce((c, s) => {
+			s.property === 'hotkey_bindings' && s.settings.forEach(s => c[s.property.slice(16)] = s);
+			return c;
+		}, {});
 
 		// Setup up hardware media keys.
 		if ('mediaSession' in navigator && Player.config.hardwareMediaKeys) {
@@ -42,14 +53,6 @@ module.exports = {
 				});
 			});
 		}
-	},
-
-	_keyMap: {
-		' ': 'space',
-		arrowleft: 'left',
-		arrowright: 'right',
-		arrowup: 'up',
-		arrowdown: 'down'
 	},
 
 	addHandler: () => {
@@ -96,18 +99,22 @@ module.exports = {
 		const bindings = Player.config.hotkey_bindings || {};
 
 		// Look for a matching hotkey binding
-		for (let key in bindings) {
-			const keyDef = bindings[key];
+		Object.entries(bindings).find(function checkBinding([ name, keyDef ]) {
+			if (Array.isArray(keyDef)) {
+				return keyDef.find(_def => checkBinding([ name, _def ]));
+			}
 			const bindingConfig = k === keyDef.key
 				&& (!!keyDef.shiftKey === !!e.shiftKey) && (!!keyDef.ctrlKey === !!e.ctrlKey) && (!!keyDef.metaKey === !!e.metaKey)
 				&& (!keyDef.ignoreRepeat || !e.repeat)
-				&& keyConfigs.find(s => s.property === 'hotkey_bindings.' + key);
+				&& keyConfigs[name];
 
 			if (bindingConfig) {
 				e.preventDefault();
-				return Player.getHandler(bindingConfig.keyHandler)();
+				e._binding = keyDef;
+				Player.getHandler(bindingConfig.keyHandler)(e);
+				return true;
 			}
-		}
+		});
 	},
 
 	/**

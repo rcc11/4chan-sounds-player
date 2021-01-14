@@ -11,7 +11,8 @@ module.exports = [
 		default: true,
 		title: 'Pause On Hide',
 		description: 'Pause the player when it\'s hidden.',
-		displayGroup: 'Display'
+		displayGroup: 'Display',
+		allowInTheme: true
 	},
 	{
 		property: 'showUpdatedNotification',
@@ -21,8 +22,15 @@ module.exports = [
 		displayGroup: 'Display'
 	},
 	{
+		property: 'hoverImages',
+		title: 'Hover Images',
+		default: false,
+		allowInTheme: true
+	},
+	{
 		title: 'Controls',
 		displayGroup: 'Display',
+		allowInTheme: true,
 		settings: [
 			{
 				property: 'preventControlWrapping',
@@ -45,6 +53,7 @@ module.exports = [
 		title: 'Minimised Display',
 		description: 'Optional displays for when the player is minimised.',
 		displayGroup: 'Display',
+		allowInTheme: true,
 		settings: [
 			{
 				property: 'pip',
@@ -75,6 +84,7 @@ module.exports = [
 	{
 		title: 'Thread',
 		displayGroup: 'Display',
+		allowInTheme: true,
 		settings: [
 			{
 				property: 'autoScrollThread',
@@ -113,6 +123,7 @@ module.exports = [
 		displayGroup: 'Display',
 		property: 'colors',
 		updateStylesheet: true,
+		allowInTheme: true,
 		class: `${ns}-colorpicker-input`,
 		displayMethod: (value, attrs) => `<div class="${ns}-col">
 				<input type="text" ${attrs} value="${value}">
@@ -197,7 +208,8 @@ module.exports = [
 			{
 				property: 'colors.page_background',
 				default: 'rgb(238, 242, 255)',
-				displayMethod: null
+				displayMethod: null,
+				allowInTheme: false
 			}
 		]
 	}
