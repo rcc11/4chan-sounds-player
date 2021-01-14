@@ -94,7 +94,7 @@ module.exports = {
 	 */
 	renderThreads: function () {
 		if (!Player.threads.hasParser || Player.config.threadsViewStyle === 'table') {
-			Player.$(`.${ns}-threads-body`).innerHTML = Player.threads.listTemplate();
+			Player.$(`.${ns}-threads-body`).innerHTML = Player.threads.listsTemplate();
 		} else {
 			try {
 				const list = Player.$(`.${ns}-thread-list`);

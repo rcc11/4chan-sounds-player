@@ -22,6 +22,9 @@ const components = {
 const Player = window.Player = module.exports = {
 	ns,
 
+	// Store a ref to the components so they can be iterated.
+	components,
+
 	audio: new Audio(),
 	sounds: [],
 	isHidden: true,
@@ -35,9 +38,6 @@ const Player = window.Player = module.exports = {
 	// Helper function to query elements in the player.
 	$: (...args) => Player.container && Player.container.querySelector(...args),
 	$all: (...args) => Player.container && Player.container.querySelectorAll(...args),
-
-	// Store a ref to the components so they can be iterated.
-	components,
 
 	/**
 	 * Set up the player.

@@ -33,7 +33,7 @@ module.exports = {
 			[`.${ns}-info-circle`]: e => {
 				const el = _.element(`<div class="${ns}-popover dialog">${e.currentTarget.dataset.content}</div>`, Player.container);
 				e.currentTarget.infoEl = el;
-				Player.position.showRelativeTo(el, e.currentTarget)
+				Player.position.showRelativeTo(el, e.currentTarget);
 			}
 		},
 		mouseleave: {
@@ -76,7 +76,7 @@ module.exports = {
 	},
 
 	render: function () {
-		const settingsContainer = Player.$(`.${ns}-settings`)
+		const settingsContainer = Player.$(`.${ns}-settings`);
 		settingsContainer.innerHTML = Player.settings.template();
 		Player.events.addUndelegatedListeners(settingsContainer, Player.settings.undelegatedEvents);
 	},

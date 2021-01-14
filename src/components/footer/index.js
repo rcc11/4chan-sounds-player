@@ -6,7 +6,7 @@ module.exports = {
 		defaultName: '4chan Sounds',
 		outerClass: `${ns}-col-auto`
 	}),
-	
+
 	initialize: function () {
 		Player.userTemplate.maintain(Player.footer, 'footerTemplate');
 	},

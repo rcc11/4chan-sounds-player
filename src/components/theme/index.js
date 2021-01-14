@@ -104,8 +104,8 @@ module.exports = {
 		Player.set('selectedTheme', name);
 		if (name === 'Default') {
 			[ 'headerTemplate', 'footerTemplate', 'rowTemplate', 'chanXTemplate', 'customCSS' ].forEach(prop => {
-				Player.settings.reset(prop, { bypassRender: true, bypassStylesheet: true })
-			})
+				Player.settings.reset(prop, { bypassRender: true, bypassStylesheet: true });
+			});
 			Player.settings.render();
 			Player.display.updateStylesheet();
 		} else {
@@ -164,7 +164,7 @@ module.exports = {
 
 	_remove: function (prop, e) {
 		const themes = Player.config.savedThemes;
-		const row = e.eventTarget.closest(`[data-theme]`);
+		const row = e.eventTarget.closest('[data-theme]');
 		const name = row.dataset.theme;
 		// Can't delete the default. It's not actually a stored theme.
 		if (name === 'Default') {
@@ -175,7 +175,7 @@ module.exports = {
 			themes[name] = null;
 		} else {
 			delete themes[name];
-			Player.config.savedThemesOrder = Player.config.savedThemesOrder.filter(name => name !== name);
+			Player.config.savedThemesOrder = Player.config.savedThemesOrder.filter(_name => _name !== name);
 		}
 		// Remove the row
 		row.parentNode.removeChild(row);
@@ -206,14 +206,14 @@ module.exports = {
 
 	_toggleSaveFields: function () {
 		Player.$(`.${ns}-theme-save-options`).classList.toggle('fields-collapsed');
-		Player.position.showRelativeTo(Player.$(`.${ns}-theme-save-options`), Player.$(`[data-handler="theme._showSaveOptions"]`));
+		Player.position.showRelativeTo(Player.$(`.${ns}-theme-save-options`), Player.$('[data-handler="theme._showSaveOptions"]'));
 	},
 
 	_save: function (e) {
 		e.preventDefault();
 		const name = Player.$(`.${ns}-save-theme-name`).value;
 		if (!name) {
-			return Player.logError(`A name is required to save a theme.`, null, 'warning');
+			return Player.logError('A name is required to save a theme.', null, 'warning');
 		}
 		const checked = Player.$all(`.${ns}-theme-save-options input:checked`);
 		const data = [ ...checked ].reduce((data, el) => _.set(data, el.value, _.get(Player.config, el.value)), {});

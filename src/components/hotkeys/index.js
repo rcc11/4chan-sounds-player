@@ -114,6 +114,7 @@ module.exports = {
 				Player.getHandler(bindingConfig.keyHandler)(e);
 				return true;
 			}
+			return false;
 		});
 	},
 

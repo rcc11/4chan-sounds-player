@@ -1,5 +1,6 @@
 const selectors = require('../../selectors');
 
+/* eslint-disable max-statements-per-line, no-empty */
 module.exports = {
 	delegatedEvents: {
 		mousedown: {
@@ -121,7 +122,7 @@ module.exports = {
 	/**
 	 * Handle the user releasing the expander.
 	 */
-	stopResize: function () {
+	stopResize: function (e) {
 		try { e.preventDefault(); } catch (e) { }
 
 		const { width, height } = Player.container.getBoundingClientRect();

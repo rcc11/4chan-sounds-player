@@ -126,4 +126,4 @@ module.exports = {
 		Object.assign(Player.config.uploadHosts, Player.settings.findDefault('uploadHosts').default);
 		Player.set('uploadHosts', Player.config.uploadHosts, { bypassValidation: true });
 	}
-}
+};
