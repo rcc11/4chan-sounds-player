@@ -60,37 +60,38 @@ module.exports = {
 
 		const _confFuncOrText = v => (typeof v === 'function' ? v(data) : v);
 
-		// Apply common template replacements, checking for config only.
-		let html = data.template
-			.replace(configRE, (...args) => _.get(Player.config, args[1]));
-		!data.configOnly && (html = html
+		// Apply common template replacements, unless they are opted out.
+		let html = data.template.replace(configRE, (...args) => _.get(Player.config, args[1]));
+		!data.ignoreDisplayBlocks && (html = html
 			.replace(playingRE, Player.playing && Player.playing === data.sound ? '$1' : '')
-			.replace(hoverRE, `<span class="${ns}-hover-display ${outerClass}">$1</span>`)
-			.replace(buttonRE, function (full, type, text) {
-				let buttonConf = buttons.find(conf => conf.tplName === type);
-				if (buttonConf.requireSound && !data.sound || buttonConf.showIf && !buttonConf.showIf(data)) {
-					return '';
-				}
-				// If the button config has sub values then extend the base config with the selected sub value.
-				// Which value is to use is taken from the `property` in the base config of the player config.
-				// This gives us different state displays.
-				if (buttonConf.values) {
-					let topConf = buttonConf;
-					const valConf = buttonConf.values[_.get(Player.config, buttonConf.property)] || buttonConf.values[Object.keys(buttonConf.values)[0]];
-					buttonConf = { ...topConf, ...valConf, class: ((topConf.class || '') + ' ' + (valConf.class || '')).trim() };
-				}
-				const attrs = [ ...(_confFuncOrText(buttonConf.attrs) || []) ];
-				attrs.some(attr => attr.startsWith('href')) || attrs.push('href="javascript:;"');
-				(buttonConf.class || outerClass) && attrs.push(`class="${buttonConf.class || ''} ${outerClass || ''}"`);
+			.replace(hoverRE, `<span class="${ns}-hover-display ${outerClass}">$1</span>`));
+		!data.ignoreButtons && (html = html.replace(buttonRE, function (full, type, text) {
+			let buttonConf = buttons.find(conf => conf.tplName === type);
+			if (buttonConf.requireSound && !data.sound || buttonConf.showIf && !buttonConf.showIf(data)) {
+				return '';
+			}
+			// If the button config has sub values then extend the base config with the selected sub value.
+			// Which value is to use is taken from the `property` in the base config of the player config.
+			// This gives us different state displays.
+			if (buttonConf.values) {
+				let topConf = buttonConf;
+				const valConf = buttonConf.values[_.get(Player.config, buttonConf.property)] || buttonConf.values[Object.keys(buttonConf.values)[0]];
+				buttonConf = { ...topConf, ...valConf, class: ((topConf.class || '') + ' ' + (valConf.class || '')).trim() };
+			}
+			const attrs = [ ...(_confFuncOrText(buttonConf.attrs) || []) ];
+			attrs.some(attr => attr.startsWith('href')) || attrs.push('href="javascript:;"');
+			(buttonConf.class || outerClass) && attrs.push(`class="${buttonConf.class || ''} ${outerClass || ''}"`);
 
-				return `<a ${attrs.join(' ')}>${text || _confFuncOrText(buttonConf.icon) || _confFuncOrText(buttonConf.text)}</a>`;
-			})
+			return `<a ${attrs.join(' ')}>${text || _confFuncOrText(buttonConf.icon) || _confFuncOrText(buttonConf.text)}</a>`;
+		}));
+		!data.ignoreSoundName && (html = html
 			.replace(soundNameMarqueeRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem; text-overflow: clip;"><span title="${name}" class="${ns}-title-marquee" data-location="${data.location || ''}">${name}</span></div>` : '')
-			.replace(soundNameRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem"><span title="${name}">${name}</span></div>` : '')
+			.replace(soundNameRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem"><span title="${name}">${name}</span></div>` : ''));
+		!data.ignoreSoundProperties && (html = html
 			.replace(soundPropRE, (...args) => data.sound ? data.sound[args[1]] : '')
 			.replace(soundIndexRE, data.sound ? Player.sounds.indexOf(data.sound) + 1 : 0)
-			.replace(soundCountRE, Player.sounds.length)
-			.replace(/%v/g, VERSION));
+			.replace(soundCountRE, Player.sounds.length));
+		!data.ignoreVersion && (html = html.replace(/%v/g, VERSION));
 
 		// Apply any specific replacements
 		if (data.replacements) {
@@ -124,14 +125,14 @@ module.exports = {
 		const events = [];
 
 		// add/remove should render templates showing the count.
-		// playsound/stop should render templates showing the playing sounds name/index or dependent on something playing.
+		// playsound/stop should render templates either showing properties of the playing sound or dependent on something playing.
 		// order should render templates showing a sounds index.
 		const hasCount = soundCountRE.test(template);
-		const hasName = soundNameRE.test(template);
+		const hasSoundProp = soundNameRE.test(template) || soundPropRE.test(template);
 		const hasIndex = soundIndexRE.test(template);
 		const hasPlaying = playingRE.test(template);
 		hasCount && events.push('add', 'remove');
-		(hasPlaying || property !== 'rowTemplate' && (hasName || hasIndex)) && events.push('playsound', 'stop');
+		(hasPlaying || property !== 'rowTemplate' && (hasSoundProp || hasIndex)) && events.push('playsound', 'stop');
 		hasIndex && events.push('order');
 
 		// Find which buttons the template includes that are dependent on config values.

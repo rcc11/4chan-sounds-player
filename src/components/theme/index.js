@@ -33,7 +33,10 @@ module.exports = {
 		Player.userStylesheet.innerHTML = Player.userTemplate.build({
 			template: '/* Sounds Player User CSS */\n\n' + Player.config.customCSS,
 			sound: Player.playing,
-			configOnly: true
+			ignoreButtons: true,
+			ignoreDisplayBlocks: true,
+			ignoreSoundName: true,
+			ignoreVersion: true
 		});
 	},
 
@@ -218,7 +221,7 @@ module.exports = {
 		const checked = Player.$all(`.${ns}-theme-save-options input:checked`);
 		const data = [ ...checked ].reduce((data, el) => _.set(data, el.value, _.get(Player.config, el.value)), {});
 		Player.config.savedThemes[name] = data;
-		Player.config.savedThemesOrder.push(name);
+		Player.config.savedThemesOrder.indexOf(name) === -1 && Player.config.savedThemesOrder.push(name);
 		Player.set('savedThemes', Player.config.savedThemes, { bypassValidation: true });
 		Player.container.removeChild(Player.$(`.${ns}-theme-save-options`));
 	}

@@ -146,13 +146,13 @@ module.exports = {
 			}
 		});
 		// Run any migrations to get up to date, and update the stored changes for event triggering.
-		Object.entries(await Player.settings.migrate(settings.VERSION)).forEach(([ prop, [ current, previous ] ]) => {
-			changes[prop] = [ current, changes[prop] ? changes[prop][1] : previous ];
+		Object.entries(await Player.settings.migrate(settings.VERSION)).forEach(([ prop, [ previous, current ] ]) => {
+			changes[prop] = [ changes[prop] ? changes[prop][1] : previous, current ];
 		});
 		// Finally, trigger events.
 		if (!opts.bypassAll) {
 			!opts.bypassStylesheet && Player.display.updateStylesheet();
-			!opts.silent && Object.entries(changes).forEach(([ prop, [ current, previous ] ]) => {
+			!opts.silent && Object.entries(changes).forEach(([ prop, [ previous, current ] ]) => {
 				Player.trigger('config', prop, current, previous);
 				Player.trigger('config:' + prop, current, previous);
 			});
