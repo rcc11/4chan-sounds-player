@@ -1,6 +1,7 @@
 module.exports = {
 	template: () => Player.userTemplate.build({
-		template: Player.config.headerTemplate,
+		template: Player.config.headerTemplate
+			+ `<div class="${ns}-expander" data-direction="nw"></div><div class="${ns}-expander" data-direction="ne"></div>`,
 		location: 'header',
 		sound: Player.playing,
 		defaultName: '4chan Sounds',
