@@ -4,6 +4,7 @@
 	flex-grow: 1;
 	justify-content: center;
 	overflow: hidden;
+	position: relative;
 
 	&.#{$ns}-pip {
 		position: fixed;
@@ -19,20 +20,44 @@
 			object-fit: contain;
 		}
 	}
+
+	& .#{$ns}-video {
+		display: none;
+	}
+	& .#{$ns}-image, & .#{$ns}-video {
+		height: 100%;
+		width: 100%;
+		object-fit: contain;
+	}
+
+	& .#{$ns}-background-image {
+		position: absolute;
+		top: -20px;
+		bottom: -20px;
+		left: -20px;
+		right: -20px;
+		object-fit: cover;
+		object-position: center;
+		height: calc(100% + 40px);
+		width: calc(100% + 40px);
+		filter: blur(10px) brightness(.7) saturate(.5) contrast(.7);
+		z-index: -1;
+
+		&:not([src]) {
+			display: none;
+		}
+	}
 }
-.#{$ns}-image-link .#{$ns}-video {
-	display: none;
-}
-.#{$ns}-image, .#{$ns}-video {
-	height: 100%;
-	width: 100%;
-	object-fit: contain;
-}
-.#{$ns}-image-link.#{$ns}-show-video {
-	.#{$ns}-video {
+
+
+##{$ns}-container.playing-video {
+	.#{$ns}-image-link .#{$ns}-video {
 		display: block;
 	}
-	.#{$ns}-image {
+	.#{$ns}-image-link .#{$ns}-image {
 		display: none;
+	}
+	&[data-view-style="fullscreen"] .#{$ns}-background-image {
+		filter: brightness(0);
 	}
 }

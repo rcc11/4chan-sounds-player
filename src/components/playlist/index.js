@@ -7,7 +7,8 @@ module.exports = {
 	atRoot: [ 'add', 'remove' ],
 	public: [ 'search' ],
 
-	template: require('./templates/list.tpl'),
+	template: require('./templates/player.tpl'),
+	listTemplate: require('./templates/list.tpl'),
 
 	delegatedEvents: {
 		click: { [`.${ns}-list-item`]: 'playlist.handleSelect' },
@@ -83,7 +84,7 @@ module.exports = {
 	 */
 	render: function () {
 		const container = Player.$(`.${ns}-list-container`);
-		container.innerHTML = Player.playlist.template();
+		container.innerHTML = Player.playlist.listTemplate();
 		Player.events.addUndelegatedListeners(document.body, Player.playlist.undelegatedEvents);
 		Player.playlist.hoverImage = Player.$(`.${ns}-hover-image`);
 	},
@@ -98,18 +99,19 @@ module.exports = {
 	/**
 	 * Update the image displayed in the player.
 	 */
-	showImage: function (sound, thumb) {
-		let isVideo = !thumb && (sound.image.endsWith('.webm') || sound.type === 'video/webm');
+	showImage: function (sound) {
+		let isVideo = sound.image.endsWith('.webm') || sound.type === 'video/webm';
 		const container = document.querySelector(`.${ns}-image-link`);
 		const img = container.querySelector(`.${ns}-image`);
 		const video = container.querySelector(`.${ns}-video`);
-		img.src = '';
-		img.src = isVideo || thumb ? sound.thumb : sound.image;
-		video.src = isVideo ? sound.image : undefined;
+		const background = container.querySelector(`.${ns}-background-image`);
+		img.src = background.src = '';
+		img.src = background.src = sound.imageOrThumb;
+		video.src = Player.isVideo ? sound.image : undefined;
 		if (Player.config.viewStyle !== 'fullscreen') {
 			container.href = sound.image;
 		}
-		container.classList[isVideo ? 'add' : 'remove'](ns + '-show-video');
+		container.classList[Player.isVideo ? 'add' : 'remove'](ns + '-show-video');
 	},
 
 	/**
@@ -145,7 +147,7 @@ module.exports = {
 				if (!skipRender) {
 					// Add the sound to the playlist.
 					const list = Player.$(`.${ns}-list-container`);
-					let rowContainer = _.element(`<div>${Player.playlist.template({ sounds: [ sound ] })}</div>`);
+					let rowContainer = _.element(`<div>${Player.playlist.listTemplate({ sounds: [ sound ] })}</div>`);
 					Player.events.addUndelegatedListeners(rowContainer, Player.playlist.undelegatedEvents);
 					if (index < Player.sounds.length - 1) {
 						const before = Player.$(`.${ns}-list-item[data-id="${Player.sounds[index + 1].id}"]`);
