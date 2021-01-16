@@ -1,4 +1,4 @@
-`<div class="${ns}-colorpicker dialog" style="top: 0px; left: 0px;">
+`<div class="${ns}-colorpicker ${ns}-dialog dialog" data-allow-click="true" style="top: 0px; left: 0px;">
 	<div class="${ns}-cp-saturation" style="height: ${data.HEIGHT}px; width: ${data.WIDTH}px;">
 		<div class="position" style="left: ${data.WIDTH - 3}px; top: -3px;"></div>
 	</div>

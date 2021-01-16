@@ -28,21 +28,6 @@ module.exports = {
 		}
 	},
 
-	undelegatedEvents: {
-		mouseenter: {
-			[`.${ns}-info-circle`]: e => {
-				const el = _.element(`<div class="${ns}-popover dialog">${e.currentTarget.dataset.content}</div>`, Player.container);
-				e.currentTarget.infoEl = el;
-				Player.position.showRelativeTo(el, e.currentTarget);
-			}
-		},
-		mouseleave: {
-			[`.${ns}-info-circle`]: e => {
-				e.currentTarget.infoEl && Player.container.removeChild(e.currentTarget.infoEl);
-			}
-		}
-	},
-
 	initialize: async function () {
 		Player.settings.view = 'Display';
 
@@ -79,6 +64,7 @@ module.exports = {
 		const settingsContainer = Player.$(`.${ns}-settings`);
 		settingsContainer.innerHTML = Player.settings.template();
 		Player.events.addUndelegatedListeners(settingsContainer, Player.settings.undelegatedEvents);
+		Player.display.initPopovers(settingsContainer);
 	},
 
 	/**

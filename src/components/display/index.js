@@ -93,6 +93,7 @@ module.exports = {
 			const isThread = document.body.classList.contains('is_thread');
 			const parent = isThread && !isChanX && document.body.querySelector('.board') || document.body;
 			Player.container = _.element(Player.display.template(), parent);
+			Player.display.initPopovers(Player.container);
 
 			Player.trigger('rendered');
 		} catch (err) {
@@ -262,12 +263,12 @@ module.exports = {
 	 * Close any open menus.
 	 */
 	closeDialogs: function (e) {
-		document.querySelectorAll(`.${ns}-menu, .${ns}-colorpicker, .${ns}-theme-save-options`).forEach(menu => {
-			// Don't close colorpickers when you click inside them.
-			const isClickable = menu.classList.contains(`${ns}-colorpicker`) || menu.classList.contains(`${ns}-theme-save-options`);
-			if (!e || !isClickable || !menu.contains(e.target)) {
-				menu.parentNode.removeChild(menu);
-				Player.trigger('menu-close', menu);
+		document.querySelectorAll(`.${ns}-dialog`).forEach(dialog => {
+			// Close if there's no click event, or the click was not part of a clickable dialog or an associated element.
+			const clickableElements = (dialog._keepOpenFor || []).concat(dialog.dataset.allowClick ? dialog : []);
+			if (!e || !clickableElements.find(el => el === e.target || el.contains(e.target))) {
+				dialog.parentNode.removeChild(dialog);
+				Player.trigger('menu-close', dialog);
 			}
 		});
 	},
@@ -301,5 +302,41 @@ module.exports = {
 
 			title.style.marginLeft = data.position + 'px';
 		});
+	},
+
+	initPopovers: function (el) {
+		const popovers = el.querySelectorAll(`.${ns}-popover`);
+		popovers.forEach(popover => {
+			popover.addEventListener('mouseenter', Player.display._popoverMouseEnter);
+			popover.addEventListener('mouseleave', Player.display._popoverMouseLeave);
+			popover.addEventListener('click', Player.display._popoverClick);
+		});
+	},
+
+	_popoverMouseEnter: e => {
+		const icon = e.currentTarget;
+		if (!icon.infoEl || !Player.container.contains(icon.infoEl)) {
+			icon.infoEl = _.element(`<div class="${ns}-popover-body ${ns}-dialog dialog">${icon.dataset.content}</div>`, Player.container);
+			icon.infoEl._keepOpenFor = [ icon ];
+			Player.position.showRelativeTo(icon.infoEl, icon);
+		}
+	},
+
+	_popoverMouseLeave: e => {
+		const icon = e.currentTarget;
+		if (icon.infoEl && !icon.infoEl._clicked) {
+			icon.infoEl.parentNode.removeChild(icon.infoEl);
+			delete icon.infoEl;
+		}
+	},
+
+	_popoverClick: e => {
+		const icon = e.currentTarget;
+		const openPopover = icon.infoEl && Player.container.contains(icon.infoEl);
+		if (!openPopover) {
+			Player.display._popoverMouseEnter(e);
+		} else if (!(icon.infoEl._clicked = !icon.infoEl._clicked)) {
+			Player.display._popoverMouseLeave(e);
+		}
 	}
 };

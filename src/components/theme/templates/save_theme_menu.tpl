@@ -1,4 +1,4 @@
-`<div class="${ns}-theme-save-options fields-collapsed dialog" style="top: 0px; left: 0px;">
+`<div class="${ns}-theme-save-options  ${ns}-dialog fields-collapsed dialog" data-allow-click="true" style="top: 0px; left: 0px;">
 	<div class="${ns}-row ${ns}-align-center">
 		<div class="${ns}-col">
 			<input type="text" class="${ns}-save-theme-name" placeholder="Name">

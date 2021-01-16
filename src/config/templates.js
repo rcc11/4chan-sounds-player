@@ -49,7 +49,6 @@ module.exports = [
 			+ '		Download [ dl-image-button dl-sound-button ]\n'
 			+ '}\n'
 			+ `<div class="${ns}-expander" data-direction="se"></div>\n`,
-		description: 'Template for the footer contents',
 		displayGroup: 'Theme',
 		displayMethod: 'textarea',
 		attrs: 'style="height:9em;"',

@@ -36,7 +36,7 @@
 				<div class="${ns}-col ${!setting.isSubSetting ? `${ns}-heading` : `${ns}-space-between`}">
 					<span>
 						${setting.title}
-						${setting.description ? `<i class="${ns}-info-circle" data-content="${setting.description}">${Icons.infoCircle}</i>` : ''}
+						${setting.description ? `<i class="${ns}-info-circle ${ns}-popover" data-content="${setting.description}">${Icons.infoCircle}</i>` : ''}
 					</span>
 					${!setting.actions || !setting.actions.length ? '' : `<div style="display: inline-block; margin: 0 .25rem">
 						${(setting.actions || []).map(action => `<a href="#" class="${ns}-heading-action" data-handler="${action.handler}" data-property="${setting.property}">${action.title}</a>`).join(' ')}
