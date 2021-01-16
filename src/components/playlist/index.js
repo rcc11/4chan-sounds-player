@@ -100,7 +100,6 @@ module.exports = {
 	 * Update the image displayed in the player.
 	 */
 	showImage: function (sound) {
-		let isVideo = sound.image.endsWith('.webm') || sound.type === 'video/webm';
 		const container = document.querySelector(`.${ns}-image-link`);
 		const img = container.querySelector(`.${ns}-image`);
 		const video = container.querySelector(`.${ns}-video`);

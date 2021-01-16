@@ -6,17 +6,25 @@
 	overflow: hidden;
 	position: relative;
 
+	&.#{$ns}-show-video {
+		.#{$ns}-video {
+			display: block;
+		}
+		.#{$ns}-image {
+			display: none;
+		}
+	}
+
 	&.#{$ns}-pip {
 		position: fixed;
 		right: 10px;
-		height: #{$max-pip-size} !important;
-		max-width: #{$max-pip-size};
 		align-items: end;
 
 		& .#{$ns}-image, .#{$ns}-video {
-			max-height: 100%;
-			height: initial;
-			width: initial;
+			width: auto;
+			height: auto;
+			max-height: #{$max-pip-size};
+			max-width: #{$max-pip-size};
 			object-fit: contain;
 		}
 	}
@@ -51,12 +59,6 @@
 
 
 ##{$ns}-container.playing-video {
-	.#{$ns}-image-link .#{$ns}-video {
-		display: block;
-	}
-	.#{$ns}-image-link .#{$ns}-image {
-		display: none;
-	}
 	&[data-view-style="fullscreen"] .#{$ns}-background-image {
 		filter: brightness(0);
 	}
