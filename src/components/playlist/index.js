@@ -52,8 +52,11 @@ module.exports = {
 		// Update the UI when a new sound plays, and scroll to it.
 		Player.on('playsound', sound => {
 			Player.playlist.showImage(sound);
-			Player.$all(`.${ns}-list-item.playing`).forEach(el => el.classList.remove('playing'));
-			Player.$(`.${ns}-list-item[data-id="${Player.playing.id}"]`).classList.add('playing');
+			Player.$all(`.${ns}-list-item.playing, .${ns}-list-item[data-id="${Player.playing.id}"]`).forEach(el => {
+				const newItem = Player.playlist.listTemplate({ sounds: [ Player.sounds.find(s => s.id === el.dataset.id) ] });
+				_.elementBefore(newItem, el)
+				el.parentNode.removeChild(el);
+			});
 			Player.config.viewStyle !== 'fullscreen' && Player.playlist.scrollToPlaying('nearest');
 			Player.config.autoScrollThread && sound.post && (location.href = location.href.split('#')[0] + '#' + postIdPrefix + sound.post);
 		});

@@ -5,11 +5,11 @@ const viewsMenuTemplate = require('./templates/views_menu.tpl');
 const playingRE = /p: ?{([^}]*)}/g;
 const hoverRE = /h: ?{([^}]*)}/g;
 const buttonRE = new RegExp(`(${buttons.map(option => option.tplName).join('|')})-(?:button|link)(?:\\:"([^"]+?)")?`, 'g');
-const soundNameRE = /sound-name/g;
-const soundNameMarqueeRE = /sound-name-marquee/g;
+const soundTitleRE = /sound-title/g;
+const soundTitleMarqueeRE = /sound-title-marquee/g;
 const soundIndexRE = /sound-index/g;
 const soundCountRE = /sound-count/g;
-const soundPropRE = /sound-(src|id|title|post|imageOrThumb|image|thumb|filename|imageMD5)/g;
+const soundPropRE = /sound-(src|id|name|post|imageOrThumb|image|thumb|filename|imageMD5)/g;
 const configRE = /\$config\[([^\]]+)\]/g;
 
 // Hold information on which config values components templates depend on.
@@ -85,8 +85,8 @@ module.exports = {
 			return `<a ${attrs.join(' ')}>${text || _confFuncOrText(buttonConf.icon) || _confFuncOrText(buttonConf.text)}</a>`;
 		}));
 		!data.ignoreSoundName && (html = html
-			.replace(soundNameMarqueeRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem; text-overflow: clip;"><span title="${name}" class="${ns}-title-marquee" data-location="${data.location || ''}">${name}</span></div>` : '')
-			.replace(soundNameRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem"><span title="${name}">${name}</span></div>` : ''));
+			.replace(soundTitleMarqueeRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem; text-overflow: clip;"><span title="${name}" class="${ns}-title-marquee" data-location="${data.location || ''}">${name}</span></div>` : '')
+			.replace(soundTitleRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem"><span title="${name}">${name}</span></div>` : ''));
 		!data.ignoreSoundProperties && (html = html
 			.replace(soundPropRE, (...args) => data.sound ? data.sound[args[1]] : '')
 			.replace(soundIndexRE, data.sound ? Player.sounds.indexOf(data.sound) + 1 : 0)
@@ -128,11 +128,12 @@ module.exports = {
 		// playsound/stop should render templates either showing properties of the playing sound or dependent on something playing.
 		// order should render templates showing a sounds index.
 		const hasCount = soundCountRE.test(template);
-		const hasSoundProp = soundNameRE.test(template) || soundPropRE.test(template);
+		const hasSoundProp = soundTitleRE.test(template) || soundPropRE.test(template);
 		const hasIndex = soundIndexRE.test(template);
 		const hasPlaying = playingRE.test(template);
 		hasCount && events.push('add', 'remove');
-		(hasPlaying || property !== 'rowTemplate' && (hasSoundProp || hasIndex)) && events.push('playsound', 'stop');
+		// The row template handles this itself to avoid a full playlist render.
+		property !== 'rowTemplate' && (hasSoundProp || hasIndex || hasPlaying) && events.push('playsound', 'stop');
 		hasIndex && events.push('order');
 
 		// Find which buttons the template includes that are dependent on config values.

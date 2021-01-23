@@ -23,7 +23,7 @@ module.exports = [
 		property: 'headerTemplate',
 		title: 'Header',
 		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
-		default: 'repeat-button shuffle-button hover-images-button playlist-button\nsound-name-marquee\nview-menu-button add-button reload-button close-button',
+		default: 'repeat-button shuffle-button hover-images-button playlist-button\nsound-title-marquee\nview-menu-button add-button reload-button close-button',
 		displayGroup: 'Theme',
 		displayMethod: 'textarea',
 		themeField: true
@@ -32,7 +32,7 @@ module.exports = [
 		property: 'rowTemplate',
 		title: 'Row',
 		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
-		default: 'sound-name h:{menu-button}',
+		default: 'sound-title h:{menu-button}',
 		displayGroup: 'Theme',
 		displayMethod: 'textarea',
 		themeField: true
@@ -57,7 +57,7 @@ module.exports = [
 	{
 		property: 'chanXTemplate',
 		title: '4chan X Header',
-		default: 'p:{\n\tpost-link:"sound-name"\n\tprev-button\n\tplay-button\n\tnext-button\n\tsound-current-time / sound-duration\n}',
+		default: 'p:{\n\tpost-link:"sound-title"\n\tprev-button\n\tplay-button\n\tnext-button\n\tsound-current-time / sound-duration\n}',
 		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
 		displayGroup: 'Theme',
 		displayMethod: 'textarea',

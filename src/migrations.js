@@ -10,5 +10,20 @@ module.exports = [
 			});
 			return {};
 		}
+	},
+	{
+		version: '3.4.0',
+		name: 'sound-name-title-swap',
+		async run () {
+			const changes = {};
+			const templates = [ 'headerTemplate', 'rowTemplate', 'footerTemplate', 'chanXTemplate', 'customCSS' ];
+			templates.forEach(prop => {
+				/sound-name/.test(config[prop]) && (changes[prop] = [
+					config[prop],
+					config[prop] = config[prop].replace(/sound-name/g, 'sound-title')
+				]);
+			});
+			return changes;
+		}
 	}
 ];

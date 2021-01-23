@@ -57,9 +57,11 @@
 	}
 }
 
-
-##{$ns}-container.playing-video {
-	&[data-view-style="fullscreen"] .#{$ns}-background-image {
-		filter: brightness(0);
+##{$ns}-container[data-view-style="fullscreen"].playing-video {
+	.#{$ns}-image-link {
+		background: black;
+	}
+	.#{$ns}-background-image {
+		display: none;
 	}
 }
