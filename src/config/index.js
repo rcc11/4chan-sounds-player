@@ -21,5 +21,15 @@ module.exports = [
 	{
 		property: 'showPlaylistSearch',
 		default: true
+	},
+
+	// These are for availability in templates
+	{
+		property: 'offsetTop',
+		default: '0'
+	},
+	{
+		property: 'offsetBottom',
+		default: '0'
 	}
 ];

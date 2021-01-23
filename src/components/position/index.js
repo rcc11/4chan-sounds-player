@@ -14,6 +14,11 @@ module.exports = {
 	},
 
 	initialize: function () {
+		// Set the header offsets for use in templates.
+		const { top, bottom } = Player.position.getHeaderOffset();
+		Player.config.offsetTop = top + 'px';
+		Player.config.offsetBottom = bottom + 'px';
+
 		// Apply the last position/size, and post width limiting, when the player is shown.
 		Player.on('show', async function () {
 			const [ top, left ] = (await GM.getValue('position') || '').split(':');
