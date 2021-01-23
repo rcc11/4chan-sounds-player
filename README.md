@@ -10,6 +10,7 @@ A floating player for 4chan sounds threads.
 - [Creating Sound Images](#creating-sound-images)
 - [Searching for Threads](#sound-threads-search)
 - [Themes](#themes)
+- [API](#api)
 
 ## Sound Player UI
 
@@ -153,6 +154,33 @@ For the 4chan X Header Controls template there are extra replacements, in additi
 __Custom CSS__
 
 The only replacements made to custom CSS are config values and sound properties.
+
+## API
+
+The player can be controlled by using PlayerEvents with an action and arguments. The documentation below is as if you were calling the functions directly, but you'll need to send events as below.
+
+`document.dispatchEvent(new CustomEvent('PlayerEvent', { detail: { action: '<function name>', arguments: ...<args> } }))`
+
+#### Playback
+- `play()` - Play audio.
+- `pause()` - Pause audio.
+- `togglePlay()` - Play/pause the audio.
+- `next({ group: Boolean, force: Boolean })` - Skip to the next sound. Pass `group: true` to the next sound image, and `force: true` to ignore repeat one being set.
+- `previous({ group: false, force: false })` - Skip to the previous sound. Same arguments as `next`.
+- `stop()` - Stop playback and close (not hide) the player.
+- `volumeUp()` - Raise the volume by 5 percent.
+- `volumeDown()` - Lower the volume by 5 percent.
+- `toggleMute()` - Mute/unmute.
+- `show()` - Display the player.
+- `hide()` - Minimise the player.
+- `playlist.search(value)` - Show search results for the given value in the playlist.
+- `theme.switch(name)` - Switch theme.
+- `theme.next()` - Switch to the next theme, according to the configured order.
+- `theme.previous()` - Switch to the previous theme, according to the configured order.
+- `set(property, value, { bypassValidation } )` - Set a config value. If `bypassValidation` is not set the value will be checked for changes and ignored if it's the same.
+- `settings.export()` - Trigger an export of the user settings.
+- `settings.import()` - Trigger a file input to import user settings.
+- `settings.load(settings, { applyDefault: false })` - Load a user settings object. If `applyDefault` is set any settings not included in the given object will be set to the default. Otherwise they are left unchanged.
 
 ## FFmpeg Version
 

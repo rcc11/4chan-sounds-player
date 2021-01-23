@@ -5,6 +5,7 @@ const hosts = require('./hosts');
 
 module.exports = {
 	atRoot: [ 'set' ],
+	public: [ 'set', 'export', 'import', 'reset' ],
 	hosts,
 	template: require('./templates/settings.tpl'),
 	changelog: 'https://github.com/rcc11/4chan-sounds-player/releases',
@@ -14,8 +15,8 @@ module.exports = {
 			[`.${ns}-settings .${ns}-heading-action`]: 'settings._handleAction',
 			[`.${ns}-settings-tab`]: 'settings._handleTab',
 			[`.${ns}-settings-reset-all`]: _.noDefault(() => Player.settings.load({}, { applyDefault: true, ignore: [ 'viewStyle' ] })),
-			[`.${ns}-settings-export`]: 'settings._handleExport',
-			[`.${ns}-settings-import`]: 'settings._handleImport',
+			[`.${ns}-settings-export`]: 'settings.export',
+			[`.${ns}-settings-import`]: 'settings.import',
 		},
 		focusout: {
 			[`.${ns}-settings input, .${ns}-settings textarea`]: 'settings._handleChange'
@@ -293,8 +294,8 @@ module.exports = {
 		Player.$(`.${ns}-settings-tab[data-group="${group}"]`).classList.add('active');
 	},
 
-	_handleImport: async function (e) {
-		e.preventDefault();
+	import: async function (e) {
+		e && e.preventDefault();
 		const fileInput = _.element('<input type="file">');
 		const _import = async () => {
 			let config;
@@ -310,10 +311,10 @@ module.exports = {
 		fileInput.click();
 	},
 
-	_handleExport: async function (e) {
-		e.preventDefault();
+	export: async function (e) {
+		e && e.preventDefault();
 		// Use the saved settings to only export non-default user settings. Shift click exports everything for testing.
-		const settings = e.shiftKey ? JSON.stringify(Player.config, null, 4) : await GM.getValue('settings') || '{}';
+		const settings = e && e.shiftKey ? JSON.stringify(Player.config, null, 4) : await GM.getValue('settings') || '{}';
 		const blob = new Blob([ settings ], { type: 'application/json' });
 		const a = _.element(`<a href="${URL.createObjectURL(blob)}" download="4chan-sp-config.json" rel="noopener" target="_blank"></a>`);
 		a.click();
