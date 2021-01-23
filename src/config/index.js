@@ -3,7 +3,7 @@ module.exports = [
 	...require('./display'),
 	...require('./filter'),
 	...require('./keybinds'),
-	...require('./templates'),
+	...require('./theme'),
 	...require('./hosts'),
 
 	{

@@ -1,4 +1,4 @@
-[ 'Default' ].concat(Object.keys(Player.config.savedThemes)).map(name => `
+[ 'Default' ].concat(Player.config.savedThemesOrder).map(name => `
 	<div class="${ns}-row ${ns}-select-themes">
 		<div class="${ns}-col"><span style="padding-left: .5rem">- ${name}</span></div>
 		<div class="${ns}-col" data-name="${name}">

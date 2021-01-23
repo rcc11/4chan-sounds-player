@@ -9,7 +9,7 @@ module.exports = [
 		displayGroup: 'Theme',
 		displayMethod: 'theme.savedThemesTemplate',
 		mix: true,
-		default:  { }
+		default:  require('../components/theme/themes.js')
 	},
 	{
 		property: 'savedThemesOrder',
@@ -41,7 +41,7 @@ module.exports = [
 		property: 'footerTemplate',
 		title: 'Footer',
 		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
-		default: 'playing-button:"sound-index /" sound-count sounds\n'
+		default: 'playing-button:"sound-index /&nbsp;" sound-count sounds\n'
 			+ '<div class="fcsp-col"></div>\n'
 			+ 'p:{\n'
 			+ '		post-link\n'

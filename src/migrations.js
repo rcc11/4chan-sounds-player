@@ -14,7 +14,8 @@ module.exports = [
 	{
 		version: '3.4.0',
 		name: 'sound-name-title-swap',
-		async run () {
+		async run() {
+			const config = Player.config;
 			const changes = {};
 			const templates = [ 'headerTemplate', 'rowTemplate', 'footerTemplate', 'chanXTemplate', 'customCSS' ];
 			templates.forEach(prop => {

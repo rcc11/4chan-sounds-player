@@ -4,10 +4,6 @@
 	max-width: 100%;
 	line-height: 1rem;
 
-	&.#{$ns}-col-auto {
-		display: block;
-	}
-
 	&:hover .#{$ns}-hover-display {
 		display: flex;
 	}

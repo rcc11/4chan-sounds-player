@@ -1,4 +1,4 @@
-`<div class="${ns}-menu dialog" id="menu" tabindex="0" data-type="post" style="position: fixed;">
+`<div class="${ns}-menu ${ns}-dialog dialog" id="menu" tabindex="0" data-type="post" style="position: fixed;">
 	${[ 'playlist', 'image' ].includes(Player.config.viewStyle) ? ''
 		: `<a class="${ns}-row nowrap ${ns}-align-center ${ns}-player-button entry" href="javascript:;"><div class="${ns}-col">Player</div><div class="${ns}-col-auto">${Icons.musicNoteList}</div></a>`}
 	${Player.config.viewStyle === 'settings' ? ''

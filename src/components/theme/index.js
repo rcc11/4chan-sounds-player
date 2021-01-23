@@ -178,15 +178,15 @@ module.exports = {
 			themes[name] = null;
 		} else {
 			delete themes[name];
-			Player.config.savedThemesOrder = Player.config.savedThemesOrder.filter(_name => _name !== name);
 		}
+		Player.config.savedThemesOrder = Player.config.savedThemesOrder.filter(_name => _name !== name);
 		// Remove the row
 		row.parentNode.removeChild(row);
 		Player.settings.set('savedThemes', themes, { bypassValidation: true, bypassRender: true });
 		// Remove hotkey binding
 		const bindingIndex = Player.config.hotkey_bindings.switchTheme.find(def => def.themeName === name);
 		if (bindingIndex) {
-			Player.set('switchTheme', Player.config.hotkey_bindings.switchTheme.splice(bindingIndex, 1), { bypassValidation: true });
+			Player.set('hotkey_bindings.switchTheme', Player.config.hotkey_bindings.switchTheme.splice(bindingIndex, 1), { bypassValidation: true });
 		}
 	},
 
