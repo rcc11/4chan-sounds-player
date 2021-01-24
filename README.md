@@ -100,7 +100,7 @@ __Sound Properties__
 - `imageMD5` - MD5 of the image.
 
 __Config Properties__
-The format for any config property is `$config[property]`. You can reference any config value but the only useful ones are colors.
+The format for any config property is `$config[property]`. You can reference any config value but mainly the only useful ones are colors.
 They're the ones defined in Settings > Display.
 - `colors.text`
 - `colors.background`
@@ -115,6 +115,8 @@ They're the ones defined in Settings > Display.
 - `colors.controls_empty_bar`
 - `colors.controls_loaded_bar`
 - `colors.page_background` - This one is the body background color, and is not configurable.
+- `offsetTop` - This is the offset from top to account for the 4chan X header. Also not configurable.
+- `offsetBottom` - And the offset if the 4chan X header is at the bottom.
 
 __Links/Buttons__
 

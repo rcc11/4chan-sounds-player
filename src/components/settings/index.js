@@ -5,7 +5,7 @@ const hosts = require('./hosts');
 
 module.exports = {
 	atRoot: [ 'set' ],
-	public: [ 'set', 'export', 'import', 'reset' ],
+	public: [ 'set', 'export', 'import', 'reset', 'load' ],
 	hosts,
 	template: require('./templates/settings.tpl'),
 	changelog: 'https://github.com/rcc11/4chan-sounds-player/releases',

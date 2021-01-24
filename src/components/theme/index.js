@@ -45,6 +45,9 @@ module.exports = {
 		Player.settings.save();
 	},
 
+	/**
+	 * Get colors from the board theme.
+	 */
 	applyBoardTheme: function (opts = {}) {
 		// Create a reply element to gather the style from
 		const div = _.element(`<div class="${selectors.styleFetcher}"></div>`, document.body);
@@ -86,6 +89,9 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * Switch to the next theme, wrapping round to the beginning.
+	 */
 	next: function () {
 		const order = [ 'Default' ].concat(Player.config.savedThemesOrder);
 		const cIndex = order.indexOf(Player.config.selectedTheme);
@@ -93,6 +99,9 @@ module.exports = {
 		Player.theme.switch(next);
 	},
 
+	/**
+	 * Switch to the previous theme, wrapping round to the end.
+	 */
 	previous: function () {
 		const order = [ 'Default' ].concat(Player.config.savedThemesOrder);
 		const cIndex = order.indexOf(Player.config.selectedTheme);
@@ -100,6 +109,11 @@ module.exports = {
 		Player.theme.switch(previous);
 	},
 
+	/**
+	 * Switch theme.
+	 * @param {String} name The name of the theme to switch to.
+	 * @param {Object} opts Options passed to player.load
+	 */
 	switch: function (name) {
 		if (name !== 'Default' && !Player.config.savedThemes[name]) {
 			return Player.logError(`Theme '${name}' does not exist.`, null, 'warning');
@@ -116,8 +130,10 @@ module.exports = {
 		}
 	},
 
+	/**
+	 * Make sure the saved themes order contains all and only the saved themes, without duplicates.
+	 */
 	validateOrder: function () {
-		// Make sure the saved themes order contains all and only the saved themes, without duplicates.
 		const order = Player.config.savedThemesOrder;
 		let _i;
 		Player.config.savedThemesOrder = order
@@ -144,11 +160,6 @@ module.exports = {
 
 	_handleSwitch: function (e) {
 		Player.theme.switch(e._binding.themeName);
-	},
-
-	_apply: function (prop, e) {
-		const name = e.eventTarget.closest('[data-theme]').dataset.theme;
-		Player.theme.switch(name);
 	},
 
 	_moveUp: (prop, e) => Player.theme._swapOrder(e, -1),
