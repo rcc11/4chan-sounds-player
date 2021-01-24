@@ -108,7 +108,7 @@ const Player = window.Player = module.exports = {
 	/**
 	 * Listen for changes
 	 */
-	syncTab: (property, callback) => 0 && typeof GM_addValueChangeListener !== 'undefined' && GM_addValueChangeListener(property, (_prop, oldValue, newValue, remote) => {
+	syncTab: (property, callback) => typeof GM_addValueChangeListener !== 'undefined' && GM_addValueChangeListener(property, (_prop, oldValue, newValue, remote) => {
 		remote && callback(newValue, oldValue);
 	}),
 
