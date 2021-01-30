@@ -167,7 +167,7 @@ module.exports = {
 	 * Handle the user grabbing the header.
 	 */
 	initMove: function (e) {
-		if (e.target.nodeName === 'A' || e.target.classList.contains(`${ns}-expander`)) {
+		if (e.target.nodeName === 'A' || e.target.closest('a') || e.target.classList.contains(`${ns}-expander`)) {
 			return;
 		}
 		try { e.preventDefault(); } catch (e) { }
