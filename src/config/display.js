@@ -22,6 +22,13 @@ module.exports = [
 		displayGroup: 'Display'
 	},
 	{
+		property: 'preventSleep',
+		default: true,
+		title: 'Prevent Sleep',
+		description: 'Prevent sleeping while audio is playing. This only works when the browser and tab are in the foreground.',
+		displayGroup: 'Display'
+	},
+	{
 		property: 'hoverImages',
 		title: 'Hover Images',
 		default: false,

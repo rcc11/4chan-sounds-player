@@ -4,10 +4,13 @@ const css4chanXPolyfillTemplate = require('../../scss/4chan-x-polyfill.scss');
 const dismissedContentCache = {};
 const dismissedRestoreCache = {};
 
+const noSleep = typeof NoSleep === 'function' && new NoSleep();
+
 module.exports = {
 	atRoot: [ 'show', 'hide' ],
 	public: [ 'show', 'hide' ],
 	template: require('./templates/body.tpl'),
+	_noSleepEnabled: false,
 
 	delegatedEvents: {
 		click: {
@@ -45,6 +48,9 @@ module.exports = {
 		});
 		// Store the rem size
 		Player.remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+		// Set up no sleep
+		Player.on('config:preventSleep', Player.display._initNoSleep);
+		Player.display._initNoSleep(Player.config.preventSleep);
 	},
 
 	/**
@@ -337,6 +343,20 @@ module.exports = {
 			Player.display._popoverMouseEnter(e);
 		} else if (!(icon.infoEl._clicked = !icon.infoEl._clicked)) {
 			Player.display._popoverMouseLeave(e);
+		}
+	},
+
+	_initNoSleep: newValue => {
+		const action = newValue ? 'addEventListener' : 'removeEventListener';
+		if (!noSleep || !!newValue === Player.display._noSleepEnabled) {
+			return;
+		}
+		Player.audio[action]('play', noSleep.enable);
+		Player.audio[action]('pause', noSleep.disable);
+		Player.audio[action]('ended', noSleep.disable);
+		Player.display._noSleepEnabled = !!newValue;
+		if (!Player.audio.paused) {
+			noSleep[newValue ? 'enable' : 'disable']();
 		}
 	}
 };
