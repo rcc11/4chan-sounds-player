@@ -35,6 +35,15 @@
 }
 
 ##{$ns}-container[data-view-style="fullscreen"] {
+	&.cursor-inactive {
+		.#{$ns}-player {
+			cursor: none;
+		}
+
+		& .#{$ns}-controls {
+			opacity: 0;
+		}
+	}
 	& .#{$ns}-image-link {
 		height: calc(100% - .4rem) !important;
 	}
@@ -42,11 +51,9 @@
 		position: absolute;
 		left: 0;
 		right: 0;
-		bottom: calc(-2.5rem + .4rem);
-		opacity: .7;
-	}
-	& .#{$ns}-controls:hover {
 		bottom: 0;
+		opacity: .7;
+		transition: opacity .3s ease;
 	}
 	& .#{$ns}-list-container {
 		position: absolute;

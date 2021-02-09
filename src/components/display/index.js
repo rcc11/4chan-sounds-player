@@ -200,9 +200,20 @@ module.exports = {
 				Player.show();
 			}
 			Player.$(`.${ns}-player`).requestFullscreen();
+			Player.$(`.${ns}-player`).addEventListener('mousemove', Player.display._fullscreenMouseMove);
+			Player.display._fullscreenMouseMove();
 		} else if (document.exitFullscreen) {
 			document.exitFullscreen();
+			Player.$(`.${ns}-player`).removeEventListener('mousemove', Player.display._fullscreenMouseMove);
 		}
+	},
+
+	_fullscreenMouseMove: function () {
+		Player.container.classList.remove('cursor-inactive');
+		Player.display.fullscreenCursorTO && clearTimeout(Player.display.fullscreenCursorTO);
+		Player.display.fullscreenCursorTO = setTimeout(function () {
+			Player.container.classList.add('cursor-inactive');
+		}, 2000);
 	},
 
 	/**
