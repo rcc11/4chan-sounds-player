@@ -35,6 +35,12 @@
 }
 
 ##{$ns}-container[data-view-style="fullscreen"] {
+	& .#{$ns}-player {
+		scrollbar-width: none;
+		&::-webkit-scrollbar {
+			display: none;
+		}
+	}
 	&.cursor-inactive {
 		.#{$ns}-player {
 			cursor: none;
