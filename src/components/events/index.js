@@ -76,16 +76,26 @@ module.exports = {
 	 */
 	addUndelegatedListeners: function (target, events) {
 		for (let evt in events) {
-			for (let eventList of [].concat(events[evt])) {
-				for (let selector in eventList) {
-					target.querySelectorAll(selector).forEach(element => {
-						const handler = Player.getHandler(eventList[selector]);
-						element.removeEventListener(evt, handler);
-						element.addEventListener(evt, handler);
-					});
+			if (typeof events[evt] !== 'object') {
+				Player.events._addEventListener([ target ], evt, events[evt]);
+			} else {
+				for (let eventList of [].concat(events[evt])) {
+					for (let selector in eventList) {
+						const elements = [ ...target.querySelectorAll(selector) ];
+						target.matches && target.matches(selector) && elements.unshift(target);
+						Player.events._addEventListener(elements, evt, eventList[selector]);
+					}
 				}
 			}
 		}
+	},
+
+	_addEventListener(elements, evt, listener) {
+		elements.forEach(element => {
+			const handler = Player.getHandler(listener);
+			element.removeEventListener(evt, handler);
+			element.addEventListener(evt, handler);
+		});
 	},
 
 	/**

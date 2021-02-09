@@ -73,9 +73,7 @@ module.exports.element = function element(html, parent, events = {}) {
 	container.innerHTML = html;
 	const el = container.children[0];
 	parent && parent.appendChild(el);
-	for (let event in events) {
-		el.addEventListener(event, events[event]);
-	}
+	Player.events.addUndelegatedListeners(events);
 	return el;
 };
 

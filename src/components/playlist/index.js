@@ -12,7 +12,6 @@ module.exports = {
 
 	delegatedEvents: {
 		click: { [`.${ns}-list-item`]: 'playlist.handleSelect' },
-		mousemove: { [`.${ns}-list-item`]: 'playlist.positionHoverImage' },
 		dragstart: { [`.${ns}-list-item`]: 'playlist.handleDragStart' },
 		dragenter: { [`.${ns}-list-item`]: 'playlist.handleDragEnter' },
 		dragend: { [`.${ns}-list-item`]: 'playlist.handleDragEnd' },
@@ -23,12 +22,9 @@ module.exports = {
 	},
 
 	undelegatedEvents: {
-		mouseenter: {
-			[`.${ns}-list-item`]: 'playlist.updateHoverImage'
-		},
-		mouseleave: {
-			[`.${ns}-list-item`]: 'playlist.removeHoverImage'
-		}
+		mouseenter: { [`.${ns}-list-item`]: 'playlist.updateHoverImage' },
+		mouseleave: { [`.${ns}-list-item`]: 'playlist.removeHoverImage' },
+		mousemove: { [`.${ns}-list-item`]: 'playlist.positionHoverImage' }
 	},
 
 	initialize: function () {
@@ -54,7 +50,7 @@ module.exports = {
 			Player.playlist.showImage(sound);
 			Player.$all(`.${ns}-list-item.playing, .${ns}-list-item[data-id="${Player.playing.id}"]`).forEach(el => {
 				const newItem = Player.playlist.listTemplate({ sounds: [ Player.sounds.find(s => s.id === el.dataset.id) ] });
-				_.elementBefore(newItem, el);
+				_.elementBefore(newItem, el, Player.playlist.undelegatedEvents);
 				el.parentNode.removeChild(el);
 			});
 			Player.config.viewStyle !== 'fullscreen' && Player.playlist.scrollToPlaying('nearest');
@@ -149,8 +145,7 @@ module.exports = {
 				if (!skipRender) {
 					// Add the sound to the playlist.
 					const list = Player.$(`.${ns}-list-container`);
-					let rowContainer = _.element(`<div>${Player.playlist.listTemplate({ sounds: [ sound ] })}</div>`);
-					Player.events.addUndelegatedListeners(rowContainer, Player.playlist.undelegatedEvents);
+					let rowContainer = _.element(`<div>${Player.playlist.listTemplate({ sounds: [ sound ] })}</div>`, null, Player.playlist.undelegatedEvents);
 					if (index < Player.sounds.length - 1) {
 						const before = Player.$(`.${ns}-list-item[data-id="${Player.sounds[index + 1].id}"]`);
 						list.insertBefore(rowContainer.children[0], before);
