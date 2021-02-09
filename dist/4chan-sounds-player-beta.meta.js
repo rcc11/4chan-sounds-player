@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         4chan sounds player
-// @version      3.3.1-6627bac
+// @version      3.3.1-684b21e
 // @namespace    rccom
 // @description  A player designed for 4chan sounds threads.
 // @author       RCC
@@ -31,6 +31,7 @@
 // @connect      lewd.se
 // @connect      *
 // @run-at       document-start
+// @require      https://github.com/richtr/NoSleep.js/raw/master/dist/NoSleep.min.js
 // @updateURL    https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player-beta.meta.js
 // @downloadURL  https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player-beta.user.js
 // ==/UserScript==
