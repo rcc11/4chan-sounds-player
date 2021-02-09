@@ -32,7 +32,7 @@
 // @connect      *
 // @run-at       document-start
 // @require      FFMPEG_REQUIRE
-// @require      https://github.com/richtr/NoSleep.js/raw/master/dist/NoSleep.min.js
+// @require      https://gitcdn.xyz/repo/richtr/NoSleep.js/07fcee254724ab1b79076fbc22f3dd447649a2eb/dist/NoSleep.min.js
 // @updateURL    https://raw.githubusercontent.com/rcc11/4chan-sounds-player/BRANCH/dist/FILENAME.meta.js
 // @downloadURL  https://raw.githubusercontent.com/rcc11/4chan-sounds-player/BRANCH/dist/FILENAME.user.js
 // ==/UserScript==
