@@ -372,7 +372,7 @@ module.exports = {
 		e.preventDefault();
 		const property = e.eventTarget.getAttribute('data-property');
 		const handlerName = e.eventTarget.getAttribute('data-handler');
-		const handler = _.get(Player, handlerName);
+		const handler = handlerName && _.get(Player, handlerName);
 		handler && handler(property, e);
 	}
 };

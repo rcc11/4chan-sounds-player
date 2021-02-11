@@ -11,7 +11,10 @@ module.exports = {
 	listTemplate: require('./templates/list.tpl'),
 
 	delegatedEvents: {
-		click: { [`.${ns}-list-item`]: 'playlist.handleSelect' },
+		click: {
+			[`.${ns}-list-item`]: 'playlist.handleSelect',
+			[`.${ns}-player-button`]: 'playlist.restore'
+		},
 		dragstart: { [`.${ns}-list-item`]: 'playlist.handleDragStart' },
 		dragenter: { [`.${ns}-list-item`]: 'playlist.handleDragEnter' },
 		dragend: { [`.${ns}-list-item`]: 'playlist.handleDragEnd' },
@@ -42,7 +45,7 @@ module.exports = {
 			}
 		});
 
-		// Keey track of  of the hover image element.
+		// Keey track of the hover image element.
 		Player.on('rendered', () => Player.playlist.hoverImage = Player.$(`.${ns}-hover-image`));
 
 		// Update the UI when a new sound plays, and scroll to it.
@@ -84,7 +87,7 @@ module.exports = {
 	render: function () {
 		const container = Player.$(`.${ns}-list-container`);
 		container.innerHTML = Player.playlist.listTemplate();
-		Player.events.addUndelegatedListeners(document.body, Player.playlist.undelegatedEvents);
+		Player.events.addUndelegatedListeners(container, Player.playlist.undelegatedEvents);
 		Player.playlist.hoverImage = Player.$(`.${ns}-hover-image`);
 	},
 

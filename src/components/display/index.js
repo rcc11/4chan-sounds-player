@@ -14,7 +14,6 @@ module.exports = {
 
 	delegatedEvents: {
 		click: {
-			[`.${ns}-close-button`]: 'hide',
 			[`.${ns}-dismiss-link`]: 'display._handleDismiss',
 			[`.${ns}-restore-link`]: 'display._handleRestore'
 		},

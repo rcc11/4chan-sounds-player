@@ -1,10 +1,11 @@
 const buttons = require('./buttons');
-const viewsMenuTemplate = require('./templates/views_menu.tpl');
 
 // Regex for replacements
 const playingRE = /p: ?{([^}]*)}/g;
 const hoverRE = /h: ?{([^}]*)}/g;
-const buttonRE = new RegExp(`(${buttons.map(option => option.tplName).join('|')})-(?:button|link)(?:\\:"([^"]+?)")?`, 'g');
+// Create a regex to find buttons/links, ignore matches if the button/link name is itself a regex.
+const tplNames = buttons.map(conf => `${conf.tplName.source && conf.tplName.source.replace(/\(/g, '(?:') || conf.tplName}`);
+const buttonRE = new RegExp(`(${tplNames.join('|')})-(?:button|link)(?:\\:"([^"]+?)")?`, 'g');
 const soundTitleRE = /sound-title/g;
 const soundTitleMarqueeRE = /sound-title-marquee/g;
 const soundIndexRE = /sound-index/g;
@@ -19,25 +20,11 @@ module.exports = {
 	buttons,
 
 	delegatedEvents: {
-		click: {
-			[`.${ns}-playing-jump-link`]: () => Player.playlist.scrollToPlaying('center'),
-			[`.${ns}-viewStyle-button`]: 'playlist.toggleView',
-			[`.${ns}-hoverImages-button`]: 'playlist.toggleHoverImages',
-			[`.${ns}-remove-link`]: 'userTemplate._handleRemove',
-			[`.${ns}-filter-link`]: 'userTemplate._handleFilter',
-			[`.${ns}-download-link`]: 'userTemplate._handleDownload',
-			[`.${ns}-shuffle-button`]: 'userTemplate._handleShuffle',
-			[`.${ns}-repeat-button`]: 'userTemplate._handleRepeat',
-			[`.${ns}-reload-button`]: _.noDefault('playlist.refresh'),
-			[`.${ns}-add-button`]: _.noDefault(() => Player.$(`.${ns}-add-local-file-input`).click()),
-			[`.${ns}-item-menu-button`]: 'playlist._handleItemMenu',
-			[`.${ns}-view-menu-button`]: 'userTemplate._handleViewsMenu',
-			[`.${ns}-threads-button`]: 'threads.toggle',
-			[`.${ns}-tools-button`]: 'tools.toggle',
-			[`.${ns}-config-button`]: _.noDefault(() => Player.settings.toggle()),
-			[`.${ns}-favorites-button`]: 'favorites.toggle',
-			[`.${ns}-player-button`]: 'playlist.restore'
-		},
+		// Add a click event listeners for each button/link with an action.
+		click: buttons.reduce((events, conf) => {
+			conf.action && (events[`.${conf.class}`] = conf.action);
+			return events;
+		}, {}),
 		change: {
 			[`.${ns}-add-local-file-input`]: 'userTemplate._handleFileSelect'
 		}
@@ -57,8 +44,9 @@ module.exports = {
 	build: function (data) {
 		const outerClass = data.outerClass || '';
 		const name = data.sound && data.sound.title || data.defaultName;
+		let _data = { ...data };
 
-		const _confFuncOrText = v => (typeof v === 'function' ? v(data) : v);
+		const _confFuncOrText = v => (typeof v === 'function' ? v(_data) : v);
 
 		// Apply common template replacements, unless they are opted out.
 		let html = data.template.replace(configRE, (...args) => _.get(Player.config, args[1]));
@@ -66,8 +54,9 @@ module.exports = {
 			.replace(playingRE, Player.playing && Player.playing === data.sound ? '$1' : '')
 			.replace(hoverRE, `<span class="${ns}-hover-display ${outerClass}">$1</span>`));
 		!data.ignoreButtons && (html = html.replace(buttonRE, function (full, type, text) {
-			let buttonConf = buttons.find(conf => conf.tplName === type);
-			if (buttonConf.requireSound && !data.sound || buttonConf.showIf && !buttonConf.showIf(data)) {
+			let buttonConf = Player.userTemplate._findButtonConf(type);
+			_data.tplNameMatch = buttonConf.tplNameMatch;
+			if (buttonConf.requireSound && !data.sound || buttonConf.showIf && !buttonConf.showIf(_data)) {
 				return '';
 			}
 			// If the button config has sub values then extend the base config with the selected sub value.
@@ -142,8 +131,7 @@ module.exports = {
 		while ((match = buttonRE.exec(template)) !== null) {
 			// If user text is given then the display doesn't change.
 			if (!match[2]) {
-				let type = match[1];
-				let buttonConf = buttons.find(conf => conf.tplName === type);
+				let buttonConf = Player.userTemplate._findButtonConf(match[1]);
 				if (buttonConf.property) {
 					config.push(buttonConf.property);
 				}
@@ -197,44 +185,6 @@ module.exports = {
 		Player.playlist.addFromFiles(input.files);
 	},
 
-	/**
-	 * Toggle the repeat style.
-	 */
-	_handleRepeat: function (e) {
-		e.preventDefault();
-		const values = [ 'all', 'one', 'none' ];
-		const current = values.indexOf(Player.config.repeat);
-		Player.set('repeat', values[(current + 4) % 3]);
-	},
-
-	/**
-	 * Toggle the shuffle style.
-	 */
-	_handleShuffle: function (e) {
-		e.preventDefault();
-		Player.set('shuffle', !Player.config.shuffle);
-		Player.header.render();
-
-		// Update the play order.
-		if (!Player.config.shuffle) {
-			Player.sounds.sort((a, b) => Player.compareIds(a.id, b.id));
-		} else {
-			const sounds = Player.sounds;
-			for (let i = sounds.length - 1; i > 0; i--) {
-				const j = Math.floor(Math.random() * (i + 1));
-				[ sounds[i], sounds[j] ] = [ sounds[j], sounds[i] ];
-			}
-		}
-		Player.trigger('order');
-	},
-
-	_handleViewsMenu: function (e) {
-		e.preventDefault();
-		e.stopPropagation();
-		const dialog = _.element(viewsMenuTemplate());
-		Player.userTemplate._showMenu(e.eventTarget, dialog);
-	},
-
 	_showMenu: function (relative, dialog, parent) {
 		Player.display.closeDialogs();
 		parent || (parent = Player.container);
@@ -263,34 +213,14 @@ module.exports = {
 		}
 	},
 
-	_handleFilter: function (e) {
-		e.preventDefault();
-		let filter = e.eventTarget.getAttribute('data-filter');
-		if (filter) {
-			Player.set('filters', Player.config.filters.concat(filter));
-		}
-	},
-
-	_handleDownload: function (e) {
-		const src = e.eventTarget.getAttribute('data-src');
-		const name = e.eventTarget.getAttribute('data-name') || new URL(src).pathname.split('/').pop();
-
-		GM.xmlHttpRequest({
-			method: 'GET',
-			url: src,
-			responseType: 'blob',
-			onload: response => {
-				const a = _.element(`<a href="${URL.createObjectURL(response.response)}" download="${name}" rel="noopener" target="_blank"></a>`);
-				a.click();
-				URL.revokeObjectURL(a.href);
-			},
-			onerror: response => Player.logError('There was an error downloading.', response, 'warning')
+	_findButtonConf: type => {
+		let tplNameMatch;
+		let buttonConf = buttons.find(conf => {
+			if (conf.tplName === type) {
+				return tplNameMatch = [ type ];
+			}
+			return tplNameMatch = conf.tplName.test && type.match(conf.tplName);
 		});
-	},
-
-	_handleRemove: function (e) {
-		const id = e.eventTarget.getAttribute('data-id');
-		const sound = id && Player.sounds.find(sound => sound.id === '' + id);
-		sound && Player.remove(sound);
-	},
+		return buttonConf && { ...buttonConf, tplNameMatch };
+	}
 };

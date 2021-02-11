@@ -12,7 +12,8 @@ module.exports = {
 	delegatedEvents: {
 		click: {
 			[`.${ns}-save-theme`]: 'theme._save',
-			[`.${ns}-toggle-theme-save-fields`]: _.noDefault(() => Player.theme._toggleSaveFields())
+			[`.${ns}-toggle-theme-save-fields`]: _.noDefault(() => Player.theme._toggleSaveFields()),
+			[`.${ns}-apply-theme`]: _.noDefault(e => Player.theme.switch(e.eventTarget.dataset.theme))
 		},
 		keyup: {
 			[`.${ns}-save-theme-name`]: e => {

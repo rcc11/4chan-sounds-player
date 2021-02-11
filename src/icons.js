@@ -22,6 +22,7 @@ module.exports = {
 	github: require('../node_modules/bootstrap-icons/icons/github.svg').default,
 	image: require('../node_modules/bootstrap-icons/icons/image.svg').default,
 	infoCircle: require('../node_modules/bootstrap-icons/icons/info-circle.svg').default,
+	layoutTextWindow: require('../node_modules/bootstrap-icons/icons/layout-text-window.svg').default,
 	link: require('../node_modules/bootstrap-icons/icons/link-45deg.svg').default,
 	musicNoteList: require('../node_modules/bootstrap-icons/icons/music-note-list.svg').default,
 	play: require('../node_modules/bootstrap-icons/icons/play.svg').default.replace(/viewBox="[^"]+"/, 'viewBox="2 2 12 12"'),

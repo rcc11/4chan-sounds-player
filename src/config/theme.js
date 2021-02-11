@@ -23,7 +23,7 @@ module.exports = [
 		property: 'headerTemplate',
 		title: 'Header',
 		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
-		default: 'repeat-button shuffle-button hover-images-button playlist-button\nsound-title-marquee\nview-menu-button add-button reload-button close-button',
+		default: 'repeat-button shuffle-button hover-images-button playlist-button\nsound-title-marquee\nview-menu-button add-button theme-menu-button close-button',
 		displayGroup: 'Theme',
 		displayMethod: 'textarea',
 		themeField: true
