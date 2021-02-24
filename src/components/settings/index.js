@@ -7,27 +7,24 @@ module.exports = {
 	atRoot: [ 'set' ],
 	public: [ 'set', 'export', 'import', 'reset', 'load' ],
 	hosts,
-	template: require('./templates/settings.tpl'),
-	changelog: 'https://github.com/rcc11/4chan-sounds-player/releases',
 
-	delegatedEvents: {
-		click: {
-			[`.${ns}-settings .${ns}-heading-action`]: 'settings._handleAction',
-			[`.${ns}-settings-tab`]: 'settings._handleTab',
-			[`.${ns}-settings-reset-all`]: _.noDefault(() => Player.settings.load({}, { applyDefault: true, ignore: [ 'viewStyle' ] })),
-			[`.${ns}-settings-export`]: 'settings.export',
-			[`.${ns}-settings-import`]: 'settings.import',
-		},
-		focusout: {
-			[`.${ns}-settings input, .${ns}-settings textarea`]: 'settings._handleChange'
-		},
-		change: {
-			[`.${ns}-settings input[type=checkbox], .${ns}-settings select`]: 'settings._handleChange'
-		},
-		keydown: {
-			[`.${ns}-key-input`]: 'settings.handleKeyChange',
-		}
+	template: require('./templates/settings.tpl'),
+	settingTemplate: require('./templates/setting.tpl'),
+	inputTemplates: {
+		checkbox: require('./templates/inputs/checkbox.tpl'),
+		input: require('./templates/inputs/input.tpl'),
+		select: require('./templates/inputs/select.tpl'),
+		textarea: require('./templates/inputs/textarea.tpl')
 	},
+
+	changelog: 'https://github.com/rcc11/4chan-sounds-player/releases',
+	groups: settingsConfig.reduce((groups, setting) => {
+		if (setting.displayGroup) {
+			groups[setting.displayGroup] || (groups[setting.displayGroup] = []);
+			groups[setting.displayGroup].push(setting);
+		}
+		return groups;
+	}, {}),
 
 	initialize: async function () {
 		Player.settings.view = 'Display';
@@ -59,12 +56,14 @@ module.exports = {
 			applyDefault: true,
 			ignore: [ 'viewStyle' ]
 		}));
+
+		Player.on('rendered', Player.settings.setChangeListeners);
 	},
 
 	render: function () {
 		const settingsContainer = Player.$(`.${ns}-settings`);
-		settingsContainer.innerHTML = Player.settings.template();
-		Player.events.addUndelegatedListeners(settingsContainer, Player.settings.undelegatedEvents);
+		_.elementHTML(settingsContainer, Player.settings.template());
+		Player.settings.setChangeListeners();
 		Player.display.initPopovers(settingsContainer);
 	},
 
@@ -273,17 +272,6 @@ module.exports = {
 		}
 	},
 
-	/**
-	 * Switch the displayed group
-	 */
-	_handleTab: function (e) {
-		const group = e.eventTarget.getAttribute('data-group');
-		if (group) {
-			e.preventDefault();
-			Player.settings.showGroup(group);
-		}
-	},
-
 	showGroup: function (group) {
 		Player.settings.view = group;
 		const currentGroup = Player.$(`.${ns}-settings-group.active`);
@@ -294,8 +282,7 @@ module.exports = {
 		Player.$(`.${ns}-settings-tab[data-group="${group}"]`).classList.add('active');
 	},
 
-	import: async function (e) {
-		e && e.preventDefault();
+	import: async function () {
 		const fileInput = _.element('<input type="file">');
 		const _import = async () => {
 			let config;
@@ -312,7 +299,6 @@ module.exports = {
 	},
 
 	export: async function (e) {
-		e && e.preventDefault();
 		// Use the saved settings to only export non-default user settings. Shift click exports everything for testing.
 		const settings = e && e.shiftKey ? JSON.stringify(Player.config, null, 4) : await GM.getValue('settings') || '{}';
 		const blob = new Blob([ settings ], { type: 'application/json' });
@@ -321,12 +307,22 @@ module.exports = {
 		URL.revokeObjectURL(a.href);
 	},
 
+	setChangeListeners: function () {
+		const settingsContainer = Player.$(`.${ns}-settings`);
+		settingsContainer.querySelectorAll(`.${ns}-settings input, .${ns}-settings textarea`).forEach(el => {
+			el.addEventListener('focusout', Player.settings.handleChange);
+		});
+		settingsContainer.querySelectorAll(`.${ns}-settings input[type=checkbox], .${ns}-settings select`).forEach(el => {
+			el.addEventListener('change', Player.settings.handleChange);
+		});
+	},
+
 	/**
 	 * Handle the user making a change in the settings view.
 	 */
-	_handleChange: function (e) {
+	handleChange: function (e) {
 		try {
-			const input = e.eventTarget;
+			const input = e.currentTarget;
 			const property = input.getAttribute('data-property');
 			if (!property) {
 				return;
@@ -339,9 +335,6 @@ module.exports = {
 
 			if (settingConfig.parse) {
 				newValue = Player.getHandler(settingConfig.parse)(newValue, currentValue, e);
-			}
-			if (settingConfig && settingConfig.split) {
-				newValue = newValue.split(decodeURIComponent(settingConfig.split));
 			}
 
 			// Not the most stringent check but enough to avoid some spamming.
@@ -362,17 +355,6 @@ module.exports = {
 		if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Meta') {
 			return;
 		}
-		e.eventTarget.value = Player.hotkeys.stringifyKey(e);
-	},
-
-	/**
-	 * Handle an action link next to a heading being clicked.
-	 */
-	_handleAction: function (e) {
-		e.preventDefault();
-		const property = e.eventTarget.getAttribute('data-property');
-		const handlerName = e.eventTarget.getAttribute('data-handler');
-		const handler = handlerName && _.get(Player, handlerName);
-		handler && handler(property, e);
+		e.currentTarget.value = Player.hotkeys.stringifyKey(e);
 	}
 };

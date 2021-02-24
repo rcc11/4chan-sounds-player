@@ -5,20 +5,9 @@
 	padding: .25rem;
 }
 
-.#{$ns}-file-input, .#{$ns}-tools input[type=text] {
-	width: 100%;
-	color: black;
-}
-
 .#{$ns}-file-overlay, .#{$ns}-tools input[type=text] {
-	box-sizing: border-box;
-	height: 1.5rem;
-	border: solid 1px #{map-get($colors, border)};
-	min-width: 5rem;
 	display: flex;
 	align-items: center;
-	padding: 0 .25rem;
-	margin: 0;
 }
 
 .#{$ns}-file-input.placeholder span, .#{$ns}-create-sound-form input[type=text]::placeholder {

@@ -8,8 +8,8 @@ module.exports = [
 		property: 'uploadHosts',
 		title: 'Hosts',
 		actions: [
-			{ title: 'Add', handler: 'settings.hosts.add' },
-			{ title: 'Restore Defaults', handler: 'settings.hosts.restoreDefaults' }
+			{ title: 'Add', handler: 'settings.hosts.add:prevent' },
+			{ title: 'Restore Defaults', handler: 'settings.hosts.restoreDefaults:prevent' }
 		],
 		displayGroup: 'Hosts',
 		displayMethod: () => `<div class="${ns}-host-inputs">${Object.entries(Player.config.uploadHosts).map(Player.settings.hosts.template).join('')}</div>`,
@@ -24,7 +24,7 @@ module.exports = [
 			+ '<br><strong>File URL Format</strong>: The URL format for uploaded sounds. %s is replaced with the result of response path/match if given or the full response.'
 			+ '<br><strong>Data</strong>: The form data for the upload (as JSON). Specify the file using $file.',
 		mix: true,
-		default:  {
+		default: {
 			catbox: {
 				default: true,
 				url: 'https://catbox.moe/user/api.php',

@@ -1,41 +1,6 @@
 module.exports = {
 	template: require('./templates/controls.tpl'),
 
-	delegatedEvents: {
-		click: {
-			[`.${ns}-previous-button`]: _.noDefault(() => Player.previous({ force: true })),
-			[`.${ns}-play-button`]: _.noDefault('togglePlay'),
-			[`.${ns}-next-button`]: _.noDefault(() => Player.next({ force: true })),
-			[`.${ns}-seek-bar`]: 'controls.handleSeek',
-			[`.${ns}-volume-bar`]: 'controls.handleVolume',
-			[`.${ns}-volume-button`]: _.noDefault('toggleMute'),
-			[`.${ns}-fullscreen-button`]: 'display.toggleFullScreen'
-		},
-		mousedown: {
-			[`.${ns}-seek-bar`]: () => Player._seekBarDown = true,
-			[`.${ns}-volume-bar`]: () => Player._volumeBarDown = true
-		},
-		mousemove: {
-			[`.${ns}-seek-bar`]: e => Player._seekBarDown && Player.controls.handleSeek(e),
-			[`.${ns}-volume-bar`]: e => Player._volumeBarDown && Player.controls.handleVolume(e)
-		}
-	},
-
-	undelegatedEvents: {
-		mouseleave: {
-			[`.${ns}-seek-bar`]: e => Player._seekBarDown && Player.controls.handleSeek(e),
-			[`.${ns}-volume-bar`]: e => Player._volumeBarDown && Player.controls.handleVolume(e)
-		},
-		mouseup: {
-			body: () => {
-				Player._seekBarDown = false;
-				Player._volumeBarDown = false;
-			}
-		},
-		play: { [`.${ns}-video`]: 'controls.syncVideo' },
-		pause: { [`.${ns}-video`]: 'controls.syncVideo' }
-	},
-
 	audioEvents: {
 		ended: () => Player.next(),
 		pause: 'controls.handleAudioEvent',
@@ -192,7 +157,6 @@ module.exports = {
 	 * Handle the user interacting with the seek bar.
 	 */
 	handleSeek: function (e) {
-		e.preventDefault();
 		if (Player.audio.duration && Player.audio.duration !== Infinity) {
 			Player.audio.currentTime = Player.audio.duration * Player.controls._getBarXRatio(e);
 		}
@@ -202,14 +166,14 @@ module.exports = {
 	 * Handle the user interacting with the volume bar.
 	 */
 	handleVolume: function (e) {
-		e.preventDefault();
 		Player.audio.volume = Player.controls._getBarXRatio(e);
 		Player.controls.updateVolume();
 	},
 
 	_getBarXRatio: function (e) {
 		const offset = 0.4 * Player.remSize;
-		return Math.max(0, Math.min(1, (e.offsetX - offset) / (parseInt(getComputedStyle(e.eventTarget || e.target).width, 10) - (2 * offset))));
+		const offsetX = e.offsetX || (e.targetTouches[0].pageX - e.currentTarget.getBoundingClientRect().left);
+		return Math.max(0, Math.min(1, (offsetX - offset) / (parseInt(getComputedStyle(e.currentTarget).width, 10) - (2 * offset))));
 	},
 
 	/**

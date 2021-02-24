@@ -1,0 +1,24 @@
+[\\\@pointdrag], .no-touch-action {
+	touch-action: none;
+}
+.#{$ns}-truncate-text {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+.#{$ns}-align-center {
+	align-items: center;
+	align-content: center;
+	align-self: center;
+}
+.#{$ns}-align-start {
+	align-items: start;
+	align-content: start;
+	align-self: start;
+}
+.#{$ns}-space-between {
+	justify-content: space-between;
+}
+.#{$ns}-has-description {
+	cursor: help;
+}

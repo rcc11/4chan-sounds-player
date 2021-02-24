@@ -7,6 +7,22 @@
 	border: 1px solid #{map-get($colors, border)};
 	box-sizing: border-box;
 	min-width: 7rem;
+
+	& .w-100 {
+		width: 100%;
+		min-width: 100%;
+	}
+
+	& input[type=text], & select, & .#{$ns}-file-overlay {
+		color: black;
+		height: 1.5rem !important;
+		padding: 2px 4px 3px;
+		box-sizing: border-box;
+		margin: 0;
+		border-radius: 0;
+		border: solid 1px #{map-get($colors, border)};
+		padding: 0 .25rem;
+	}
 }
 .#{$ns}-panel {
 	padding: 0 .25rem;
@@ -17,9 +33,6 @@
 .#{$ns}-heading {
 	font-weight: 600;
 	margin: .5rem 0;
-}
-.#{$ns}-has-description {
-	cursor: help;
 }
 .#{$ns}-heading-action {
 	font-weight: normal;
@@ -49,33 +62,6 @@
 	width: 100%;
 	position: relative;
 }
-.#{$ns}-align-center {
-	align-items: center;
-	align-content: center;
-	align-self: center;
-}
-.#{$ns}-align-start {
-	align-items: start;
-	align-content: start;
-	align-self: start;
-}
-.#{$ns}-space-between {
-	justify-content: space-between;
-}
-
-// Hide the text with 4chan X since the icons will show
-html.fourchan-x ##{$ns}-container .fa {
-	font-size: 0;
-	visibility: hidden;
-	margin: 0 0.15rem;
-}
-
-.#{$ns}-truncate-text {
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
-}
-
 .#{$ns}-hover-display {
 	display: none;
 }

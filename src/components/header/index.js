@@ -13,6 +13,6 @@ module.exports = {
 	},
 
 	render: function () {
-		Player.$(`.${ns}-header`).innerHTML = Player.header.template();
+		_.elementHTML(Player.$(`.${ns}-header`), Player.header.template());
 	}
 };

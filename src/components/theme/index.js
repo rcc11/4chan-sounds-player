@@ -9,19 +9,6 @@ module.exports = {
 	savedThemesTemplate: require('./templates/saved_themes.tpl'),
 	themeKeybindsTemplate: require('./templates/theme_keybinds.tpl'),
 
-	delegatedEvents: {
-		click: {
-			[`.${ns}-save-theme`]: 'theme._save',
-			[`.${ns}-toggle-theme-save-fields`]: _.noDefault(() => Player.theme._toggleSaveFields()),
-			[`.${ns}-apply-theme`]: _.noDefault(e => Player.theme.switch(e.eventTarget.dataset.theme))
-		},
-		keyup: {
-			[`.${ns}-save-theme-name`]: e => {
-				Player.$(`.${ns}-save-theme`).innerHTML = Player.config.savedThemes[e.eventTarget.value] ? 'Update' : 'Create';
-			}
-		}
-	},
-
 	initialize: async function () {
 		// Create the user stylesheet and update it when dependent config values are changed.
 		Player.theme.render();
@@ -142,9 +129,9 @@ module.exports = {
 			.filter((name, i) => Player.config.savedThemes[name] && (_i = order.indexOf(name), _i === -1 || _i === i));
 	},
 
-	_parseSwitch: function (newValue, bindings, e) {
+	parseSwitch: function (newValue, bindings, e) {
 		bindings = [ ...bindings ];
-		const themeName = e.eventTarget.parentNode.dataset.name;
+		const themeName = e.currentTarget.parentNode.dataset.name;
 		if (themeName !== 'Default' && !Player.config.savedThemes[themeName]) {
 			Player.logError(`No theme named '${themeName}'.`, null, 'warning');
 		}
@@ -159,14 +146,14 @@ module.exports = {
 		return bindings;
 	},
 
-	_handleSwitch: function (e) {
+	handleSwitch: function (e) {
 		Player.theme.switch(e._binding.themeName);
 	},
 
-	_moveUp: (prop, e) => Player.theme._swapOrder(e, -1),
-	_moveDown: (prop, e) => Player.theme._swapOrder(e, 1),
+	moveUp: e => Player.theme._swapOrder(e, -1),
+	moveDown: e => Player.theme._swapOrder(e, 1),
 	_swapOrder: function (e, dir) {
-		const name = e.eventTarget.closest('[data-theme]').dataset.theme;
+		const name = e.currentTarget.closest('[data-theme]').dataset.theme;
 		const order = Player.config.savedThemesOrder;
 		const i = order.indexOf(name);
 		if (i + dir >= 0 && i + dir < order.length) {
@@ -177,9 +164,9 @@ module.exports = {
 		}
 	},
 
-	_remove: function (prop, e) {
+	remove: function (e) {
 		const themes = Player.config.savedThemes;
-		const row = e.eventTarget.closest('[data-theme]');
+		const row = e.currentTarget.closest('[data-theme]');
 		const name = row.dataset.theme;
 		// Can't delete the default. It's not actually a stored theme.
 		if (name === 'Default') {
@@ -202,30 +189,32 @@ module.exports = {
 		}
 	},
 
-	_restoreDefaults: function () {
+	restoreDefaults: function () {
 		Object.assign(Player.config.savedThemes, Player.settings.findDefault('savedThemes').default);
 		Player.theme.validateOrder();
 		Player.set('savedThemes', Player.config.savedThemes, { bypassValidation: true });
 	},
 
-	_showSaveOptions: function (prop, e) {
-		e.stopPropagation();
+	showSaveOptions: function (e) {
 		const open = Player.$(`.${ns}-theme-save-options`);
 		if (open) {
 			return Player.container.removeChild(open);
 		}
 		const el = _.element(saveMenuTemplate({ settingsConfig }), Player.container);
-		Player.position.showRelativeTo(el, e.eventTarget);
+		Player.position.showRelativeTo(el, e.currentTarget);
 		Player.$(`.${ns}-save-theme-name`).focus();
 	},
 
-	_toggleSaveFields: function () {
+	toggleSaveFields: function () {
 		Player.$(`.${ns}-theme-save-options`).classList.toggle('fields-collapsed');
-		Player.position.showRelativeTo(Player.$(`.${ns}-theme-save-options`), Player.$('[data-handler="theme._showSaveOptions"]'));
+		Player.position.showRelativeTo(Player.$(`.${ns}-theme-save-options`), Player.$('[\\@click^="theme.showSaveOptions"]'));
 	},
 
-	_save: function (e) {
-		e.preventDefault();
+	toggleSaveButtonText: function (e) {
+		Player.$(`.${ns}-save-theme`).innerHTML = Player.config.savedThemes[e.currentTarget.value] ? 'Update' : 'Create';
+	},
+
+	save: function () {
 		const name = Player.$(`.${ns}-save-theme-name`).value;
 		if (!name) {
 			return Player.logError('A name is required to save a theme.', null, 'warning');

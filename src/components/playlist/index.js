@@ -10,26 +10,6 @@ module.exports = {
 	template: require('./templates/player.tpl'),
 	listTemplate: require('./templates/list.tpl'),
 
-	delegatedEvents: {
-		click: {
-			[`.${ns}-list-item`]: 'playlist.handleSelect',
-			[`.${ns}-player-button`]: 'playlist.restore'
-		},
-		dragstart: { [`.${ns}-list-item`]: 'playlist.handleDragStart' },
-		dragenter: { [`.${ns}-list-item`]: 'playlist.handleDragEnter' },
-		dragend: { [`.${ns}-list-item`]: 'playlist.handleDragEnd' },
-		dragover: { [`.${ns}-list-item`]: e => e.preventDefault() },
-		drop: { [`.${ns}-list-item`]: e => e.preventDefault() },
-		keyup: { [`.${ns}-playlist-search`]: 'playlist._handleSearch' },
-		contextmenu: { [`.${ns}-list-item`]: 'playlist._handleItemMenu' }
-	},
-
-	undelegatedEvents: {
-		mouseenter: { [`.${ns}-list-item`]: 'playlist.updateHoverImage' },
-		mouseleave: { [`.${ns}-list-item`]: 'playlist.removeHoverImage' },
-		mousemove: { [`.${ns}-list-item`]: 'playlist.positionHoverImage' }
-	},
-
 	initialize: function () {
 		// Keep track of the last view style so we can return to it.
 		Player.playlist._lastView = Player.config.viewStyle === 'playlist' || Player.config.viewStyle === 'image'
@@ -53,7 +33,7 @@ module.exports = {
 			Player.playlist.showImage(sound);
 			Player.$all(`.${ns}-list-item.playing, .${ns}-list-item[data-id="${Player.playing.id}"]`).forEach(el => {
 				const newItem = Player.playlist.listTemplate({ sounds: [ Player.sounds.find(s => s.id === el.dataset.id) ] });
-				_.elementBefore(newItem, el, Player.playlist.undelegatedEvents);
+				_.elementBefore(newItem, el);
 				el.parentNode.removeChild(el);
 			});
 			Player.config.viewStyle !== 'fullscreen' && Player.playlist.scrollToPlaying('nearest');
@@ -85,9 +65,7 @@ module.exports = {
 	 * Render the playlist.
 	 */
 	render: function () {
-		const container = Player.$(`.${ns}-list-container`);
-		container.innerHTML = Player.playlist.listTemplate();
-		Player.events.addUndelegatedListeners(container, Player.playlist.undelegatedEvents);
+		_.elementHTML(Player.$(`.${ns}-list-container`), Player.playlist.listTemplate());
 		Player.playlist.hoverImage = Player.$(`.${ns}-hover-image`);
 	},
 
@@ -148,7 +126,7 @@ module.exports = {
 				if (!skipRender) {
 					// Add the sound to the playlist.
 					const list = Player.$(`.${ns}-list-container`);
-					let rowContainer = _.element(`<div>${Player.playlist.listTemplate({ sounds: [ sound ] })}</div>`, null, Player.playlist.undelegatedEvents);
+					let rowContainer = _.element(`<div>${Player.playlist.listTemplate({ sounds: [ sound ] })}</div>`);
 					if (index < Player.sounds.length - 1) {
 						const before = Player.$(`.${ns}-list-item[data-id="${Player.sounds[index + 1].id}"]`);
 						list.insertBefore(rowContainer.children[0], before);
@@ -205,10 +183,18 @@ module.exports = {
 		});
 	},
 
+	selectLocalFiles: function () {
+		Player.$(`.${ns}-add-local-file-input`).click();
+	},
+
 	/**
 	 * Remove a sound
 	 */
 	remove: function (sound) {
+		// Accept the sound object or id
+		if (typeof sound !== 'object') {
+			sound = Player.sounds.find(sound => sound.id === '' + sound);
+		}
 		const index = Player.sounds.indexOf(sound);
 
 		// If the playing sound is being removed then play the next sound.
@@ -223,6 +209,29 @@ module.exports = {
 		Player.trigger('remove', sound);
 	},
 
+	toggleShuffle: function () {
+		const values = [ 'all', 'one', 'none' ];
+		const current = values.indexOf(Player.config.repeat);
+		Player.set('repeat', values[(current + 4) % 3]);
+	},
+
+	toggleRepeat: function () {
+		Player.set('shuffle', !Player.config.shuffle);
+		Player.header.render();
+
+		// Update the play order.
+		if (!Player.config.shuffle) {
+			Player.sounds.sort((a, b) => Player.compareIds(a.id, b.id));
+		} else {
+			const sounds = Player.sounds;
+			for (let i = sounds.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[ sounds[i], sounds[j] ] = [ sounds[j], sounds[i] ];
+			}
+		}
+		Player.trigger('order');
+	},
+
 	/**
 	 * Handle an playlist item being clicked. Either open/close the menu or play the sound.
 	 */
@@ -231,8 +240,7 @@ module.exports = {
 		if (e.target.nodeName === 'A' || e.target.closest('a')) {
 			return;
 		}
-		e.preventDefault();
-		const id = e.eventTarget.getAttribute('data-id');
+		const id = e.currentTarget.getAttribute('data-id');
 		const sound = id && Player.sounds.find(sound => sound.id === id);
 		sound && Player.play(sound);
 	},
@@ -247,20 +255,18 @@ module.exports = {
 	/**
 	 * Display an item menu.
 	 */
-	_handleItemMenu: function (e) {
-		e.preventDefault();
-		e.stopPropagation();
-		const id = e.eventTarget.getAttribute('data-id');
+	handleItemMenu: function (e, id) {
 		const sound = Player.sounds.find(s => s.id === id);
 
 		// Add row item menus to the list container. Append to the container otherwise.
-		const listContainer = e.eventTarget.closest(`.${ns}-list-container`);
+		const listContainer = e.currentTarget.closest(`.${ns}-list-container`);
 		const parent = listContainer || Player.container;
 
 		// Create the menu.
-		const dialog = _.element(itemMenuTemplate({ sound, postIdPrefix }), parent);
-		const relative = e.eventTarget.classList.contains(`${ns}-item-menu-button`) ? e.eventTarget : e;
-		Player.userTemplate._showMenu(relative, dialog, parent);
+		const html = itemMenuTemplate({ sound, postIdPrefix });
+		const dialog = _.element(html, parent);
+		const relative = e.currentTarget.classList.contains(`${ns}-item-menu-button`) ? e.currentTarget : e;
+		Player.display.showMenu(relative, dialog, parent);
 	},
 
 	/**
@@ -314,12 +320,14 @@ module.exports = {
 	 * Start dragging a playlist item.
 	 */
 	handleDragStart: function (e) {
-		Player.playlist._dragging = e.eventTarget;
+		Player.playlist._dragging = e.currentTarget;
 		Player.playlist.setHoverImageVisibility();
-		e.eventTarget.classList.add(`${ns}-dragging`);
-		e.dataTransfer.setDragImage(new Image(), 0, 0);
+		e.currentTarget.classList.add(`${ns}-dragging`);
+		const img = document.createElement('img');
+		img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+		e.dataTransfer.setDragImage(img, 0, 0);
 		e.dataTransfer.dropEffect = 'move';
-		e.dataTransfer.setData('text/plain', e.eventTarget.getAttribute('data-id'));
+		e.dataTransfer.setData('text/plain', e.currentTarget.getAttribute('data-id'));
 	},
 
 	/**
@@ -329,7 +337,6 @@ module.exports = {
 		if (!Player.playlist._dragging) {
 			return;
 		}
-		e.preventDefault();
 		const moving = Player.playlist._dragging;
 		const id = moving.getAttribute('data-id');
 		let before = e.target.closest && e.target.closest(`.${ns}-list-item`);
@@ -339,7 +346,7 @@ module.exports = {
 		const movingIdx = Player.sounds.findIndex(s => s.id === id);
 		const list = moving.parentNode;
 
-		// If the item is being moved down it need inserting before the node after the one it's dropped on.
+		// If the item is being moved down it needs inserting before the node after the one it's dropped on.
 		const position = moving.compareDocumentPosition(before);
 		if (position & 0x04) {
 			before = before.nextSibling;
@@ -367,9 +374,8 @@ module.exports = {
 		if (!Player.playlist._dragging) {
 			return;
 		}
-		e.preventDefault();
 		delete Player.playlist._dragging;
-		e.eventTarget.classList.remove(`${ns}-dragging`);
+		e.currentTarget.classList.remove(`${ns}-dragging`);
 		Player.playlist.setHoverImageVisibility();
 	},
 
@@ -391,11 +397,16 @@ module.exports = {
 		Player.sounds.filter(sound => !Player.acceptedSound(sound)).forEach(Player.playlist.remove);
 	},
 
+	// Add a filter.
+	addFilter: function (filter) {
+		filter && Player.set('filters', Player.config.filters.concat(filter));
+	},
+
 	/**
 	 * Search the playlist
 	 */
 	_handleSearch: function (e) {
-		Player.playlist.search(e.eventTarget.value.toLowerCase());
+		Player.playlist.search(e.currentTarget.value.toLowerCase());
 	},
 
 	search: function (v) {

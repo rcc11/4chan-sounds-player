@@ -6,12 +6,19 @@
 		box-sizing: border-box;
 		white-space: pre;
 	}
-	& .#{$ns}-sub-settings .#{$ns}-col {
-		min-height: 1.55rem;
-		display: flex;
-		align-items: center;
-		align-content: center;
-		white-space: nowrap;
+	& .#{$ns}-sub-settings {
+		.#{$ns}-heading {
+			font-weight: normal;
+			margin: 0;
+			justify-content: space-between;
+		}
+		.#{$ns}-col {
+			min-height: 1.55rem;
+			display: flex;
+			align-items: center;
+			align-content: center;
+			white-space: nowrap;
+		}
 	}
 
 	& .#{$ns}-settings-tabs {

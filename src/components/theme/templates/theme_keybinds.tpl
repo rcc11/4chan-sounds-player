@@ -4,7 +4,7 @@
 		<div class="${ns}-col" data-name="${name}">
 			<input
 				type="text"
-				class="${ns}-key-input"
+				@keydown="settings.handleKeyChange"
 				value="${Player.hotkeys.stringifyKey(Player.config.hotkey_bindings.switchTheme.find(def => def.themeName === name) || { key: '' })}"
 				data-property="hotkey_bindings.switchTheme"
 			/>

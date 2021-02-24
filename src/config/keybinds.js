@@ -3,7 +3,7 @@ const keybindOpts = {
 	displayGroup: 'Keybinds',
 	format: 'hotkeys.stringifyKey',
 	parse: 'hotkeys.parseKey',
-	class: `${ns}-key-input`,
+	attrs: '@keydown="settings.handleKeyChange"',
 	property: 'hotkey_bindings',
 	allowInTheme: true
 };
@@ -138,7 +138,7 @@ module.exports = [
 			{
 				property: 'hotkey_bindings.toggleAutoScroll',
 				title: 'Toggle Thread Scroll',
-				keyHandler:  () => Player.set('autoScrollThread', !Player.config.autoScrollThread),
+				keyHandler: () => Player.set('autoScrollThread', !Player.config.autoScrollThread),
 				default: { key: '' }
 			}
 		]
@@ -163,10 +163,10 @@ module.exports = [
 			{
 				property: 'hotkey_bindings.switchTheme',
 				title: 'Select Theme',
-				keyHandler: 'theme._handleSwitch',
+				keyHandler: 'theme.handleSwitch',
 				default: [ ],
 				displayMethod: 'theme.themeKeybindsTemplate',
-				parse: 'theme._parseSwitch',
+				parse: 'theme.parseSwitch',
 				format: null
 			}
 		]

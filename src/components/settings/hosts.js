@@ -3,12 +3,20 @@ const inputTemplate = require('./templates/host_input.tpl');
 module.exports = {
 	template: inputTemplate,
 
+	fields: {
+		name: 'Name',
+		url: 'URL',
+		responsePath: 'Response Path',
+		responseMatch: 'Response Match',
+		soundUrl: 'File URL Format'
+	},
+
 	parse: function (newValue, hosts, e) {
 		hosts = { ...hosts };
-		const container = e.eventTarget.closest(`.${ns}-host-input`);
+		const container = e.currentTarget.closest(`.${ns}-host-input`);
 		let name = container.getAttribute('data-host-name');
 		let host = hosts[name] = { ...hosts[name] };
-		const changedField = e.eventTarget.getAttribute('name');
+		const changedField = e.currentTarget.getAttribute('name');
 
 		try {
 			// If the name was changed then reassign in hosts and update the data-host-name attribute.
@@ -95,9 +103,9 @@ module.exports = {
 		Player.settings.set('uploadHosts', hosts, { bypassValidation: true, bypassRender: true, silent: true });
 	},
 
-	remove: function (prop, e) {
+	remove: function (e) {
 		const hosts = Player.config.uploadHosts;
-		const container = e.eventTarget.closest(`.${ns}-host-input`);
+		const container = e.currentTarget.closest(`.${ns}-host-input`);
 		const name = container.getAttribute('data-host-name');
 		// For hosts in the defaults set null so we know to not include them on load
 		if (Player.settings.findDefault('uploadHosts').default[name]) {
@@ -110,7 +118,7 @@ module.exports = {
 	},
 
 	setDefault: function (_new, _current, e) {
-		const selected = e.eventTarget.closest(`.${ns}-host-input`).getAttribute('data-host-name');
+		const selected = e.currentTarget.closest(`.${ns}-host-input`).getAttribute('data-host-name');
 		if (selected === Player.config.defaultUploadHost) {
 			return selected;
 		}

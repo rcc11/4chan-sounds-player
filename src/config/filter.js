@@ -23,17 +23,21 @@ module.exports = [
 			'pomf.cat',
 			'zz.ht'
 		],
-		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
+		actions: [ { title: 'Reset', handler: 'settings.reset("allow"):prevent' } ],
 		displayGroup: 'Filter',
-		split: '\n'
+		displayMethod: 'textarea',
+		format: v => v.join('\n'),
+		parse: v => v.split('\n')
 	},
 	{
 		property: 'filters',
 		default: [ '# Image MD5 or sound URL' ],
 		title: 'Filters',
 		description: 'List of URLs or image MD5s to filter, one per line.\nLines starting with a # will be ignored.',
-		actions: [ { title: 'Reset', handler: 'settings.reset' } ],
+		actions: [ { title: 'Reset', handler: 'settings.reset("filters"):prevent' } ],
 		displayGroup: 'Filter',
-		split: '\n'
+		displayMethod: 'textarea',
+		format: v => v.join('\n'),
+		parse: v => v.split('\n')
 	}
 ];

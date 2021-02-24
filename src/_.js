@@ -12,10 +12,13 @@ module.exports.get = function get(object, path, dflt) {
 	if (typeof path !== 'string') {
 		return dflt;
 	}
+	if (path === '') {
+		return object;
+	}
 	const props = path.split('.');
 	const lastProp = props.pop();
 	const parent = props.reduce((obj, k) => obj && obj[k], object);
-	return parent && Object.prototype.hasOwnProperty.call(parent, lastProp)
+	return parent && (!dflt || lastProp in parent)
 		? parent[lastProp]
 		: dflt;
 };
@@ -74,6 +77,7 @@ module.exports.element = function element(html, parent, events) {
 	const el = container.children[0];
 	parent && parent.appendChild(el);
 	events && Player.events.addUndelegatedListeners(el, events);
+	_.elementHandler(el);
 	return el;
 };
 
@@ -83,8 +87,21 @@ module.exports.elementBefore = function elementBefore(html, before, events) {
 	return el;
 };
 
-module.exports.noDefault = (f, ...args) => e => {
-	e.preventDefault();
-	const func = typeof f === 'function' ? f : _.get(Player, f);
-	func(e, ...args);
+module.exports.elementHTML = function elementHTML(el, content) {
+	el.innerHTML = content;
+	_.elementHandler(el);
+};
+
+module.exports.elementHandler = function elementHandler(el) {
+	el.querySelectorAll(`.${ns}-expander`).forEach(el => {
+		el.classList.add('no-touch-action');
+		Player.events.set(el, 'pointdragstart', 'position.initResize');
+		Player.events.set(el, 'pointdrag', 'position.doResize:unbound');
+		Player.events.set(el, 'pointdragend', 'position.stopResize');
+	});
+	Player.events.apply(el);
+};
+
+module.exports.escAttr = function (str, escapeDoubleQuote) {
+	return str.replace(/'/g, '&#39;').replace(/"/g, escapeDoubleQuote ? '\\&#34;' : '&#34;');
 };

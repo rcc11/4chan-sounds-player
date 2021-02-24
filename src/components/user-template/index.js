@@ -19,17 +19,6 @@ const componentDeps = [ ];
 module.exports = {
 	buttons,
 
-	delegatedEvents: {
-		// Add a click event listeners for each button/link with an action.
-		click: buttons.reduce((events, conf) => {
-			conf.action && (events[`.${conf.class}`] = conf.action);
-			return events;
-		}, {}),
-		change: {
-			[`.${ns}-add-local-file-input`]: 'userTemplate._handleFileSelect'
-		}
-	},
-
 	initialize: function () {
 		Player.on('config', Player.userTemplate._handleConfig);
 		Player.on('playsound', () => Player.userTemplate._handleEvent('playsound'));
@@ -60,18 +49,20 @@ module.exports = {
 				return '';
 			}
 			// If the button config has sub values then extend the base config with the selected sub value.
-			// Which value is to use is taken from the `property` in the base config of the player config.
+			// Which value to use is taken from the `property` in the base config of the player config.
 			// This gives us different state displays.
 			if (buttonConf.values) {
 				let topConf = buttonConf;
 				const valConf = buttonConf.values[_.get(Player.config, buttonConf.property)] || buttonConf.values[Object.keys(buttonConf.values)[0]];
-				buttonConf = { ...topConf, ...valConf, class: ((topConf.class || '') + ' ' + (valConf.class || '')).trim() };
+				buttonConf = { ...topConf, ...valConf };
 			}
 			const attrs = [ ...(_confFuncOrText(buttonConf.attrs) || []) ];
 			attrs.some(attr => attr.startsWith('href')) || attrs.push('href="javascript:;"');
 			(buttonConf.class || outerClass) && attrs.push(`class="${buttonConf.class || ''} ${outerClass || ''}"`);
+			buttonConf.action && attrs.push(`@click='${_confFuncOrText(buttonConf.action)}'`);
 
-			return `<a ${attrs.join(' ')}>${text || _confFuncOrText(buttonConf.icon) || _confFuncOrText(buttonConf.text)}</a>`;
+			// Replace spaces with non breaking spaces in user text to prevent collapsing.
+			return `<a ${attrs.join(' ')}>${text && text.replace(/ /g, ' ') || _confFuncOrText(buttonConf.icon) || _confFuncOrText(buttonConf.text)}</a>`;
 		}));
 		!data.ignoreSoundName && (html = html
 			.replace(soundTitleMarqueeRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem; text-overflow: clip;"><span title="${name}" class="${ns}-title-marquee" data-location="${data.location || ''}">${name}</span></div>` : '')
@@ -174,43 +165,6 @@ module.exports = {
 				depInfo.component.render();
 			}
 		});
-	},
-
-	/**
-	 * Add local files.
-	 */
-	_handleFileSelect: function (e) {
-		e.preventDefault();
-		const input = e.eventTarget;
-		Player.playlist.addFromFiles(input.files);
-	},
-
-	_showMenu: function (relative, dialog, parent) {
-		Player.display.closeDialogs();
-		parent || (parent = Player.container);
-		parent.appendChild(dialog);
-
-		// Position the menu.
-		Player.position.showRelativeTo(dialog, relative);
-
-		// Add the focused class handler
-		dialog.querySelectorAll('.entry').forEach(el => {
-			el.addEventListener('mouseenter', Player.userTemplate._setFocusedMenuItem);
-		});
-
-		Player.trigger('menu-open', dialog);
-	},
-
-	_setFocusedMenuItem: function (e) {
-		const submenu = e.currentTarget.querySelector('.submenu');
-		const menu = e.currentTarget.closest('.dialog');
-		const currentFocus = menu.querySelectorAll('.focused');
-		currentFocus.forEach(el => el.classList.remove('focused'));
-		e.currentTarget.classList.add('focused');
-		// Move the menu to the other side if there isn't room.
-		if (submenu && submenu.getBoundingClientRect().right > document.documentElement.clientWidth) {
-			submenu.style.inset = '0px 100% auto auto';
-		}
 	},
 
 	_findButtonConf: type => {

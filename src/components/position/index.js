@@ -2,17 +2,6 @@ const selectors = require('../../selectors');
 
 /* eslint-disable max-statements-per-line, no-empty */
 module.exports = {
-	delegatedEvents: {
-		mousedown: {
-			[`.${ns}-header`]: 'position.initMove',
-			[`.${ns}-expander`]: 'position.initResize'
-		},
-		touchstart: {
-			[`.${ns}-header`]: 'position.initMove',
-			[`.${ns}-expander`]: 'position.initResize'
-		}
-	},
-
 	initialize: function () {
 		// Set the header offsets for use in templates.
 		const { top, bottom } = Player.position.getHeaderOffset();
@@ -94,16 +83,12 @@ module.exports = {
 		Player._startHeight = height;
 		Player._startTop = Player.container.offsetTop;
 		Player._startLeft = Player.container.offsetLeft;
-		const dir = e.eventTarget.dataset.direction || 'se';
+		const dir = e.currentTarget.dataset.direction || 'se';
 		Player._resizeX = dir.includes('e') ? 1 : dir.includes('w') ? -1 : 0;
 		Player._resizeY = dir.includes('s') ? 1 : dir.includes('n') ? -1 : 0;
 		Player._resizeMoveX = dir.includes('w') ? -1 : 0;
 		Player._resizeMoveY = dir.includes('n') ? -1 : 0;
-		Player._resizeTarget = e.eventTarget;
-		document.documentElement.addEventListener('mousemove', Player.position.doResize, false);
-		document.documentElement.addEventListener('touchmove', Player.position.doResize, false);
-		document.documentElement.addEventListener('mouseup', Player.position.stopResize, false);
-		document.documentElement.addEventListener('touchend', Player.position.stopResize, false);
+		Player._resizeTarget = e.currentTarget;
 	},
 
 	/**
@@ -131,10 +116,6 @@ module.exports = {
 		try { e.preventDefault(); } catch (e) { }
 
 		const { width, height } = Player.container.getBoundingClientRect();
-		document.documentElement.removeEventListener('mousemove', Player.position.doResize, false);
-		document.documentElement.removeEventListener('touchmove', Player.position.doResize, false);
-		document.documentElement.removeEventListener('mouseup', Player.position.stopResize, false);
-		document.documentElement.removeEventListener('touchend', Player.position.stopResize, false);
 
 		if (Player._resizeTarget.dataset.bypassSave !== 'true') {
 			GM.setValue('size', width + ':' + height);
@@ -168,7 +149,7 @@ module.exports = {
 	 */
 	initMove: function (e) {
 		if (e.target.nodeName === 'A' || e.target.closest('a') || e.target.classList.contains(`${ns}-expander`)) {
-			return;
+			return e.preventDrag = true;
 		}
 		try { e.preventDefault(); } catch (e) { }
 		Player.$(`.${ns}-header`).style.cursor = 'grabbing';
@@ -181,10 +162,6 @@ module.exports = {
 		const clientY = (e.touches && e.touches[0] || e).clientY;
 		Player._offsetX = clientX - Player.container.offsetLeft;
 		Player._offsetY = clientY - Player.container.offsetTop;
-		document.documentElement.addEventListener('mousemove', Player.position.doMove, false);
-		document.documentElement.addEventListener('touchmove', Player.position.doMove, false);
-		document.documentElement.addEventListener('mouseup', Player.position.stopMove, false);
-		document.documentElement.addEventListener('touchend', Player.position.stopMove, false);
 	},
 
 	/**
@@ -202,10 +179,6 @@ module.exports = {
 	 */
 	stopMove: function (e) {
 		try { e.preventDefault(); } catch (e) { }
-		document.documentElement.removeEventListener('mousemove', Player.position.doMove, false);
-		document.documentElement.removeEventListener('touchmove', Player.position.doMove, false);
-		document.documentElement.removeEventListener('mouseup', Player.position.stopMove, false);
-		document.documentElement.removeEventListener('touchend', Player.position.stopMove, false);
 		Player.$(`.${ns}-header`).style.cursor = null;
 		GM.setValue('position', parseInt(Player.container.style.left, 10) + ':' + parseInt(Player.container.style.top, 10));
 	},

@@ -1,6 +1,11 @@
 const cssTemplate = require('../../scss/style.scss');
 const css4chanXPolyfillTemplate = require('../../scss/4chan-x-polyfill.scss');
 
+const menus = {
+	themes: require('./templates/themes_menu.tpl'),
+	views: require('./templates/views_menu.tpl')
+};
+
 const dismissedContentCache = {};
 const dismissedRestoreCache = {};
 
@@ -12,36 +17,14 @@ module.exports = {
 	template: require('./templates/body.tpl'),
 	_noSleepEnabled: false,
 
-	delegatedEvents: {
-		click: {
-			[`.${ns}-dismiss-link`]: 'display._handleDismiss',
-			[`.${ns}-restore-link`]: 'display._handleRestore'
-		},
-		fullscreenchange: {
-			[`.${ns}-player`]: 'display._handleFullScreenChange'
-		},
-		drop: {
-			[`#${ns}-container`]: 'display._handleDrop'
-		}
-	},
-
-	undelegatedEvents: {
-		click: {
-			body: 'display.closeDialogs'
-		},
-		keydown: {
-			body: e => e.key === 'Escape' && Player.display.closeDialogs(e)
-		}
-	},
-
 	initialize: async function () {
 		try {
 			Player.display.dismissed = (await GM.getValue('dismissed')).split(',');
 		} catch (err) {
 			Player.display.dismissed = [];
 		}
+		// Reset marquees when a new sound is played.
 		Player.on('playsound', () => {
-			// Reset marquees
 			Player.display._marquees = {};
 			!Player.display._marqueeTO && Player.display.runTitleMarquee();
 		});
@@ -50,6 +33,9 @@ module.exports = {
 		// Set up no sleep
 		Player.on('config:preventSleep', Player.display._initNoSleep);
 		Player.display._initNoSleep(Player.config.preventSleep);
+		// Close dialogs when the user clicks anywhere or presses escape.
+		document.body.addEventListener('click', Player.display.closeDialogs);
+		document.body.addEventListener('keydown', e => e.key === 'Escape' && Player.display.closeDialogs(e));
 	},
 
 	/**
@@ -147,8 +133,7 @@ module.exports = {
 	/**
 	 * Togle the display status of the player.
 	 */
-	toggle: function (e) {
-		e && e.preventDefault();
+	toggle: function () {
 		if (Player.container.style.display === 'none') {
 			Player.show();
 		} else {
@@ -159,8 +144,7 @@ module.exports = {
 	/**
 	 * Hide the player. Stops polling for changes, and pauses the aduio if set to.
 	 */
-	hide: function (e) {
-		e && e.preventDefault();
+	hide: function () {
 		Player.container.style.display = 'none';
 
 		Player.isHidden = true;
@@ -170,8 +154,7 @@ module.exports = {
 	/**
 	 * Show the player. Reapplies the saved position/size, and resumes loaded amount polling if it was paused.
 	 */
-	show: async function (e) {
-		e && e.preventDefault();
+	show: async function () {
 		if (!Player.container.style.display) {
 			return;
 		}
@@ -199,11 +182,11 @@ module.exports = {
 				Player.show();
 			}
 			Player.$(`.${ns}-player`).requestFullscreen();
-			Player.$(`.${ns}-player`).addEventListener('mousemove', Player.display._fullscreenMouseMove);
+			document.body.addEventListener('pointermove', Player.display._fullscreenMouseMove);
 			Player.display._fullscreenMouseMove();
 		} else if (document.exitFullscreen) {
 			document.exitFullscreen();
-			Player.$(`.${ns}-player`).removeEventListener('mousemove', Player.display._fullscreenMouseMove);
+			document.body.removeEventListener('pointermove', Player.display._fullscreenMouseMove);
 		}
 	},
 
@@ -213,15 +196,6 @@ module.exports = {
 		Player.display.fullscreenCursorTO = setTimeout(function () {
 			Player.container.classList.add('cursor-inactive');
 		}, 2000);
-	},
-
-	/**
-	 * Handle file/s being dropped on the player.
-	 */
-	_handleDrop: function (e) {
-		e.preventDefault();
-		e.stopPropagation();
-		Player.playlist.addFromFiles(e.dataTransfer.files);
 	},
 
 	/**
@@ -240,13 +214,11 @@ module.exports = {
 		Player.controls.preventWrapping();
 	},
 
-	_handleRestore: async function (e) {
-		e.preventDefault();
-		const restore = e.eventTarget.getAttribute('data-restore');
+	restore: async function (restore) {
 		const restoreIndex = Player.display.dismissed.indexOf(restore);
 		if (restore && restoreIndex > -1) {
 			Player.display.dismissed.splice(restoreIndex, 1);
-			Player.$all(`[data-restore="${restore}"]`).forEach(el => {
+			Player.$all(`[\\@click^='display.restore("${restore}")']`).forEach(el => {
 				_.elementBefore(dismissedContentCache[restore], el);
 				el.parentNode.removeChild(el);
 			});
@@ -254,13 +226,11 @@ module.exports = {
 		}
 	},
 
-	_handleDismiss: async function (e) {
-		e.preventDefault();
-		const dismiss = e.eventTarget.getAttribute('data-dismiss');
+	dismiss: async function (dismiss) {
 		if (dismiss && !Player.display.dismissed.includes(dismiss)) {
 			Player.display.dismissed.push(dismiss);
 			Player.$all(`[data-dismiss-id="${dismiss}"]`).forEach(el => {
-				_.elementBefore(`<a href="#" class="${ns}-restore-link" data-restore="${dismiss}">${dismissedRestoreCache[dismiss]}</a>`, el);
+				_.elementBefore(`<a href="#" @click='display.restore("${dismiss}"):prevent'>${dismissedRestoreCache[dismiss]}</a>`, el);
 				el.parentNode.removeChild(el);
 			});
 			await GM.setValue('dismissed', Player.display.dismissed.join(','));
@@ -271,8 +241,43 @@ module.exports = {
 		dismissedContentCache[name] = text;
 		dismissedRestoreCache[name] = restore;
 		return Player.display.dismissed.includes(name)
-			? `<a href="#" class="${ns}-restore-link" data-restore="${name}">${restore}</a>`
+			? `<a href="#" @click='display.restore("${name}"):prevent'>${restore}</a>`
 			: text;
+	},
+
+	/**
+	 * Display a menu
+	 */
+	showMenu: function (relative, menu, parent) {
+		const dialog = typeof menu === 'string' ? _.element(menus[menu]()) : menu;
+		Player.display.closeDialogs();
+		parent || (parent = Player.container);
+		parent.appendChild(dialog);
+
+		// Position the menu.
+		Player.position.showRelativeTo(dialog, relative);
+
+		// Add the focused class handler
+		dialog.querySelectorAll('.entry').forEach(el => {
+			el.addEventListener('mouseenter', Player.display._setFocusedMenuItem);
+		});
+		// Allow clicks of sub menus
+		dialog._keepOpenFor = Array.from(dialog.querySelectorAll('.entry.has-submenu'));
+		dialog._closeFor = Array.from(dialog.querySelectorAll('.submenu'));
+
+		Player.trigger('menu-open', dialog);
+	},
+
+	_setFocusedMenuItem: function (e) {
+		const submenu = e.currentTarget.querySelector('.submenu');
+		const menu = e.currentTarget.closest('.dialog');
+		const currentFocus = menu.querySelectorAll('.focused');
+		currentFocus.forEach(el => el.classList.remove('focused'));
+		e.currentTarget.classList.add('focused');
+		// Move the menu to the other side if there isn't room.
+		if (submenu && submenu.getBoundingClientRect().right > document.documentElement.clientWidth) {
+			submenu.style.inset = '0px 100% auto auto';
+		}
 	},
 
 	/**
@@ -280,9 +285,14 @@ module.exports = {
 	 */
 	closeDialogs: function (e) {
 		document.querySelectorAll(`.${ns}-dialog`).forEach(dialog => {
-			// Close if there's no click event, or the click was not part of a clickable dialog or an associated element.
 			const clickableElements = (dialog._keepOpenFor || []).concat(dialog.dataset.allowClick ? dialog : []);
-			if (!e || !clickableElements.find(el => el === e.target || el.contains(e.target))) {
+			// Close the dialog if there's no event...
+			const closeDialog = !e
+				// ...the event was not for an element that allows the dialog to stay open
+				|| !clickableElements.find(el => el === e.target || el.contains(e.target))
+				// ...or the event was for an element explicitly set to close the dialog.
+				|| (dialog._closeFor || []).find(el => el === e.target || el.contains(e.target));
+			if (closeDialog) {
 				dialog.parentNode.removeChild(dialog);
 				Player.trigger('menu-close', dialog);
 			}

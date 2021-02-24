@@ -1,38 +1,47 @@
+const eventNames = [
+	// Inputs/Forms
+	'change', 'focus', 'blur', 'focusin', 'focusout', 'reset', 'submit',
+	// View
+	'fullscreenchange', 'fullscreenerror', 'resize', 'scroll',
+	// Keyboard
+	'keydown', 'keyup',
+	// Clicks
+	'auxclick', 'click', 'contextmenu', 'dblclick',
+	// Mouse
+	'mousedown', 'mouseenter', 'mouseleave', 'mousemove', 'mouseout', 'mouseup',
+	// Custom pointer dragging
+	'pointdrag', 'pointdragstart', 'pointdragend',
+	// Touch
+	'touchcancel', 'touchend', 'touchmove', 'touchstart',
+	// Dragging
+	'drag', 'dragend', 'dragenter', 'dragstart', 'dragleave', 'dragover', 'drop',
+	// Media
+	'canplay', 'canplaythrough', 'complete', 'duration-change', 'emptied', 'ended', 'loadeddata', 'loadedmetadata',
+	'pause', 'play', 'playing', 'ratechange', 'seeked', 'seeking', 'stalled', 'suspend', 'timeupdate', 'volumechange', 'waiting'
+];
+const evtSelector = eventNames.map(e => `[\\@${e}]`).join(',');
+
 module.exports = {
 	atRoot: [ 'on', 'off', 'trigger' ],
 
 	// Holder of event handlers.
 	_events: { },
-	_delegatedEvents: { },
-	_undelegatedEvents: { },
 	_audioEvents: [ ],
 
 	initialize: function () {
 		const eventLocations = { Player, ...Player.components };
-		const delegated = Player.events._delegatedEvents;
-		const undelegated = Player.events._undelegatedEvents;
 		const audio = Player.events._audioEvents;
 
 		for (let name in eventLocations) {
 			const comp = eventLocations[name];
-			for (let evt in comp.delegatedEvents || {}) {
-				delegated[evt] || (delegated[evt] = []);
-				delegated[evt].push(comp.delegatedEvents[evt]);
-			}
-			for (let evt in comp.undelegatedEvents || {}) {
-				undelegated[evt] || (undelegated[evt] = []);
-				undelegated[evt].push(comp.undelegatedEvents[evt]);
-			}
 			comp.audioEvents && (audio.push(comp.audioEvents));
 		}
 
+		// Clear mousedown listeners when the mouse/touch is released.
+		document.body.addEventListener('pointerup', Player.events.clearMousedown);
+		document.body.addEventListener('pointercancel', Player.events.clearMousedown);
+
 		Player.on('rendered', function () {
-			// Wire up delegated events on the container.
-			Player.events.addDelegatedListeners(Player.container, delegated);
-
-			// Wire up undelegated events.
-			Player.events.addUndelegatedListeners(document, undelegated);
-
 			// Wire up audio events.
 			for (let eventList of audio) {
 				for (let evt in eventList) {
@@ -44,58 +53,77 @@ module.exports = {
 	},
 
 	/**
-	 * Set delegated events listeners on a target
+	 * Add event listeners from event attributes on an elements and all it's decendents.
+	 *
+	 * @param {Element} element The element to set event listeners for.
 	 */
-	addDelegatedListeners(target, events) {
-		for (let evt in events) {
-			target.addEventListener(evt, function (e) {
-				let nodes = [ e.target ];
-				while (nodes[nodes.length - 1] !== target) {
-					nodes.push(nodes[nodes.length - 1].parentNode);
-				}
-				for (let node of nodes) {
-					for (let eventList of [].concat(events[evt])) {
-						for (let selector in eventList) {
-							if (node.matches && node.matches(selector)) {
-								e.eventTarget = node;
-								let handler = Player.getHandler(eventList[selector]);
-								// If the handler returns false stop propogation
-								if (handler && handler(e) === false) {
-									return;
-								}
-							}
-						}
-					}
-				}
-			});
-		}
-	},
-
-	/**
-	 * Set, or reset, directly bound events.
-	 */
-	addUndelegatedListeners: function (target, events) {
-		for (let evt in events) {
-			if (typeof events[evt] !== 'object') {
-				Player.events._addEventListener([ target ], evt, events[evt]);
-			} else {
-				for (let eventList of [].concat(events[evt])) {
-					for (let selector in eventList) {
-						const elements = [ ...target.querySelectorAll(selector) ];
-						target.matches && target.matches(selector) && elements.unshift(target);
-						Player.events._addEventListener(elements, evt, eventList[selector]);
-					}
+	apply: function (element) {
+		// Find all elements with event attributes, including the given element.
+		const els = Array.from(element.querySelectorAll(evtSelector));
+		element.matches(evtSelector) && els.unshift(element);
+		els.forEach(el => {
+			for (let { name, value } of el.attributes) {
+				const evt = name[0] === '@' && name.slice(1);
+				if (evt) {
+					Player.events.set(el, evt, value);
 				}
 			}
-		}
+		});
 	},
 
-	_addEventListener(elements, evt, listener) {
-		elements.forEach(element => {
-			const handler = Player.getHandler(listener);
-			element.removeEventListener(evt, handler);
-			element.addEventListener(evt, handler);
-		});
+	set(el, evt, value) {
+		// Remove listeners already set.
+		let listeners = el._eventListeners || (el._eventListeners = {});
+		listeners[evt] || (listeners[evt] = []);
+		listeners[evt].forEach(l => el.removeEventListener(evt, l));
+		// Events are defined in the format `func1("arg1",...):mod1:modN`
+		for (let spec of value.split(/\s*;\s*/)) {
+			const [ _spec, handler, argString, modsString ] = spec.match(/^([^(:]+)?(\(.*\))?(?::(.*))?$/);
+			const mods = modsString && modsString.split(':').reduce((m, n) => {
+				const isArgs = n[0] === '[';
+				m[isArgs ? 'args' : n] = isArgs ? JSON.parse(n) : n;
+				return m;
+			}, {}) || {};
+			// Args are any JSON value, where "evt.property" signifies the event being passed and an optional property path.
+			const args = argString && JSON.parse('[' + argString.slice(1, -1) + ']');
+			const eventArgs = (args || []).reduce((a, arg, i) => a.concat(arg.startsWith && arg.startsWith('evt') ? [ [ i, arg.slice(4) ] ] : []), []);
+			const f = handler && Player.getHandler(handler.trim());
+			// Wrap the handler to handle prevent/stop/args.
+			const needsWrapping = mods.prevent || mods.stop || args;
+			const listener = !needsWrapping ? f : e => {
+				mods.prevent && e.preventDefault();
+				mods.stop && e.stopPropagation();
+				eventArgs.forEach(([ idx, path ]) => args.splice(idx, 1, _.get(e, path)));
+				f && f.apply(null, args || [ e ]);
+			};
+			if (!listener || handler && !f) {
+				console.error('[4chan sounds player] Invalid event', evt, spec, el);
+			}
+			// Point drag is a special case to handle pointer dragging.
+			if (evt === 'pointdrag') {
+				const downListener = e => {
+					el._pointdragstart && el._pointdragstart(e);
+					if (!e.preventDrag) {
+						el.setPointerCapture(e.pointerId);
+						Player._mousedown = el;
+						Player._mousedownListener = listener;
+						Player._mousedownMoveEl = mods.unbound ? document.documentElement : el;
+						Player._mousedownMoveEl.addEventListener('pointermove', listener, mods);
+						el.addEventListener('pointerleave', listener, mods);
+						mods.boxed && el.addEventListener('pointerleave', Player.events.clearMousedown);
+						!mods.move && listener(e);
+					}
+				};
+				el.addEventListener('pointerdown', downListener);
+				listeners.pointerdown || (listeners.pointerdown = []);
+				listeners.pointerdown.push(downListener);
+			} else if (evt === 'pointdragstart' || evt === 'pointdragend') {
+				el[`_${evt}`] = listener;
+			} else {
+				el.addEventListener(evt, listener, mods);
+				listeners[evt].push(listener);
+			}
+		}
 	},
 
 	/**
@@ -132,6 +160,16 @@ module.exports = {
 		const events = Player.events._events[evt] || [];
 		for (let handler of events) {
 			await handler(...data);
+		}
+	},
+
+	clearMousedown: function (e) {
+		if (Player._mousedown) {
+			Player._mousedown.releasePointerCapture(e.pointerId);
+			Player._mousedownMoveEl.removeEventListener('pointermove', Player._mousedownListener);
+			Player._mousedown.removeEventListener('pointerleave', Player._mousedownListener);
+			Player._mousedown._pointdragend && Player._mousedown._pointdragend(e);
+			Player._mousedown = Player._mousedownListener = null;
 		}
 	}
 };

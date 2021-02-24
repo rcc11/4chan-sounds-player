@@ -16,20 +16,6 @@ module.exports = {
 	selectedBoards: Board ? [ Board ] : [ 'a' ],
 	showAllBoards: false,
 
-	delegatedEvents: {
-		click: {
-			[`.${ns}-fetch-threads-link`]: 'threads.fetch',
-			[`.${ns}-all-boards-link`]: 'threads.toggleBoardList',
-			[`.${ns}-threads-view-style`]: 'threads.toggleView'
-		},
-		keyup: {
-			[`.${ns}-threads-filter`]: e => Player.threads.filter(e.eventTarget.value)
-		},
-		change: {
-			[`.${ns}-threads input[type=checkbox]`]: 'threads.toggleBoard'
-		}
-	},
-
 	initialize: async function () {
 		Player.threads.hasParser = is4chan && typeof Parser !== 'undefined';
 		// If the native Parser hasn't been intialised chuck customSpoiler on it so we can call it for threads.
@@ -56,12 +42,14 @@ module.exports = {
 	_initialFetch: function () {
 		if (Player.container && Player.config.viewStyle === 'threads' && Player.threads.boardList === null) {
 			Player.threads.fetchBoards(true);
+			Player.off('show', Player.threads._initialFetch);
+			Player.off('view', Player.threads._initialFetch);
 		}
 	},
 
 	render: function () {
 		if (Player.container) {
-			Player.$(`.${ns}-threads`).innerHTML = Player.threads.template();
+			_.elementHTML(Player.$(`.${ns}-threads`), Player.threads.template());
 			Player.threads.afterRender();
 		}
 	},
@@ -82,19 +70,11 @@ module.exports = {
 	},
 
 	/**
-	 * Switch between board and table view.
-	 */
-	toggleView: function (e) {
-		e.preventDefault();
-		Player.set('threadsViewStyle', e.eventTarget.getAttribute('data-style'));
-	},
-
-	/**
 	 * Render just the threads.
 	 */
 	renderThreads: function () {
 		if (!Player.threads.hasParser || Player.config.threadsViewStyle === 'table') {
-			Player.$(`.${ns}-threads-body`).innerHTML = Player.threads.listsTemplate();
+			_.elementHTML(Player.$(`.${ns}-threads-body`), Player.threads.listsTemplate());
 		} else {
 			try {
 				const list = Player.$(`.${ns}-thread-list`);
@@ -127,14 +107,13 @@ module.exports = {
 	 * Render just the board selection.
 	 */
 	renderBoards: function () {
-		Player.$(`.${ns}-thread-board-list`).innerHTML = Player.threads.boardsTemplate();
+		_.elementHTML(Player.$(`.${ns}-thread-board-list`), Player.threads.boardsTemplate());
 	},
 
 	/**
 	 * Toggle the threads view.
 	 */
-	toggle: function (e) {
-		e && e.preventDefault();
+	toggle: function () {
 		if (Player.config.viewStyle === 'threads') {
 			Player.playlist.restore();
 		} else {
@@ -145,8 +124,7 @@ module.exports = {
 	/**
 	 * Switch between showing just the selected boards and all boards.
 	 */
-	toggleBoardList: function (e) {
-		e.preventDefault();
+	toggleBoardList: function () {
 		Player.threads.showAllBoards = !Player.threads.showAllBoards;
 		Player.$(`.${ns}-all-boards-link`).innerHTML = Player.threads.showAllBoards ? 'Selected Only' : 'Show All';
 		Player.threads.renderBoards();
@@ -155,9 +133,7 @@ module.exports = {
 	/**
 	 * Select/deselect a board.
 	 */
-	toggleBoard: async function (e) {
-		const board = e.eventTarget.value;
-		const selected = e.eventTarget.checked;
+	toggleBoard: async function (board, selected) {
 		if (selected) {
 			!Player.threads.selectedBoards.includes(board) && Player.threads.selectedBoards.unshift(board);
 		} else {
@@ -184,8 +160,7 @@ module.exports = {
 	/**
 	 * Fetch the catalog for each selected board and search for sounds in OPs.
 	 */
-	fetch: async function (e) {
-		e && e.preventDefault();
+	fetch: async function () {
 		Player.threads.loading = true;
 		Player.threads.render();
 		if (!Player.threads.boardList) {

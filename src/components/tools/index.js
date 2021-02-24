@@ -9,29 +9,6 @@ module.exports = {
 	_uploadIdx: 0,
 	createStatusText: '',
 
-	delegatedEvents: {
-		click: {
-			[`.${ns}-create-button`]: 'tools._handleCreate',
-			[`.${ns}-create-sound-post-link`]: 'tools._addCreatedToQR',
-			[`.${ns}-create-sound-add-link`]: 'tools._addCreatedToPlayer',
-			[`.${ns}-toggle-sound-input`]: 'tools._handleToggleSoundInput',
-			[`.${ns}-host-setting-link`]: _.noDefault(() => Player.settings.toggle('Hosts')),
-			[`.${ns}-remove-file`]: 'tools._handleFileRemove'
-		},
-		change: {
-			[`.${ns}-create-sound-img`]: 'tools._handleImageSelect',
-			[`.${ns}-create-sound-form input[type=file]`]: e => Player.tools._handleFileSelect(e.eventTarget),
-			[`.${ns}-use-video`]: 'tools._handleWebmSoundChange'
-		},
-		drop: {
-			[`.${ns}-create-sound-form`]: 'tools._handleCreateSoundDrop'
-		},
-		keyup: {
-			[`.${ns}-encoded-input`]: 'tools._handleEncoded',
-			[`.${ns}-decoded-input`]: 'tools._handleDecoded'
-		}
-	},
-
 	initialize: function () {
 		Player.on('config:uploadHosts', Player.tools.render);
 		Player.on('config:defaultUploadHost', newValue => Player.$(`.${ns}-create-sound-host`).value = newValue);
@@ -39,7 +16,7 @@ module.exports = {
 	},
 
 	render: function () {
-		Player.$(`.${ns}-tools`).innerHTML = Player.tools.template();
+		_.elementHTML(Player.$(`.${ns}-tools`).innerHTML, Player.tools.template());
 		Player.tools.afterRender();
 	},
 
@@ -49,8 +26,7 @@ module.exports = {
 		Player.tools.sndInput = Player.$(`.${ns}-create-sound-snd`);
 	},
 
-	toggle: function (e) {
-		e && e.preventDefault();
+	toggle: function () {
 		if (Player.config.viewStyle === 'tools') {
 			Player.playlist.restore();
 		} else {
@@ -60,28 +36,28 @@ module.exports = {
 
 	updateCreateStatus: function (text) {
 		Player.tools.status.style.display = text ? 'inherit' : 'none';
-		Player.tools.status.innerHTML = Player.tools.createStatusText = text;
+		_.elementHTML(Player.tools.status, Player.tools.createStatusText = text);
 	},
 
 	/**
 	 * Encode the decoded input.
 	 */
-	_handleDecoded: function (e) {
-		Player.$(`.${ns}-encoded-input`).value = encodeURIComponent(e.eventTarget.value);
+	handleDecoded: function (e) {
+		Player.$(`.${ns}-encoded-input`).value = encodeURIComponent(e.currentTarget.value);
 	},
 
 	/**
 	 * Decode the encoded input.
 	 */
-	_handleEncoded: function (e) {
-		Player.$(`.${ns}-decoded-input`).value = decodeURIComponent(e.eventTarget.value);
+	handleEncoded: function (e) {
+		Player.$(`.${ns}-decoded-input`).value = decodeURIComponent(e.currentTarget.value);
 	},
 
 	/**
 	 * Show/hide the "Use webm" checkbox when an image is selected.
 	 */
-	_handleImageSelect: async function (e) {
-		const input = e && e.eventTarget || Player.tools.imgInput;
+	handleImageSelect: async function (e) {
+		const input = e && e.currentTarget || Player.tools.imgInput;
 		const image = input.files[0];
 		const isVideo = image.type === 'video/webm';
 		let placeholder = image.name.replace(/\.[^/.]+$/, '');
@@ -92,7 +68,7 @@ module.exports = {
 
 			const webmCheckbox = Player.$(`.${ns}-use-video`);
 			// If the image is a video and Copy Video is selected then update the sound input as well
-			webmCheckbox.checked && isVideo && Player.tools._handleFileSelect(Player.tools.sndInput, [ image ]);
+			webmCheckbox.checked && isVideo && Player.tools.handleFileSelect(Player.tools.sndInput, [ image ]);
 			// If the image isn't a webm make sure Copy Video is deselected (click to fire change event)
 			webmCheckbox.checked && !isVideo && webmCheckbox.click();
 		} else if (await Player.tools.hasAudio(image)) {
@@ -106,7 +82,7 @@ module.exports = {
 	/**
 	 * Update the custom file input display when the input changes
 	 */
-	_handleFileSelect: function (input, files) {
+	handleFileSelect: function (input, files) {
 		const container = input.closest(`.${ns}-file-input`);
 		const fileText = container.querySelector('.text');
 		const fileList = container.querySelector(`.${ns}-file-list`);
@@ -115,41 +91,39 @@ module.exports = {
 		fileText.innerHTML = files.length > 1
 			? files.length + ' files'
 			: files[0] && files[0].name || '';
-		fileList && (fileList.innerHTML = files.length < 2 ? '' : files.map((file, i) =>
+		fileList && (_.elementHTML(fileList, files.length < 2 ? '' : files.map((file, i) =>
 			`<div class="${ns}-row">
 				<div class="${ns}-col ${ns}-truncate-text">${file.name}</div>
-				<a class="${ns}-col-auto ${ns}-remove-file" href="#" data-idx="${i}">${Icons.close}</a>
+				<a class="${ns}-col-auto" @click="tools.handleFileRemove:prevent" href="#" data-idx="${i}">${Icons.close}</a>
 			</div>`
-		).join(''));
+		).join('')));
 	},
 
 	/**
 	 * Handle a file being removed from a multi input
 	 */
-	_handleFileRemove: function (e) {
-		e.preventDefault();
-		const idx = +e.eventTarget.getAttribute('data-idx');
-		const input = e.eventTarget.closest(`.${ns}-file-input`).querySelector('input[type="file"]');
+	handleFileRemove: function (e) {
+		const idx = +e.currentTarget.getAttribute('data-idx');
+		const input = e.currentTarget.closest(`.${ns}-file-input`).querySelector('input[type="file"]');
 		const dataTransfer = new DataTransfer();
 		for (let i = 0; i < input.files.length; i++) {
 			i !== idx && dataTransfer.items.add(input.files[i]);
 		}
 		input.files = dataTransfer.files;
-		Player.tools._handleFileSelect(input);
+		Player.tools.handleFileSelect(input);
 	},
 
 	/**
 	 * Show/hide the sound input when "Use webm" is changed.
 	 */
-	_handleWebmSoundChange: function (e) {
+	handleWebmSoundChange: function (e) {
 		const sound = Player.tools.sndInput;
 		const image = Player.tools.imgInput;
-		Player.tools._handleFileSelect(sound, e.eventTarget.checked && [ image.files[0] ]);
+		Player.tools.handleFileSelect(sound, e.currentTarget.checked && [ image.files[0] ]);
 	},
 
-	_handleToggleSoundInput: function (e) {
-		e.preventDefault();
-		const showURL = e.eventTarget.getAttribute('data-type') === 'url';
+	toggleSoundInput: function (type) {
+		const showURL = type === 'url';
 		Player.$(`.${ns}-create-sound-snd-url`).closest(`.${ns}-row`).style.display = showURL ? null : 'none';
 		Player.$(`.${ns}-create-sound-snd`).closest(`.${ns}-file-input`).style.display = showURL ? 'none' : null;
 		Player.tools.useSoundURL = showURL;
@@ -158,9 +132,7 @@ module.exports = {
 	/**
 	 * Handle files being dropped on the create sound section.
 	 */
-	_handleCreateSoundDrop: function (e) {
-		e.preventDefault();
-		e.stopPropagation();
+	handleCreateSoundDrop: function (e) {
 		const targetInput = e.target.nodeName === 'INPUT' && e.target.getAttribute('type') === 'file' && e.target;
 		[ ...e.dataTransfer.files ].forEach(file => {
 			const isVideo = file.type.startsWith('video');
@@ -178,8 +150,12 @@ module.exports = {
 				}
 				dataTransfer.items.add(file);
 				input.files = dataTransfer.files;
-				Player.tools._handleFileSelect(input);
-				input === Player.tools.imgInput && Player.tools._handleImageSelect();
+				Player.tools.handleFileSelect(input);
+				input === Player.tools.imgInput && Player.tools.handleImageSelect();
+				// Make sure sound file input is shown if a sound file is dropped
+				if (input === Player.tools.sndInput && Player.tools.useSoundURL) {
+					Player.tools.toggleSoundInput('file');
+				}
 			}
 		});
 		return false;
@@ -189,8 +165,7 @@ module.exports = {
 	 * Handle the create button.
 	 * Extracts video/audio if required, uploads the sound, and creates an image file names with [sound=url].
 	 */
-	_handleCreate: async function (e) {
-		e && e.preventDefault();
+	handleCreate: async function () {
 		// Revoke the URL for an existing created image.
 		Player.tools._createdImageURL && URL.revokeObjectURL(Player.tools._createdImageURL);
 		Player.tools._createdImage = null;
@@ -200,7 +175,7 @@ module.exports = {
 		Player.$(`.${ns}-create-button`).disabled = true;
 
 		// Gather the input values.
-		const host =  Player.config.uploadHosts[Player.$(`.${ns}-create-sound-host`).value];
+		const host = Player.config.uploadHosts[Player.$(`.${ns}-create-sound-host`).value];
 		const useSoundURL = Player.tools.useSoundURL;
 		let image = Player.tools.imgInput.files[0];
 		let soundURLs = useSoundURL && Player.$(`.${ns}-create-sound-snd-url`).value.split(',').map(v => v.trim()).filter(v => v);
@@ -297,9 +272,9 @@ module.exports = {
 			// Complete! with some action links
 			Player.tools.updateCreateStatus(Player.tools.createStatusText
 				+ '<br>Complete!<br>'
-				+ (is4chan ? `<a href="#" class="${ns}-create-sound-post-link">Post</a> - ` : '')
-				+ ` <a href="#" class="${ns}-create-sound-add-link">Add</a> - `
-				+ ` <a href="${Player.tools._createdImageURL}" download="${soundImage.name}" title="${soundImage.name}">Download</a>`
+				+ (is4chan ? '<a href="#" @click="tools.addCreatedToQR:prevent">Post</a> - ' : '')
+				+ '<a href="#" @click="tools.addCreatedToPlayer:prevent">Add</a> - '
+				+ `<a href="${Player.tools._createdImageURL}" download="${soundImage.name}" title="${soundImage.name}">Download</a>`
 			);
 		} catch (err) {
 			Player.tools.updateCreateStatus(Player.tools.createStatusText
@@ -399,19 +374,17 @@ module.exports = {
 	/**
 	 * Add the created sound image to the player.
 	 */
-	_addCreatedToPlayer: function (e) {
-		e.preventDefault();
+	addCreatedToPlayer: function () {
 		Player.playlist.addFromFiles([ Player.tools._createdImage ]);
 	},
 
 	/**
 	 * Open the QR window and add the created sound image to it.
 	 */
-	_addCreatedToQR: function (e) {
+	addCreatedToQR: function () {
 		if (!is4chan) {
 			return;
 		}
-		e.preventDefault();
 		// Open the quick reply window.
 		const qrLink = document.querySelector(isChanX ? '.qr-link' : '.open-qr-link');
 

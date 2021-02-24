@@ -4,42 +4,13 @@ const HEIGHT = 200;
 const WIDTH = 200;
 
 module.exports = {
-	delegatedEvents: {
-		click: {
-			[`.${ns}-colorpicker-input, .${ns}-cp-preview`]: 'colorpicker.create',
-			[`.${ns}-apply-colorpicker`]: 'colorpicker._applyColorPicker',
-			[`.${ns}-close-colorpicker`]: _.noDefault(() => Player.display.closeDialogs())
-		},
-		change: {
-			[`.${ns}-rgb-input`]: 'colorpicker._handleRGBInput',
-		},
-		focusout: {
-			[`.${ns}-colorpicker-input`]: 'colorpicker._updatePreview'
-		},
-		mousedown: {
-			[`.${ns}-cp-saturation, .${ns}-cp-hue`]: e => {
-				const target = e.eventTarget;
-				target._mousedown = true;
-				document.documentElement.addEventListener('mouseup', _e => delete target._mousedown, { once: true });
-				Player.colorpicker[`_handle${e.eventTarget.classList.contains(`${ns}-cp-hue`) ? 'Hue' : 'Saturation'}Move`](e);
-			}
-		},
-		mousemove: {
-			[`.${ns}-cp-hue`]: 'colorpicker._handleHueMove',
-			[`.${ns}-cp-saturation`]: 'colorpicker._handleSaturationMove'
-		}
-	},
-
 	initialize: function () {
 		Player.on('menu-close', menu => menu._input && (delete menu._input._colorpicker));
 	},
 
 	create: function (e) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const parent = e.eventTarget.parentNode;
-		const input = e.eventTarget.nodeName === 'INPUT' ? e.eventTarget : parent.querySelector('input');
+		const parent = e.currentTarget.parentNode;
+		const input = e.currentTarget.nodeName === 'INPUT' ? e.currentTarget : parent.querySelector('input');
 		const preview = parent.querySelector(`.${ns}-cp-preview`);
 		if (!input || input._colorpicker) {
 			return;
@@ -64,31 +35,23 @@ module.exports = {
 		Player.colorpicker.updateOutput(colorpicker);
 	},
 
-	_handleHueMove: function (e) {
-		if (!e.eventTarget._mousedown) {
-			return;
-		}
-		e.preventDefault();
-		const colorpicker = e.eventTarget.closest(`.${ns}-colorpicker`);
-		const y = Math.max(0, e.clientY - e.eventTarget.getBoundingClientRect().top);
+	hueMove: function (e) {
+		const colorpicker = e.currentTarget.closest(`.${ns}-colorpicker`);
+		const y = Math.max(0, e.clientY - e.currentTarget.getBoundingClientRect().top);
 		colorpicker._colorpicker.hsv[0] = y / HEIGHT;
 		const _hue = Player.colorpicker.hsv2rgb(colorpicker._colorpicker.hsv[0], 1, 1, 1);
 
 		colorpicker.querySelector(`.${ns}-cp-saturation`).style.background = `linear-gradient(to right, white, rgb(${_hue[0]}, ${_hue[1]}, ${_hue[2]}))`;
-		e.eventTarget.querySelector('.position').style.top = Math.max(-3, (y - 6)) + 'px';
+		e.currentTarget.querySelector('.position').style.top = Math.max(-3, (y - 6)) + 'px';
 
 		Player.colorpicker.updateOutput(colorpicker, true);
 	},
 
-	_handleSaturationMove: function (e) {
-		if (!e.eventTarget._mousedown) {
-			return;
-		}
-		e.preventDefault();
-		const colorpicker = e.eventTarget.closest(`.${ns}-colorpicker`);
-		const saturationPosition = e.eventTarget.querySelector('.position');
-		const x = Math.max(0, e.clientX - e.eventTarget.getBoundingClientRect().left);
-		const y = Math.max(0, e.clientY - e.eventTarget.getBoundingClientRect().top);
+	satMove: function (e) {
+		const colorpicker = e.currentTarget.closest(`.${ns}-colorpicker`);
+		const saturationPosition = e.currentTarget.querySelector('.position');
+		const x = Math.max(0, e.clientX - e.currentTarget.getBoundingClientRect().left);
+		const y = Math.max(0, e.clientY - e.currentTarget.getBoundingClientRect().top);
 
 		colorpicker._colorpicker.hsv[1] = x / WIDTH;
 		colorpicker._colorpicker.hsv[2] = 1 - y / HEIGHT;
@@ -98,9 +61,9 @@ module.exports = {
 		Player.colorpicker.updateOutput(colorpicker, true);
 	},
 
-	_handleRGBInput: function (e) {
-		const colorpicker = e.eventTarget.closest(`.${ns}-colorpicker`);
-		colorpicker._colorpicker.rgb[+e.eventTarget.getAttribute('data-color')] = e.eventTarget.value;
+	inputRGBA: function (e) {
+		const colorpicker = e.currentTarget.closest(`.${ns}-colorpicker`);
+		colorpicker._colorpicker.rgb[+e.currentTarget.getAttribute('data-color')] = e.currentTarget.value;
 		Player.colorpicker.updateOutput(colorpicker);
 	},
 
@@ -129,12 +92,9 @@ module.exports = {
 		colorpicker.querySelector('.output-color').style.background = `rgb(${r}, ${g}, ${b}, ${a})`;
 	},
 
-	_applyColorPicker: function (e) {
-		e.preventDefault();
-		e.stopPropagation();
-
+	apply: function (e) {
 		// Update the input.
-		const colorpicker = e.eventTarget.closest(`.${ns}-colorpicker`);
+		const colorpicker = e.currentTarget.closest(`.${ns}-colorpicker`);
 		const [ r, g, b, a ] = colorpicker._colorpicker.rgb;
 		const input = colorpicker._input;
 		input.value = `rgb(${r}, ${g}, ${b}, ${a})`;
@@ -188,8 +148,8 @@ module.exports = {
 	},
 
 	_updatePreview: function (e) {
-		const value = e.eventTarget.value;
-		const preview = e.eventTarget.parentNode.querySelector(`.${ns}-cp-preview`);
+		const value = e.currentTarget.value;
+		const preview = e.currentTarget.parentNode.querySelector(`.${ns}-cp-preview`);
 		preview.style.background = value;
 	}
 };

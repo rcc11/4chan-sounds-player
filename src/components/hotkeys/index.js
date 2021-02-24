@@ -76,7 +76,7 @@ module.exports = {
 			// If hotkeys are always enabled then just set the handler.
 			Player.hotkeys.addHandler();
 		} else if (type === 'open') {
-			// If hotkeys are only enabled with the player toggle the handler as the player opens/closes.
+			// If hotkeys are only enabled with the player open toggle the handler as the player opens/closes.
 			// If the player is already open set the handler now.
 			if (!Player.isHidden) {
 				Player.hotkeys.addHandler();

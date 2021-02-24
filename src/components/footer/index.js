@@ -13,8 +13,6 @@ module.exports = {
 	},
 
 	render: function () {
-		if (Player.container) {
-			Player.$(`.${ns}-footer`).innerHTML = Player.footer.template();
-		}
+		_.elementHTML(Player.$(`.${ns}-footer`), Player.footer.template());
 	}
 };

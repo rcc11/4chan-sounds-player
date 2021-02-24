@@ -19,9 +19,6 @@ module.exports = {
 			// Set the user template and control events on it to make all the buttons work.
 			if (!container) {
 				container = _.elementBefore(`<span class="${ns}-chan-x-controls ${ns}-col-auto ${ns}-align-center"></span>`, document.querySelector('#shortcuts').firstElementChild);
-				Player.events.addDelegatedListeners(container, {
-					click: [ Player.userTemplate.delegatedEvents.click, Player.controls.delegatedEvents.click ]
-				});
 			}
 
 			if (Player.config.chanXControls === 'never' || Player.config.chanXControls === 'closed' && !Player.isHidden) {
@@ -29,18 +26,18 @@ module.exports = {
 			}
 
 			// Render the contents.
-			container.innerHTML = Player.userTemplate.build({
+			_.elementHTML(container, Player.userTemplate.build({
 				template: Player.config.chanXTemplate,
 				location: '4chan-X-controls',
 				sound: Player.playing,
 				replacements: {
-					'prev-button': `<a href="#" class="${ns}-media-control ${ns}-previous-button ${ns}-hover-fill">${Icons.skipStart} ${Icons.skipStartFill}</a>`,
-					'play-button': `<a href="#" class="${ns}-media-control ${ns}-play-button ${ns}-hover-fill ${!Player.audio || Player.audio.paused ? `${ns}-play` : ''}">${Icons.play} ${Icons.pause} ${Icons.playFill} ${Icons.pauseFill}</a>`,
-					'next-button': `<a href="#" class="${ns}-media-control ${ns}-next-button ${ns}-hover-fill">${Icons.skipEnd} ${Icons.skipEndFill} </a>`,
+					'prev-button': `<a href="#" class="${ns}-media-control ${ns}-previous-button ${ns}-hover-fill" @click='previous({"force":true}):prevent'>${Icons.skipStart} ${Icons.skipStartFill}</a>`,
+					'play-button': `<a href="#" class="${ns}-media-control ${ns}-play-button ${ns}-hover-fill ${!Player.audio || Player.audio.paused ? `${ns}-play` : ''}" @click="togglePlay:prevent">${Icons.play} ${Icons.pause} ${Icons.playFill} ${Icons.pauseFill}</a>`,
+					'next-button': `<a href="#" class="${ns}-media-control ${ns}-next-button ${ns}-hover-fill" @click='next({"force":true}):prevent'>${Icons.skipEnd} ${Icons.skipEndFill} </a>`,
 					'sound-current-time': `<span class="${ns}-current-time">0:00</span>`,
 					'sound-duration': `<span class="${ns}-duration">0:00</span>`
 				}
-			});
+			}));
 		}
 	},
 
