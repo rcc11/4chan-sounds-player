@@ -86,7 +86,7 @@ module.exports = {
 			Player.container = _.element(Player.display.template(), parent);
 			Player.display.initPopovers(Player.container);
 
-			Player.trigger('rendered');
+			await Player.trigger('rendered');
 		} catch (err) {
 			Player.logError('There was an error rendering the sound player.', err);
 			// Can't recover, throw.

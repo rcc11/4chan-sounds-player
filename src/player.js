@@ -58,7 +58,7 @@ const Player = window.Player = module.exports = {
 			Player.display.createPlayerButton();
 
 			// Render the player, but not neccessarily show it.
-			Player.display.render();
+			await Player.display.render();
 
 			// Expose some functionality via PlayerEvent custom events.
 			document.addEventListener('PlayerEvent', e => {

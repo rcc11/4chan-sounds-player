@@ -26,15 +26,13 @@ module.exports = {
 
 	// Holder of event handlers.
 	_events: { },
-	_audioEvents: [ ],
 
 	initialize: function () {
 		const eventLocations = { Player, ...Player.components };
-		const audio = Player.events._audioEvents;
+		const audio = [];
 
-		for (let name in eventLocations) {
-			const comp = eventLocations[name];
-			comp.audioEvents && (audio.push(comp.audioEvents));
+		for (let comp of Object.values(eventLocations)) {
+			comp.audioEvents && audio.push(comp.audioEvents);
 		}
 
 		// Clear mousedown listeners when the mouse/touch is released.

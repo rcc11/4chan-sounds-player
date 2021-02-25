@@ -2,6 +2,11 @@ module.exports = {
 	atRoot: [ 'togglePlay', 'play', 'pause', 'next', 'previous', 'stop', 'toggleMute', 'volumeUp', 'volumeDown' ],
 	public: [ 'togglePlay', 'play', 'pause', 'next', 'previous', 'stop', 'toggleMute', 'volumeUp', 'volumeDown' ],
 
+	initialize: function () {
+		// Keep this reference to switch Player.audio to standalone videos and back.
+		Player.controls._audio = Player.audio;
+	},
+
 	/**
 	 * Switching being playing and paused.
 	 */
@@ -23,8 +28,7 @@ module.exports = {
 				sound = Player.sounds[0];
 			}
 
-			const video = document.querySelector(`.${ns}-video`);
-			video.removeEventListener('canplaythrough', Player.actions._playOnceLoaded);
+			Player.video.removeEventListener('canplaythrough', Player.actions._playOnceLoaded);
 			Player.audio.removeEventListener('canplaythrough', Player.actions._playOnceLoaded);
 
 			// If a new sound is being played update the display.
@@ -38,8 +42,8 @@ module.exports = {
 					let handlers = Array.isArray(audioEvents[evt]) ? audioEvents[evt] : [ audioEvents[evt] ];
 					handlers.forEach(handler => {
 						const handlerFunction = Player.getHandler(handler);
-						video.removeEventListener(evt, handlerFunction);
-						sound.standaloneVideo && video.addEventListener(evt, handlerFunction);
+						Player.video.removeEventListener(evt, handlerFunction);
+						sound.standaloneVideo && Player.video.addEventListener(evt, handlerFunction);
 					});
 				}
 				sound.playing = true;
@@ -47,7 +51,7 @@ module.exports = {
 				Player.audio.src = sound.src;
 				Player.isVideo = sound.image.endsWith('.webm') || sound.type === 'video/webm';
 				Player.isStandalone = sound.standaloneVideo;
-				Player.audio = sound.standaloneVideo ? video : Player.controls._audio;
+				Player.audio = sound.standaloneVideo ? Player.video : Player.controls._audio;
 				Player.container.classList[Player.isVideo ? 'add' : 'remove']('playing-video');
 				Player.container.classList[Player.isVideo || sound.image.endsWith('gif') ? 'add' : 'remove']('playing-animated');
 				await Player.trigger('playsound', sound);
@@ -55,8 +59,8 @@ module.exports = {
 
 			if (!paused) {
 				// If there's a video and sound wait for both to load before playing.
-				if (!Player.isStandalone && Player.isVideo && (video.readyState < 3 || Player.audio.readyState < 3)) {
-					video.addEventListener('canplaythrough', Player.actions._playOnceLoaded);
+				if (!Player.isStandalone && Player.isVideo && (Player.video.readyState < 3 || Player.audio.readyState < 3)) {
+					Player.video.addEventListener('canplaythrough', Player.actions._playOnceLoaded);
 					Player.audio.addEventListener('canplaythrough', Player.actions._playOnceLoaded);
 				} else {
 					Player.audio.play();
@@ -71,9 +75,8 @@ module.exports = {
 	 * Handler to start playback once the video and audio are both loaded.
 	 */
 	_playOnceLoaded: function () {
-		const video = document.querySelector(`.${ns}-video`);
-		if (video.readyState > 2 && Player.audio.readyState > 2) {
-			video.removeEventListener('canplaythrough', Player.actions._playOnceLoaded);
+		if (Player.video.readyState > 2 && Player.audio.readyState > 2) {
+			Player.video.removeEventListener('canplaythrough', Player.actions._playOnceLoaded);
 			Player.audio.removeEventListener('canplaythrough', Player.actions._playOnceLoaded);
 			Player.audio.play();
 			// Sometimes it just doesn't sync when the playback starts. Give it a second and then force a sync.
@@ -94,6 +97,8 @@ module.exports = {
 	stop: function () {
 		Player.audio.src = null;
 		Player.playing = null;
+		Player.isVideo = false;
+		Player.isStandalone = false;
 		Player.trigger('stop');
 	},
 

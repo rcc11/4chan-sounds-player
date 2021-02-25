@@ -54,7 +54,7 @@ module.exports = {
 		image.classList.add(`${ns}-pip`);
 		image.style.bottom = (Player.position.getHeaderOffset().bottom + 10) + 'px';
 		// Show the player again when the image is clicked.
-		image.addEventListener('click', Player.show);
+		image.addEventListener('click', Player.minimised._handleImageClick);
 	},
 
 	/**
@@ -67,6 +67,11 @@ module.exports = {
 		controls.parentNode.insertBefore(document.querySelector(`.${ns}-image-link`), controls);
 		image.classList.remove(`${ns}-pip`);
 		image.style.bottom = null;
-		image.removeEventListener('click', Player.show);
+		image.removeEventListener('click', Player.minimised._handleImageClick);
+	},
+
+	_handleImageClick: e => {
+		e.preventDefault();
+		Player.show();
 	}
 };

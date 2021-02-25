@@ -26,7 +26,7 @@ module.exports = {
 		});
 
 		// Keey track of the hover image element.
-		Player.on('rendered', () => Player.playlist.hoverImage = Player.$(`.${ns}-hover-image`));
+		Player.on('rendered', Player.playlist.afterRender);
 
 		// Update the UI when a new sound plays, and scroll to it.
 		Player.on('playsound', sound => {
@@ -43,7 +43,11 @@ module.exports = {
 		// Reset to the placeholder image when the player is stopped.
 		Player.on('stop', () => {
 			Player.$all(`.${ns}-list-item.playing`).forEach(el => el.classList.remove('playing'));
-			Player.playlist.showImage({ image: `data:image/svg+xml;base64,${btoa(Icons.fcSounds)}` });
+			const container = Player.$(`.${ns}-image-link`);
+			container.href = '#';
+			Player.$(`.${ns}-background-image`).src = Player.video.src = '';
+			Player.$(`.${ns}-image`).src = `data:image/svg+xml;base64,${btoa(Icons.fcSounds)}`;
+			container.classList.remove(`${ns}-show-video`);
 		});
 
 		// Reapply filters when they change
@@ -66,7 +70,12 @@ module.exports = {
 	 */
 	render: function () {
 		_.elementHTML(Player.$(`.${ns}-list-container`), Player.playlist.listTemplate());
+		Player.playlist.afterRender();
+	},
+
+	afterRender: function () {
 		Player.playlist.hoverImage = Player.$(`.${ns}-hover-image`);
+		Player.video = Player.$(`.${ns}-video`);
 	},
 
 	/**
@@ -82,11 +91,10 @@ module.exports = {
 	showImage: function (sound) {
 		const container = document.querySelector(`.${ns}-image-link`);
 		const img = container.querySelector(`.${ns}-image`);
-		const video = container.querySelector(`.${ns}-video`);
 		const background = container.querySelector(`.${ns}-background-image`);
 		img.src = background.src = '';
 		img.src = background.src = sound.imageOrThumb;
-		video.src = Player.isVideo ? sound.image : undefined;
+		Player.video.src = Player.isVideo ? sound.image : undefined;
 		if (Player.config.viewStyle !== 'fullscreen') {
 			container.href = sound.image;
 		}
@@ -193,7 +201,7 @@ module.exports = {
 	remove: function (sound) {
 		// Accept the sound object or id
 		if (typeof sound !== 'object') {
-			sound = Player.sounds.find(sound => sound.id === '' + sound);
+			sound = Player.sounds.find(s => s.id === '' + sound);
 		}
 		const index = Player.sounds.indexOf(sound);
 
@@ -205,8 +213,9 @@ module.exports = {
 		index > -1 && Player.sounds.splice(index, 1);
 
 		// Remove the item from the list.
-		Player.$(`.${ns}-list-container`).removeChild(Player.$(`.${ns}-list-item[data-id="${sound.id}"]`));
-		Player.trigger('remove', sound);
+		const item = sound && Player.$(`.${ns}-list-item[data-id="${sound.id}"]`);
+		item && Player.$(`.${ns}-list-container`).removeChild(item);
+		sound && Player.trigger('remove', sound);
 	},
 
 	toggleShuffle: function () {

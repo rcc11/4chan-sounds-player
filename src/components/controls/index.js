@@ -16,9 +16,6 @@ module.exports = {
 	},
 
 	initialize: async function () {
-		// Keep this reference to switch Player.audio to standalone videos and back.
-		Player.controls._audio = Player.audio;
-
 		// Apply the previous volume
 		GM.getValue('volume').then(volume => volume >= 0 && volume <= 1 && (Player.audio.volume = volume));
 
@@ -72,16 +69,12 @@ module.exports = {
 	 * Sync the webm to the audio. Matches the videos time and play state to the audios.
 	 */
 	syncVideo: function () {
-		if (Player.isVideo && !Player.isStandalone) {
-			const paused = Player.audio.paused;
-			const video = document.querySelector(`.${ns}-video`);
-			if (video) {
-				video.currentTime = Player.audio.currentTime % video.duration;
-				if (paused) {
-					video.pause();
-				} else {
-					video.play();
-				}
+		if (Player.isVideo && !Player.isStandalone && Player.video) {
+			Player.video.currentTime = Player.audio.currentTime % Player.video.duration;
+			if (Player.audio.paused) {
+				Player.video.pause();
+			} else {
+				Player.video.play();
 			}
 		}
 	},
