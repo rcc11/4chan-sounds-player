@@ -53,6 +53,69 @@ module.exports = {
 		Player.$(`.${ns}-decoded-input`).value = decodeURIComponent(e.currentTarget.value);
 	},
 
+	downloadThread: async function () {
+		const zip = new JSZip();
+
+		const includeImages = Player.$(`.${ns}-download-all-images`).checked;
+		const includeSounds = Player.$(`.${ns}-download-all-audio`).checked;
+		const ignoreDownload = Player.$(`.${ns}-download-all-ignore-downloaded`).checked;
+		const toDownload = Player.sounds.filter(s => s.post && (!ignoreDownload || !s.downloaded));
+		const total = toDownload.length;
+
+		const status = Player.$(`.${ns}-download-all-status`);
+		status.style.display = 'block';
+
+		if (!total || !includeImages && !includeSounds) {
+			return status.innerHTML = 'Nothing to download.';
+		}
+
+		status.innerHTML = `Downloading ${total} sound images.`
+			+ '<br/><br/>This may take a while. You can leave it running in the background. '
+			+ 'You\'ll be prompted to download the zip file once complete.';
+
+		const currentStatus = _.element('<div style="margin-top: .5rem"></div>', status);
+		for (let i = 0; i < toDownload.length; i++) {
+			const sound = toDownload[i];
+			currentStatus.innerHTML = `${i + 1} / ${total}: ${sound.title}`;
+			try {
+				const [ imageBlob, soundBlob ] = await Promise.all([
+					includeImages && Player.tools.download(sound.image),
+					includeSounds && Player.tools.download(sound.src)
+				]);
+				const prefix = includeImages && includeSounds ? sound.post + '/' : '';
+				zip.file(`${prefix}${sound.filename}`, imageBlob);
+				soundBlob && zip.file(`${prefix}${encodeURIComponent(sound.src)}`, soundBlob);
+				sound.downloaded = true;
+			} catch (err) {
+				console.log(err);
+				_.elementBefore(`<p>Failed to download ${sound.title}!</p>`, currentStatus);
+			}
+		}
+		status.removeChild(currentStatus);
+		_.element(`<div style="margin-top: .5rem">Complete! <a href="#" @click="tools.saveThreadDownload:prevent">Save</a></div>`, status);
+		Player.tools.threadDownloadBlob = await zip.generateAsync({ type: 'blob' })
+		Player.tools.saveThreadDownload();
+	},
+
+	saveThreadDownload: function() {
+		const threadNum = (location.href.match(/\/thread\/(\d+)/) || [ null, '-' ])[1];
+		const a = _.element(`<a href="${URL.createObjectURL(Player.tools.threadDownloadBlob)}" download="sounds-thread-${Board}-${threadNum}" rel="noopener" target="_blank"></a>`);
+		a.click();
+		URL.revokeObjectURL(a.href);
+	},
+
+	download: async function (src) {
+		return new Promise((resolve, reject) => {
+			GM.xmlHttpRequest({
+				method: 'GET',
+				url: src,
+				responseType: 'blob',
+				onload: response => resolve(response),
+				onerror: response => reject(response)
+			});
+		});
+	},
+
 	/**
 	 * Show/hide the "Use webm" checkbox when an image is selected.
 	 */

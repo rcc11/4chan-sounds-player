@@ -108,7 +108,6 @@ function parseFileName(filename, image, post, thumb, imageMD5, bypassVerificatio
 	}
 	// Best quality image. For webms this has to be the thumbnail still. SAD!
 	const imageOrThumb = image.endsWith('webm') ? thumb : image;
-	filename = filename.replace(/-/, '/');
 	const matches = [];
 	let match;
 	while ((match = filenameRE.exec(filename)) !== null) {

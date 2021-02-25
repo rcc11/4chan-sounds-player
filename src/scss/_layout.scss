@@ -33,6 +33,10 @@
 .#{$ns}-heading {
 	font-weight: 600;
 	margin: .5rem 0;
+
+	&.lined {
+		border-bottom: solid 1px #{map-get($colors, border)};
+	}
 }
 .#{$ns}-heading-action {
 	font-weight: normal;

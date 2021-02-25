@@ -1,12 +1,12 @@
-`<div class="${ns}-heading ${ns}-has-description" title="Search for threads with a sound OP">
+`<div class="${ns}-heading lined">
 	Active Threads
 	${!Player.threads.loading ? `- <a class="${ns}-heading-action" @click="threads.fetch:prevent" href="#">Update</a>` : ''}
 </div>
 
-<div style="display: ${Player.threads.loading ? 'block' : 'none'}">Loading</div>
+<div style="margin: 0 .25rem; display: ${Player.threads.loading ? 'block' : 'none'}">Loading</div>
 
-<div style="display: ${Player.threads.loading ? 'none' : 'block'}">
-	<div class="${ns}-heading ${ns}-has-description" title="Only includes threads containing the search.">
+<div style="margin: 0 .25rem; display: ${Player.threads.loading ? 'none' : 'block'}">
+	<div class="${ns}-heading">
 		Filter
 	</div>
 	<input
