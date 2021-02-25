@@ -84,7 +84,6 @@ module.exports = {
 			const isThread = document.body.classList.contains('is_thread');
 			const parent = isThread && !isChanX && document.body.querySelector('.board') || document.body;
 			Player.container = _.element(Player.display.template(), parent);
-			Player.display.initPopovers(Player.container);
 
 			await Player.trigger('rendered');
 		} catch (err) {
@@ -327,15 +326,6 @@ module.exports = {
 			}
 
 			title.style.marginLeft = data.position + 'px';
-		});
-	},
-
-	initPopovers: function (el) {
-		const popovers = el.querySelectorAll(`.${ns}-popover`);
-		popovers.forEach(popover => {
-			popover.addEventListener('mouseenter', Player.display._popoverMouseEnter);
-			popover.addEventListener('mouseleave', Player.display._popoverMouseLeave);
-			popover.addEventListener('click', Player.display._popoverClick);
 		});
 	},
 

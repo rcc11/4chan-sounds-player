@@ -1,5 +1,5 @@
 data.displayMethod === null ? '' : `
-<div class="${ns}-row ${ns}-align-start ${data.isSubSetting ? `${ns}-sub-settings` : ''}" data-property="${data.property}">
+<div class="${ns}-row ${ns}-align-start ${ns}-setting ${data.isSubSetting ? `${ns}-sub-settings` : ''}" data-property="${data.property}">
 	<div class="${ns}-col ${ns}-heading">
 		<span>
 			${data.title}

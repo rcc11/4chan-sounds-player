@@ -64,7 +64,6 @@ module.exports = {
 		const settingsContainer = Player.$(`.${ns}-settings`);
 		_.elementHTML(settingsContainer, Player.settings.template());
 		Player.settings.setChangeListeners();
-		Player.display.initPopovers(settingsContainer);
 	},
 
 	/**
@@ -88,7 +87,11 @@ module.exports = {
 			!silent && Player.trigger('config', property, value, previous);
 			!silent && Player.trigger('config:' + property, value, previous);
 			!bypassSave && Player.settings.save();
-			!bypassRender && settingConfig.displayGroup && Player.settings.render();
+			if (!bypassRender && settingConfig.displayGroup) {
+				const settingEl = Player.$(`.${ns}-setting[data-property="${property}"]`);
+				_.elementBefore(Player.settings.settingTemplate(settingConfig), settingEl);
+				settingEl.parentNode.removeChild(settingEl);
+			}
 		}
 		return [ previous, value ];
 	},
@@ -243,7 +246,14 @@ module.exports = {
 			}
 			if (setting.settings) {
 				let subSetting = setting.settings.find(_setting => _setting.property === property);
-				return subSetting && (settingConfig = { ...setting, settings: null, ...subSetting });
+				return subSetting && (settingConfig = {
+					...setting,
+					actions: null,
+					settings: null,
+					description: null,
+					...subSetting,
+					isSubSetting: true
+				});
 			}
 			return false;
 		});

@@ -18,7 +18,7 @@ module.exports.get = function get(object, path, dflt) {
 	const props = path.split('.');
 	const lastProp = props.pop();
 	const parent = props.reduce((obj, k) => obj && obj[k], object);
-	return parent && (!dflt || lastProp in parent)
+	return parent && lastProp in parent
 		? parent[lastProp]
 		: dflt;
 };
@@ -93,12 +93,21 @@ module.exports.elementHTML = function elementHTML(el, content) {
 };
 
 module.exports.elementHandler = function elementHandler(el) {
+	// Wire up resize elements.
 	el.querySelectorAll(`.${ns}-expander`).forEach(el => {
 		el.classList.add('no-touch-action');
 		Player.events.set(el, 'pointdragstart', 'position.initResize');
 		Player.events.set(el, 'pointdrag', 'position.doResize:unbound');
 		Player.events.set(el, 'pointdragend', 'position.stopResize');
 	});
+	// Wire up popovers.
+	const popovers = el.querySelectorAll(`.${ns}-popover`);
+	popovers.forEach(popover => {
+		popover.addEventListener('mouseenter', Player.display._popoverMouseEnter);
+		popover.addEventListener('mouseleave', Player.display._popoverMouseLeave);
+		popover.addEventListener('click', Player.display._popoverClick);
+	});
+	// Wire up events from attributes.
 	Player.events.apply(el);
 };
 
