@@ -168,22 +168,5 @@ module.exports = {
 	 */
 	toggleMute: function () {
 		Player.audio.volume = (Player._lastVolume || 0.5) * !Player.audio.volume;
-	},
-
-	/**
-	 * Trigger a download for a file using GM.xmlHttpRequest to avoid cors issues.
-	 */
-	download: function (src, name) {
-		GM.xmlHttpRequest({
-			method: 'GET',
-			url: src,
-			responseType: 'blob',
-			onload: response => {
-				const a = _.element(`<a href="${URL.createObjectURL(response.response)}" download="${_.escAttr(name)}" rel="noopener" target="_blank"></a>`);
-				a.click();
-				URL.revokeObjectURL(a.href);
-			},
-			onerror: response => Player.logError('There was an error downloading.', response, 'warning')
-		});
 	}
 };

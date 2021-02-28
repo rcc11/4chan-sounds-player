@@ -133,7 +133,7 @@ module.exports = [
 		action: data => {
 			const src = data.sound[data.tplNameMatch[1] === 'image' ? 'image' : 'src'];
 			const name = data.sound[data.tplNameMatch[1] === 'image' ? 'filename' : 'name'] || '';
-			return `actions.download("${src}", "${_.escAttr(name, true)}"):prevent`;
+			return `tools.download("${src}", "${_.escAttr(name, true)}"):prevent`;
 		},
 		icon: data => data.tplNameMatch[1] === 'image'
 			? Icons.fileEarmarkImage

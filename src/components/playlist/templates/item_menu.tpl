@@ -10,8 +10,8 @@
 	<div class="entry has-submenu">
 		Download
 		<div class="dialog submenu" style="inset: 0px auto auto 100%;">
-			<a class="entry" href="#" @click='actions.download("${data.sound.image}", "${_.escAttr(data.sound.filename, true)}"):prevent'>Image</a>
-			<a class="entry" href="#" @click='actions.download("${data.sound.src}", "${_.escAttr(data.sound.name, true)}"):prevent'>Sound</a>
+			<a class="entry" href="#" @click='tools.download("${data.sound.image}", "${_.escAttr(data.sound.filename, true)}"):prevent'>Image</a>
+			<a class="entry" href="#" @click='tools.download("${data.sound.src}", "${_.escAttr(data.sound.name, true)}"):prevent'>Sound</a>
 		</div>
 	</div>
 	<div class="entry has-submenu">

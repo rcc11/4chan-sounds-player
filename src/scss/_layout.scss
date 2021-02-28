@@ -36,6 +36,10 @@
 
 	&.lined {
 		border-bottom: solid 1px #{map-get($colors, border)};
+
+		& .#{$ns}-heading-action {
+			text-decoration: none;
+		}
 	}
 }
 .#{$ns}-heading-action {
