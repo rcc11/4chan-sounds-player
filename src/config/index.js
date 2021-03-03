@@ -1,19 +1,12 @@
 module.exports = [
 	// Order the groups appear in.
 	...require('./display'),
+	...require('./playback'),
 	...require('./filter'),
 	...require('./keybinds'),
 	...require('./theme'),
 	...require('./hosts'),
 
-	{
-		property: 'shuffle',
-		default: false
-	},
-	{
-		property: 'repeat',
-		default: 'all'
-	},
 	{
 		property: 'viewStyle',
 		default: 'playlist'

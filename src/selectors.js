@@ -10,6 +10,8 @@ module.exports = {
 			'.fileText': 'textContent'
 		},
 		thumb: '.fileThumb',
+		expandedImage: isChanX ? '.full-image' : '.expanded-thumb, .expandedWebm',
+		hoverImage: isChanX ? '#ihover' : '#image-hover',
 		playLink: {
 			class: `${ns}-play-link`,
 			text: 'play',

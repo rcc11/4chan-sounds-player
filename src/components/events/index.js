@@ -87,8 +87,11 @@ module.exports = {
 			const eventArgs = (args || []).reduce((a, arg, i) => a.concat(arg.startsWith && arg.startsWith('evt') ? [ [ i, arg.slice(4) ] ] : []), []);
 			const f = handler && Player.getHandler(handler.trim());
 			// Wrap the handler to handle prevent/stop/args.
-			const needsWrapping = mods.prevent || mods.stop || args;
+			const needsWrapping = mods.prevent || mods.stop || mods.disabled || args;
 			const listener = !needsWrapping ? f : e => {
+				if (mods.disabled && e.currentTarget.classList.contains('disabled')) {
+					return;
+				}
 				mods.prevent && e.preventDefault();
 				mods.stop && e.stopPropagation();
 				eventArgs.forEach(([ idx, path ]) => args.splice(idx, 1, _.get(e, path)));

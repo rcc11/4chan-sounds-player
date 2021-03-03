@@ -43,7 +43,9 @@ data.displayMethod === null ? '' : `
 		}
 
 		value = _.get(Player.config, data.property, data.default);
-		attrs = (data.attrs || '') + (data.class ? ` class="${data.class}"` : '') + ` data-property="${data.property}"`;
+		attrs = (typeof data.attrs === 'function' ? data.attrs() : data.attrs || '')
+			+ (data.class ? ` class="${data.class}"` : '')
+			+ ` data-property="${data.property}"`;
 
 		if (data.format) {
 			value = Player.getHandler(data.format)(value);

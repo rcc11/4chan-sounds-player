@@ -1,11 +1,13 @@
 `<a class="${ns}-image-link" target="_blank">
 	<img class="${ns}-background-image"></img>
 	<img id="fcspImage" class="${ns}-image" src="data:image/svg+xml;base64,${btoa(Icons.fcSounds)}"></img>
-	<video class="${ns}-video" @play="controls.syncVideo" @pause="controls.syncVideo"></video>
+	<video class="${ns}-video" @play='controls.sync' @pause='controls.sync'></video>
 </a>
-<div class="${ns}-controls ${ns}-row">
-	${Player.controls.template(data)}
-</div>
+${Player.controls.template({
+	audio: Player.audio,
+	audioId: Player.audio.dataset.id,
+	actions: Player.controls.actions
+})}
 <input
 	type="input"
 	class="${ns}-playlist-search"

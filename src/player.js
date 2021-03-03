@@ -9,6 +9,7 @@ const components = {
 	footer: require('./components/footer'),
 	header: require('./components/header'),
 	hotkeys: require('./components/hotkeys'),
+	inline: require('./components/inline'),
 	minimised: require('./components/minimised'),
 	playlist: require('./components/playlist'),
 	position: require('./components/position'),
@@ -48,6 +49,7 @@ const Player = window.Player = module.exports = {
 		}
 		Player.initialized = true;
 		try {
+			Player.audio.dataset.id = 'main';
 			Player.sounds = [ ];
 			// Run the initialisation for each component.
 			for (let name in components) {

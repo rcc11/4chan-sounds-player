@@ -66,6 +66,13 @@ module.exports = {
 		Player.settings.setChangeListeners();
 	},
 
+	renderSetting: function (settingConfig) {
+		const settingEl = Player.$(`.${ns}-setting[data-property="${settingConfig.property}"]`);
+		const newEl = _.elementBefore(Player.settings.settingTemplate(settingConfig), settingEl);
+		settingEl.parentNode.removeChild(settingEl);
+		Player.settings.setChangeListeners(newEl);
+	},
+
 	/**
 	 * Update a setting.
 	 */
@@ -87,11 +94,9 @@ module.exports = {
 			!silent && Player.trigger('config', property, value, previous);
 			!silent && Player.trigger('config:' + property, value, previous);
 			!bypassSave && Player.settings.save();
-			if (!bypassRender && settingConfig.displayGroup) {
-				const settingEl = Player.$(`.${ns}-setting[data-property="${property}"]`);
-				_.elementBefore(Player.settings.settingTemplate(settingConfig), settingEl);
-				settingEl.parentNode.removeChild(settingEl);
-			}
+			!bypassRender && settingConfig.displayGroup && Player.settings.renderSetting(settingConfig);
+			(!bypassRender || bypassRender === 'self') && settingConfig.dependentRender
+				&& settingConfig.dependentRender.forEach(prop => Player.settings.renderSetting(Player.settings.findDefault(prop)));
 		}
 		return [ previous, value ];
 	},
@@ -317,8 +322,8 @@ module.exports = {
 		URL.revokeObjectURL(a.href);
 	},
 
-	setChangeListeners: function () {
-		const settingsContainer = Player.$(`.${ns}-settings`);
+	setChangeListeners: function (target) {
+		const settingsContainer = target || Player.$(`.${ns}-settings`);
 		settingsContainer.querySelectorAll(`.${ns}-settings input, .${ns}-settings textarea`).forEach(el => {
 			el.addEventListener('focusout', Player.settings.handleChange);
 		});
@@ -350,7 +355,7 @@ module.exports = {
 			// Not the most stringent check but enough to avoid some spamming.
 			if (!_.isEqual(currentValue, newValue, !settingConfig.looseCompare)) {
 				// Update the setting.
-				Player.set(property, newValue, { bypassValidation: true, bypassRender: true, settingConfig });
+				Player.set(property, newValue, { bypassValidation: true, bypassRender: 'self', settingConfig });
 			}
 		} catch (err) {
 			Player.logError('There was an error updating the setting.', err);

@@ -50,18 +50,17 @@ module.exports = {
 		} else if (Site === 'Fuuka') {
 			const br = document.querySelector('body > div > br');
 			br.parentNode.insertBefore(document.createTextNode('['), br);
-			_.elementBefore('<a href="javascript:;">Sounds</a>', br, { click: Player.display.toggle });
+			_.elementBefore('<a href="#" @click="display.toggle:prevent">Sounds</a>', br);
 			br.parentNode.insertBefore(document.createTextNode(']'), br);
 		} else if (isChanX) {
 			// Add a button in the header for 4chan X.
-			const showIcon = _.elementBefore(`<span id="shortcut-sounds" class="shortcut brackets-wrap" data-index="0">
-				<a href="javascript:;" title="Sounds" class="fa fa-play-circle">Sounds</a>
+			_.elementBefore(`<span id="shortcut-sounds" class="shortcut brackets-wrap" data-index="0">
+				<a href="#" @click="display.toggle:prevent" title="Sounds" class="fa fa-play-circle">Sounds</a>
 			</span>`, document.getElementById('shortcut-settings'));
-			showIcon.querySelector('a').addEventListener('click', Player.display.toggle);
 		} else {
 			// Add a [Sounds] link in the top and bottom nav for native 4chan.
 			document.querySelectorAll('#settingsWindowLink, #settingsWindowLinkBot').forEach(function (link) {
-				_.elementBefore('<a href="javascript:;">Sounds</a>', link, { click: Player.display.toggle });
+				_.elementBefore('<a href="#" @click="display.toggle:prevent">Sounds</a>', link);
 				link.parentNode.insertBefore(document.createTextNode('] ['), link);
 			});
 		}

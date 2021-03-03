@@ -28,14 +28,14 @@ module.exports = {
 				sound = Player.sounds[0];
 			}
 
-			Player.video.removeEventListener('canplaythrough', Player.actions._playOnceLoaded);
-			Player.audio.removeEventListener('canplaythrough', Player.actions._playOnceLoaded);
-
 			// If a new sound is being played update the display.
-			if (sound) {
+			if (sound && sound !== Player.playing) {
 				if (Player.playing) {
 					Player.playing.playing = false;
 				}
+				// Remove play on load listeners for the previous sound.
+				Player.video.removeEventListener('canplaythrough', Player.actions.playOnceLoaded);
+				Player.audio.removeEventListener('canplaythrough', Player.actions.playOnceLoaded);
 				// Remove audio events from the video, and add them back for standalone video.
 				const audioEvents = Player.controls.audioEvents;
 				for (let evt in audioEvents) {
@@ -52,6 +52,8 @@ module.exports = {
 				Player.isVideo = sound.image.endsWith('.webm') || sound.type === 'video/webm';
 				Player.isStandalone = sound.standaloneVideo;
 				Player.audio = sound.standaloneVideo ? Player.video : Player.controls._audio;
+				Player.audio._linked = Player.isVideo && !Player.isStandalone && Player.video;
+				Player.video._linked = Player.isVideo && !Player.isStandalone && Player.audio;
 				Player.container.classList[Player.isVideo ? 'add' : 'remove']('playing-video');
 				Player.container.classList[Player.isVideo || sound.image.endsWith('gif') ? 'add' : 'remove']('playing-animated');
 				await Player.trigger('playsound', sound);
@@ -60,8 +62,8 @@ module.exports = {
 			if (!paused) {
 				// If there's a video and sound wait for both to load before playing.
 				if (!Player.isStandalone && Player.isVideo && (Player.video.readyState < 3 || Player.audio.readyState < 3)) {
-					Player.video.addEventListener('canplaythrough', Player.actions._playOnceLoaded);
-					Player.audio.addEventListener('canplaythrough', Player.actions._playOnceLoaded);
+					Player.video.addEventListener('canplaythrough', Player.actions.playOnceLoaded);
+					Player.audio.addEventListener('canplaythrough', Player.actions.playOnceLoaded);
 				} else {
 					Player.audio.play();
 				}
@@ -74,13 +76,12 @@ module.exports = {
 	/**
 	 * Handler to start playback once the video and audio are both loaded.
 	 */
-	_playOnceLoaded: function () {
-		if (Player.video.readyState > 2 && Player.audio.readyState > 2) {
-			Player.video.removeEventListener('canplaythrough', Player.actions._playOnceLoaded);
-			Player.audio.removeEventListener('canplaythrough', Player.actions._playOnceLoaded);
-			Player.audio.play();
-			// Sometimes it just doesn't sync when the playback starts. Give it a second and then force a sync.
-			setTimeout(Player.controls.syncVideo, 100);
+	playOnceLoaded: function (e) {
+		if (e.currentTarget.readyState > 3 && e.currentTarget._linked.readyState > 3) {
+			e.currentTarget.removeEventListener('canplaythrough', Player.actions.playOnceLoaded);
+			e.currentTarget._linked.removeEventListener('canplaythrough', Player.actions.playOnceLoaded);
+			e.currentTarget._linked.play();
+			e.currentTarget.play();
 		}
 	},
 

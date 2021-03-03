@@ -3,16 +3,26 @@ module.exports = {
 
 	audioEvents: {
 		ended: () => Player.next(),
-		pause: 'controls.handleAudioEvent',
-		play: 'controls.handleAudioEvent',
-		seeked: 'controls.handleAudioEvent',
-		waiting: 'controls.handleAudioEvent',
+		pause: 'controls.handleMediaEvent',
+		play: 'controls.handleMediaEvent',
+		seeked: 'controls.handleMediaEvent',
+		waiting: 'controls.handleMediaEvent',
 		timeupdate: 'controls.updateDuration',
 		loadedmetadata: [ 'controls.updateDuration', 'controls.preventWrapping' ],
 		durationchange: 'controls.updateDuration',
 		volumechange: 'controls.updateVolume',
 		loadstart: 'controls.pollForLoading',
 		error: 'controls.handleAudioError'
+	},
+
+	actions: {
+		previous: 'previous({ "force": true })',
+		playPause: 'togglePlay',
+		next: 'next({ "force": true })',
+		seek: 'controls.handleSeek("evt", "main"):prevent',
+		mute: 'toggleMute',
+		volume: 'controls.handleVolume("evt", "main"):prevent',
+		fullscreen: 'display.toggleFullScreen'
 	},
 
 	initialize: async function () {
@@ -27,12 +37,13 @@ module.exports = {
 		});
 		Player.on('rendered', () => {
 			// Keep track of heavily updated elements.
-			Player.ui.currentTimeBar = Player.$(`.${ns}-seek-bar .${ns}-current-bar`);
-			Player.ui.loadedBar = Player.$(`.${ns}-seek-bar .${ns}-loaded-bar`);
+			Player.audio.volumeBar = Player.$(`.${ns}-volume-bar .${ns}-current-bar`);
+			Player.audio.currentTimeBar = Player.$(`.${ns}-seek-bar .${ns}-current-bar`);
+			Player.audio.loadedBar = Player.$(`.${ns}-seek-bar .${ns}-loaded-bar`);
 
 			// Set the initial volume/seek bar positions and hidden controls.
-			Player.controls.updateDuration();
-			Player.controls.updateVolume();
+			Player.controls.updateDuration({ currentTarget: Player.audio });
+			Player.controls.updateVolume({ currentTarget: Player.audio });
 			Player.controls.preventWrapping();
 		});
 		// Show all the controls when wrapping prevention is disabled.
@@ -57,25 +68,23 @@ module.exports = {
 	/**
 	 * Handle audio events. Sync the video up, and update the controls.
 	 */
-	handleAudioEvent: function () {
-		Player.controls.syncVideo();
-		Player.controls.updateDuration();
-		document.querySelectorAll(`.${ns}-play-button`).forEach(el => {
-			el.classList[Player.audio.paused ? 'add' : 'remove'](`${ns}-play`);
+	handleMediaEvent: function (e) {
+		const audio = e.currentTarget._inlineAudio || e.currentTarget;
+		Player.controls.sync(e.currentTarget);
+		Player.controls.updateDuration(e);
+		document.querySelectorAll(`.${ns}-play-button[data-audio="${audio.dataset.id}"]`).forEach(el => {
+			el.classList[audio.paused ? 'add' : 'remove'](`${ns}-play`);
 		});
 	},
 
 	/**
 	 * Sync the webm to the audio. Matches the videos time and play state to the audios.
 	 */
-	syncVideo: function () {
-		if (Player.isVideo && !Player.isStandalone && Player.video) {
-			Player.video.currentTime = Player.audio.currentTime % Player.video.duration;
-			if (Player.audio.paused) {
-				Player.video.pause();
-			} else {
-				Player.video.play();
-			}
+	sync: function (from) {
+		const to = from._linked;
+		if (from && from.readyState > 3 && to && to.readyState > 3) {
+			to.currentTime = from.currentTime % to.duration;
+			to[from.paused ? 'pause' : 'play']();
 		}
 	},
 
@@ -104,33 +113,42 @@ module.exports = {
 			: 0;
 		// If it's fully loaded then stop polling.
 		size === 100 && Player.controls.stopPollingForLoading();
-		Player.ui.loadedBar.style.width = size + '%';
+		Player.audio.loadedBar.style.width = size + '%';
 	},
 
 	/**
 	 * Update the seek bar and the duration labels.
 	 */
-	updateDuration: function () {
-		const currentTime = _.toDuration(Player.audio.currentTime);
-		const duration = _.toDuration(Player.audio.duration);
+	updateDuration: function (e) {
+		const media = e.currentTarget;
+		const audio = media._inlineAudio || media;
+		const controls = media._inlineAudio ? audio._inlinePlayer.controls : document;
+		const currentTime = _.toDuration(media.currentTime);
+		const duration = _.toDuration(media.duration);
+		const audioId = audio.dataset.id;
 		// Gross use of childNodes to avoid textContent triggering mutation observers of other scripts.
-		document.querySelectorAll(`.${ns}-current-time`).forEach(el => el.childNodes[0].textContent = currentTime);
-		document.querySelectorAll(`.${ns}-duration`).forEach(el => el.childNodes[0].textContent = duration);
-		Player.controls.updateProgressBarPosition(Player.ui.currentTimeBar, Player.audio.currentTime, Player.audio.duration);
+		controls && controls.querySelectorAll(`.${ns}-current-time[data-audio="${audioId}"]`).forEach(el => el.childNodes[0].textContent = currentTime);
+		controls && controls.querySelectorAll(`.${ns}-duration[data-audio="${audioId}"]`).forEach(el => el.childNodes[0].textContent = duration);
+		Player.controls.updateProgressBarPosition(audio.currentTimeBar, media.currentTime, media.duration);
 	},
 
 	/**
 	 * Update the volume bar.
 	 */
-	updateVolume: function () {
-		const vol = Player.audio.volume;
-		vol > 0 && (Player._lastVolume = vol);
-		GM.setValue('volume', vol);
-		document.querySelectorAll(`.${ns}-volume-button`).forEach(el => {
+	updateVolume: function (e) {
+		const audio = e.currentTarget._inlineAudio || e.currentTarget;
+		const controls = audio._inlinePlayer ? audio._inlinePlayer.controls : Player.container;
+		const vol = audio.volume;
+		// Store volume of the main player.
+		if (audio === Player.audio) {
+			vol > 0 && (Player._lastVolume = vol);
+			GM.setValue('volume', vol);
+		}
+		controls && controls.querySelectorAll(`.${ns}-volume-button[data-audio="${audio.dataset.id}"]`).forEach(el => {
 			el.classList[vol === 0 ? 'add' : 'remove']('mute');
 			el.classList[vol > 0 ? 'add' : 'remove']('up');
 		});
-		Player.controls.updateProgressBarPosition(Player.$(`.${ns}-volume-bar .${ns}-current-bar`), Player.audio.volume, 1);
+		Player.controls.updateProgressBarPosition(audio.volumeBar, audio.volume, 1);
 	},
 
 	/**
@@ -149,18 +167,21 @@ module.exports = {
 	/**
 	 * Handle the user interacting with the seek bar.
 	 */
-	handleSeek: function (e) {
-		if (Player.audio.duration && Player.audio.duration !== Infinity) {
-			Player.audio.currentTime = Player.audio.duration * Player.controls._getBarXRatio(e);
+	handleSeek: function (e, audioId) {
+		const media = audioId === 'main'
+			? Player.audio
+			: Player.inline.audio[audioId]._inlinePlayer.master;
+		if (media && media.duration && media.duration !== Infinity) {
+			media.currentTime = media.duration * Player.controls._getBarXRatio(e);
 		}
 	},
 
 	/**
 	 * Handle the user interacting with the volume bar.
 	 */
-	handleVolume: function (e) {
-		Player.audio.volume = Player.controls._getBarXRatio(e);
-		Player.controls.updateVolume();
+	handleVolume: function (e, audioId) {
+		const audio = audioId === 'main' ? Player.audio : Player.inline.audio[audioId];
+		audio.volume = Player.controls._getBarXRatio(e);
 	},
 
 	_getBarXRatio: function (e) {

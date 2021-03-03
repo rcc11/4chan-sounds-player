@@ -71,18 +71,17 @@ function _duration(from, to) {
 	];
 }
 
-module.exports.element = function element(html, parent, events) {
+module.exports.element = function element(html, parent) {
 	const container = document.createElement('div');
 	container.innerHTML = html;
 	const el = container.children[0];
 	parent && parent.appendChild(el);
-	events && Player.events.addUndelegatedListeners(el, events);
 	_.elementHandler(el);
 	return el;
 };
 
-module.exports.elementBefore = function elementBefore(html, before, events) {
-	const el = _.element(html, null, events);
+module.exports.elementBefore = function elementBefore(html, before) {
+	const el = _.element(html);
 	before.parentNode.insertBefore(el, before);
 	return el;
 };

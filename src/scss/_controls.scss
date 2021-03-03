@@ -20,7 +20,12 @@
 
 		color: #{map-get($colors, controls_inactive)};
 
-		&:hover {
+		&.disabled {
+			cursor: inherit;
+			filter: brightness(0.5) grayscale(1);
+		}
+
+		&:hover:not(.disabled) {
 			color: #{map-get($colors, controls_active)};
 		}
 	}
@@ -37,7 +42,7 @@
 			display: none;
 		}
 
-		&:hover {
+		&:hover:not(.disabled) {
 			svg {
 				display: none;
 			}

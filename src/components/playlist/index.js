@@ -61,6 +61,9 @@ module.exports = {
 		// Listen to the search display being toggled
 		Player.on('config:showPlaylistSearch', Player.playlist.toggleSearch);
 
+		// Listen for the playlist being shuffled/ordered.
+		Player.on('config:shuffle', Player.playlist._handleShuffle);
+
 		// Maintain changes to the user templates it's dependent values
 		Player.userTemplate.maintain(Player.playlist, 'rowTemplate', [ 'shuffle' ]);
 	},
@@ -218,16 +221,17 @@ module.exports = {
 		sound && Player.trigger('remove', sound);
 	},
 
-	toggleShuffle: function () {
+	toggleRepeat: function () {
 		const values = [ 'all', 'one', 'none' ];
 		const current = values.indexOf(Player.config.repeat);
 		Player.set('repeat', values[(current + 4) % 3]);
 	},
 
-	toggleRepeat: function () {
+	toggleShuffle: function () {
 		Player.set('shuffle', !Player.config.shuffle);
-		Player.header.render();
+	},
 
+	_handleShuffle: function () {
 		// Update the play order.
 		if (!Player.config.shuffle) {
 			Player.sounds.sort((a, b) => Player.compareIds(a.id, b.id));

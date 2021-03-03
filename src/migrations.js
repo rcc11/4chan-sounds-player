@@ -26,5 +26,17 @@ module.exports = [
 			});
 			return changes;
 		}
+	},
+	{
+		version: '3.4.0',
+		name: 'disable-inline-player-for-existing-users',
+		async run() {
+			Player.config.playExpandedImages = false;
+			Player.config.playHoveredImages = false;
+			return {
+				playExpandedImages: [ true, false ],
+				playHoveredImages: [ true, false ]
+			};
+		}
 	}
 ];
