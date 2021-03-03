@@ -85,6 +85,18 @@ module.exports = [
 				title: 'Volume Down',
 				keyHandler: 'actions.volumeDown',
 				default: { shiftKey: true, key: 'arrowdown' }
+			},
+			{
+				property: 'hotkey_bindings.shuffle',
+				title: 'Shuffle',
+				keyHandler: 'playlist.toggleShuffle',
+				default: { key: '' }
+			},
+			{
+				property: 'hotkey_bindings.repeat',
+				title: 'Toggle Repeat',
+				keyHandler: 'playlist.toggleRepeat',
+				default: { key: '' }
 			}
 		]
 	},
