@@ -73,15 +73,16 @@ function parsePost(post, skipRender) {
 		// Create a play link
 		const firstID = sounds[0].id;
 		const linkInfo = selectors.playLink;
-		const content = `<a href="javascript:;" class="${linkInfo.class}" data-id="${firstID}">${linkInfo.text}</a>`;
+		const content = `<a href="javascript:;" class="${linkInfo.class}" data-id="${firstID}">${linkInfo.text || ''}</a>`;
 
-		const playLinkRelative = linkInfo.relative && post.querySelector(linkInfo.relative);
+		const relative = linkInfo.relative && post.querySelector(linkInfo.relative);
+		const position = linkInfo.position;
 
-		linkInfo.prependText && _addPlayLinkText(linkInfo.prependText, linkInfo.before, playLinkRelative);
-		playLink = linkInfo.before
-			? _.elementBefore(content, playLinkRelative)
-			: _.element(content, playLinkRelative);
-		linkInfo.appendText && _addPlayLinkText(linkInfo.appendText, linkInfo.before, playLinkRelative);
+		const prepended = linkInfo.prependText && _.elementRelativeTo(document.createTextNode(linkInfo.prependText), relative, position);
+		playLink = prepended
+			? _.elementRelativeTo(content, prepended, 'after')
+			: _.elementRelativeTo(content, relative, position);
+		linkInfo.appendText && _.elementRelativeTo(document.createTextNode(linkInfo.appendText), playLink, 'after');
 		playLink.onclick = () => Player.play(sounds[0]);
 
 		// Don't add sounds from inline quotes of posts in the thread
@@ -93,14 +94,6 @@ function parsePost(post, skipRender) {
 	}
 }
 
-function _addPlayLinkText(text, before, relative) {
-	const node = text && document.createTextNode(text);
-	if (before) {
-		relative.parentNode.insertBefore(node, relative);
-	} else {
-		relative.appendChild(node);
-	}
-}
 
 function parseFileName(filename, image, post, thumb, imageMD5, bypassVerification) {
 	if (!filename) {

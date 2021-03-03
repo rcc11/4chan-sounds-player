@@ -72,11 +72,16 @@ function _duration(from, to) {
 }
 
 module.exports.element = function element(html, parent) {
-	const container = document.createElement('div');
-	container.innerHTML = html;
-	const el = container.children[0];
+	let el;
+	if (html instanceof Node) {
+		el = html;
+	} else {
+		const container = document.createElement('div');
+		container.innerHTML = html;
+		el = container.children[0];
+	}
 	parent && parent.appendChild(el);
-	_.elementHandler(el);
+	el instanceof Element && _.elementHandler(el);
 	return el;
 };
 
@@ -85,6 +90,14 @@ module.exports.elementBefore = function elementBefore(html, before) {
 	before.parentNode.insertBefore(el, before);
 	return el;
 };
+
+module.exports.elementRelativeTo = function (html, relative, position) {
+	return position === 'before'
+		? _.elementBefore(html, relative)
+		: position === 'after' && relative.nextSibling
+			? _.elementBefore(html, relative.nextSibling)
+			: _.element(html, position === 'after' ? relative.parentNode : relative);
+}
 
 module.exports.elementHTML = function elementHTML(el, content) {
 	el.innerHTML = content;

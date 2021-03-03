@@ -13,9 +13,10 @@ module.exports = {
 		expandedImage: isChanX ? '.full-image' : '.expanded-thumb, .expandedWebm',
 		hoverImage: isChanX ? '#ihover' : '#image-hover',
 		playLink: {
-			class: `${ns}-play-link`,
-			text: 'play',
-			relative: '.fileText',
+			class: `${ns}-play-link fa fa-play-circle`,
+			text: isChanX ? null : 'play',
+			relative: isChanX ? '.download-button' : '.fileText',
+			position: isChanX ? 'after' : 'append',
 			prependText: ' '
 		},
 		// Deliberately missing dots because this is used to set the class
@@ -51,7 +52,7 @@ module.exports = {
 			class: `${ns}-play-link`,
 			text: 'play',
 			relative: 'br:nth-of-type(2)',
-			before: true,
+			position: 'before',
 			prependText: ' [',
 			appendText: ']'
 		},
