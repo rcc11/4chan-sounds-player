@@ -370,6 +370,8 @@ module.exports = {
 		if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Meta') {
 			return;
 		}
-		e.currentTarget.value = Player.hotkeys.stringifyKey(e);
+		e.currentTarget.value = e.which === 8 || e.key.toLowerCase() === 'backspace'
+			? ''
+			: Player.hotkeys.stringifyKey(e);
 	}
 };
