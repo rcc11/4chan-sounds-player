@@ -2,7 +2,7 @@ module.exports = {
 	template: require('./templates/controls.tpl'),
 
 	audioEvents: {
-		ended: () => Player.next(),
+		ended: () => Player.config.autoplayNext && Player.next(),
 		pause: 'controls.handleMediaEvent',
 		play: 'controls.handleMediaEvent',
 		seeked: 'controls.handleMediaEvent',

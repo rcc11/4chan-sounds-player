@@ -24,6 +24,13 @@ module.exports = [
 		default: true
 	},
 	{
+		property: 'autoplayNext',
+		title: 'Autoplay Next',
+		displayGroup: 'Playback',
+		description: 'Automatically play the next sound when the current one finishes.',
+		default: true
+	},
+	{
 		title: 'Inline Player',
 		displayGroup: 'Playback',
 		settings: [
