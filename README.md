@@ -42,6 +42,10 @@ You can opt to display a thumbnail in the bottom right of the page while the pla
 
 ![Minimised Thumbnail](./images/minimised-image.png)
 
+#### Inline Player
+
+The inline player can be set to play sounds when images are expanded, or full images are shown when hovering over thumbnails. If you have [4chan External Sounds](https://greasyfork.org/en/scripts/31045-4chan-external-sounds/code) installed you'll want to disable this under Settings > Playback.
+
 #### Position/Resizing
 
 The player can be moved by dragging the header and resized by dragging each corner.
