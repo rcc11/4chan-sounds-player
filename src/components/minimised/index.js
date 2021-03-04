@@ -25,6 +25,7 @@ module.exports = {
 				return container.innerHTML = '';
 			}
 
+			const audioId = Player.audio.dataset.id;
 			// Render the contents.
 			_.elementHTML(container, Player.userTemplate.build({
 				template: Player.config.chanXTemplate,
@@ -32,10 +33,10 @@ module.exports = {
 				sound: Player.playing,
 				replacements: {
 					'prev-button': `<a href="#" class="${ns}-media-control ${ns}-previous-button ${ns}-hover-fill" @click='previous({"force":true}):prevent'>${Icons.skipStart} ${Icons.skipStartFill}</a>`,
-					'play-button': `<a href="#" class="${ns}-media-control ${ns}-play-button ${ns}-hover-fill ${!Player.audio || Player.audio.paused ? `${ns}-play` : ''}" @click="togglePlay:prevent">${Icons.play} ${Icons.pause} ${Icons.playFill} ${Icons.pauseFill}</a>`,
+					'play-button': `<a href="#" class="${ns}-media-control ${ns}-play-button ${ns}-hover-fill ${!Player.audio || Player.audio.paused ? `${ns}-play` : ''}" @click="togglePlay:prevent" data-audio="${audioId}">${Icons.play} ${Icons.pause} ${Icons.playFill} ${Icons.pauseFill}</a>`,
 					'next-button': `<a href="#" class="${ns}-media-control ${ns}-next-button ${ns}-hover-fill" @click='next({"force":true}):prevent'>${Icons.skipEnd} ${Icons.skipEndFill} </a>`,
-					'sound-current-time': `<span class="${ns}-current-time">0:00</span>`,
-					'sound-duration': `<span class="${ns}-duration">0:00</span>`
+					'sound-current-time': `<span class="${ns}-current-time" data-audio="${audioId}">0:00</span>`,
+					'sound-duration': `<span class="${ns}-duration" data-audio="${audioId}">0:00</span>`
 				}
 			}));
 		}
