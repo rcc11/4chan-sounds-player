@@ -2,6 +2,8 @@
 
 A floating player for 4chan sounds threads. 
 
+If you have [4chan External Sounds](https://greasyfork.org/en/scripts/31045-4chan-external-sounds) installed make you sure disable the inline player of this script under Settings > Playback.
+
 ## Install
 [Stable](https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player.user.js), [Beta](https://raw.githubusercontent.com/rcc11/4chan-sounds-player/master/dist/4chan-sounds-player-beta.user.js).
 

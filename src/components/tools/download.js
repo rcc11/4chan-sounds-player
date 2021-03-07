@@ -3,7 +3,7 @@ const get = src => new Promise((resolve, reject) => {
 		method: 'GET',
 		url: src,
 		responseType: 'blob',
-		onload: response => resolve(response),
+		onload: response => resolve(response.response),
 		onerror: response => reject(response)
 	});
 });
@@ -34,8 +34,8 @@ module.exports = {
 	 */
 	async download(src, name) {
 		try {
-			const response = await get(src);
-			const a = _.element(`<a href="${URL.createObjectURL(response.response)}" download="${_.escAttr(name)}" rel="noopener" target="_blank"></a>`);
+			const blob = await get(src);
+			const a = _.element(`<a href="${URL.createObjectURL(blob)}" download="${_.escAttr(name)}" rel="noopener" target="_blank"></a>`);
 			a.click();
 			URL.revokeObjectURL(a.href);
 		} catch (err) {
