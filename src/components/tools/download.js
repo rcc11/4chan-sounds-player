@@ -86,8 +86,9 @@ module.exports = {
 			}
 		}
 		status && status.removeChild(currentStatus);
-		status && _.element('<div style="margin-top: .5rem">Complete!<br/><a href="#" @click="tools.saveThreadDownload:prevent">Save</a></div>', status);
+		status && _.element('<div style="margin-top: .5rem">Generating zip file...</div>', status);
 		Player.tools.threadDownloadBlob = await zip.generateAsync({ type: 'blob' });
+		status && _.element('<span>Complete! <a href="#" @click="tools.saveThreadDownload:prevent">Save</a></span>', status);
 		Player.$(`.${ns}-ignore-downloaded`).style.display = 'block';
 		Player.tools.saveThreadDownload();
 	},
