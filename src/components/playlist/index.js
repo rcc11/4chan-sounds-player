@@ -463,7 +463,7 @@ module.exports = {
 		const v = Player.playlist._lastSearch;
 		return !v
 			|| sound.title.toLowerCase().includes(v)
-			|| String(sound.post.toLowerCase()).includes(v)
+			|| sound.post && String(sound.post.toLowerCase()).includes(v)
 			|| String(sound.src.toLowerCase()).includes(v);
 	},
 
