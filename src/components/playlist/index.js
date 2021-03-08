@@ -203,12 +203,15 @@ module.exports = {
 			const canvas = document.createElement('canvas');
 			const video = document.createElement('video');
 			const context = canvas.getContext('2d');
-			video.addEventListener('loadeddata', function () {
-				context.drawImage(video, 0, 0);
+			video.addEventListener('seeked', function () {
+				canvas.width = video.videoWidth;
+				canvas.height = video.videoHeight;
+				context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
 				thumbSrc = canvas.toDataURL();
 				_continue();
 			});
 			video.src = imageSrc;
+			video.currentTime = 0.001;
 
 			function _continue() {
 				parseFileName(file.name, imageSrc, null, thumbSrc, null, true).forEach(sound => Player.add({ ...sound, local: true, type }));
