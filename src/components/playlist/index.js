@@ -162,7 +162,29 @@ module.exports = {
 		}
 	},
 
-	addFromFiles: function (files) {
+	addFromDrop(e) {
+		for (let item of e.dataTransfer.items) {
+			Player.playlist._scanEntry(item.getAsEntry ? item.getAsEntry() : item.webkitGetAsEntry());
+		}
+	},
+
+	_scanEntry(entry) {
+		if (entry.isDirectory) {
+			return Player.playlist._readEntries(entry.createReader());
+		}
+		return entry.file(file => Player.playlist.addFromFiles([ file ]));
+	},
+
+	_readEntries(reader) {
+		reader.readEntries(entries => {
+			if (entries.length) {
+				entries.forEach(Player.playlist._scanEntry);
+				Player.playlist._readEntries(reader);
+			}
+		});
+	},
+
+	addFromFiles(files) {
 		// Check each of the files for sounds.
 		[ ...files ].forEach(file => {
 			if (!file.type.startsWith('image') && file.type !== 'video/webm') {

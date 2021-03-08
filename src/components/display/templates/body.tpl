@@ -1,4 +1,4 @@
-`<div id="${ns}-container" data-view-style="${Player.config.viewStyle}" @drop='playlist.addFromFiles("evt.dataTransfer.files"):prevent:stop' style="top: 30px; left: 0px; width: 360px; height: 360px; display: none;">
+`<div id="${ns}-container" data-view-style="${Player.config.viewStyle}" @drop='playlist.addFromDrop:prevent:stop' style="top: 30px; left: 0px; width: 360px; height: 360px; display: none;">
 	<div class="${ns}-header ${ns}-row ${ns}-align-center" @pointdragstart="position.initMove" @pointdrag="position.doMove:unbound" @pointdragend="position.stopMove">
 		${Player.header.template(data)}
 	</div>
