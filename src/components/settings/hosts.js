@@ -1,7 +1,5 @@
-const inputTemplate = require('./templates/host_input.tpl');
-
 module.exports = {
-	template: inputTemplate,
+	template: require('./templates/host_input.tpl'),
 
 	fields: {
 		name: 'Name',
@@ -87,20 +85,13 @@ module.exports = {
 	},
 
 	add: function () {
-		const hosts = Player.config.uploadHosts;
-		const container = Player.$(`.${ns}-host-inputs`);
-		let name = 'New Host';
-		let i = 1;
-		while (Player.config.uploadHosts[name]) {
-			name = name + ' ' + ++i;
+		let i, name = 'New Host';
+		for (i = ''; Player.config.uploadHosts[`${name}${i}`]; i = ` ${++i}`);
+		const hosts = {
+			[`${name}${i}`]: { invalid: true, data: { file: '$file' } },
+			...Player.config.uploadHosts
 		}
-		hosts[name] = { invalid: true, data: { file: '$file' } };
-		if (container.children[0]) {
-			_.elementBefore(inputTemplate([ name, hosts[name] ]), container.children[0]);
-		} else {
-			_.element(inputTemplate([ name, hosts[name] ]), container);
-		}
-		Player.settings.set('uploadHosts', hosts, { bypassValidation: true, bypassRender: true, silent: true });
+		Player.settings.set('uploadHosts', hosts, { bypassValidation: true, silent: true });
 	},
 
 	remove: function (e) {

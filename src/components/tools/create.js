@@ -20,7 +20,7 @@ const createTool = module.exports = {
 	 * Update the view when the hosts are updated.
 	 */
 	initialize() {
-		Player.on('config:uploadHosts', () => Player.$(`${ns}-create-hosts-container`).innerHTML = hostsTemplate());
+		Player.on('config:uploadHosts', () => Player.$(`.${ns}-create-hosts-container`).innerHTML = hostsTemplate());
 		Player.on('config:defaultUploadHost', newValue => Player.$(`.${ns}-create-sound-host`).value = newValue);
 		Player.on('rendered', createTool.afterRender);
 	},
@@ -366,7 +366,7 @@ const createTool = module.exports = {
 		dataTransfer.items.add(Player.tools._createdImage);
 
 		// 4chan X, drop the file on the qr window.
-		if (isChanX) {
+		if (isChanX && qrLink) {
 			qrLink.click();
 			const event = new CustomEvent('drop', { view: window, bubbles: true, cancelable: true });
 			event.dataTransfer = dataTransfer;

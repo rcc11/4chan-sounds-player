@@ -12,7 +12,7 @@ module.exports = [
 			{ title: 'Restore Defaults', handler: 'settings.hosts.restoreDefaults:prevent' }
 		],
 		displayGroup: 'Hosts',
-		displayMethod: () => `<div class="${ns}-host-inputs">${Object.entries(Player.config.uploadHosts).map(Player.settings.hosts.template).join('')}</div>`,
+		displayMethod: 'settings.hosts.template',
 		parse: 'settings.hosts.parse',
 		looseCompare: true,
 		dismissTextId: 'uplodHostSettings',
