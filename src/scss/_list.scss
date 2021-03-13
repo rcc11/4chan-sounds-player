@@ -40,9 +40,6 @@
 		& .#{$ns}-item-menu-button {
 			right: .25rem;
 		}
-		&:hover .#{$ns}-hover-display {
-			display: flex;
-		}
 
 		&.#{$ns}-dragging {
 			background: #{map-get($colors, dragging)}

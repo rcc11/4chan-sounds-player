@@ -1,6 +1,6 @@
 (data.sounds || Player.sounds).map(sound =>
 	`<div
-		class="${ns}-list-item ${ns}-row ${sound.playing ? 'playing' : ''} ${ns}-align-center"
+		class="${ns}-list-item ${ns}-row ${sound.playing ? 'playing' : ''} ${ns}-align-center ${ns}-hover-trigger"
 		@click="playlist.handleSelect"
 		@dragstart="playlist.handleDragStart:passive"
 		@dragenter="playlist.handleDragEnter:prevent"

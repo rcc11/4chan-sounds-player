@@ -4,10 +4,6 @@
 	max-width: 100%;
 	line-height: 1rem;
 
-	&:hover .#{$ns}-hover-display {
-		display: flex;
-	}
-
 	& .#{$ns}-expander {
 		opacity: 0;
 		position: absolute;

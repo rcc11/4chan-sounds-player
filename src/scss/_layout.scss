@@ -14,6 +14,7 @@
 	}
 
 	& input[type=text], & select, & .#{$ns}-file-overlay {
+		background: white;
 		color: black;
 		height: 1.5rem !important;
 		padding: 2px 4px 3px;
@@ -72,4 +73,28 @@
 }
 .#{$ns}-hover-display {
 	display: none;
+}
+.#{$ns}-hover-trigger:hover .#{$ns}-hover-display {
+	display: flex;
+}
+[\\\@pointdrag], .no-touch-action {
+	touch-action: none;
+}
+.#{$ns}-truncate-text {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+.#{$ns}-align-center {
+	align-items: center;
+	align-content: center;
+	align-self: center;
+}
+.#{$ns}-align-start {
+	align-items: start;
+	align-content: start;
+	align-self: start;
+}
+.#{$ns}-space-between {
+	justify-content: space-between;
 }

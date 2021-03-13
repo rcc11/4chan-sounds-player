@@ -4,6 +4,7 @@ const migrations = require('../../migrations');
 const hosts = require('./hosts');
 
 module.exports = {
+	asdf: 'asdf',
 	atRoot: [ 'set' ],
 	public: [ 'set', 'export', 'import', 'reset', 'load' ],
 	hosts,
