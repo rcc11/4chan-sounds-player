@@ -78,7 +78,6 @@ module.exports = {
 
 	afterRender: function () {
 		Player.playlist.hoverImage = Player.$(`.${ns}-hover-image`);
-		Player.video = Player.$(`.${ns}-video`);
 	},
 
 	/**

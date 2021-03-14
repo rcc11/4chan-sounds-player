@@ -36,10 +36,12 @@ module.exports = {
 			Player.controls.stopPollingForLoading();
 		});
 		Player.on('rendered', () => {
+			Player.video = Player.$(`.${ns}-video`);
+			Player.video.dataset.id = 'main';
 			// Keep track of heavily updated elements.
-			Player.audio.volumeBar = Player.$(`.${ns}-volume-bar .${ns}-current-bar`);
-			Player.audio.currentTimeBar = Player.$(`.${ns}-seek-bar .${ns}-current-bar`);
-			Player.audio.loadedBar = Player.$(`.${ns}-seek-bar .${ns}-loaded-bar`);
+			Player.audio.volumeBar = Player.video.volumeBar = Player.$(`.${ns}-volume-bar .${ns}-current-bar`);
+			Player.audio.currentTimeBar = Player.video.currentTimeBar = Player.$(`.${ns}-seek-bar .${ns}-current-bar`);
+			Player.audio.loadedBar = Player.video.loadedBar = Player.$(`.${ns}-seek-bar .${ns}-loaded-bar`);
 
 			// Set the initial volume/seek bar positions and hidden controls.
 			Player.controls.updateDuration({ currentTarget: Player.audio });
