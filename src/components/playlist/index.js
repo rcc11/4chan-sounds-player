@@ -33,7 +33,7 @@ module.exports = {
 			Player.playlist.showImage(sound);
 			Player.$all(`.${ns}-list-item.playing, .${ns}-list-item[data-id="${Player.playing.id}"]`).forEach(el => {
 				const newItem = Player.playlist.listTemplate({ sounds: [ Player.sounds.find(s => s.id === el.dataset.id) ] });
-				_.elementBefore(newItem, el);
+				_.element(newItem, el, 'beforebegin');
 				el.parentNode.removeChild(el);
 			});
 			Player.config.viewStyle !== 'fullscreen' && Player.playlist.scrollToPlaying('nearest');

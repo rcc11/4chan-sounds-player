@@ -69,7 +69,7 @@ module.exports = {
 
 	renderSetting: function (settingConfig) {
 		const settingEl = Player.$(`.${ns}-setting[data-property="${settingConfig.property}"]`);
-		const newEl = _.elementBefore(Player.settings.settingTemplate(settingConfig), settingEl);
+		const newEl = _.element(Player.settings.settingTemplate(settingConfig), settingEl, 'beforebegin');
 		settingEl.parentNode.removeChild(settingEl);
 		Player.settings.setChangeListeners(newEl);
 	},

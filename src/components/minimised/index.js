@@ -18,7 +18,7 @@ module.exports = {
 			// Create the element if it doesn't exist.
 			// Set the user template and control events on it to make all the buttons work.
 			if (!container) {
-				container = _.elementBefore(`<span class="${ns}-chan-x-controls ${ns}-col-auto ${ns}-align-center"></span>`, document.querySelector('#shortcuts').firstElementChild);
+				container = _.element(`<span class="${ns}-chan-x-controls ${ns}-col-auto ${ns}-align-center"></span>`, document.querySelector('#shortcuts'), 'afterbegin');
 			}
 
 			if (Player.config.chanXControls === 'never' || Player.config.chanXControls === 'closed' && !Player.isHidden) {

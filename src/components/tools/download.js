@@ -82,7 +82,7 @@ module.exports = {
 				sound.downloaded = true;
 			} catch (err) {
 				console.log(err);
-				status && _.elementBefore(`<p>Failed to download ${sound.title}!</p>`, currentStatus);
+				status && _.element(`<p>Failed to download ${sound.title}!</p>`, currentStatus, 'beforebegin');
 			}
 		}
 		status && status.removeChild(currentStatus);

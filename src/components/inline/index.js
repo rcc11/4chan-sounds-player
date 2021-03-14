@@ -126,6 +126,7 @@ module.exports = {
 					}), node.closest(selectors.posts));
 					audio.volumeBar = controls.querySelector(`.${ns}-volume-bar .${ns}-current-bar`);
 					audio.currentTimeBar = controls.querySelector(`.${ns}-seek-bar .${ns}-current-bar`);
+					Player.controls.updateProgressBarPosition(audio.volumeBar, audio.volume, 1);
 				}
 
 				// For videos wait for both to load before playing.

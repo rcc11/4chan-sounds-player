@@ -73,16 +73,12 @@ function parsePost(post, skipRender) {
 		// Create a play link
 		const firstID = sounds[0].id;
 		const linkInfo = selectors.playLink;
-		const content = `<a href="javascript:;" class="${linkInfo.class}" data-id="${firstID}">${linkInfo.text || ''}</a>`;
-
 		const relative = linkInfo.relative && post.querySelector(linkInfo.relative);
-		const position = linkInfo.position;
-
-		const prepended = linkInfo.prependText && _.elementRelativeTo(document.createTextNode(linkInfo.prependText), relative, position);
-		playLink = prepended
-			? _.elementRelativeTo(content, prepended, 'after')
-			: _.elementRelativeTo(content, relative, position);
-		linkInfo.appendText && _.elementRelativeTo(document.createTextNode(linkInfo.appendText), playLink, 'after');
+		const content = (linkInfo.prependText || '')
+			+ `<a href="javascript:;" class="${linkInfo.class}" data-id="${firstID}">${linkInfo.text || ''}</a>`
+			+ (linkInfo.appendText || '');
+		relative.insertAdjacentHTML(linkInfo.position, content);
+		playLink = relative.parentNode.querySelector(`.${ns}-play-link`);
 		playLink.onclick = () => Player.play(sounds[0]);
 
 		// Don't add sounds from inline quotes of posts in the thread
@@ -93,7 +89,6 @@ function parsePost(post, skipRender) {
 		console.log('[4chan sounds player]', post);
 	}
 }
-
 
 function parseFileName(filename, image, post, thumb, imageMD5, bypassVerification) {
 	if (!filename) {

@@ -50,17 +50,17 @@ module.exports = {
 		} else if (Site === 'Fuuka') {
 			const br = document.querySelector('body > div > br');
 			br.parentNode.insertBefore(document.createTextNode('['), br);
-			_.elementBefore('<a href="#" @click="display.toggle:prevent">Sounds</a>', br);
+			_.element('<a href="#" @click="display.toggle:prevent">Sounds</a>', br, 'beforebegin');
 			br.parentNode.insertBefore(document.createTextNode(']'), br);
 		} else if (isChanX) {
 			// Add a button in the header for 4chan X.
-			_.elementBefore(`<span id="shortcut-sounds" class="shortcut brackets-wrap" data-index="0">
+			_.element(`<span id="shortcut-sounds" class="shortcut brackets-wrap" data-index="0">
 				<a href="#" @click="display.toggle:prevent" title="Sounds" class="fa fa-play-circle">Sounds</a>
-			</span>`, document.getElementById('shortcut-settings'));
+			</span>`, document.getElementById('shortcut-settings'), 'beforebegin');
 		} else {
 			// Add a [Sounds] link in the top and bottom nav for native 4chan.
 			document.querySelectorAll('#settingsWindowLink, #settingsWindowLinkBot').forEach(function (link) {
-				_.elementBefore('<a href="#" @click="display.toggle:prevent">Sounds</a>', link);
+				_.element('<a href="#" @click="display.toggle:prevent">Sounds</a>', link, 'beforebegin');
 				link.parentNode.insertBefore(document.createTextNode('] ['), link);
 			});
 		}
@@ -217,7 +217,7 @@ module.exports = {
 		if (restore && restoreIndex > -1) {
 			Player.display.dismissed.splice(restoreIndex, 1);
 			Player.$all(`[\\@click^='display.restore("${restore}")']`).forEach(el => {
-				_.elementBefore(dismissedContentCache[restore], el);
+				_.element(dismissedContentCache[restore], el, 'beforebegin');
 				el.parentNode.removeChild(el);
 			});
 			await GM.setValue('dismissed', Player.display.dismissed.join(','));
@@ -228,7 +228,7 @@ module.exports = {
 		if (dismiss && !Player.display.dismissed.includes(dismiss)) {
 			Player.display.dismissed.push(dismiss);
 			Player.$all(`[data-dismiss-id="${dismiss}"]`).forEach(el => {
-				_.elementBefore(`<a href="#" @click='display.restore("${dismiss}"):prevent'>${dismissedRestoreCache[dismiss]}</a>`, el);
+				_.element(`<a href="#" @click='display.restore("${dismiss}"):prevent'>${dismissedRestoreCache[dismiss]}</a>`, el, 'beforebegin');
 				el.parentNode.removeChild(el);
 			});
 			await GM.setValue('dismissed', Player.display.dismissed.join(','));
