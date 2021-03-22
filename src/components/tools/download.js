@@ -1,12 +1,19 @@
-const get = src => new Promise((resolve, reject) => {
-	GM.xmlHttpRequest({
-		method: 'GET',
-		url: src,
-		responseType: 'blob',
-		onload: response => resolve(response.response),
-		onerror: response => reject(response)
+const get = (src, opts) => {
+	let xhr;
+	const p = new Promise((resolve, reject) => {
+		xhr = GM.xmlHttpRequest({
+			method: 'GET',
+			url: src,
+			responseType: 'blob',
+			onload: response => resolve(response.response),
+			onerror: response => reject(response),
+			onabort: response => reject(response),
+			...opts
+		});
 	});
-});
+	p.abort = xhr.abort;
+	return p;
+};
 
 /**
  * This component is mixed into tools so these function are under `Player.tools`.
@@ -14,16 +21,30 @@ const get = src => new Promise((resolve, reject) => {
 module.exports = {
 	downloadTemplate: require('./templates/download.tpl'),
 
+	async _handleCancel(e) {
+		Player.tools._downloadAllCanceled = true;
+		console.log(Player.tools._imageFetch, Player.tools._soundFetch);
+		Player.tools._imageFetch && Player.tools._imageFetch.abort();
+		Player.tools._soundFetch && Player.tools._soundFetch.abort();
+		Player.tools.resetDownloadButtons();
+	},
+
 	async _handleDownload(e) {
-		const btn = e.currentTarget;
-		btn.disabled = true;
+		Player.tools._downloadAllCanceled = false;
+		e.currentTarget.style.display = 'none';
+		Player.$(`.${ns}-download-all-cancel`).style.display = null;
 		await Player.tools.downloadThread(
 			Player.$(`.${ns}-download-all-images`).checked,
 			Player.$(`.${ns}-download-all-audio`).checked,
 			Player.$(`.${ns}-download-all-ignore-downloaded`).checked,
 			Player.$(`.${ns}-download-all-status`)
-		);
-		btn.disabled = false;
+		).catch(() => { /* it's logged */ });
+		Player.tools.resetDownloadButtons();
+	},
+
+	resetDownloadButtons() {
+		Player.$(`.${ns}-download-all-start`).style.display = null;
+		Player.$(`.${ns}-download-all-cancel`).style.display = 'none';
 	},
 
 	/**
@@ -55,40 +76,71 @@ module.exports = {
 		const zip = new JSZip();
 
 		const toDownload = Player.sounds.filter(s => s.post && (!ignoreDownload || !s.downloaded));
-		const total = toDownload.length;
+		const count = toDownload.length;
 
 		status && (status.style.display = 'block');
 
-		if (!total || !includeImages && !includeSounds) {
+		if (!count || !includeImages && !includeSounds) {
 			return status && (status.innerHTML = 'Nothing to download.');
 		}
 
-		status && (status.innerHTML = `Downloading ${total} sound images.`
+		status && (status.innerHTML = `Downloading ${count} sound images.`
 			+ '<br/><br/>This may take a while. You can leave it running in the background. '
 			+ 'You\'ll be prompted to download the zip file once complete.');
 
+		// Show currently downloading files with progress bars.
 		const currentStatus = status && _.element('<div style="margin-top: .5rem"></div>', status);
-		for (let i = 0; i < toDownload.length; i++) {
+		const progressBars = status && _.element(`<div>
+			<div class="fcsp-row fcsp-align-center" ${includeImages ? '' : 'style="display: none;"'}>
+				<div class="fcsp-col-auto" style="margin-right: .5rem;">${Icons.image}</div>
+				<div class="fcsp-col"><div class="fcsp-full-bar"><div class="fcsp-image-bar"></div></div></div>
+			</div>
+			<div class="fcsp-row fcsp-align-center" ${includeSounds ? '' : 'style="display: none;"'}>
+				<div class="fcsp-col-auto" style="margin-right: .5rem;">${Icons.soundwave}</div>
+				<div class="fcsp-col"><div class="fcsp-full-bar"><div class="fcsp-sound-bar"></div></div></div>
+			</div>
+		</div>`, status);
+		const imageProgressBar = status && progressBars.querySelector(`.${ns}-image-bar`);
+		const soundProgressBar = status && progressBars.querySelector(`.${ns}-sound-bar`);
+
+		for (let i = 0; i < toDownload.length && !Player.tools._downloadAllCanceled; i++) {
 			const sound = toDownload[i];
-			status && (currentStatus.innerHTML = `${i + 1} / ${total}: ${sound.title}`);
+			status && (currentStatus.innerHTML = `${i + 1} / ${count}: ${sound.title}`);
+			imageProgressBar.style.width = soundProgressBar.style.width = '0';
+
 			try {
-				const [ imageBlob, soundBlob ] = await Promise.all([
-					includeImages && get(sound.image),
-					includeSounds && get(sound.src)
-				]);
+				// Create a folder per post if images and sounds are being downloaded.
 				const prefix = includeImages && includeSounds ? sound.post + '/' : '';
-				zip.file(`${prefix}${sound.filename}`, imageBlob);
+				// Reset the progress bars.
+				const onprogress = bar => status && (rsp => bar.style.width = ((rsp.loaded / rsp.total) * 100) + '%');
+				// Download image and sound as selected.
+				const imgFetch = Player.tools._imageFetch = includeImages && get(sound.image, { onprogress: onprogress(imageProgressBar) });
+				const sndFetch = Player.tools._soundFetch = includeSounds && get(sound.src, { onprogress: onprogress(soundProgressBar) });
+				const [ imageBlob, soundBlob ] = await Promise.all([ imgFetch, sndFetch ]);
+				// Add the downloaded files to the zip.
+				imageBlob && zip.file(`${prefix}${sound.filename}`, imageBlob);
 				soundBlob && zip.file(`${prefix}${encodeURIComponent(sound.src)}`, soundBlob);
+				// Flag the sound as downloaded.
 				sound.downloaded = true;
 			} catch (err) {
-				console.log(err);
-				status && _.element(`<p>Failed to download ${sound.title}!</p>`, currentStatus, 'beforebegin');
+				console.error('[4chan sounds player] Download failed', err);
+				!Player.tools._downloadAllCanceled && status && _.element(`<p>Failed to download ${sound.title}!</p>`, currentStatus, 'beforebegin');
 			}
 		}
+
+		// Remove per-post log items
 		status && status.removeChild(currentStatus);
-		status && _.element('<div style="margin-top: .5rem">Generating zip file...</div>', status);
+		status && status.removeChild(progressBars);
+
+		// Generate the zip file
+		status && _.element(`<div style="margin-top: .5rem">
+			${!Player.tools._downloadAllCanceled ? '' : `Canceled at ${i} / ${count}.`}
+			Generating zip file...
+		</div>`, status);
 		Player.tools.threadDownloadBlob = await zip.generateAsync({ type: 'blob' });
-		status && _.element('<span>Complete! <a href="#" @click="tools.saveThreadDownload:prevent">Save</a></span>', status);
+
+		// Show a download so if the download prompt is accidently closed you don't have to redo the whole process.
+		_.element('<span>Complete! <a href="#" @click="tools.saveThreadDownload:prevent">Save</a></span>', status);
 		Player.$(`.${ns}-ignore-downloaded`).style.display = 'block';
 		Player.tools.saveThreadDownload();
 	},

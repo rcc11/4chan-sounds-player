@@ -64,3 +64,12 @@
 	padding-left: .25rem;
 	right: .125rem;
 }
+
+.#{$ns}-tools .#{$ns}-full-bar {
+	background: none;
+	height: 5px;
+
+	& > div {
+		background: #{map-get($colors, border)};
+	}
+}

@@ -95,43 +95,43 @@
 	display: flex;
 	align-items:center;
 
-	& .#{$ns}-full-bar {
-		height: .3rem;
-		width: 100%;
-		background: #{map-get($colors, controls_empty_bar)};
-		border-radius: 1rem;
-		position: relative;
-
-		& > div {
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			border-radius: 1rem;
-		}
-
-		& .#{$ns}-loaded-bar {
-			background: #{map-get($colors, controls_loaded_bar)};
-		}
-
-		& .#{$ns}-current-bar {
-			display: flex;
-			justify-content: flex-end;
-			align-items: center;
-
-			&:after {
-				content: '';
-				background: #{map-get($colors, controls_inactive)};
-				height: .8rem;
-				min-width: .8rem;
-				border-radius: 1rem;
-				box-shadow: rgba(0, 0, 0, 0.76) 0 0 3px 0;
-				margin-right: -.4rem
-			}
-		}
-	}
-
 	&:hover .#{$ns}-current-bar:after {
 		background: #{map-get($colors, controls_active)};
+	}
+}
+
+.#{$ns}-full-bar {
+	height: .3rem;
+	width: 100%;
+	background: #{map-get($colors, controls_empty_bar)};
+	border-radius: 1rem;
+	position: relative;
+
+	& > div {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		border-radius: 1rem;
+	}
+
+	& .#{$ns}-loaded-bar {
+		background: #{map-get($colors, controls_loaded_bar)};
+	}
+
+	& .#{$ns}-current-bar {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+
+		&:after {
+			content: '';
+			background: #{map-get($colors, controls_inactive)};
+			height: .8rem;
+			min-width: .8rem;
+			border-radius: 1rem;
+			box-shadow: rgba(0, 0, 0, 0.76) 0 0 3px 0;
+			margin-right: -.4rem
+		}
 	}
 }
 
