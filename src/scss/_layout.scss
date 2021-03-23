@@ -14,7 +14,7 @@
 		min-width: 100%;
 	}
 
-	& input[type=text], & select, & .#{$ns}-file-overlay {
+	& input[type=text], input[type=number], & select, & .#{$ns}-file-overlay {
 		background: white;
 		color: black;
 		height: 1.5rem !important;
@@ -24,6 +24,21 @@
 		border-radius: 0;
 		border: solid 1px #{map-get($colors, border)};
 		padding: 0 .25rem;
+	}
+
+	@for $i from 1 through length($sizes) {
+		$size: nth($sizes, $i);
+		.m-#{$i - 1} { margin: $size };
+		.mx-#{$i - 1} { margin-right: $size; margin-left: $size; };
+		.my-#{$i - 1} { margin-top: $size; margin-bottom: $size; };
+		.mr-#{$i - 1} { margin-right: $size };
+		.ml-#{$i - 1} { margin-left: $size };
+		.mt-#{$i - 1} { margin-top: $size };
+		.mb-#{$i - 1} { margin-bottom: $size };
+	}
+	
+	.pointer {
+		cursor: pointer;
 	}
 }
 .#{$ns}-panel {

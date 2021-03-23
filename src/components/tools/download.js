@@ -1,16 +1,22 @@
+const progressBarsTemplate = require('./templates/download-progress.tpl');
+
 const get = (src, opts) => {
 	let xhr;
-	const p = new Promise((resolve, reject) => {
+	// Wrap so aborting rejects.
+	let p = new Promise((resolve, reject) => {
 		xhr = GM.xmlHttpRequest({
 			method: 'GET',
 			url: src,
 			responseType: 'blob',
 			onload: response => resolve(response.response),
 			onerror: response => reject(response),
-			onabort: response => reject(response),
-			...opts
+			onabort: response => { response.aborted = true; reject(response) },
+			...(opts || {})
 		});
 	});
+	if (opts && opts.catch) {
+		p = p.catch(opts.catch);
+	}
 	p.abort = xhr.abort;
 	return p;
 };
@@ -18,33 +24,54 @@ const get = (src, opts) => {
 /**
  * This component is mixed into tools so these function are under `Player.tools`.
  */
-module.exports = {
+const downloadTool = module.exports = {
 	downloadTemplate: require('./templates/download.tpl'),
+	_downloading: null,
 
-	async _handleCancel(e) {
-		Player.tools._downloadAllCanceled = true;
-		console.log(Player.tools._imageFetch, Player.tools._soundFetch);
-		Player.tools._imageFetch && Player.tools._imageFetch.abort();
-		Player.tools._soundFetch && Player.tools._soundFetch.abort();
-		Player.tools.resetDownloadButtons();
+	/**
+	 * Update the view when the hosts are updated.
+	 */
+	initialize() {
+		Player.on('rendered', downloadTool.afterRender);
+	},
+
+	/**
+	 * Store references to various elements.
+	 */
+	afterRender() {
+		downloadTool.resetDownloadButtons();
+	},
+
+	async _handleDownloadCancel() {
+		if (Player.tools._downloading) {
+			Player.tools._downloadAllCanceled = true;
+			Player.tools._downloading.forEach(dls => dls.forEach(dl => dl && dl.abort()));
+		}
 	},
 
 	async _handleDownload(e) {
 		Player.tools._downloadAllCanceled = false;
 		e.currentTarget.style.display = 'none';
 		Player.$(`.${ns}-download-all-cancel`).style.display = null;
-		await Player.tools.downloadThread(
-			Player.$(`.${ns}-download-all-images`).checked,
-			Player.$(`.${ns}-download-all-audio`).checked,
-			Player.$(`.${ns}-download-all-ignore-downloaded`).checked,
-			Player.$(`.${ns}-download-all-status`)
-		).catch(() => { /* it's logged */ });
+
+		await Player.tools.downloadThread({
+			includeImages: Player.$('.download-all-images').checked,
+			includeSounds: Player.$('.download-all-audio').checked,
+			ignoreDownloaded: Player.$('.download-all-ignore-downloaded').checked,
+			maxSounds: +Player.$('.download-all-max-sounds').value || 0,
+			concurrency: Math.max(1, +Player.$('.download-all-concurrency').value || 1),
+			compression: Math.max(0, Math.min(+Player.$('.download-all-compression').value || 0, 9)),
+			status: Player.$(`.${ns}-download-all-status`)
+		}).catch(() => { /* it's logged */ });
+
 		Player.tools.resetDownloadButtons();
 	},
 
 	resetDownloadButtons() {
-		Player.$(`.${ns}-download-all-start`).style.display = null;
-		Player.$(`.${ns}-download-all-cancel`).style.display = 'none';
+		Player.$(`.${ns}-download-all-start`).style.display = Player.tools._downloading ? 'none' : null;
+		Player.$(`.${ns}-download-all-cancel`).style.display = Player.tools._downloading ? null : 'none';
+		Player.$(`.${ns}-download-all-save`).style.display = Player.tools.threadDownloadBlob ? null : 'none';
+		Player.$(`.${ns}-ignore-downloaded`).style.display = Player.tools.threadDownloadBlob ? null : 'none';
 	},
 
 	/**
@@ -72,10 +99,11 @@ module.exports = {
 	 * @param {Boolean} ignoreDownload Whether sounds previously downloaded should be omitted from the download.
 	 * @param {Element} [status] Element in which to display the ongoing status of the download.
 	 */
-	async downloadThread(includeImages, includeSounds, ignoreDownload, status) {
+	async downloadThread({ includeImages, includeSounds, ignoreDownload, maxSounds, concurrency, compression, status }) {
 		const zip = new JSZip();
 
-		const toDownload = Player.sounds.filter(s => s.post && (!ignoreDownload || !s.downloaded));
+		!(maxSounds > 0) && (maxSounds = Infinity);
+		const toDownload = Player.sounds.filter(s => s.post && (!ignoreDownload || !s.downloaded)).slice(0, maxSounds);
 		const count = toDownload.length;
 
 		status && (status.style.display = 'block');
@@ -84,65 +112,108 @@ module.exports = {
 			return status && (status.innerHTML = 'Nothing to download.');
 		}
 
-		status && (status.innerHTML = `Downloading ${count} sound images.`
-			+ '<br/><br/>This may take a while. You can leave it running in the background. '
-			+ 'You\'ll be prompted to download the zip file once complete.');
+		Player.tools._downloading = [];
+		status && (status.innerHTML = `Downloading ${count} sound images.<br><br>
+			This may take a while. You can leave it running in the background, but if you background the tab your browser will slow it down.
+			You'll be prompted to download the zip file once complete.<br><br>`);
 
-		// Show currently downloading files with progress bars.
-		const currentStatus = status && _.element('<div style="margin-top: .5rem"></div>', status);
-		const progressBars = status && _.element(`<div>
-			<div class="fcsp-row fcsp-align-center" ${includeImages ? '' : 'style="display: none;"'}>
-				<div class="fcsp-col-auto" style="margin-right: .5rem;">${Icons.image}</div>
-				<div class="fcsp-col"><div class="fcsp-full-bar"><div class="fcsp-image-bar"></div></div></div>
-			</div>
-			<div class="fcsp-row fcsp-align-center" ${includeSounds ? '' : 'style="display: none;"'}>
-				<div class="fcsp-col-auto" style="margin-right: .5rem;">${Icons.soundwave}</div>
-				<div class="fcsp-col"><div class="fcsp-full-bar"><div class="fcsp-sound-bar"></div></div></div>
-			</div>
-		</div>`, status);
-		const imageProgressBar = status && progressBars.querySelector(`.${ns}-image-bar`);
-		const soundProgressBar = status && progressBars.querySelector(`.${ns}-sound-bar`);
+		const elementsArr = new Array(concurrency).fill(0).map(() => {
+			// Show currently downloading files with progress bars.
+			const el = status && _.element(progressBarsTemplate({ includeSounds, includeImages }), status);
+			const dlRef = [];
+			Player.tools._downloading.push(dlRef);
+			// Allow each download to be canceled individually. In case there's a huge download you don't want to include.
+			el && (el.querySelector(`.${ns}-cancel-download`).onclick = () => dlRef.forEach(dl => dl && dl.abort()));
+			return {
+				dlRef,
+				el,
+				status: el && el.querySelector(`.${ns}-current-status`),
+				image: el && el.querySelector(`.${ns}-image-bar`),
+				sound: el && el.querySelector(`.${ns}-sound-bar`)
+			};
+		});
 
-		for (let i = 0; i < toDownload.length && !Player.tools._downloadAllCanceled; i++) {
-			const sound = toDownload[i];
-			status && (currentStatus.innerHTML = `${i + 1} / ${count}: ${sound.title}`);
-			imageProgressBar.style.width = soundProgressBar.style.width = '0';
+		let running = 0;
 
-			try {
-				// Create a folder per post if images and sounds are being downloaded.
-				const prefix = includeImages && includeSounds ? sound.post + '/' : '';
-				// Reset the progress bars.
-				const onprogress = bar => status && (rsp => bar.style.width = ((rsp.loaded / rsp.total) * 100) + '%');
-				// Download image and sound as selected.
-				const imgFetch = Player.tools._imageFetch = includeImages && get(sound.image, { onprogress: onprogress(imageProgressBar) });
-				const sndFetch = Player.tools._soundFetch = includeSounds && get(sound.src, { onprogress: onprogress(soundProgressBar) });
-				const [ imageBlob, soundBlob ] = await Promise.all([ imgFetch, sndFetch ]);
-				// Add the downloaded files to the zip.
-				imageBlob && zip.file(`${prefix}${sound.filename}`, imageBlob);
-				soundBlob && zip.file(`${prefix}${encodeURIComponent(sound.src)}`, soundBlob);
-				// Flag the sound as downloaded.
-				sound.downloaded = true;
-			} catch (err) {
-				console.error('[4chan sounds player] Download failed', err);
-				!Player.tools._downloadAllCanceled && status && _.element(`<p>Failed to download ${sound.title}!</p>`, currentStatus, 'beforebegin');
+		// Download arg builder. Update progress bars, and catch errors to log and continue.
+		const getArgs = (data, sound, type) => ({
+			responseType: 'arraybuffer',
+			onprogress: data[type] && (rsp => data[type].style.width = ((rsp.loaded / rsp.total) * 100) + '%'),
+			catch: err => {
+				if (err.aborted) {
+					return 'aborted';
+				}
+				if (!err.aborted && !Player.tools._downloadAllCanceled) {
+					console.error('[4chan sounds player] Download failed', err);
+					status && _.element(`<p>Failed to download ${sound.title} ${type}!</p>`, elementsArr[0].el, 'beforebegin');
+				}
 			}
+		});
+
+		await Promise.all(elementsArr.map(async function downloadNext(data) {
+			const sound = toDownload.shift();
+			// Fall out if all downlads were canceled.
+			if (!sound || Player.tools._downloadAllCanceled) {
+				data.el && status.removeChild(data.el);
+				return;
+			}
+			const i = ++running;
+			// Show the name and reset the progress bars.
+			if (data.el) {
+				data.status.textContent = `${i} / ${count}: ${sound.title}`;
+				data.image.style.width = data.sound.style.width = '0';
+			}
+
+			// Create a folder per post if images and sounds are being downloaded.
+			const prefix = includeImages && includeSounds ? sound.post + '/' : '';
+			// Download image and sound as selected.
+			const [ imageRsp, soundRsp ] = await Promise.all([
+				data.dlRef[0] = includeImages && get(sound.image, getArgs(data, sound, 'image')),
+				data.dlRef[1] = includeSounds && get(sound.src, getArgs(data, sound, 'sound'))
+			]);
+
+			// No post-handling if the whole download was canceled.
+			if (!Player.tools._downloadAllCanceled) {
+				if (imageRsp === 'aborted' || soundRsp === 'aborted') {
+					// Show which sounds were individually aborted.
+					status && _.element(`<p>Skipped ${sound.title}.</p>`, elementsArr[0].el, 'beforebegin');
+				} else {
+					// Add the downloaded files to the zip.
+					imageRsp && zip.file(`${prefix}${sound.filename}`, imageRsp);
+					soundRsp && zip.file(`${prefix}${encodeURIComponent(sound.src)}`, soundRsp);
+					// Flag the sound as downloaded.
+					sound.downloaded = true;
+				}
+			}
+			// Move on to the next sound.
+			await downloadNext(data);
+		}));
+
+		// Show where we canceled at, if we did cancel.
+		Player.tools._downloadAllCanceled && _.element(`<span>Canceled at ${running} / ${count}.`, status);
+		// Generate the zip file.
+		const zipProgress = status && _.element('<div>Generating zip file...</div>', status);
+		try {
+			const zipOptions = {
+				type: 'blob',
+				compression: compression ? 'DEFLATE' : 'STORE',
+				compressionOptions: {
+					level: compression
+				}
+			};
+			Player.tools.threadDownloadBlob = await zip.generateAsync(zipOptions, metadata => {
+				status && (zipProgress.textContent = `Generating zip file (${metadata.percent.toFixed(2)}%)...`);
+			});
+
+			// Update the display and prompt to download.
+			status && _.element('<span>Complete!', status);
+			Player.tools.saveThreadDownload();
+		} catch (err) {
+			console.error('[4chan sounds player] Failed to generate zip', err);
+			status && (zipProgress.textContent = 'Failed to generate zip file!');
 		}
-
-		// Remove per-post log items
-		status && status.removeChild(currentStatus);
-		status && status.removeChild(progressBars);
-
-		// Generate the zip file
-		status && _.element(`<div style="margin-top: .5rem">
-			${!Player.tools._downloadAllCanceled ? '' : `Canceled at ${i} / ${count}.`}
-			Generating zip file...
-		</div>`, status);
-		Player.tools.threadDownloadBlob = await zip.generateAsync({ type: 'blob' });
-
-		// Show a download so if the download prompt is accidently closed you don't have to redo the whole process.
-		_.element('<span>Complete! <a href="#" @click="tools.saveThreadDownload:prevent">Save</a></span>', status);
-		Player.$(`.${ns}-ignore-downloaded`).style.display = 'block';
-		Player.tools.saveThreadDownload();
+		Player.tools._downloading = null;
+		Player.tools.resetDownloadButtons();
 	},
 
 	saveThreadDownload() {

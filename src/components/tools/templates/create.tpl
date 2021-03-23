@@ -1,9 +1,9 @@
-`<div class="${ns}-heading lined" style="margin-top: 1rem;">
+`<div class="${ns}-heading lined">
 	Create Sound Image
 </div>
-<div style="margin: 0 .25rem">
+<div class="m-2">
 	<div class="${ns}-create-sound-form" @drop="tools.handleCreateSoundDrop:prevent:stop">
-		<div class="${ns}-row" style="margin-bottom: .5rem">
+		<div class="${ns}-row mb-4">
 			${Player.display.ifNotDismissed('createSoundDetails', 'Show Help',
 			`<div class="${ns}-col" data-dismiss-id="createSoundDetails">
 				Select an image and sound to combine as a sound image.
@@ -25,7 +25,7 @@
 			</div>
 		</div>
 
-		<div class="${ns}-row" style="margin-top: .25rem">
+		<div class="${ns}-row mt-2">
 			Data
 		</div>
 		<div class="${ns}-row">
@@ -88,7 +88,7 @@
 			</div>
 		</div>
 
-		<div class="${ns}-row" style="margin-top: .5rem">
+		<div class="${ns}-row mt-4">
 			<div class="${ns}-col-auto">
 				<button class="${ns}-create-button" @click="tools.handleCreate:prevent">Create</button>
 			</div>

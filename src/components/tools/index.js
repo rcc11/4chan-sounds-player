@@ -9,11 +9,13 @@ module.exports = {
 
 	initialize() {
 		createTool.initialize();
+		downloadTool.initialize();
 	},
 
 	render() {
 		_.elementHTML(Player.$(`.${ns}-tools`).innerHTML, Player.tools.template());
 		createTool.afterRender();
+		downloadTool.afterRender();
 	},
 
 	toggle() {

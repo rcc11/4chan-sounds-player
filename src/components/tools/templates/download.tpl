@@ -1,23 +1,41 @@
-`<div class="${ns}-heading lined">Download All</div>
-<div style="margin: 0 .25rem">
-	<div class="${ns}-row">
-		<label class="${ns}-col-auto ${ns}-align-center" style="margin-right: .25rem">
-			<input type="checkbox" class="${ns}-download-all-images" checked> Images
+`<div class="${ns}-heading lined mt-5">Download All</div>
+<div class="m-2">
+	<div class="${ns}-row" style="white-space: nowrap">
+		<label class="${ns}-col-auto m-0 mr-3" style="height: 1.5rem;">
+			<input type="checkbox" class="download-all-images m-0 mr-2" checked>
+			Images
 		</label>
-		<label class="${ns}-col-auto ${ns}-align-center" style="margin-right: .25rem">
-			<input type="checkbox" class="${ns}-download-all-audio" checked> Audio
+		<label class="${ns}-col-auto m-0 mr-3" style="height: 1.5rem;">
+			<input type="checkbox" class="download-all-audio m-0 mr-2" checked>
+			Audio
 		</label>
-		<label class="${ns}-col-auto ${ns}-align-center ${ns}-ignore-downloaded" ${Player.tools.threadDownloadBlob ? '' : 'style="display: none"'}>
-			<input type="checkbox" class="${ns}-download-all-ignore-downloaded"> Ignore Downloaded
-			<i class="${ns}-info-circle ${ns}-popover" data-content="Don't include sounds you've already downloaded.">${Icons.infoCircle}</i>
+		<label class="${ns}-col-auto m-0 mr-3 ${ns}-ignore-downloaded" style="height: 1.5rem;">
+			<input type="checkbox" class="download-all-ignore-downloaded m-0 mr-2" checked> Ignore Downloaded
+			<i class="${ns}-info-circle ${ns}-popover" data-content="Skip sounds you've already downloaded.">${Icons.infoCircle}</i>
 		</label>
+		<div class="${ns}-row ${ns}-align-center">
+			<div class="${ns}-col mr-2">Download Concurrency</div>
+			<div class="${ns}-col"><input type="number" class="download-all-concurrency" min="1" value="1" style="width: 3rem;"></div>
+		</div>
+		<div class="${ns}-row ${ns}-align-center">
+			<div class="${ns}-col mr-2">
+				Compression Level
+				<i class="${ns}-info-circle ${ns}-popover" data-content="0 (none/fastest) to 9 (best/slowest). It's unlikely to achieve significant compression however.">${Icons.infoCircle}</i>
+			</div>
+			<div class="${ns}-col"><input type="number" class="download-all-compression" min="0" max="9" value="0" style="width: 3rem;"></div>
+		</div>
+		<div class="${ns}-row ${ns}-align-center">
+			<div class="${ns}-col mr-2">
+				Max Sounds
+				<i class="${ns}-info-circle ${ns}-popover" data-content="Maximum number of sounds to download in one zip. 0 for unlimited. Useful for batching downloads to avoid memory contraints.">${Icons.infoCircle}</i>
+			</div>
+			<div class="${ns}-col"><input type="number" class="download-all-max-sounds" min="0" value="0" style="width: 3rem;"></div>
+		</div>
 	</div>
-	<div class="${ns}-download-all-status" ${Player.tools.threadDownloadBlob ? '' : 'style="display: none"'}>
-		Complete!<br/>
-		<a href="#" @click="tools.saveThreadDownload:prevent">Save</a></span>
-	</div>
-	<div class="${ns}-row" style="margin-top: .5rem">
+	<div class="${ns}-download-all-status" style="display: none;"></div>
+	<div class="${ns}-row mt-4">
 		<button @click="tools._handleDownload" class="${ns}-download-all-start">Download</button>
-		<button @click="tools._handleCancel" class="${ns}-download-all-cancel" style="display: none;">Cancel</button>
+		<button @click="tools._handleDownloadCancel" class="${ns}-download-all-cancel">Cancel</button>
+		<button @click="tools.saveThreadDownload" class="${ns}-download-all-save ml-2" @click="tools.saveThreadDownload:prevent">Save</button>
 	</div>
 </div>`
