@@ -110,5 +110,9 @@ module.exports.elementHandler = function elementHandler(el) {
 };
 
 module.exports.escAttr = function (str, escapeDoubleQuote) {
-	return str.replace(/'/g, '&#39;').replace(/"/g, escapeDoubleQuote ? '\\&#34;' : '&#34;');
+	return str
+		.replace(';', '&#59;')
+		.replace(/'/g, '&#39;')
+		.replace(/"/g, escapeDoubleQuote ? '\\&#34;' : '&#34;')
+		.replace(/\n/g, '\\n');
 };
