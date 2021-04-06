@@ -87,6 +87,7 @@ module.exports = {
 				Player.inline.expandedNodes.push(node);
 
 				// Add some data and cross link the nodes.
+				node.classList.add(`${ns}-has-inline-audio`);
 				node._inlineAudio = audio;
 				audio._inlinePlayer = {
 					master: isVideo ? node : audio,
@@ -150,18 +151,22 @@ module.exports = {
 	 * @param {Element} node Added node.
 	 */
 	handleRemovedNode(node) {
-		if (node._inlineAudio) {
-			// Stop listening for media events.
-			Player.inline.updateSyncListeners(node._inlineAudio._inlinePlayer.master, 'remove');
-			// Remove controls.
-			const controls = node._inlineAudio._inlinePlayer.controls;
-			controls && controls.parentNode.removeChild(controls);
-			// Stop the audio and cleanup the data.
-			node._inlineAudio.pause();
-			delete Player.inline.audio[node._inlineAudio.dataset.id];
-			delete node._inlineAudio;
-			Player.inline.expandedNodes = Player.inline.expandedNodes.filter(n => n !== node);
-		}
+		const nodes = [ node ];
+		node.querySelectorAll && nodes.push(...node.querySelectorAll(`.${ns}-has-inline-audio`));
+		nodes.forEach(node => {
+			if (node._inlineAudio) {
+				// Stop listening for media events.
+				Player.inline.updateSyncListeners(node._inlineAudio._inlinePlayer.master, 'remove');
+				// Remove controls.
+				const controls = node._inlineAudio._inlinePlayer.controls;
+				controls && controls.parentNode.removeChild(controls);
+				// Stop the audio and cleanup the data.
+				node._inlineAudio.pause();
+				delete Player.inline.audio[node._inlineAudio.dataset.id];
+				delete node._inlineAudio;
+				Player.inline.expandedNodes = Player.inline.expandedNodes.filter(n => n !== node);
+			}
+		});
 	},
 
 	/**
