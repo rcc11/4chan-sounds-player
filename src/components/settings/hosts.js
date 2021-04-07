@@ -1,3 +1,12 @@
+function validURL(value) {
+	try {
+		new URL(value.replace(/%s/, 'sound').replace(/^(https?\/\/)?/, 'https://'));
+		return true;
+	} catch (err) {
+		return false;
+	}
+}
+
 module.exports = {
 	template: require('./templates/host_input.tpl'),
 
@@ -29,12 +38,8 @@ module.exports = {
 			}
 
 			// Validate URL
-			if (changedField === 'url' || changedField === 'soundUrl') {
-				try {
-					(changedField === 'url' || newValue) && new URL(newValue);
-				} catch (err) {
-					throw new PlayerError('The value must be a valid URL.', 'warning');
-				}
+			if ((changedField === 'url' || changedField === 'soundUrl' && newValue) && !validURL(newValue)) {
+				throw new PlayerError('The value must be a valid URL.', 'warning');
 			}
 
 			// Parse the data
@@ -70,8 +75,8 @@ module.exports = {
 			const headersValue = container.querySelector('[name=headers]').value;
 			if (name
 				&& JSON.parse(container.querySelector('[name=data]').value)
-				&& new URL(container.querySelector('[name=url]').value)
-				&& (!soundUrlValue || new URL(soundUrlValue))
+				&& validURL(container.querySelector('[name=url]').value)
+				&& (!soundUrlValue || validURL(soundUrlValue))
 				&& (!headersValue || JSON.parse(headersValue))) {
 
 				delete host.invalid;
@@ -90,7 +95,7 @@ module.exports = {
 		const hosts = {
 			[`${name}${i}`]: { invalid: true, data: { file: '$file' } },
 			...Player.config.uploadHosts
-		}
+		};
 		Player.settings.set('uploadHosts', hosts, { bypassValidation: true, silent: true });
 	},
 

@@ -35,6 +35,7 @@ module.exports = [
 				url: 'https://pomf.cat/upload.php',
 				data: { 'files[]': '$file' },
 				responsePath: 'files.0.url',
+				soundUrl: 'a.pomf.cat/%s',
 				filenameLength: 23
 			},
 			zz: {
