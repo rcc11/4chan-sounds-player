@@ -10,6 +10,7 @@
 // @match        *://arch.b4k.co/*
 // @match        *://archived.moe/*
 // @match        *://warosu.org/*
+// @match        *://archive.nyafuu.org/*
 // @grant        GM.getValue
 // @grant        GM.setValue
 // @grant        GM.xmlHttpRequest
@@ -19,6 +20,7 @@
 // @connect      a.4cdn.org
 // @connect      desu-usergeneratedcontent.xyz
 // @connect      arch-img.b4k.co
+// @connect      archive-media-0.nyafuu.org
 // @connect      4cdn.org
 // @connect      a.pomf.cat
 // @connect      pomf.cat
