@@ -10,7 +10,10 @@ const get = (src, opts) => {
 			responseType: 'blob',
 			onload: response => resolve(response.response),
 			onerror: response => reject(response),
-			onabort: response => { response.aborted = true; reject(response) },
+			onabort: response => {
+				response.aborted = true;
+				reject(response);
+			},
 			...(opts || {})
 		});
 	});
@@ -71,7 +74,8 @@ const downloadTool = module.exports = {
 		Player.$(`.${ns}-download-all-start`).style.display = Player.tools._downloading ? 'none' : null;
 		Player.$(`.${ns}-download-all-cancel`).style.display = Player.tools._downloading ? null : 'none';
 		Player.$(`.${ns}-download-all-save`).style.display = Player.tools.threadDownloadBlob ? null : 'none';
-		Player.$(`.${ns}-ignore-downloaded`).style.display = Player.tools.threadDownloadBlob ? null : 'none';
+		Player.$(`.${ns}-download-all-clear`).style.display = Player.tools.threadDownloadBlob ? null : 'none';
+		Player.$(`.${ns}-ignore-downloaded`).style.display = Player.sounds.some(s => s.downloaded) ? null : 'none';
 	},
 
 	/**
@@ -96,14 +100,17 @@ const downloadTool = module.exports = {
 	 *
 	 * @param {Boolean} includeImages Whether images should be included in the download.
 	 * @param {Boolean} includeSounds Whether audio files should be included in the download.
-	 * @param {Boolean} ignoreDownload Whether sounds previously downloaded should be omitted from the download.
+	 * @param {Boolean} ignoreDownloaded Whether sounds previously downloaded should be omitted from the download.
+	 * @param {Boolean} maxSounds The maximum number of sounds to download.
+	 * @param {Boolean} concurrency How many sounds can be download at the same time.
+	 * @param {Boolean} compression Compression level.
 	 * @param {Element} [status] Element in which to display the ongoing status of the download.
 	 */
-	async downloadThread({ includeImages, includeSounds, ignoreDownload, maxSounds, concurrency, compression, status }) {
+	async downloadThread({ includeImages, includeSounds, ignoreDownloaded, maxSounds, concurrency, compression, status }) {
 		const zip = new JSZip();
 
 		!(maxSounds > 0) && (maxSounds = Infinity);
-		const toDownload = Player.sounds.filter(s => s.post && (!ignoreDownload || !s.downloaded)).slice(0, maxSounds);
+		const toDownload = Player.sounds.filter(s => s.post && (!ignoreDownloaded || !s.downloaded)).slice(0, maxSounds);
 		const count = toDownload.length;
 
 		status && (status.style.display = 'block');
@@ -221,5 +228,10 @@ const downloadTool = module.exports = {
 		const a = _.element(`<a href="${URL.createObjectURL(Player.tools.threadDownloadBlob)}" download="sounds-thread-${Board}-${threadNum}" rel="noopener" target="_blank"></a>`);
 		a.click();
 		URL.revokeObjectURL(a.href);
+	},
+
+	clearDownloadBlob() {
+		delete Player.tools.threadDownloadBlob;
+		Player.tools.resetDownloadButtons();
 	}
 };

@@ -10,8 +10,10 @@
 			Audio
 		</label>
 		<label class="${ns}-col-auto m-0 mr-3 ${ns}-ignore-downloaded" style="height: 1.5rem;">
-			<input type="checkbox" class="download-all-ignore-downloaded m-0 mr-2" checked> Ignore Downloaded
-			<i class="${ns}-info-circle ${ns}-popover" data-content="Skip sounds you've already downloaded.">${Icons.infoCircle}</i>
+			<input type="checkbox" class="download-all-ignore-downloaded m-0 mr-2" checked>
+			<span>
+				Skip Downloaded <i class="${ns}-info-circle ${ns}-popover" data-content="Skip sounds you've already downloaded.">${Icons.infoCircle}</i>
+			</span>
 		</label>
 		<div class="${ns}-row ${ns}-align-center">
 			<div class="${ns}-col mr-2">Download Concurrency</div>
@@ -33,9 +35,12 @@
 		</div>
 	</div>
 	<div class="${ns}-download-all-status" style="display: none;"></div>
-	<div class="${ns}-row mt-4">
-		<button @click="tools._handleDownload" class="${ns}-download-all-start">Download</button>
-		<button @click="tools._handleDownloadCancel" class="${ns}-download-all-cancel">Cancel</button>
-		<button @click="tools.saveThreadDownload" class="${ns}-download-all-save ml-2" @click="tools.saveThreadDownload:prevent">Save</button>
+	<div class="${ns}-row mt-4 ${ns}-align-center">
+		<button @click="tools._handleDownload:prevent" class="${ns}-download-all-start">Download</button>
+		<button @click="tools._handleDownloadCancel:prevent" class="${ns}-download-all-cancel">Cancel</button>
+		<button @click="tools.saveThreadDownload:prevent" class="${ns}-download-all-save ml-2 ${ns}-popover" @click="tools.saveThreadDownload:prevent" data-content="Save the last download.">Save</button>
+		<div class="${ns}-download-all-clear ml-2">
+			<a href="#" @click="tools.clearDownloadBlob:prevent">Clear</a><i class="${ns}-info-circle ${ns}-popover ml-1" data-content="Clear the last download to free memory.">${Icons.infoCircle}</i>
+		</div>
 	</div>
 </div>`
