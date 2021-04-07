@@ -8,7 +8,6 @@
 			`<div class="${ns}-col" data-dismiss-id="createSoundDetails">
 				Select an image and sound to combine as a sound image.
 				The sound will be uploaded to the selected file host and the url will be added to the image filename.<br/>
-				${Player.tools.hasFFmpeg ? 'Selecting a webm with audio as the image will split it into a video only webm to be posted and ogg audio file to be uploaded.' : ''}
 				<br/>
 				Multiple sound files, or a comma-separated list of sound URLs, can be given for a single image.
 				If you do have multiple sounds the name will also be a considered comma-separated list.<br/>
@@ -56,11 +55,6 @@
 						<span class="placeholder-text">Select/Drop Sound/s</span>
 						<span class="text"></span>
 						<div class="overfile ${ns}-input-append">
-							${!Player.tools.hasFFmpeg ? '' : `
-								<label class="${ns}-use-video-label" style="display: none;">
-									Use video
-									<input type="checkbox" class="${ns}-use-video" @click="tools.handleWebmSoundChange">
-								</label>`}
 							<a href="#" @click='tools.toggleSoundInput("url"):prevent' title="Enter a URL of a previously uploaded file.">
 								${Icons.link}
 							</a>

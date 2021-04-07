@@ -17,22 +17,15 @@ const hash = execSync('git rev-parse --short HEAD').toString().trim();
 
 module.exports = (env, argv) => {
 	const version = pkg.version + (argv['append-hash'] ? '-' + hash : '');
-	if (argv.ffmpeg ||  argv['build-ffmpeg']) {
-		execFileSync(path.join(__dirname, './build-ffmpeg.sh'));
-	}
-	// Only require ffmpeg if it's not explicitly set
-	const ffmpegVersion = argv.ffmpeg || argv['require-ffmpeg'];
-	const ffmpegRequire = ffmpegVersion ? '// @require$1https://raw.githubusercontent.com/rcc11/4chan-sounds-player/' + branch + '/dist/ffmpeg-webm.js\n' : '';
 	const githubRequire = '// @require$1' + (argv.gitcdn ? 'https://gitcdn.link/repo' : 'https://raw.githubusercontent.com');
 
-	const filename = argv.filename || `4chan-sounds-player${argv.mode === 'production' ? '' : '-dev'}${ffmpegVersion ? '-ffmpeg' : ''}`;
+	const filename = argv.filename || `4chan-sounds-player${argv.mode === 'production' ? '' : '-dev'}`;
 
 	const header = fs.readFileSync(path.resolve(__dirname, './src/header.js'));
 	const banner = header.toString()
 		.replace('VERSION', version)
 		.replace(/FILENAME/g, filename)
 		.replace(/BRANCH/g, branch)
-		.replace(/\/\/ @require(\s+)FFMPEG_REQUIRE\n/, ffmpegRequire)
 		.replace(/\/\/ @require(\s+)GITHUB/g, githubRequire);
 
 	return {
