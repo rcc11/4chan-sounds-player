@@ -41,7 +41,17 @@ module.exports = [
 			{
 				property: 'controlsHideOrder',
 				title: 'Hide Order',
-				description: 'Order controls are hidden in to prevent wrapping. Available controls are previous, next, seek-bar, time, duration, volume, mute, volume-bar, and fullscreen.',
+				description: 'Order controls are hidden in to prevent wrapping. '
+					+'Available controls are '
+					+ '<pre class="option">previous</pre> '
+					+ '<pre class="option">next</pre> '
+					+ '<pre class="option">seek-bar</pre> '
+					+ '<pre class="option">time</pre> '
+					+ '<pre class="option">duration</pre> '
+					+ '<pre class="option">volume</pre> '
+					+ '<pre class="option">volume-button</pre> '
+					+ '<pre class="option">volume-bar</pre> '
+					+ 'and <pre class="option">fullscreen</pre>.',
 				default: [ 'fullscreen', 'duration', 'volume-bar', 'seek-bar', 'time', 'previous' ],
 				displayMethod: 'textarea',
 				inlineTextarea: true,

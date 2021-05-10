@@ -30,7 +30,7 @@
 			</span>
 		</span>
 	</div>
-	<div class="${ns}-col-auto" data-hide-id="mute">
+	<div class="${ns}-col-auto" data-hide-id="volume">
 		<div class="${ns}-media-control ${ns}-volume-button ${ns}-hover-fill up" @click='${data.actions.mute}' data-hide-id="volume-button" data-audio="${data.audioId}">
 			${Icons.volumeMute} ${Icons.volumeMuteFill}
 			${Icons.volumeUp} ${Icons.volumeUpFill}
