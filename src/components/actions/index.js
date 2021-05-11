@@ -74,7 +74,7 @@ module.exports = {
 	},
 
 	/**
-	 * Handler to start playback once the video and audio are both loaded.
+	 * Handler to only start playback once the video and audio are both loaded.
 	 */
 	playOnceLoaded: function (e) {
 		if (e.currentTarget.readyState > 3 && e.currentTarget._linked.readyState > 3) {
@@ -83,6 +83,11 @@ module.exports = {
 			e.currentTarget._inlinePlayer && e.currentTarget._inlinePlayer.pendingControls && e.currentTarget._inlinePlayer.pendingControls();
 			e.currentTarget._linked.play();
 			e.currentTarget.play();
+		} else {
+			e.currentTarget.pause();
+			e.currentTarget._linked.pause();
+			e.currentTarget.currentTime = 0;
+			e.currentTarget._linked.currentTime = 0;
 		}
 	},
 
