@@ -81,6 +81,7 @@ module.exports = {
 				// Create a new audio element.
 				const audio = new Audio(sounds[0].src);
 				const aId = audio.dataset.id = Player.inline.idx++;
+				const master = isVideo && Player.config.expandedLoopMaster === 'video' ? node : audio
 				Player.inline.audio[aId] = audio;
 
 				// Remember this node is playing audio.
@@ -89,27 +90,54 @@ module.exports = {
 				// Add some data and cross link the nodes.
 				node.classList.add(`${ns}-has-inline-audio`);
 				node._inlineAudio = audio;
-				audio._inlinePlayer = {
-					master: isVideo ? node : audio,
+				audio._inlinePlayer = node._inlinePlayer = {
+					master,
 					video: node,
+					audio,
 					sounds,
 					index: 0
 				};
+				// Link video & audio so they sync.
+				if (isVideo) {
+					node._linked = audio;
+					audio._linked = node;
+				}
 
 				// Start from the beginning taking the volume from the main player.
 				audio.src = sounds[0].src;
 				audio.volume = Player.audio.volume;
 				audio.currentTime = 0;
 
-				if (isVideo) {
-					// For videos link the two to keep them in sync and set the listeners on the video.
-					// That way the video controls propagate to the audio.
-					node._linked = audio;
-					audio._linked = node;
-					Player.inline.updateSyncListeners(node, 'add');
-				} else if (isExpandedImage && Player.config.expandedControls) {
-					// For images, with controls enabled, set the listeners on the audio to sync to controls display.
-					Player.inline.updateSyncListeners(audio, 'add');
+				// Add the sync handlers to which source is master.
+				Player.inline.updateSyncListeners(master, 'add');
+
+				// Show the player controls for expanded images/videos where the audio is the master source.
+				const showPlayerControls = master === audio && isExpandedImage && (isVideo || Player.config.expandedControls);
+
+				if (isVideo && showPlayerControls) {
+					// Remove the default controls, and remove them again when 4chan X tries to add them.
+					node.controls = false;
+					node.controlsObserver = new MutationObserver(() => node.controls = false);
+					node.controlsObserver.observe(node, { attributes: true });
+					// Play/pause the audio instead when the video is clicked.
+					node.addEventListener('click', () => Player.inline.playPause(aId));
+				}
+
+				// For videos wait for both to load before playing.
+				if (isVideo && (node.readyState < 3 || audio.readyState < 3)) {
+					audio.pause();
+					node.pause();
+					// Set the add controls function so playOnceLoaded can run it when it's ready.
+					node._inlinePlayer.pendingControls = showPlayerControls && addControls;
+					node.addEventListener('canplaythrough', Player.actions.playOnceLoaded);
+					audio.addEventListener('canplaythrough', Player.actions.playOnceLoaded);
+				} else {
+					showPlayerControls && addControls();
+					audio.play();
+				}
+
+				function addControls() {
+					node.parentNode.classList.add(`${ns}-has-controls`);
 					// Create the controls and store the bars on the audio node for reference. Avoid checking the DOM.
 					const controls = audio._inlinePlayer.controls = _.element(controlsTemplate({
 						audio,
@@ -124,20 +152,15 @@ module.exports = {
 							mute: `inline.mute("${aId}")`,
 							volume: `controls.handleVolume("evt", "${aId}"):prevent`
 						}
-					}), node.closest(selectors.posts));
+					}), node.parentNode);
+					// Don't want to close the expanded image or open the image when the controls are clicked.
+					controls.addEventListener('click', e => {
+						e.preventDefault();
+						e.stopPropagation();
+					});
 					audio.volumeBar = controls.querySelector(`.${ns}-volume-bar .${ns}-current-bar`);
 					audio.currentTimeBar = controls.querySelector(`.${ns}-seek-bar .${ns}-current-bar`);
 					Player.controls.updateProgressBarPosition(audio.volumeBar, audio.volume, 1);
-				}
-
-				// For videos wait for both to load before playing.
-				if (isVideo && (node.readyState < 3 || audio.readyState < 3)) {
-					audio.pause();
-					node.pause();
-					node.addEventListener('canplaythrough', Player.actions.playOnceLoaded);
-					audio.addEventListener('canplaythrough', Player.actions.playOnceLoaded);
-				} else {
-					audio.play();
 				}
 			}
 		} catch (err) {
@@ -155,18 +178,27 @@ module.exports = {
 		node.querySelectorAll && nodes.push(...node.querySelectorAll(`.${ns}-has-inline-audio`));
 		nodes.forEach(node => {
 			if (node._inlineAudio) {
-				// Stop listening for media events.
-				Player.inline.updateSyncListeners(node._inlineAudio._inlinePlayer.master, 'remove');
-				// Remove controls.
-				const controls = node._inlineAudio._inlinePlayer.controls;
-				controls && controls.parentNode.removeChild(controls);
-				// Stop the audio and cleanup the data.
-				node._inlineAudio.pause();
-				delete Player.inline.audio[node._inlineAudio.dataset.id];
-				delete node._inlineAudio;
-				Player.inline.expandedNodes = Player.inline.expandedNodes.filter(n => n !== node);
+				Player.inline._removeForNode(node);
 			}
 		});
+	},
+
+	_removeForNode(node) {
+		// Stop removing controls.
+		node.controlsObserver && node.controlsObserver.disconnect();
+		// Stop listening for media events.
+		Player.inline.updateSyncListeners(node._inlinePlayer.master, 'remove');
+		// Remove controls.
+		const controls = node._inlineAudio._inlinePlayer.controls;
+		if (controls) {
+			controls.parentNode.classList.remove(`${ns}-has-controls`);
+			controls.parentNode.removeChild(controls);
+		}
+		// Stop the audio and cleanup the data.
+		node._inlineAudio.pause();
+		delete Player.inline.audio[node._inlineAudio.dataset.id];
+		delete node._inlineAudio;
+		Player.inline.expandedNodes = Player.inline.expandedNodes.filter(n => n !== node);
 	},
 
 	/**
@@ -206,10 +238,7 @@ module.exports = {
 	 */
 	stop() {
 		Player.inline.observer.disconnect();
-		Player.inline.expandedNodes.forEach(node => {
-			Player.inline.updateSyncListeners(node, 'remove');
-			node._inlineAudio.pause();
-		});
+		Player.inline.expandedNodes.forEach(node => Player.inline._removeForNode);
 		Player.inline.expandedNodes = [];
 	},
 

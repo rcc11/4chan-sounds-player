@@ -1,4 +1,4 @@
-`<div class="${ns}-controls ${ns}-row" data-audio="${data.audioId}">
+`<div class="${ns}-controls ${ns}-row ${data.inline ? `${ns}-inline-controls` : '' }" data-audio="${data.audioId}">
 	<div class="${ns}-col-auto">
 		${data.inline && !data.multiple ? '' : `
 			<div class="${ns}-media-control ${ns}-previous-button ${ns}-hover-fill ${data.inline ? 'disabled' : ''}" @click='${data.actions.previous}' data-hide-id="previous">

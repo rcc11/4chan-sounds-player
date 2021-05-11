@@ -1,0 +1,26 @@
+.#{$ns}-has-controls {
+	position: relative;
+	padding-bottom: 2.6rem;
+
+	// No idea what this is about.
+	video {
+		margin-bottom: -3px;
+	}
+
+	.#{$ns}-controls {
+		cursor: auto;
+		flex-wrap: nowrap;
+		overflow: hidden;
+		min-width: auto;
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 2.6rem;
+	}
+
+    html:not(.fourchan-x) & > video + .#{$ns}-controls {
+        left: 20px;
+        right: 20px;
+    }
+}

@@ -49,6 +49,17 @@ module.exports = [
 				attrs: () => !Player.config.playExpandedImages ? 'disabled' : ''
 			},
 			{
+				property: 'expandedLoopMaster',
+				title: 'Loop',
+				default: 'sound',
+				description: 'Which souce to play in full before looping.',
+				options: {
+					sound: 'Audio',
+					video: 'Video',
+					// longest: 'Longest'
+				}
+			},
+			{
 				property: 'playHoveredImages',
 				title: 'Hover Image',
 				description: 'Play audio when sound hover images are shown. This applies to hover images displayed by the native extention or 4chan X.',

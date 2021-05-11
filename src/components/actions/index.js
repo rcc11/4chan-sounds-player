@@ -80,6 +80,7 @@ module.exports = {
 		if (e.currentTarget.readyState > 3 && e.currentTarget._linked.readyState > 3) {
 			e.currentTarget.removeEventListener('canplaythrough', Player.actions.playOnceLoaded);
 			e.currentTarget._linked.removeEventListener('canplaythrough', Player.actions.playOnceLoaded);
+			e.currentTarget._inlinePlayer && e.currentTarget._inlinePlayer.pendingControls && e.currentTarget._inlinePlayer.pendingControls();
 			e.currentTarget._linked.play();
 			e.currentTarget.play();
 		}
