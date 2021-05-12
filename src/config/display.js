@@ -42,7 +42,7 @@ module.exports = [
 				property: 'controlsHideOrder',
 				title: 'Hide Order',
 				description: 'Order controls are hidden in to prevent wrapping. '
-					+'Available controls are '
+					+ 'Available controls are '
 					+ '<pre class="option">previous</pre> '
 					+ '<pre class="option">next</pre> '
 					+ '<pre class="option">seek-bar</pre> '

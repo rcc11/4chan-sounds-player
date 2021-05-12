@@ -9,6 +9,7 @@ module.exports = {
 
 	// Similar but not exactly the audio events in the controls component.
 	mediaEvents: {
+		ended: evt => Player.inline._movePlaying(evt.currentTarget.dataset.id, +(Player.config.expandedRepeat !== 'one')),
 		pause: 'controls.handleMediaEvent',
 		play: 'controls.handleMediaEvent',
 		seeked: 'controls.handleMediaEvent',
@@ -81,7 +82,7 @@ module.exports = {
 				// Create a new audio element.
 				const audio = new Audio(sounds[0].src);
 				const aId = audio.dataset.id = Player.inline.idx++;
-				const master = isVideo && Player.config.expandedLoopMaster === 'video' ? node : audio
+				const master = isVideo && Player.config.expandedLoopMaster === 'video' ? node : audio;
 				Player.inline.audio[aId] = audio;
 
 				// Remember this node is playing audio.
@@ -111,8 +112,8 @@ module.exports = {
 				// Add the sync handlers to which source is master.
 				Player.inline.updateSyncListeners(master, 'add');
 
-				// Show the player controls for expanded images/videos where the audio is the master source.
-				const showPlayerControls = master === audio && isExpandedImage && (isVideo || Player.config.expandedControls);
+				// Show the player controls for expanded images/videos.
+				const showPlayerControls = isExpandedImage && Player.config.expandedControls;
 
 				if (isVideo && showPlayerControls) {
 					// Remove the default controls, and remove them again when 4chan X tries to add them.
@@ -218,8 +219,6 @@ module.exports = {
 			Object.entries(Player.inline.mediaEvents).forEach(([ event, handler ]) => {
 				node[`${action}EventListener`](event, Player.getHandler(handler));
 			});
-			action === 'add' && !node._endedListener && (node._endedListener = () => Player.inline.next(audio.dataset.id));
-			node[`${action}EventListener`]('ended', node._endedListener);
 		}
 	},
 
@@ -238,7 +237,7 @@ module.exports = {
 	 */
 	stop() {
 		Player.inline.observer.disconnect();
-		Player.inline.expandedNodes.forEach(node => Player.inline._removeForNode);
+		Player.inline.expandedNodes.forEach(Player.inline._removeForNode);
 		Player.inline.expandedNodes = [];
 	},
 
@@ -249,13 +248,35 @@ module.exports = {
 	 */
 	previous(audioId) {
 		const audio = Player.inline.audio[audioId];
+		if (audio.currentTime > 3) {
+			audio.currentTime = 0;
+		} else {
+			Player.inline._movePlaying(audioId, -1);
+		}
+	},
+
+	/**
+	 * Handle next click for inline controls.
+	 *
+	 * @param {String} audioId Identifier of the inline audio.
+	 */
+	next(audioId) {
+		Player.inline._movePlaying(audioId, 1);
+	},
+
+	_movePlaying(audioId, dir) {
+		const audio = Player.inline.audio[audioId];
 		const data = audio && audio._inlinePlayer;
-		if (data && data.index > 0) {
-			audio.src = data.sounds[--data.index].src;
+		const count = data.sounds.length;
+		const repeat = Player.config.expandedRepeat;
+		if (data && (repeat !== 'none' || data.index + dir >= 0 && data.index + dir < count)) {
+			data.index = (data.index + dir + count) % count;
+			audio.src = data.sounds[data.index].src;
+			audio.currentTime = 0;
 			audio.play();
-			data.controls.querySelector(`.${ns}-next-button`).classList.remove('disabled');
-			if (data.index === 0) {
-				data.controls.querySelector(`.${ns}-previous-button`).classList.add('disabled');
+			if (data.controls) {
+				data.controls.querySelector(`.${ns}-previous-button`).classList[repeat !== 'all' && data.index === 0 ? 'add' : 'remove']('disabled');
+				data.controls.querySelector(`.${ns}-next-button`).classList[repeat !== 'all' && data.index === count - 1 ? 'add' : 'remove']('disabled');
 			}
 		}
 	},
@@ -268,24 +289,6 @@ module.exports = {
 	playPause(audioId) {
 		const audio = Player.inline.audio[audioId];
 		audio && audio[audio.paused ? 'play' : 'pause']();
-	},
-
-	/**
-	 * Handle next click for inline controls.
-	 *
-	 * @param {String} audioId Identifier of the inline audio.
-	 */
-	next(audioId) {
-		const audio = Player.inline.audio[audioId];
-		const data = audio && audio._inlinePlayer;
-		if (data && data.index < data.sounds.length - 1) {
-			audio.src = data.sounds[++data.index].src;
-			audio.play();
-			data.controls.querySelector(`.${ns}-previous-button`).classList.remove('disabled');
-			if (data.index === data.sounds.length - 1) {
-				data.controls.querySelector(`.${ns}-next-button`).classList.add('disabled');
-			}
-		}
 	},
 
 	/**

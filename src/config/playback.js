@@ -44,19 +44,30 @@ module.exports = [
 			{
 				property: 'expandedControls',
 				title: 'Expanded Controls',
-				description: 'Show playback controls for expanded image audio.',
+				description: 'Show playback controls for expanded images.',
 				default: true,
 				attrs: () => !Player.config.playExpandedImages ? 'disabled' : ''
 			},
 			{
 				property: 'expandedLoopMaster',
-				title: 'Loop',
+				title: 'Master Source',
 				default: 'sound',
-				description: 'Which souce to play in full before looping.',
+				description: 'Which media source to play in full for audio and video of different durations.',
 				options: {
 					sound: 'Audio',
 					video: 'Video',
 					// longest: 'Longest'
+				}
+			},
+			{
+				property: 'expandedRepeat',
+				title: 'Repeat',
+				default: 'all',
+				description: 'How to repeat expanded images with multiple sounds.',
+				options: {
+					all: 'All',
+					one: 'One',
+					none: 'None'
 				}
 			},
 			{

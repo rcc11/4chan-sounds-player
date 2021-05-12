@@ -124,7 +124,7 @@ module.exports = {
 	updateDuration: function (e) {
 		const media = e.currentTarget;
 		const audio = media._inlineAudio || media;
-		const controls = media._inlineAudio ? audio._inlinePlayer.controls : document;
+		const controls = media._inlinePlayer ? media._inlinePlayer.controls : document;
 		const currentTime = _.toDuration(media.currentTime);
 		const duration = _.toDuration(media.duration);
 		const audioId = audio.dataset.id;
