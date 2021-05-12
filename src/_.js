@@ -46,6 +46,7 @@ module.exports.toDuration = function toDuration(number) {
 	number = Math.floor(number || 0);
 	let [ seconds, minutes, hours ] = _duration(0, number);
 	seconds < 10 && (seconds = '0' + seconds);
+	hours && minutes < 10 && (minutes = '0' + minutes);
 	return (hours ? hours + ':' : '') + minutes + ':' + seconds;
 };
 
