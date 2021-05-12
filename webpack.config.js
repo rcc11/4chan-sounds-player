@@ -1,5 +1,5 @@
 // eslint-disable-next-line security/detect-child-process
-const { execFileSync, execSync } = require('child_process');
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -16,10 +16,10 @@ const branch = execSync('git rev-parse --abbrev-ref HEAD').toString().trim();
 const hash = execSync('git rev-parse --short HEAD').toString().trim();
 
 module.exports = (env, argv) => {
-	const version = pkg.version + (argv['append-hash'] ? '-' + hash : '');
-	const githubRequire = '// @require$1' + (argv.gitcdn ? 'https://gitcdn.link/repo' : 'https://raw.githubusercontent.com');
+	const version = pkg.version + (env['append-hash'] ? '-' + hash : '');
+	const githubRequire = '// @require$1' + (env.gitcdn ? 'https://gitcdn.link/repo' : 'https://raw.githubusercontent.com');
 
-	const filename = argv.filename || `4chan-sounds-player${argv.mode === 'production' ? '' : '-dev'}`;
+	const filename = env.filename || `4chan-sounds-player${argv.mode === 'production' ? '' : '-dev'}`;
 
 	const header = fs.readFileSync(path.resolve(__dirname, './src/header.js'));
 	const banner = header.toString()
@@ -30,11 +30,11 @@ module.exports = (env, argv) => {
 
 	return {
 		entry: './src/main.js',
-		devtool: 'none',
+		devtool: false,
 		mode: argv.mode,
 		output: {
-			filename: (argv.filename || filename) + '.user.js',
-			path: argv.path || path.resolve(__dirname, 'dist'),
+			filename: (env.filename || filename) + '.user.js',
+			path: env.path || path.resolve(__dirname, 'dist'),
 		},
 		optimization: {
 			minimizer: [
