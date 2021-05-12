@@ -367,5 +367,33 @@ module.exports = {
 		if (!Player.audio.paused) {
 			noSleep[newValue ? 'enable' : 'disable']();
 		}
+	},
+
+	untz() {
+		const container =  Player.$(`.${ns}-image-link`);
+		Player.untzing = !Player.untzing;
+		Player.audio.playbackRate = Player.audio.defaultPlaybackRate = Player.untzing ? 1.3 : 1;
+		Player.container.classList[Player.untzing ? 'add' : 'remove']('untz');
+		if (Player.untzing) {
+			const overlay = Player.$('.image-color-overlay');
+			let rotate = 0;
+			overlay.style.filter = `brightness(1.5); hue-rotate(${rotate}deg)`;
+			(function color() {
+				overlay.style.filter = `hue-rotate(${rotate = 360 - rotate}deg)`;
+				Player.untzColorTO = setTimeout(color, 500);
+			}());
+			(function bounce() {
+				if (Player.untzing) {
+					container.style.transform = `scale(${1 + Math.random() * 0.05})`;
+					container.style.filter = `brightness(${1 + Math.random() * 0.5}) blur(${Math.random() * 3}px)`;
+					Player.untzBounceTO = setTimeout(bounce, 200);
+				}
+			}());
+		} else {
+			container.style.transform = null;
+			container.style.filter = null;
+			clearTimeout(Player.untzBounceTO);
+			clearTimeout(Player.untzColorTO);
+		}
 	}
 };

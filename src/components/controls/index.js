@@ -7,6 +7,7 @@ module.exports = {
 		play: 'controls.handleMediaEvent',
 		seeked: 'controls.handleMediaEvent',
 		waiting: 'controls.handleMediaEvent',
+		ratechange: 'controls.handleMediaEvent',
 		timeupdate: 'controls.updateDuration',
 		loadedmetadata: [ 'controls.updateDuration', 'controls.preventWrapping' ],
 		durationchange: 'controls.updateDuration',
@@ -87,6 +88,8 @@ module.exports = {
 		if (from && from.readyState > 3 && to && to.readyState > 3) {
 			to.currentTime = from.currentTime % to.duration;
 			to[from.paused ? 'pause' : 'play']();
+			to.playbackRate = from.playbackRate;
+			to.defaultPlaybackRate = from.defaultPlaybackRate;
 		}
 	},
 

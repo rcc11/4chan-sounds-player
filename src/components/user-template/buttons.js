@@ -180,5 +180,11 @@ module.exports = [
 		action: 'display.showMenu("evt.currentTarget", "themes"):prevent:stop',
 		icon: Icons.layoutTextWindow,
 		attrs: [ 'title="Switch Theme"' ]
+	},
+	{
+		tplName: 'untz',
+		action: 'display.untz',
+		icon: Icons.speaker,
+		attrs: [ 'title="UNTZ"' ]
 	}
 ];

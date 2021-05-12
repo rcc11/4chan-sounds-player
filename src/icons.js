@@ -38,6 +38,7 @@ module.exports = {
 	skipStart: require('../node_modules/bootstrap-icons/icons/skip-start.svg').default.replace(/viewBox="[^"]+"/, 'viewBox="2 2 12 12"'),
 	skipStartFill: require('../node_modules/bootstrap-icons/icons/skip-start-fill.svg').default.replace(/viewBox="[^"]+"/, 'viewBox="2 2 12 12"'),
 	soundwave: require('../node_modules/bootstrap-icons/icons/soundwave.svg').default,
+	speaker: require('../node_modules/bootstrap-icons/icons/speaker.svg').default,
 	square: require('../node_modules/bootstrap-icons/icons/square.svg').default,
 	tools: require('../node_modules/bootstrap-icons/icons/tools.svg').default,
 	trash: require('../node_modules/bootstrap-icons/icons/trash.svg').default,
