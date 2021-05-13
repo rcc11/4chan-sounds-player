@@ -75,7 +75,7 @@ module.exports = {
 					return;
 				}
 				// Check for sounds added to the player.
-				const sounds = id && Player.sounds.filter(s => s.post === id);
+				const sounds = id && Player.sounds.filter(s => s.post === id && !s.standaloneVideo);
 				if (!sounds.length) {
 					return;
 				}
