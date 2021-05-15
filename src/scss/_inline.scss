@@ -1,11 +1,5 @@
 .#{$ns}-has-controls {
 	position: relative;
-	padding-bottom: 2.6rem;
-
-	// No idea what this is about.
-	video {
-		margin-bottom: -3px;
-	}
 
 	.#{$ns}-controls {
 		cursor: auto;
@@ -16,7 +10,10 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		height: 2.6rem;
+	}
+
+	&:not(:hover) .#{$ns}-controls {
+		display: none;
 	}
 
     html:not(.fourchan-x) & > video + .#{$ns}-controls {

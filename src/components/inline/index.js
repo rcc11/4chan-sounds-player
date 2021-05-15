@@ -94,6 +94,7 @@ module.exports = {
 				audio._inlinePlayer = node._inlinePlayer = {
 					master,
 					video: node,
+					isVideo,
 					audio,
 					sounds,
 					index: 0
@@ -138,6 +139,7 @@ module.exports = {
 				}
 
 				function addControls() {
+					delete node._inlinePlayer.pendingControls;
 					node.parentNode.classList.add(`${ns}-has-controls`);
 					// Create the controls and store the bars on the audio node for reference. Avoid checking the DOM.
 					const controls = audio._inlinePlayer.controls = _.element(controlsTemplate({
@@ -272,11 +274,22 @@ module.exports = {
 		if (data && (repeat !== 'none' || data.index + dir >= 0 && data.index + dir < count)) {
 			data.index = (data.index + dir + count) % count;
 			audio.src = data.sounds[data.index].src;
-			audio.currentTime = 0;
-			audio.play();
 			if (data.controls) {
-				data.controls.querySelector(`.${ns}-previous-button`).classList[repeat !== 'all' && data.index === 0 ? 'add' : 'remove']('disabled');
-				data.controls.querySelector(`.${ns}-next-button`).classList[repeat !== 'all' && data.index === count - 1 ? 'add' : 'remove']('disabled');
+				const prev = data.controls.querySelector(`.${ns}-previous-button`);
+				const next = data.controls.querySelector(`.${ns}-next-button`);
+				prev && prev.classList[repeat !== 'all' && data.index === 0 ? 'add' : 'remove']('disabled');
+				next && next.classList[repeat !== 'all' && data.index === count - 1 ? 'add' : 'remove']('disabled');
+			}
+			// For videos wait for both to load before playing.
+			if (data.isVideo && (data.video.readyState < 3 || audio.readyState < 3)) {
+				data.master.currentTime = 0;
+				data.master.pause();
+				data.video.pause();
+				data.video.addEventListener('canplaythrough', Player.actions.playOnceLoaded);
+				audio.addEventListener('canplaythrough', Player.actions.playOnceLoaded);
+			} else {
+				data.master.currentTime = 0;
+				data.master.play();
 			}
 		}
 	},

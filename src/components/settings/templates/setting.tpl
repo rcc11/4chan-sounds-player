@@ -62,7 +62,7 @@ data.displayMethod === null ? '' : `
 			|| type === 'object' && Player.settings.inputTemplates.textarea
 			|| data.options && Player.settings.inputTemplates.select
 			|| Player.settings.inputTemplates.input;
-		
+
 		return inputTemplate({ value, attrs, setting: data });
 	})()}
 </div>`

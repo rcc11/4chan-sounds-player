@@ -84,10 +84,10 @@ module.exports = {
 			e.currentTarget._linked.play();
 			e.currentTarget.play();
 		} else {
-			e.currentTarget.pause();
-			e.currentTarget._linked.pause();
-			e.currentTarget.currentTime = 0;
-			e.currentTarget._linked.currentTime = 0;
+			!e.currentTarget.paused && e.currentTarget.pause();
+			!e.currentTarget._linked.paused && e.currentTarget._linked.pause();
+			e.currentTarget.currentTime !== 0 && (e.currentTarget.currentTime = 0);
+			e.currentTarget._linked.currentTime !== 0 && (e.currentTarget._linked.currentTime = 0);
 		}
 	},
 
