@@ -17,7 +17,9 @@ const eventNames = [
 	'drag', 'dragend', 'dragenter', 'dragstart', 'dragleave', 'dragover', 'drop',
 	// Media
 	'canplay', 'canplaythrough', 'complete', 'duration-change', 'emptied', 'ended', 'loadeddata', 'loadedmetadata',
-	'pause', 'play', 'playing', 'ratechange', 'seeked', 'seeking', 'stalled', 'suspend', 'timeupdate', 'volumechange', 'waiting'
+	'pause', 'play', 'playing', 'ratechange', 'seeked', 'seeking', 'stalled', 'suspend', 'timeupdate', 'volumechange', 'waiting',
+	// Custom
+	'entry-focus', 'entry-blur'
 ];
 const evtSelector = eventNames.map(e => `[\\@${e}]`).join(',');
 

@@ -35,6 +35,7 @@
 // @run-at       document-start
 // @require      GITHUB/richtr/NoSleep.js/07fcee254724ab1b79076fbc22f3dd447649a2eb/dist/NoSleep.min.js
 // @require      GITHUB/Stuk/jszip/7bbcb3873db23f6d27550cdbb6c4cc2bdeb32194/dist/jszip.js
+// @require      https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.js
 // @updateURL    https://raw.githubusercontent.com/rcc11/4chan-sounds-player/BRANCH/dist/FILENAME.meta.js
 // @downloadURL  https://raw.githubusercontent.com/rcc11/4chan-sounds-player/BRANCH/dist/FILENAME.user.js
 // ==/UserScript==

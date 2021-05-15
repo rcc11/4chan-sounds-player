@@ -1,5 +1,6 @@
 const { parseFiles, parseFileName } = require('../../file_parser');
 const { postIdPrefix } = require('../../selectors');
+const xhrReplacer = require('../../xhr-replace');
 
 const itemMenuTemplate = require('./templates/item_menu.tpl');
 
@@ -7,8 +8,11 @@ module.exports = {
 	atRoot: [ 'add', 'remove' ],
 	public: [ 'search' ],
 
+	tagLoadTO: {},
+
 	template: require('./templates/player.tpl'),
 	listTemplate: require('./templates/list.tpl'),
+	tagsDialogTemplate: require('./templates/tags_dialog.tpl'),
 
 	initialize: function () {
 		// Keep track of the last view style so we can return to it.
@@ -474,5 +478,49 @@ module.exports = {
 		!show && Player.playlist._lastSearch && Player.playlist.search();
 		input.style.display = show ? null : 'none';
 		show && input.focus();
+	},
+
+	/**
+	 * Attempt to load info tags from a sound source.
+	 * @param {String} id The sound id
+	 */
+	loadTags(id) {
+		const sound = Player.sounds.find(s => s.id === id);
+		// Fall out if they've already been loaded.
+		if (sound.tags) {
+			return;
+		}
+		// Wait a bit before fetching to ignore the mouse going across.
+		Player.playlist.tagLoadTO[id] = setTimeout(() => {
+			// Replace XMLHttpRequest to avoid cors.
+			xhrReplacer.toGM();
+			try {
+				jsmediatags.read(sound.src, {
+					onSuccess: handleTags,
+					onError: handleTags
+				});
+			} catch (err) {
+				handleTags(err);
+			}
+		}, 150);
+
+		function handleTags(data) {
+			// Restore the native XMLHttpRequest.
+			xhrReplacer.toNative();
+			// Store all the strings tags that jsmediatags has set.
+			sound.tags = data && Object.entries(data.tags || {}).filter(([ name, value ]) => typeof value === 'string');
+			// Update the info dialog if it's still open.
+			const dialog = Player.$(`.tags-dialog[data-sound-id="${id}"]`);
+			dialog && _.elementHTML(dialog, Player.playlist.tagsDialogTemplate(sound));
+		}
+	},
+
+	/**
+	 * Cancel a pending of tags for a sond.
+	 * @param {String} id The sound id
+	 */
+	abortTags(id) {
+		clearTimeout(Player.playlist.tagLoadTO[id]);
+		delete Player.playlist.tagLoadTO[id];
 	}
 };

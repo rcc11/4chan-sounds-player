@@ -257,7 +257,10 @@ module.exports = {
 
 		// Add the focused class handler
 		dialog.querySelectorAll('.entry').forEach(el => {
-			el.addEventListener('mouseenter', Player.display._setFocusedMenuItem);
+			el.addEventListener('mouseenter', e => {
+				Player.display._setFocusedMenuItem(e);
+				el.dispatchEvent(new CustomEvent('entry-focus'));
+			});
 		});
 		// Allow clicks of sub menus
 		dialog._keepOpenFor = Array.from(dialog.querySelectorAll('.entry.has-submenu'));
@@ -270,7 +273,10 @@ module.exports = {
 		const submenu = e.currentTarget.querySelector('.submenu');
 		const menu = e.currentTarget.closest('.dialog');
 		const currentFocus = menu.querySelectorAll('.focused');
-		currentFocus.forEach(el => el.classList.remove('focused'));
+		currentFocus.forEach(el => {
+			el.classList.remove('focused');
+			el.dispatchEvent(new CustomEvent('entry-blur'));
+		});
 		e.currentTarget.classList.add('focused');
 		// Move the menu to the other side if there isn't room.
 		if (submenu && submenu.getBoundingClientRect().right > document.documentElement.clientWidth) {

@@ -1,5 +1,11 @@
 `<div class="${ns}-menu dialog ${ns}-dialog" id="menu" tabindex="0" data-type="post" style="position: fixed;">
 	${data.sound.post ? `<a class="entry" href="#${data.postIdPrefix + data.sound.post}">Show Post</a>` : ''}
+	<div class="entry has-submenu" @entry-focus='playlist.loadTags("${data.sound.id}")' @entry-blur='playlist.abortTags("${data.sound.id}")'>
+		Details
+		<div class="dialog submenu tags-dialog" @click=":stop" data-sound-id="${data.sound.id}" style="inset: 0px auto auto 100%;">
+			${Player.playlist.tagsDialogTemplate(data.sound)}
+		</div>
+	</div>
 	<div class="entry has-submenu">
 		Open
 		<div class="dialog submenu" style="inset: 0px auto auto 100%;">
