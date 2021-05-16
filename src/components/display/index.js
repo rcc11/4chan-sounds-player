@@ -10,6 +10,8 @@ const dismissedContentCache = {};
 const dismissedRestoreCache = {};
 
 const noSleep = typeof NoSleep === 'function' && new NoSleep();
+const enableNoSleep = () => noSleep.enable();
+const disableNoSleep = () => noSleep.disable();
 
 module.exports = {
 	atRoot: [ 'show', 'hide' ],
@@ -365,9 +367,9 @@ module.exports = {
 		if (!noSleep || !!newValue === Player.display._noSleepEnabled) {
 			return;
 		}
-		Player.audio[action]('play', noSleep.enable);
-		Player.audio[action]('pause', noSleep.disable);
-		Player.audio[action]('ended', noSleep.disable);
+		Player.audio[action]('play', enableNoSleep);
+		Player.audio[action]('pause', disableNoSleep);
+		Player.audio[action]('ended', disableNoSleep);
 		Player.display._noSleepEnabled = !!newValue;
 		if (!Player.audio.paused) {
 			noSleep[newValue ? 'enable' : 'disable']();
