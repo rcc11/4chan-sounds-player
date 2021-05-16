@@ -99,11 +99,12 @@
 	border-radius: .3rem;
 }
 
-pre.option{
+pre.option {
 	display: inline;
 	background: #f5f5f5;
 	border: 1px solid rgb(183, 197, 217);
 	border-radius: 4px;
 	padding: 0 .3em;
 	font-size: 0.9em;
+	white-space: nowrap;
 }

@@ -32,16 +32,22 @@ module.exports = {
 		// Keey track of the hover image element.
 		Player.on('rendered', Player.playlist.afterRender);
 
-		// Update the UI when a new sound plays, and scroll to it.
+		// Various things to do when a new sound plays.
 		Player.on('playsound', sound => {
+			// Update the image/video.
 			Player.playlist.showImage(sound);
+			// Update the previously and the new playing rows.
 			Player.$all(`.${ns}-list-item.playing, .${ns}-list-item[data-id="${Player.playing.id}"]`).forEach(el => {
 				const newItem = Player.playlist.listTemplate({ sounds: [ Player.sounds.find(s => s.id === el.dataset.id) ] });
 				_.element(newItem, el, 'beforebegin');
 				el.parentNode.removeChild(el);
 			});
+			// If the player isn't fullscreen scroll to the playing item.
 			Player.config.viewStyle !== 'fullscreen' && Player.playlist.scrollToPlaying('nearest');
+			// Scroll the thread to the playing post.
 			Player.config.autoScrollThread && sound.post && (location.href = location.href.split('#')[0] + '#' + postIdPrefix + sound.post);
+			// Load tags from the audio file.
+			Player.playlist.loadTags(Player.playing.id);
 		});
 
 		// Reset to the placeholder image when the player is stopped.
@@ -67,6 +73,12 @@ module.exports = {
 
 		// Listen for the playlist being shuffled/ordered.
 		Player.on('config:shuffle', Player.playlist._handleShuffle);
+
+		// Update an open tags info dialog when tags are loaded for a sound.
+		Player.on('tags-loaded', sound => {
+			const dialog = Player.$(`.tags-dialog[data-sound-id="${sound.id}"]`);
+			dialog && _.elementHTML(dialog, Player.playlist.tagsDialogTemplate(sound));
+		});
 
 		// Maintain changes to the user templates it's dependent values
 		Player.userTemplate.maintain(Player.playlist, 'rowTemplate', [ 'shuffle' ]);
@@ -492,26 +504,23 @@ module.exports = {
 		}
 		// Wait a bit before fetching to ignore the mouse going across.
 		Player.playlist.tagLoadTO[id] = setTimeout(() => {
+			const reader = new jsmediatags.Reader(sound.src);
 			// Replace XMLHttpRequest to avoid cors.
-			xhrReplacer.toGM();
-			try {
-				jsmediatags.read(sound.src, {
-					onSuccess: handleTags,
-					onError: handleTags
-				});
-			} catch (err) {
-				handleTags(err);
-			}
+			reader._findFileReader().prototype._createXHRObject = () => new xhrReplacer.GM();
+			// Load and read the tags.
+			reader.read({
+				onSuccess: handleTags,
+				onError: handleTags
+			});
 		}, 150);
 
 		function handleTags(data) {
-			// Restore the native XMLHttpRequest.
-			xhrReplacer.toNative();
-			// Store all the strings tags that jsmediatags has set.
-			sound.tags = data && Object.entries(data.tags || {}).filter(([ name, value ]) => typeof value === 'string');
-			// Update the info dialog if it's still open.
-			const dialog = Player.$(`.tags-dialog[data-sound-id="${id}"]`);
-			dialog && _.elementHTML(dialog, Player.playlist.tagsDialogTemplate(sound));
+			// Store all the string tags that jsmediatags has set.
+			sound.tags = data && Object.entries(data.tags || {}).reduce((tags, [ name, value ]) => {
+				typeof value === 'string' && (tags[name] = value);
+				return tags;
+			}, {});
+			Player.trigger('tags-loaded', sound);
 		}
 	},
 

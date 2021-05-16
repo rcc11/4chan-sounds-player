@@ -80,8 +80,7 @@ module.exports = {
 			Player.display.updateStylesheet();
 
 			// Create the main player. For native threads put it in the threads to get free quote previews.
-			const isThread = document.body.classList.contains('is_thread');
-			const parent = isThread && !isChanX && document.body.querySelector('.board') || document.body;
+			const parent = Thread && !isChanX && document.body.querySelector('.board') || document.body;
 			Player.container = _.element(Player.display.template(), parent);
 
 			await Player.trigger('rendered');

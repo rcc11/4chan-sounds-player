@@ -43,16 +43,57 @@ module.exports = {
 			// Keep the media metadata updated.
 			Player.audio.addEventListener('pause', () => navigator.mediaSession.playbackState = 'paused');
 			Player.audio.addEventListener('ended', () => navigator.mediaSession.playbackState = 'paused');
-			Player.audio.addEventListener('play', function () {
-				navigator.mediaSession.playbackState = 'playing';
-				navigator.mediaSession.metadata = new MediaMetadata({
-					title: Player.playing.title,
-					artist: '4chan Sounds Player',
-					album: document.title,
-					artwork: [ { src: Player.playing.thumb } ]
-				});
-			});
+			Player.audio.addEventListener('play', Player.hotkeys.setMediaMetadata);
+			Player.audio.addEventListener('ratechange', Player.hotkeys.setMediaPosition);
+			Player.audio.addEventListener('seeked', Player.hotkeys.setMediaPosition);
+			Player.on('tags-loaded', sound => sound === Player.playing && Player.hotkeys.setMediaMetadata());
 		}
+	},
+
+	async setMediaMetadata() {
+		const sound = Player.playing;
+		const tags = sound.tags || {};
+		navigator.mediaSession.playbackState = 'playing';
+		const metadata = {
+			title: [ tags.title, sound.name ].filter(Boolean).join(' ~ ') || sound.title,
+			artist: [ tags.artist, `/${Board}/ - ${Thread || '4chan Sounds Player'}` ].filter(Boolean).join(' ~ '),
+			album: tags.album || document.title,
+			artwork: [
+				{
+					src: Player.playing.thumb,
+					sizes: '125x125'
+				}
+			]
+		};
+
+		// If it's not a video add the full image to artwork. (TODO: grab the first frame for videos)
+		// If we have the dimensions already add the artwork, otherwise load them then reset the metadata.
+		if (!Player.isVideo) {
+			if (sound._fullDimension) {
+				metadata.artwork.push({
+					src: Player.playing.image,
+					sizes: sound._fullDimension
+				});
+			} else {
+				const img = new Image();
+				img.onload = function () {
+					sound._fullDimension = img.width + 'x' + img.height;
+					Player.hotkeys.setMediaMetadata();
+				};
+				img.src = Player.playing.image;
+			}
+		}
+
+		navigator.mediaSession.metadata = new MediaMetadata(metadata);
+		Player.hotkeys.setMediaPosition();
+	},
+
+	setMediaPosition() {
+		navigator.mediaSession.setPositionState({
+			duration: Player.audio.duration || 0,
+			playbackRate: Player.audio.playbackRate,
+			position: Player.audio.currentTime
+		});
 	},
 
 	addHandler: () => {

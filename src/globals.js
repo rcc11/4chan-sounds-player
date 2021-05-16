@@ -7,6 +7,7 @@ window.ns = 'fcsp';
 window.is4chan = location.hostname.includes('4chan.org') || location.hostname.includes('4channel.org');
 window.isChanX = document.documentElement && document.documentElement.classList.contains('fourchan-x');
 window.Board = location.pathname.split('/')[1];
+window.Thread = (location.href.match(/\/thread\/(\d+)/) || [])[1];
 
 // Determine what type of site this is. Default to FoolFuuka as the most common archiver.
 window.Site = is4chan ? '4chan'

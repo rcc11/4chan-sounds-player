@@ -1,19 +1,12 @@
-let autoRestore = false;
-
-function toGM(restore) {
-	autoRestore = +restore || false;
+function toGM() {
 	XMLHttpRequest = xhrGM;
 };
  function toNative() {
-	autoRestore = false;
 	XMLHttpRequest = xhrNative;
 };
 
 const xhrNative = XMLHttpRequest;
 const xhrGM = function() {
-	if (typeof autoRestore === 'number' && --autoRestore == 0) {
-		toNative();
-	}
 	let method, url, headers = {}, mime;
 	this.open = (m, u) => {
 		method = m;
@@ -51,5 +44,7 @@ const xhrGM = function() {
 	return this;
 };
 
+module.exports.GM = xhrGM;
+module.exports.native = xhrNative;
 module.exports.toGM = toGM;
 module.exports.toNative = toNative;

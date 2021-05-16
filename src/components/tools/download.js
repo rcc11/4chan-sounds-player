@@ -224,7 +224,7 @@ const downloadTool = module.exports = {
 	},
 
 	saveThreadDownload() {
-		const threadNum = (location.href.match(/\/thread\/(\d+)/) || [ null, '-' ])[1];
+		const threadNum = Thread || '-';
 		const a = _.element(`<a href="${URL.createObjectURL(Player.tools.threadDownloadBlob)}" download="sounds-thread-${Board}-${threadNum}" rel="noopener" target="_blank"></a>`);
 		a.click();
 		URL.revokeObjectURL(a.href);
