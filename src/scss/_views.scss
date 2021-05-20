@@ -1,4 +1,4 @@
-.#{$ns}-threads, .#{$ns}-settings, .#{$ns}-tools, .#{$ns}-player {
+.#{$ns}-threads, .#{$ns}-settings, .#{$ns}-tools, .#{$ns}-player, .fullscreen-details {
 	display: none;
 }
 
@@ -47,7 +47,8 @@
 			cursor: none;
 		}
 
-		& .#{$ns}-controls {
+		& .#{$ns}-controls,
+		& .fullscreen-details {
 			opacity: 0;
 		}
 	}
@@ -66,5 +67,20 @@
 		position: absolute;
 		top: 100%;
 		width: 100%;
+	}
+	& .fullscreen-details {
+		display: block;
+		opacity: .7;
+		position: absolute;
+		top: .5rem;
+		left: .5rem;
+		text-align: left;
+		background: #{map-get($colors, controls_background)};
+		color: #{map-get($colors, controls_inactive)};
+		color: white;
+		padding: .5rem 1rem;
+		font-size: 1.5rem;
+		line-height: 1.5rem;
+		border-radius: .375rem;
 	}
 }

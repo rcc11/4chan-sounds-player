@@ -19,7 +19,7 @@ module.exports = {
 	template: require('./templates/body.tpl'),
 	_noSleepEnabled: false,
 
-	initialize: async function () {
+	async initialize() {
 		try {
 			Player.display.dismissed = (await GM.getValue('dismissed')).split(',');
 		} catch (err) {
@@ -38,12 +38,15 @@ module.exports = {
 		// Close dialogs when the user clicks anywhere or presses escape.
 		document.body.addEventListener('click', Player.display.closeDialogs);
 		document.body.addEventListener('keydown', e => e.key === 'Escape' && Player.display.closeDialogs(e));
+		// Update fullscreen details when details are changed/loaded
+		Player.on('playsound', Player.display.updateFullScreenDetails);
+		Player.on('tags-loaded', sound => sound === Player.playing && Player.display.updateFullScreenDetails());
 	},
 
 	/**
 	 * Create the player show/hide button in to the 4chan X header.
 	 */
-	createPlayerButton: function () {
+	createPlayerButton() {
 		if (Site === 'FoolFuuka') {
 			// Add a sounds link in the nav for archives
 			const nav = document.querySelector('.navbar-inner .nav:nth-child(2)');
@@ -71,7 +74,7 @@ module.exports = {
 	/**
 	 * Render the player.
 	 */
-	render: async function () {
+	async render() {
 		try {
 			if (Player.container) {
 				document.body.removeChild(Player.container);
@@ -93,7 +96,7 @@ module.exports = {
 		}
 	},
 
-	updateStylesheet: function () {
+	updateStylesheet() {
 		// Insert the stylesheet if it doesn't exist. 4chan X polyfill, sound player styling, and user styling.
 		Player.stylesheet = Player.stylesheet || _.element('<style id="sound-player-css"></style>', document.head);
 		Player.stylesheet.innerHTML = (!isChanX ? '/* 4chanX Polyfill */\n\n' + css4chanXPolyfillTemplate() : '')
@@ -103,7 +106,7 @@ module.exports = {
 	/**
 	 * Change what view is being shown
 	 */
-	setViewStyle: async function (style) {
+	async setViewStyle(style) {
 		// Get the size and style prior to switching.
 		const previousStyle = Player.config.viewStyle;
 
@@ -132,7 +135,7 @@ module.exports = {
 	/**
 	 * Togle the display status of the player.
 	 */
-	toggle: function () {
+	toggle() {
 		if (Player.container.style.display === 'none') {
 			Player.show();
 		} else {
@@ -143,7 +146,7 @@ module.exports = {
 	/**
 	 * Hide the player. Stops polling for changes, and pauses the aduio if set to.
 	 */
-	hide: function () {
+	hide() {
 		Player.container.style.display = 'none';
 
 		Player.isHidden = true;
@@ -153,7 +156,7 @@ module.exports = {
 	/**
 	 * Show the player. Reapplies the saved position/size, and resumes loaded amount polling if it was paused.
 	 */
-	show: async function () {
+	async show() {
 		if (!Player.container.style.display) {
 			return;
 		}
@@ -166,7 +169,7 @@ module.exports = {
 	/**
 	 * Stop playback and close the player.
 	 */
-	close: async function () {
+	async close() {
 		Player.stop();
 		Player.hide();
 	},
@@ -174,7 +177,7 @@ module.exports = {
 	/**
 	 * Toggle the video/image and controls fullscreen state
 	 */
-	toggleFullScreen: async function () {
+	async toggleFullScreen() {
 		if (!document.fullscreenElement) {
 			// Make sure the player (and fullscreen contents) are visible first.
 			if (Player.isHidden) {
@@ -189,7 +192,7 @@ module.exports = {
 		}
 	},
 
-	_fullscreenMouseMove: function () {
+	_fullscreenMouseMove() {
 		Player.container.classList.remove('cursor-inactive');
 		Player.display.fullscreenCursorTO && clearTimeout(Player.display.fullscreenCursorTO);
 		Player.display.fullscreenCursorTO = setTimeout(function () {
@@ -197,10 +200,18 @@ module.exports = {
 		}, 2000);
 	},
 
+	updateFullScreenDetails() {
+		const tags = Player.playing.tags || {};
+		Player.$('.fullscreen-details').innerHTML = [
+			Player.playing.name,
+			[ tags.title, tags.artist ].filter(Boolean).join(' - ')
+		].filter(Boolean).join(' • ') || Player.playing.title;
+	},
+
 	/**
 	 * Handle the fullscreen state being changed
 	 */
-	_handleFullScreenChange: function () {
+	_handleFullScreenChange() {
 		if (document.fullscreenElement) {
 			Player.display.setViewStyle('fullscreen');
 			document.querySelector(`.${ns}-image-link`).removeAttribute('href');
@@ -213,7 +224,7 @@ module.exports = {
 		Player.controls.preventWrapping();
 	},
 
-	restore: async function (restore) {
+	async restore(restore) {
 		const restoreIndex = Player.display.dismissed.indexOf(restore);
 		if (restore && restoreIndex > -1) {
 			Player.display.dismissed.splice(restoreIndex, 1);
@@ -225,7 +236,7 @@ module.exports = {
 		}
 	},
 
-	dismiss: async function (dismiss) {
+	async dismiss(dismiss) {
 		if (dismiss && !Player.display.dismissed.includes(dismiss)) {
 			Player.display.dismissed.push(dismiss);
 			Player.$all(`[data-dismiss-id="${dismiss}"]`).forEach(el => {
@@ -236,7 +247,7 @@ module.exports = {
 		}
 	},
 
-	ifNotDismissed: function (name, restore, text) {
+	ifNotDismissed(name, restore, text) {
 		dismissedContentCache[name] = text;
 		dismissedRestoreCache[name] = restore;
 		return Player.display.dismissed.includes(name)
@@ -247,7 +258,7 @@ module.exports = {
 	/**
 	 * Display a menu
 	 */
-	showMenu: function (relative, menu, parent) {
+	showMenu(relative, menu, parent) {
 		const dialog = typeof menu === 'string' ? _.element(menus[menu]()) : menu;
 		Player.display.closeDialogs();
 		parent || (parent = Player.container);
@@ -270,7 +281,7 @@ module.exports = {
 		Player.trigger('menu-open', dialog);
 	},
 
-	_setFocusedMenuItem: function (e) {
+	_setFocusedMenuItem(e) {
 		const submenu = e.currentTarget.querySelector('.submenu');
 		const menu = e.currentTarget.closest('.dialog');
 		const currentFocus = menu.querySelectorAll('.focused');
@@ -288,7 +299,7 @@ module.exports = {
 	/**
 	 * Close any open menus.
 	 */
-	closeDialogs: function (e) {
+	closeDialogs(e) {
 		document.querySelectorAll(`.${ns}-dialog`).forEach(dialog => {
 			const clickableElements = (dialog._keepOpenFor || []).concat(dialog.dataset.allowClick ? dialog : []);
 			// Close the dialog if there's no event...
@@ -304,7 +315,7 @@ module.exports = {
 		});
 	},
 
-	runTitleMarquee: async function () {
+	async runTitleMarquee() {
 		Player.display._marqueeTO = setTimeout(Player.display.runTitleMarquee, 1000);
 		document.querySelectorAll(`.${ns}-title-marquee`).forEach(title => {
 			const offset = title.parentNode.getBoundingClientRect().width - (title.scrollWidth + 1);
