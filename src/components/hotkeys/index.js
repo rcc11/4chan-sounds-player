@@ -55,8 +55,8 @@ module.exports = {
 		const tags = sound.tags || {};
 		navigator.mediaSession.playbackState = 'playing';
 		const metadata = {
-			title: [ tags.title, sound.name ].filter(Boolean).join(' ~ ') || sound.title,
-			artist: [ tags.artist, `/${Board}/ - ${Thread || '4chan Sounds Player'}` ].filter(Boolean).join(' ~ '),
+			title: tags.title || sound.name || sound.title,
+			artist: tags.artist ||  `/${Board}/ - ${Thread || '4chan Sounds Player'}`,
 			album: tags.album || document.title,
 			artwork: [
 				{
