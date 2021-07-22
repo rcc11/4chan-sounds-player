@@ -51,18 +51,28 @@ module.exports = {
 
 		// Apply the computed style to the color config.
 		const colorSettingMap = {
-			'colors.text': 'color',
-			'colors.background': 'backgroundColor',
-			'colors.odd_row': 'backgroundColor',
-			'colors.border': 'borderBottomColor',
+			'colors.text': style.color,
+			'colors.background': style.backgroundColor,
+			'colors.odd_row': style.backgroundColor,
+			'colors.border': style.borderBottomColor,
 			// If the border is the same color as the text don't use it as a background color.
-			'colors.even_row': style.borderBottomColor === style.color ? 'backgroundColor' : 'borderBottomColor',
+			'colors.even_row': style.borderBottomColor === style.color ? style.backgroundColor : style.borderBottomColor,
 			// Set this for use in custom css and templates
-			'colors.page_background': 'page_background'
+			'colors.page_background': window.getComputedStyle(document.body).backgroundColor,
+			// Playing row is a more saturated and brighter odd row.
+			'colors.playing': (() => {
+				const oddRowHSV = Player.colorpicker.rgb2hsv(...Player.colorpicker.parseRGB(style.backgroundColor));
+				const playingRGB = Player.colorpicker.hsv2rgb(
+					oddRowHSV[0],
+					Math.min(1, oddRowHSV[1] + 0.25),
+					Math.min(1, oddRowHSV[2] + 0.15)
+				);
+				return `rgb(${playingRGB[0]}, ${playingRGB[1]}, ${playingRGB[2]})`;
+			})()
 		};
 		settingsConfig.find(s => s.property === 'colors').settings.forEach(setting => {
 			const updateConfig = opts.force || (setting.default === _.get(Player.config, setting.property));
-			colorSettingMap[setting.property] && (setting.default = style[colorSettingMap[setting.property]]);
+			colorSettingMap[setting.property] && (setting.default = colorSettingMap[setting.property]);
 			updateConfig && Player.set(setting.property, setting.default, { bypassSave: true, bypassRender: true, bypassStylesheet: true });
 		});
 

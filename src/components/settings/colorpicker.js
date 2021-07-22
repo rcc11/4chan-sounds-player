@@ -4,11 +4,11 @@ const HEIGHT = 200;
 const WIDTH = 200;
 
 module.exports = {
-	initialize: function () {
+	initialize() {
 		Player.on('menu-close', menu => menu._input && (delete menu._input._colorpicker));
 	},
 
-	create: function (e) {
+	create(e) {
 		const parent = e.currentTarget.parentNode;
 		const input = e.currentTarget.nodeName === 'INPUT' ? e.currentTarget : parent.querySelector('input');
 		const preview = parent.querySelector(`.${ns}-cp-preview`);
@@ -19,9 +19,7 @@ module.exports = {
 		Player.display.closeDialogs();
 
 		// Get the color from the preview.
-		const previewColor = window.getComputedStyle(preview).backgroundColor;
-		const rgbMatch = previewColor.match(/rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)/);
-		const rgb = [ +rgbMatch[1], +rgbMatch[2], +rgbMatch[3], isNaN(+rgbMatch[4]) ? 1 : rgbMatch[4] ];
+		const rgb = Player.colorpicker.parseRGB(window.getComputedStyle(preview).backgroundColor);
 
 		const colorpicker = _.element(colorpickerTemplate({ HEIGHT, WIDTH, rgb }), parent);
 		Player.position.showRelativeTo(colorpicker, input);
@@ -35,7 +33,7 @@ module.exports = {
 		Player.colorpicker.updateOutput(colorpicker);
 	},
 
-	hueMove: function (e) {
+	hueMove(e) {
 		const colorpicker = e.currentTarget.closest(`.${ns}-colorpicker`);
 		const y = Math.max(0, e.clientY - e.currentTarget.getBoundingClientRect().top);
 		colorpicker._colorpicker.hsv[0] = y / HEIGHT;
@@ -47,7 +45,7 @@ module.exports = {
 		Player.colorpicker.updateOutput(colorpicker, true);
 	},
 
-	satMove: function (e) {
+	satMove(e) {
 		const colorpicker = e.currentTarget.closest(`.${ns}-colorpicker`);
 		const saturationPosition = e.currentTarget.querySelector('.position');
 		const x = Math.max(0, e.clientX - e.currentTarget.getBoundingClientRect().left);
@@ -61,13 +59,13 @@ module.exports = {
 		Player.colorpicker.updateOutput(colorpicker, true);
 	},
 
-	inputRGBA: function (e) {
+	inputRGBA(e) {
 		const colorpicker = e.currentTarget.closest(`.${ns}-colorpicker`);
 		colorpicker._colorpicker.rgb[+e.currentTarget.getAttribute('data-color')] = e.currentTarget.value;
 		Player.colorpicker.updateOutput(colorpicker);
 	},
 
-	updateOutput: function (colorpicker, fromHSV) {
+	updateOutput(colorpicker, fromHSV) {
 		const order = fromHSV ? [ 'hsv', 'rgb' ] : [ 'rgb', 'hsv' ];
 		colorpicker._colorpicker[order[1]] = Player.colorpicker[`${order[0]}2${order[1]}`](...colorpicker._colorpicker[order[0]]);
 		const [ r, g, b, a ] = colorpicker._colorpicker.rgb;
@@ -92,7 +90,7 @@ module.exports = {
 		colorpicker.querySelector('.output-color').style.background = `rgb(${r}, ${g}, ${b}, ${a})`;
 	},
 
-	apply: function (e) {
+	apply(e) {
 		// Update the input.
 		const colorpicker = e.currentTarget.closest(`.${ns}-colorpicker`);
 		const [ r, g, b, a ] = colorpicker._colorpicker.rgb;
@@ -108,7 +106,12 @@ module.exports = {
 		input.blur();
 	},
 
-	hsv2rgb: function (h, s, v, a) {
+	parseRGB(str) {
+		const rgbMatch = str.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+		return [ +rgbMatch[1] || 0, +rgbMatch[2] || 0, +rgbMatch[3] || 0, isNaN(+rgbMatch[4]) ? 1 : rgbMatch[4] ];
+	},
+
+	hsv2rgb(h, s, v, a) {
 		const i = Math.floor((h * 6));
 		const f = (h * 6) - i;
 		const p = v * (1 - s);
@@ -123,11 +126,11 @@ module.exports = {
 			Math.round(r * 255),
 			Math.round(g * 255),
 			Math.round(b * 255),
-			a
+			a || 1
 		];
 	},
 
-	rgb2hsv: function (r, g, b, a) {
+	rgb2hsv(r, g, b, a) {
 		const max = Math.max(r, g, b);
 		const min = Math.min(r, g, b);
 		const d = max - min;
@@ -144,10 +147,10 @@ module.exports = {
 		}
 		/* eslint-enable max-statements-per-line */
 
-		return [ h, s, v, a ];
+		return [ h, s, v, a || 1 ];
 	},
 
-	_updatePreview: function (e) {
+	_updatePreview(e) {
 		const value = e.currentTarget.value;
 		const preview = e.currentTarget.parentNode.querySelector(`.${ns}-cp-preview`);
 		preview.style.background = value;
