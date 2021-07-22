@@ -3,7 +3,7 @@ data.displayMethod === null ? '' : `
 	<div class="${ns}-col ${ns}-heading">
 		<span>
 			${data.title}
-			${data.description ? `<i class="${ns}-info-circle ${ns}-popover" data-content="${_.escAttr(data.description)}">${Icons.infoCircle}</i>` : ''}
+			${data.description ? `<i class="${ns}-info-circle ${ns}-popover ${data.wideDesc ? 'wide' : ''}" data-content="${_.escAttr(data.description)}">${Icons.infoCircle}</i>` : ''}
 		</span>
 		${!data.actions || !data.actions.length ? '' : `<div style="display: inline-block; margin: 0 .25rem">
 			${(data.actions || []).map(action => `

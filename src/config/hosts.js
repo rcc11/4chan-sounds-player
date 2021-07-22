@@ -15,14 +15,14 @@ module.exports = [
 		displayMethod: 'settings.hosts.template',
 		parse: 'settings.hosts.parse',
 		looseCompare: true,
-		dismissTextId: 'uplodHostSettings',
-		dismissRestoreText: 'Show Help',
-		text: 'Properties'
-			+ '<br><strong>Name</strong>: A unique identifier.'
-			+ '<br><strong>URL</strong>: The URL to post the file to.'
-			+ '<br><strong>Response Path/Match</strong>: A key path or regular expression to locate the uploaded filename in the response.'
-			+ '<br><strong>File URL Format</strong>: The URL format for uploaded sounds. %s is replaced with the result of response path/match if given or the full response.'
-			+ '<br><strong>Data</strong>: The form data for the upload (as JSON). Specify the file using $file.',
+		wideDesc: true,
+		description: 'Each host needs a unique name and URL that points to an upload endpoint. '
+			+ '<br><br>The form data is a JSON representation of the data sent with the upload, with the file being indicated as "$file". '
+			+ 'The form data and headers allow for any other information to be sent, such as a user token.'
+			+ '<br><br>A response path or match can optionally be provided to get a link to the uploaded file from the response. '
+			+ 'Use "Response Path" for JSON responses to set where a link or filename can be found in the response. '
+			+ 'For all other responses "Response Match" takes a regular expression (without slashes) that is applied to the result, with the first capture group being the link or filename. '
+			+ 'File URL format can be set if you only have part of the link, such as the filename. The response, or response path/match result, will be inserted in place of %s.',
 		mix: true,
 		default: {
 			catbox: {

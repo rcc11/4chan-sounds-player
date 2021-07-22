@@ -348,8 +348,9 @@ module.exports = {
 
 	_popoverMouseEnter: e => {
 		const icon = e.currentTarget;
+		const wide = icon.classList.contains('wide');
 		if (!icon.infoEl || !Player.container.contains(icon.infoEl)) {
-			icon.infoEl = _.element(`<div class="${ns}-popover-body ${ns}-dialog dialog">${icon.dataset.content}</div>`, Player.container);
+			icon.infoEl = _.element(`<div class="${ns}-popover-body ${wide ? 'wide' : ''} ${ns}-dialog dialog">${icon.dataset.content}</div>`, Player.container);
 			icon.infoEl._keepOpenFor = [ icon ];
 			Player.position.showRelativeTo(icon.infoEl, icon);
 		}

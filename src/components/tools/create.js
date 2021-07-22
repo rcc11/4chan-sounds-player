@@ -287,7 +287,7 @@ const createTool = module.exports = {
 						: host.responseMatch
 							? (response.responseText.match(new RegExp(host.responseMatch)) || [])[1]
 							: response.responseText;
-					const uploadedUrl = host.soundUrl ? host.soundUrl.replace('%s', responseVal) : responseVal;
+					const uploadedUrl = (host.soundUrl ? host.soundUrl.replace('%s', responseVal) : responseVal).trim();
 					Player.$(`.${ns}-upload-status-${idx}`).innerHTML = `Uploaded ${file.name} to <a href="${uploadedUrl}" target="_blank">${uploadedUrl}</a>`;
 					resolve(uploadedUrl);
 				},

@@ -97,6 +97,9 @@
 	max-width: 12rem;
 	text-align: center;
 	border-radius: .3rem;
+	&.wide {
+		max-width: 20rem;
+	}
 }
 
 pre.option {
