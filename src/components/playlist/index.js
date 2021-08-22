@@ -179,7 +179,8 @@ module.exports = {
 
 	addFromDrop(e) {
 		for (let item of e.dataTransfer.items) {
-			Player.playlist._scanEntry(item.getAsEntry ? item.getAsEntry() : item.webkitGetAsEntry());
+			const entry = item.getAsEntry ? item.getAsEntry() : item.webkitGetAsEntry();
+			entry && Player.playlist._scanEntry(entry);
 		}
 	},
 
