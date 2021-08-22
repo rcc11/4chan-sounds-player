@@ -1,4 +1,12 @@
-`<a class="${ns}-image-link" target="_blank">
+`<a
+	class="${ns}-image-link"
+	target="_blank"
+	style="height: ${Player.config.imageHeight}px"
+	@pointdragstart="playlist.expandImageStart:prevent"
+	@pointdrag="playlist.expandImage:prevent:move"
+	@pointdragend="playlist.expandImageEnd:prevent"
+	@click="playlist.expandImageClick"
+>
 	<div class="fullscreen-details"></div>
 	<div class="image-color-overlay"></div>
 	<img class="${ns}-background-image"></img>

@@ -94,8 +94,10 @@ module.exports = {
 				if (mods.disabled && e.currentTarget.classList.contains('disabled')) {
 					return;
 				}
-				mods.prevent && e.preventDefault();
-				mods.stop && e.stopPropagation();
+				try {
+					mods.prevent && e.preventDefault();
+					mods.stop && e.stopPropagation();
+				} catch (e) { }
 				eventArgs.forEach(([ idx, path ]) => args.splice(idx, 1, _.get(e, path)));
 				f && f.apply(null, args || [ e ]);
 			};

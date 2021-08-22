@@ -29,8 +29,6 @@
 
 ##{$ns}-container[data-view-style="playlist"] {
 	& .#{$ns}-image-link {
-		height: 125px;
-		max-height: 125px;
 		flex-shrink: 0;
 	}
 }

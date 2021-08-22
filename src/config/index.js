@@ -15,6 +15,10 @@ module.exports = [
 		property: 'showPlaylistSearch',
 		default: true
 	},
+	{
+		property: 'imageHeight',
+		default: 125
+	},
 
 	// These are for availability in templates
 	{
