@@ -88,7 +88,7 @@ module.exports = {
 	 * Render the playlist.
 	 */
 	render: function () {
-		_.elementHTML(Player.$(`.${ns}-list-container`), Player.playlist.listTemplate());
+		_.elementHTML(Player.$(`.${ns}-list-container`), Player.playlist.listTemplate({ search: true }));
 		Player.playlist.afterRender();
 	},
 

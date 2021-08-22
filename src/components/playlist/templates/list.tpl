@@ -1,4 +1,11 @@
-(data.sounds || Player.sounds).map(sound =>
+(!data.search ? '' : `<input
+	type="input"
+	class="${ns}-playlist-search"
+	@keyup="playlist._handleSearch"
+	style="min-width: 100%; box-sizing: border-box; ${!Player.config.showPlaylistSearch ? 'display: none;' : ''}"
+	placeholder="Search"
+/>`)
++ (data.sounds || Player.sounds).map(sound =>
 	`<div
 		class="${ns}-list-item ${ns}-row ${sound.playing ? 'playing' : ''} ${ns}-align-center ${ns}-hover-trigger"
 		@click="playlist.handleSelect"

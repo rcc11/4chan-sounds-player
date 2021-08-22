@@ -10,14 +10,7 @@ ${Player.controls.template({
 	audioId: Player.audio.dataset.id,
 	actions: Player.controls.actions
 })}
-<input
-	type="input"
-	class="${ns}-playlist-search"
-	@keyup="playlist._handleSearch"
-	style="min-width: 100%; box-sizing: border-box; ${!Player.config.showPlaylistSearch ? 'display: none;' : ''}"
-	placeholder="Search"
-/>
 <div class="${ns}-list-container">
-	${Player.playlist.listTemplate(data)}
+	${Player.playlist.listTemplate({ search: true })}
 </div>
 <img class="${ns}-hover-image">`
