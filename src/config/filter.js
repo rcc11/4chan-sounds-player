@@ -21,7 +21,8 @@ module.exports = [
 			'dmca.gripe',
 			'lewd.se',
 			'pomf.cat',
-			'zz.ht'
+			'zz.ht',
+			'zz.fo'
 		],
 		actions: [ { title: 'Reset', handler: 'settings.reset("allow"):prevent' } ],
 		displayGroup: 'Filter',

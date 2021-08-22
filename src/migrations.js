@@ -38,5 +38,16 @@ module.exports = [
 				playHoveredImages: [ true, false ]
 			};
 		}
+	},
+	{
+		version: '3.4.7',
+		name: 'zz-ht-to-zz-fo',
+		async run() {
+			const original = [ ...Player.config.allow ];
+			Player.config.allow.push('zz.fo');
+			return {
+				allow: [ original, Player.config.allow ]
+			}
+		}
 	}
 ];
