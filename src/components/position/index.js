@@ -12,8 +12,8 @@ module.exports = {
 		Player.on('show', async function () {
 			const [ top, left ] = (await GM.getValue('position') || '').split(':');
 			const [ width, height ] = (await GM.getValue('size') || '').split(':');
-			+top && +left && Player.position.move(top, left, true);
-			+width && +height && Player.position.resize(width, height);
+			+width && +height && Player.position.resize(width, height, true);
+			+top && +left && Player.position.move(top, left);
 
 			if (Player.config.limitPostWidths) {
 				Player.position.setPostWidths();
@@ -132,12 +132,10 @@ module.exports = {
 		if (!Player.container || Player.config.viewStyle === 'fullscreen') {
 			return;
 		}
-		const { bottom } = Player.position.getHeaderOffset();
-		// Make sure the player isn't going off screen.
-		if (!allowOffscreen) {
-			height = Math.min(height, document.documentElement.clientHeight - Player.container.offsetTop - bottom);
-			width = Math.min(width, document.documentElement.clientWidth - Player.container.offsetLeft);
-		}
+		const { top, bottom } = Player.position.getHeaderOffset();
+		// Make sure the player isn't larger than the screen, or going off screen unless allowed.
+		height = Math.min(height, document.documentElement.clientHeight - (allowOffscreen ? (top + bottom) : Player.container.offsetTop + bottom));
+		width = Math.min(width, document.documentElement.clientWidth - (allowOffscreen ? 0 : Player.container.offsetLeft));
 
 		Player.container.style.width = width + 'px';
 		Player.container.style.height = height + 'px';
