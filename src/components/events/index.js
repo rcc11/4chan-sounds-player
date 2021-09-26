@@ -29,7 +29,7 @@ module.exports = {
 	// Holder of event handlers.
 	_events: { },
 
-	initialize: function () {
+	initialize() {
 		const eventLocations = { Player, ...Player.components };
 		const audio = [];
 
@@ -57,7 +57,7 @@ module.exports = {
 	 *
 	 * @param {Element} element The element to set event listeners for.
 	 */
-	apply: function (element) {
+	apply(element) {
 		// Find all elements with event attributes, including the given element.
 		const els = Array.from(element.querySelectorAll(evtSelector));
 		element.matches(evtSelector) && els.unshift(element);
@@ -137,7 +137,7 @@ module.exports = {
 	 * @param {String} evt The name of the events.
 	 * @param {function} handler The handler function.
 	 */
-	on: function (evt, handler) {
+	on(evt, handler) {
 		Player.events._events[evt] || (Player.events._events[evt] = []);
 		Player.events._events[evt].push(handler);
 	},
@@ -148,7 +148,7 @@ module.exports = {
 	 * @param {String} evt The name of the events.
 	 * @param {function} handler The handler function.
 	 */
-	off: function (evt, handler) {
+	off(evt, handler) {
 		const index = Player.events._events[evt] && Player.events._events[evt].indexOf(handler);
 		if (index > -1) {
 			Player.events._events[evt].splice(index, 1);
@@ -161,14 +161,14 @@ module.exports = {
 	 * @param {String} evt The name of the events.
 	 * @param {*} data Data passed to the handler.
 	 */
-	trigger: async function (evt, ...data) {
+	async trigger(evt, ...data) {
 		const events = Player.events._events[evt] || [];
 		for (let handler of events) {
 			await handler(...data);
 		}
 	},
 
-	clearMousedown: function (e) {
+	clearMousedown(e) {
 		if (Player._mousedown) {
 			Player._mousedown.releasePointerCapture(e.pointerId);
 			Player._mousedownMoveEl.removeEventListener('pointermove', Player._mousedownListener);

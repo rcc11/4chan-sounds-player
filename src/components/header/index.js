@@ -8,11 +8,11 @@ module.exports = {
 		outerClass: `${ns}-col-auto`
 	}),
 
-	initialize: function () {
+	initialize() {
 		Player.userTemplate.maintain(Player.header, 'headerTemplate');
 	},
 
-	render: function () {
+	render() {
 		_.elementHTML(Player.$(`.${ns}-header`), Player.header.template());
 	}
 };

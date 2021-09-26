@@ -2,7 +2,7 @@ module.exports = {
 	atRoot: [ 'togglePlay', 'play', 'pause', 'next', 'previous', 'stop', 'toggleMute', 'volumeUp', 'volumeDown' ],
 	public: [ 'togglePlay', 'play', 'pause', 'next', 'previous', 'stop', 'toggleMute', 'volumeUp', 'volumeDown' ],
 
-	initialize: function () {
+	initialize() {
 		// Keep this reference to switch Player.audio to standalone videos and back.
 		Player.controls._audio = Player.audio;
 	},
@@ -10,7 +10,7 @@ module.exports = {
 	/**
 	 * Switching being playing and paused.
 	 */
-	togglePlay: function () {
+	togglePlay() {
 		if (Player.audio.paused) {
 			Player.play();
 		} else {
@@ -21,8 +21,12 @@ module.exports = {
 	/**
 	 * Start playback.
 	 */
-	play: async function (sound, { paused } = {}) {
+	async play(sound, { paused } = {}) {
 		try {
+			// Handle id instead of sound object.
+			if (typeof sound === 'string') {
+				sound = Player.sounds.find(s => s.id === sound);
+			}
 			// If nothing is currently selected to play start playing the first sound.
 			if (!sound && !Player.playing && Player.sounds.length) {
 				sound = Player.sounds[0];
@@ -76,7 +80,7 @@ module.exports = {
 	/**
 	 * Handler to only start playback once the video and audio are both loaded.
 	 */
-	playOnceLoaded: function (e) {
+	playOnceLoaded(e) {
 		if (e.currentTarget.readyState > 3 && e.currentTarget._linked.readyState > 3) {
 			e.currentTarget.removeEventListener('canplaythrough', Player.actions.playOnceLoaded);
 			e.currentTarget._linked.removeEventListener('canplaythrough', Player.actions.playOnceLoaded);
@@ -94,14 +98,14 @@ module.exports = {
 	/**
 	 * Pause playback.
 	 */
-	pause: function () {
+	pause() {
 		Player.audio && Player.audio.pause();
 	},
 
 	/**
 	 * Stop playback.
 	 */
-	stop: function () {
+	stop() {
 		Player.audio.src = null;
 		Player.playing = null;
 		Player.isVideo = false;
@@ -112,14 +116,14 @@ module.exports = {
 	/**
 	 * Play the next sound.
 	 */
-	next: function (opts) {
+	next(opts) {
 		Player.actions._movePlaying(1, opts);
 	},
 
 	/**
 	 * Play the previous sound.
 	 */
-	previous: function (opts) {
+	previous(opts) {
 		// Over three seconds into a sound restarts it instead.
 		if (Player.audio.currentTime > 3) {
 			Player.audio.currentTime = 0;
@@ -128,7 +132,7 @@ module.exports = {
 		}
 	},
 
-	_movePlaying: function (direction, { force, group, paused } = {}) {
+	_movePlaying(direction, { force, group, paused } = {}) {
 		// If there's no sound fall out.
 		if (!Player.sounds.length) {
 			return;
@@ -159,21 +163,21 @@ module.exports = {
 	/**
 	 * Raise the volume by 5%.
 	 */
-	volumeUp: function () {
+	volumeUp() {
 		Player.audio.volume = Math.min(Player.audio.volume + 0.05, 1);
 	},
 
 	/**
 	 * Lower the volume by 5%.
 	 */
-	volumeDown: function () {
+	volumeDown() {
 		Player.audio.volume = Math.max(Player.audio.volume - 0.05, 0);
 	},
 
 	/**
 	 * Mute the audio, or reset it to the last volume prior to muting.
 	 */
-	toggleMute: function () {
+	toggleMute() {
 		Player.audio.volume = (Player._lastVolume || 0.5) * !Player.audio.volume;
 	}
 };

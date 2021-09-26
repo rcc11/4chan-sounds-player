@@ -1,4 +1,3 @@
-const { parseFiles, parseFileName } = require('../../file_parser');
 const { postIdPrefix } = require('../../selectors');
 const xhrReplacer = require('../../xhr-replace');
 
@@ -14,7 +13,7 @@ module.exports = {
 	listTemplate: require('./templates/list.tpl'),
 	tagsDialogTemplate: require('./templates/tags_dialog.tpl'),
 
-	initialize: function () {
+	initialize() {
 		// Keep track of the last view style so we can return to it.
 		Player.playlist._lastView = Player.config.viewStyle === 'playlist' || Player.config.viewStyle === 'image'
 			? Player.config.viewStyle
@@ -62,6 +61,7 @@ module.exports = {
 
 		// Reapply filters when they change
 		Player.on('config:filters', Player.playlist.applyFilters);
+		Player.on('config:allow', Player.playlist.applyFilters);
 
 		// Listen to anything that can affect the display of hover images
 		Player.on('config:hoverImages', Player.playlist.setHoverImageVisibility);
@@ -80,6 +80,9 @@ module.exports = {
 			dialog && _.elementHTML(dialog, Player.playlist.tagsDialogTemplate(sound));
 		});
 
+		// Resize the image when the config is changed (from other tabs)
+		Player.on('config:imageHeight', height => Player.$(`.${ns}-image-link`).style.height = height + 'px');
+
 		// Maintain changes to the user templates it's dependent values
 		Player.userTemplate.maintain(Player.playlist, 'rowTemplate', [ 'shuffle' ]);
 	},
@@ -87,26 +90,26 @@ module.exports = {
 	/**
 	 * Render the playlist.
 	 */
-	render: function () {
+	render() {
 		_.elementHTML(Player.$(`.${ns}-list-container`), Player.playlist.listTemplate({ search: true }));
 		Player.playlist.afterRender();
 	},
 
-	afterRender: function () {
+	afterRender() {
 		Player.playlist.hoverImage = Player.$(`.${ns}-hover-image`);
 	},
 
 	/**
 	 * Restore the last playlist or image view.
 	 */
-	restore: function () {
+	restore() {
 		Player.display.setViewStyle(Player.playlist._lastView || 'playlist');
 	},
 
 	/**
 	 * Update the image displayed in the player.
 	 */
-	showImage: function (sound) {
+	showImage(sound) {
 		const container = document.querySelector(`.${ns}-image-link`);
 		const img = container.querySelector(`.${ns}-image`);
 		const background = container.querySelector(`.${ns}-background-image`);
@@ -122,7 +125,7 @@ module.exports = {
 	/**
 	 * Switch between playlist and image view.
 	 */
-	toggleView: function (e) {
+	toggleView(e) {
 		e && e.preventDefault();
 		let style = Player.config.viewStyle === 'playlist' ? 'image'
 			: Player.config.viewStyle === 'image' ? 'playlist'
@@ -133,7 +136,7 @@ module.exports = {
 	/**
 	 * Add a new sound from the thread to the player.
 	 */
-	add: function (sound, skipRender) {
+	add(sound, skipRender) {
 		try {
 			const id = sound.id;
 			// Make sure the sound is not a duplicate.
@@ -230,19 +233,20 @@ module.exports = {
 			video.currentTime = 0.001;
 
 			function _continue() {
-				parseFileName(file.name, imageSrc, null, thumbSrc, null, true).forEach(sound => Player.add({ ...sound, local: true, type }));
+				const { sounds } = Player.posts.getSounds(file.name, imageSrc, null, thumbSrc, null, true);
+				sounds.forEach(sound => Player.add({ ...sound, local: true, type }));
 			}
 		});
 	},
 
-	selectLocalFiles: function () {
+	selectLocalFiles() {
 		Player.$(`.${ns}-add-local-file-input`).click();
 	},
 
 	/**
 	 * Remove a sound
 	 */
-	remove: function (sound) {
+	remove(sound) {
 		// Accept the sound object or id
 		if (typeof sound !== 'object') {
 			sound = Player.sounds.find(s => s.id === '' + sound);
@@ -262,17 +266,17 @@ module.exports = {
 		sound && Player.trigger('remove', sound);
 	},
 
-	toggleRepeat: function () {
+	toggleRepeat() {
 		const values = [ 'all', 'one', 'none' ];
 		const current = values.indexOf(Player.config.repeat);
 		Player.set('repeat', values[(current + 4) % 3]);
 	},
 
-	toggleShuffle: function () {
+	toggleShuffle() {
 		Player.set('shuffle', !Player.config.shuffle);
 	},
 
-	_handleShuffle: function () {
+	_handleShuffle() {
 		// Update the play order.
 		if (!Player.config.shuffle) {
 			Player.sounds.sort((a, b) => Player.compareIds(a.id, b.id));
@@ -289,7 +293,7 @@ module.exports = {
 	/**
 	 * Handle an playlist item being clicked. Either open/close the menu or play the sound.
 	 */
-	handleSelect: function (e) {
+	handleSelect(e) {
 		// Ignore if a link was clicked.
 		if (e.target.nodeName === 'A' || e.target.closest('a')) {
 			return;
@@ -300,16 +304,9 @@ module.exports = {
 	},
 
 	/**
-	 * Read all the sounds from the thread again.
-	 */
-	refresh: function () {
-		parseFiles(document.body);
-	},
-
-	/**
 	 * Display an item menu.
 	 */
-	handleItemMenu: function (e, id) {
+	handleItemMenu(e, id) {
 		const sound = Player.sounds.find(s => s.id === id);
 
 		// Add row item menus to the list container. Append to the container otherwise.
@@ -326,7 +323,7 @@ module.exports = {
 	/**
 	 * Toggle the hoverImages setting
 	 */
-	toggleHoverImages: function (e) {
+	toggleHoverImages(e) {
 		e && e.preventDefault();
 		Player.set('hoverImages', !Player.config.hoverImages);
 	},
@@ -334,7 +331,7 @@ module.exports = {
 	/**
 	 * Only show the hover image with the setting enabled, no item menu open, and nothing being dragged.
 	 */
-	setHoverImageVisibility: function () {
+	setHoverImageVisibility() {
 		const container = Player.$(`.${ns}-player`);
 		const hideImage = !Player.config.hoverImages
 			|| Player.playlist._dragging
@@ -345,7 +342,7 @@ module.exports = {
 	/**
 	 * Set the displayed hover image and reposition.
 	 */
-	updateHoverImage: function (e) {
+	updateHoverImage(e) {
 		const id = e.currentTarget.getAttribute('data-id');
 		const sound = Player.sounds.find(sound => sound.id === id);
 		Player.playlist.hoverImage.style.display = 'block';
@@ -356,7 +353,7 @@ module.exports = {
 	/**
 	 * Reposition the hover image to follow the cursor.
 	 */
-	positionHoverImage: function (e) {
+	positionHoverImage(e) {
 		const { width, height } = Player.playlist.hoverImage.getBoundingClientRect();
 		const maxX = document.documentElement.clientWidth - width - 5;
 		Player.playlist.hoverImage.style.left = (Math.min(e.clientX, maxX) + 5) + 'px';
@@ -366,14 +363,14 @@ module.exports = {
 	/**
 	 * Hide the hover image when nothing is being hovered over.
 	 */
-	removeHoverImage: function () {
+	removeHoverImage() {
 		Player.playlist.hoverImage.style.display = 'none';
 	},
 
 	/**
 	 * Start dragging a playlist item.
 	 */
-	handleDragStart: function (e) {
+	handleDragStart(e) {
 		Player.playlist._dragging = e.currentTarget;
 		Player.playlist.setHoverImageVisibility();
 		e.currentTarget.classList.add(`${ns}-dragging`);
@@ -387,7 +384,7 @@ module.exports = {
 	/**
 	 * Swap a playlist item when it's dragged over another item.
 	 */
-	handleDragEnter: function (e) {
+	handleDragEnter(e) {
 		if (!Player.playlist._dragging) {
 			return;
 		}
@@ -424,7 +421,7 @@ module.exports = {
 	/**
 	 * Start dragging a playlist item.
 	 */
-	handleDragEnd: function (e) {
+	handleDragEnd(e) {
 		if (!Player.playlist._dragging) {
 			return;
 		}
@@ -436,7 +433,7 @@ module.exports = {
 	/**
 	 * Scroll to the playing item, unless there is an open menu in the playlist.
 	 */
-	scrollToPlaying: function (type = 'center') {
+	scrollToPlaying(type = 'center') {
 		if (Player.$(`.${ns}-list-container .${ns}-menu`)) {
 			return;
 		}
@@ -447,23 +444,41 @@ module.exports = {
 	/**
 	 * Remove any user filtered items from the playlist.
 	 */
-	applyFilters: function () {
-		Player.sounds.filter(sound => !Player.acceptedSound(sound)).forEach(Player.playlist.remove);
+	applyFilters() {
+		// Check for added sounds that are now filtered.
+		Player.sounds.forEach(sound => {
+			sound.disallow = Player.disallowedSound(sound);
+			if (sound.disallow) {
+				Player.playlist.remove(sound);
+				Player.filteredSounds.push(sound);
+				Player.posts.updateButtons(sound.post);
+			}
+		});
+		// Check for filtered sounds that are now accepted.
+		Player.filteredSounds.forEach((sound, idx) => {
+			sound.disallow = Player.disallowedSound(sound);
+			if (!sound.disallow) {
+				Player.filteredSounds.splice(idx, 1);
+				Player.playlist.add(sound);
+				Player.posts.updateButtons(sound.post);
+			}
+		});
+		Player.trigger('filters-applied');
 	},
 
 	// Add a filter.
-	addFilter: function (filter) {
+	addFilter(filter) {
 		filter && Player.set('filters', Player.config.filters.concat(filter));
 	},
 
 	/**
 	 * Search the playlist
 	 */
-	_handleSearch: function (e) {
+	_handleSearch(e) {
 		Player.playlist.search(e.currentTarget.value.toLowerCase());
 	},
 
-	search: function (v) {
+	search(v) {
 		const lastSearch = Player.playlist._lastSearch;
 		Player.playlist._lastSearch = v;
 		if (v === lastSearch) {
@@ -478,7 +493,7 @@ module.exports = {
 		});
 	},
 
-	matchesSearch: function (sound) {
+	matchesSearch(sound) {
 		const v = Player.playlist._lastSearch;
 		return !v
 			|| sound.title.toLowerCase().includes(v)
@@ -486,7 +501,7 @@ module.exports = {
 			|| String(sound.src.toLowerCase()).includes(v);
 	},
 
-	toggleSearch: function (show) {
+	toggleSearch(show) {
 		const input = Player.$(`.${ns}-playlist-search`);
 		!show && Player.playlist._lastSearch && Player.playlist.search();
 		input.style.display = show ? null : 'none';
@@ -538,39 +553,45 @@ module.exports = {
 	 * Set a few initial values to being resizing the playlist image.
 	 */
 	expandImageStart(e) {
-		Player.$(`.${ns}-image-link`).style.cursor = 'ns-resize';
-		Player._imageResizeStartY = (e.touches && e.touches[0] || e).clientY;
-		Player._imageResizeStartHeight = Player.config.imageHeight;
-		Player._imageResized = false;
+		if (Player.config.viewStyle === 'playlist') {
+			Player.$(`.${ns}-image-link`).style.cursor = 'ns-resize';
+			Player._imageResizeStartY = (e.touches && e.touches[0] || e).clientY;
+			Player._imageResizeStartHeight = Player.config.imageHeight;
+			Player._imageResized = false;
+		}
 	},
 
 	/**
 	 * Resize the playlist image.
 	 */
 	expandImage(e) {
-		Player._imageResized = true;
-		const clientY = (e.touches && e.touches[0] || e).clientY;
-		const height = (Player._imageResizeStartHeight + clientY - Player._imageResizeStartY);
-		Player.$(`.${ns}-image-link`).style.height = Math.max(125, height) + 'px';
+		if (Player.config.viewStyle === 'playlist') {
+			Player._imageResized = true;
+			const clientY = (e.touches && e.touches[0] || e).clientY;
+			const height = (Player._imageResizeStartHeight + clientY - Player._imageResizeStartY);
+			Player.$(`.${ns}-image-link`).style.height = Math.max(125, height) + 'px';
+		}
 	},
 
 	/**
 	 * After resizing save the image height.
 	 */
 	expandImageEnd() {
-		Player.$(`.${ns}-image-link`).style.cursor = null;
-		const imageLink = Player.$(`.${ns}-image-link`);
-		const height = parseInt(imageLink.style.height);
-		const { height: maxHeight } = Player.$(`.${ns}-player`).getBoundingClientRect();
-		const finalHeight = Math.max(125, Math.min(height, maxHeight));
-		imageLink.style.height = finalHeight + 'px';
-		Player.set('imageHeight', finalHeight);
+		if (Player.config.viewStyle === 'playlist') {
+			Player.$(`.${ns}-image-link`).style.cursor = null;
+			const imageLink = Player.$(`.${ns}-image-link`);
+			const height = parseInt(imageLink.style.height);
+			const { height: maxHeight } = Player.$(`.${ns}-player`).getBoundingClientRect();
+			const finalHeight = Math.max(125, Math.min(height, maxHeight));
+			imageLink.style.height = finalHeight + 'px';
+			Player.set('imageHeight', finalHeight);
+		}
 	},
 
 	/**
 	 * If a click on the image link was after resizing then don't open the image.
 	 */
 	expandImageClick(e) {
-		Player._imageResized && e.preventDefault();
+		Player.config.viewStyle === 'playlist' && Player._imageResized && e.preventDefault();
 	}
 };

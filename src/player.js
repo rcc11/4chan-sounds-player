@@ -13,6 +13,7 @@ const components = {
 	minimised: require('./components/minimised'),
 	playlist: require('./components/playlist'),
 	position: require('./components/position'),
+	posts: require('./components/posts'),
 	theme: require('./components/theme'),
 	threads: require('./components/threads'),
 	tools: require('./components/tools'),
@@ -28,6 +29,7 @@ const Player = window.Player = module.exports = {
 
 	audio: new Audio(),
 	sounds: [],
+	filteredSounds: [],
 	isHidden: true,
 	container: null,
 	ui: {},
@@ -43,7 +45,7 @@ const Player = window.Player = module.exports = {
 	/**
 	 * Set up the player.
 	 */
-	initialize: async function initialize() {
+	async initialize() {
 		if (Player.initialized) {
 			return;
 		}
@@ -79,14 +81,14 @@ const Player = window.Player = module.exports = {
 	 * Returns the function of Player referenced by name or a given handler function.
 	 * @param {String|Function} handler Name to function on Player or a handler function.
 	 */
-	getHandler: function (handler) {
+	getHandler(handler) {
 		return typeof handler === 'string' ? _.get(Player, handler) : handler;
 	},
 
 	/**
 	 * Compare two ids for sorting.
 	 */
-	compareIds: function (a, b) {
+	compareIds(a, b) {
 		const [ aPID, aSID ] = a.split(':');
 		const [ bPID, bSID ] = b.split(':');
 		const postDiff = aPID - bPID;
@@ -96,14 +98,25 @@ const Player = window.Player = module.exports = {
 	/**
 	 * Check whether a sound src and image are allowed and not filtered.
 	 */
-	acceptedSound: function ({ src, imageMD5 }) {
+	disallowedSound({ src, imageMD5 }) {
 		try {
 			const link = new URL(src);
+			src = src.replace(/^(https?:)?\/\//, '');
 			const host = link.hostname.toLowerCase();
-			return !Player.config.filters.find(v => v === imageMD5 || v === host + link.pathname)
-				&& Player.config.allow.find(h => host === h || host.endsWith('.' + h));
+			const result = { };
+			result.host = !Player.config.allow.find(h => host === h || host.endsWith('.' + h)) && host;
+			for (let filter of Player.config.filters) {
+				result.image = result.image || filter === imageMD5 && imageMD5;
+				result.sound = result.sound || filter.replace(/^(https?:)?\/\//, '') === src && src;
+				if (result.image && result.sound) {
+					break;
+				}
+			}
+			return result.host || result.image || result.sound
+				? result
+				: false;
 		} catch (err) {
-			return false;
+			return { invalid: true };
 		}
 	},
 
@@ -117,7 +130,7 @@ const Player = window.Player = module.exports = {
 	/**
 	 * Log errors and show an error notification.
 	 */
-	logError: function (message, error, type) {
+	logError(message, error, type) {
 		console.error('[4chan sounds player]', message, error);
 		if (error instanceof PlayerError) {
 			error.error && console.error('[4chan sound player]', error.error);
@@ -130,7 +143,7 @@ const Player = window.Player = module.exports = {
 	/**
 	 * Show a notification using 4chan X or the native extention.
 	 */
-	alert: function (content, type = 'info', lifetime = 5) {
+	alert(content, type = 'info', lifetime = 5) {
 		if (isChanX) {
 			content = _.element(`<span>${content}</span`);
 			document.dispatchEvent(new CustomEvent('CreateNotification', {

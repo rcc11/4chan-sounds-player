@@ -26,7 +26,7 @@ module.exports = {
 		fullscreen: 'display.toggleFullScreen'
 	},
 
-	initialize: async function () {
+	async initialize() {
 		// Apply the previous volume
 		GM.getValue('volume').then(volume => volume >= 0 && volume <= 1 && (Player.audio.volume = volume));
 
@@ -61,7 +61,7 @@ module.exports = {
 	/**
 	 * Handle audio errors
 	 */
-	handleAudioError: function (err) {
+	handleAudioError(err) {
 		if (Player.playing) {
 			Player.logError(`Failed to play ${Player.playing.title}. Please check the console for details.`, err, 'warning');
 			Player.next();
@@ -71,7 +71,7 @@ module.exports = {
 	/**
 	 * Handle audio events. Sync the video up, and update the controls.
 	 */
-	handleMediaEvent: function (e) {
+	handleMediaEvent(e) {
 		const audio = e.currentTarget._inlineAudio || e.currentTarget;
 		Player.controls.sync(e.currentTarget);
 		Player.controls.updateDuration(e);
@@ -83,7 +83,7 @@ module.exports = {
 	/**
 	 * Sync the webm to the audio. Matches the videos time and play state to the audios.
 	 */
-	sync: function (from) {
+	sync(from) {
 		const to = from._linked;
 		if (from && from.readyState > 3 && to && to.readyState > 3) {
 			to.currentTime = from.currentTime % to.duration;
@@ -96,14 +96,14 @@ module.exports = {
 	/**
 	 * Poll for how much has loaded. I know there's the progress event but it unreliable.
 	 */
-	pollForLoading: function () {
+	pollForLoading() {
 		Player._loadingPoll = Player._loadingPoll || setInterval(Player.controls.updateLoaded, 1000);
 	},
 
 	/**
 	 * Stop polling for how much has loaded.
 	 */
-	stopPollingForLoading: function () {
+	stopPollingForLoading() {
 		Player._loadingPoll && clearInterval(Player._loadingPoll);
 		Player._loadingPoll = null;
 	},
@@ -111,7 +111,7 @@ module.exports = {
 	/**
 	 * Update the loading bar.
 	 */
-	updateLoaded: function () {
+	updateLoaded() {
 		const length = Player.audio.buffered.length;
 		const size = length > 0
 			? (Player.audio.buffered.end(length - 1) / Player.audio.duration) * 100
@@ -124,7 +124,7 @@ module.exports = {
 	/**
 	 * Update the seek bar and the duration labels.
 	 */
-	updateDuration: function (e) {
+	updateDuration(e) {
 		const media = e.currentTarget;
 		const audio = media._inlineAudio || media;
 		const controls = media._inlinePlayer ? media._inlinePlayer.controls : document;
@@ -140,7 +140,7 @@ module.exports = {
 	/**
 	 * Update the volume bar.
 	 */
-	updateVolume: function (e) {
+	updateVolume(e) {
 		const audio = e.currentTarget._inlineAudio || e.currentTarget;
 		const controls = audio._inlinePlayer ? audio._inlinePlayer.controls : Player.container;
 		const vol = audio.volume;
@@ -159,7 +159,7 @@ module.exports = {
 	/**
 	 * Update a progress bar width. Adjust the margin of the circle so it's contained within the bar at both ends.
 	 */
-	updateProgressBarPosition: function (bar, current, total) {
+	updateProgressBarPosition(bar, current, total) {
 		if (!bar) {
 			return;
 		}
@@ -172,7 +172,7 @@ module.exports = {
 	/**
 	 * Handle the user interacting with the seek bar.
 	 */
-	handleSeek: function (e, audioId) {
+	handleSeek(e, audioId) {
 		const media = audioId === 'main'
 			? Player.audio
 			: Player.inline.audio[audioId]._inlinePlayer.master;
@@ -184,12 +184,12 @@ module.exports = {
 	/**
 	 * Handle the user interacting with the volume bar.
 	 */
-	handleVolume: function (e, audioId) {
+	handleVolume(e, audioId) {
 		const audio = audioId === 'main' ? Player.audio : Player.inline.audio[audioId];
 		audio.volume = Player.controls._getBarXRatio(e);
 	},
 
-	_getBarXRatio: function (e) {
+	_getBarXRatio(e) {
 		const offset = 0.4 * Player.remSize;
 		const offsetX = e.offsetX || (e.targetTouches[0].pageX - e.currentTarget.getBoundingClientRect().left);
 		return Math.max(0, Math.min(1, (offsetX - offset) / (parseInt(getComputedStyle(e.currentTarget).width, 10) - (2 * offset))));
@@ -198,14 +198,14 @@ module.exports = {
 	/**
 	 * Set all controls visible.
 	 */
-	showAllControls: function () {
+	showAllControls() {
 		Player.$all(`.${ns}-controls [data-hide-id]`).forEach(el => el.style.display = null);
 	},
 
 	/**
 	 * Hide elements in the controls instead of wrapping
 	 */
-	preventWrapping: function () {
+	preventWrapping() {
 		if (!Player.config.preventControlWrapping) {
 			return;
 		}
@@ -230,7 +230,7 @@ module.exports = {
 	/**
 	 * Set the hide order from the user config.
 	 */
-	setHideOrder: function () {
+	setHideOrder() {
 		if (!Array.isArray(Player.config.controlsHideOrder)) {
 			Player.settings.reset('controlsHideOrder');
 		}

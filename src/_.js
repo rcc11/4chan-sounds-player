@@ -100,11 +100,12 @@ module.exports.elementHandler = function elementHandler(el) {
 		Player.events.set(el, 'pointdragend', 'position.stopResize');
 	});
 	// Wire up popovers.
-	const popovers = el.querySelectorAll(`.${ns}-popover`);
+	const popovers = Array.from(el.querySelectorAll(`.${ns}-popover`));
+	el.classList.contains(`${ns}-popover`) && (popovers.push(el));
 	popovers.forEach(popover => {
 		popover.addEventListener('mouseenter', Player.display._popoverMouseEnter);
 		popover.addEventListener('mouseleave', Player.display._popoverMouseLeave);
-		popover.addEventListener('click', Player.display._popoverClick);
+		popover.nodeName !== 'A' && popover.addEventListener('click', Player.display._popoverClick);
 	});
 	// Wire up events from attributes.
 	Player.events.apply(el);

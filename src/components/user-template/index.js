@@ -11,6 +11,7 @@ const soundTitleMarqueeRE = /sound-title-marquee/g;
 const soundIndexRE = /sound-index/g;
 const soundCountRE = /sound-count/g;
 const soundPropRE = /sound-(src|id|name|post|imageOrThumb|image|thumb|filename|imageMD5)/g;
+const soundFilterCountRE = /filtered-count/g;
 const configRE = /\$config\[([^\]]+)\]/g;
 
 // Hold information on which config values components templates depend on.
@@ -19,7 +20,7 @@ const componentDeps = [ ];
 module.exports = {
 	buttons,
 
-	initialize: function () {
+	initialize() {
 		Player.on('config', Player.userTemplate._handleConfig);
 		Player.on('playsound', () => Player.userTemplate._handleEvent('playsound'));
 		[ 'add', 'remove', 'order', 'show', 'hide', 'stop' ].forEach(evt => {
@@ -30,7 +31,7 @@ module.exports = {
 	/**
 	 * Build a user template.
 	 */
-	build: function (data) {
+	build(data) {
 		const outerClass = data.outerClass || '';
 		const name = data.sound && data.sound.title || data.defaultName;
 		let _data = { ...data };
@@ -70,7 +71,8 @@ module.exports = {
 		!data.ignoreSoundProperties && (html = html
 			.replace(soundPropRE, (...args) => data.sound ? data.sound[args[1]] : '')
 			.replace(soundIndexRE, data.sound ? Player.sounds.indexOf(data.sound) + 1 : 0)
-			.replace(soundCountRE, Player.sounds.length));
+			.replace(soundCountRE, Player.sounds.length)
+			.replace(soundFilterCountRE, Player.filteredSounds.length));
 		!data.ignoreVersion && (html = html.replace(/%v/g, VERSION));
 
 		// Apply any specific replacements
@@ -86,7 +88,7 @@ module.exports = {
 	/**
 	 * Sets up a components to render when the template or values within it are changed.
 	 */
-	maintain: function (component, property, alwaysRenderConfigs = [], alwaysRenderEvents = []) {
+	maintain(component, property, alwaysRenderConfigs = [], alwaysRenderEvents = []) {
 		componentDeps.push({
 			component,
 			property,
@@ -99,7 +101,7 @@ module.exports = {
 	/**
 	 * Find all the config dependent values in a template.
 	 */
-	findDependencies: function (property, template) {
+	findDependencies(property, template) {
 		template || (template = _.get(Player.config, property));
 		// Figure out what events should trigger a render.
 		const events = [];
@@ -111,10 +113,12 @@ module.exports = {
 		const hasSoundProp = soundTitleRE.test(template) || soundPropRE.test(template);
 		const hasIndex = soundIndexRE.test(template);
 		const hasPlaying = playingRE.test(template);
+		const hasFilterCount = soundFilterCountRE.test(template);
 		hasCount && events.push('add', 'remove');
 		// The row template handles this itself to avoid a full playlist render.
 		property !== 'rowTemplate' && (hasSoundProp || hasIndex || hasPlaying) && events.push('playsound', 'stop');
 		hasIndex && events.push('order');
+		hasFilterCount && events.push('filters-applied');
 
 		// Find which buttons the template includes that are dependent on config values.
 		const config = [];
@@ -139,7 +143,7 @@ module.exports = {
 	/**
 	 * When a config value is changed check if any component dependencies are affected.
 	 */
-	_handleConfig: function (property, value) {
+	_handleConfig(property, value) {
 		// Check if a template for a components was updated.
 		componentDeps.forEach(depInfo => {
 			if (depInfo.property === property) {
@@ -158,7 +162,7 @@ module.exports = {
 	/**
 	 * When a player event is triggered check if any component dependencies are affected.
 	 */
-	_handleEvent: function (type) {
+	_handleEvent(type) {
 		// Check if any components are dependent on the updated property.
 		componentDeps.forEach(depInfo => {
 			if (depInfo.alwaysRenderEvents.includes(type) || depInfo.events.includes(type)) {

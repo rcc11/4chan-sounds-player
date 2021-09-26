@@ -1,4 +1,3 @@
-const { parseFileName } = require('../../file_parser');
 const { get } = require('../../api');
 
 const maxSavedBoards = 10;
@@ -16,7 +15,7 @@ module.exports = {
 	selectedBoards: Board ? [ Board ] : [ 'a' ],
 	showAllBoards: false,
 
-	initialize: async function () {
+	async initialize() {
 		Player.threads.hasParser = is4chan && typeof Parser !== 'undefined';
 		// If the native Parser hasn't been intialised chuck customSpoiler on it so we can call it for threads.
 		// You shouldn't do things like this. We can fall back to the table view if it breaks though.
@@ -39,7 +38,7 @@ module.exports = {
 	/**
 	 * Fetch the threads when the threads view is opened for the first time.
 	 */
-	_initialFetch: function () {
+	_initialFetch() {
 		if (Player.container && Player.config.viewStyle === 'threads' && Player.threads.boardList === null) {
 			Player.threads.fetchBoards(true);
 			Player.off('show', Player.threads._initialFetch);
@@ -47,7 +46,7 @@ module.exports = {
 		}
 	},
 
-	render: function () {
+	render() {
 		if (Player.container) {
 			_.elementHTML(Player.$(`.${ns}-threads`), Player.threads.template());
 			Player.threads.afterRender();
@@ -57,7 +56,7 @@ module.exports = {
 	/**
 	 * Render the threads and apply the board styling after the view is rendered.
 	 */
-	afterRender: function () {
+	afterRender() {
 		const threadList = Player.$(`.${ns}-thread-list`);
 		if (threadList) {
 			const bodyStyle = document.defaultView.getComputedStyle(document.body);
@@ -72,7 +71,7 @@ module.exports = {
 	/**
 	 * Render just the threads.
 	 */
-	renderThreads: function () {
+	renderThreads() {
 		if (!Player.threads.hasParser || Player.config.threadsViewStyle === 'table') {
 			_.elementHTML(Player.$(`.${ns}-threads-body`), Player.threads.listsTemplate());
 		} else {
@@ -106,14 +105,14 @@ module.exports = {
 	/**
 	 * Render just the board selection.
 	 */
-	renderBoards: function () {
+	renderBoards() {
 		_.elementHTML(Player.$(`.${ns}-thread-board-list`), Player.threads.boardsTemplate());
 	},
 
 	/**
 	 * Toggle the threads view.
 	 */
-	toggle: function () {
+	toggle() {
 		if (Player.config.viewStyle === 'threads') {
 			Player.playlist.restore();
 		} else {
@@ -124,7 +123,7 @@ module.exports = {
 	/**
 	 * Switch between showing just the selected boards and all boards.
 	 */
-	toggleBoardList: function () {
+	toggleBoardList() {
 		Player.threads.showAllBoards = !Player.threads.showAllBoards;
 		Player.$(`.${ns}-all-boards-link`).innerHTML = Player.threads.showAllBoards ? 'Selected Only' : 'Show All';
 		Player.threads.renderBoards();
@@ -133,7 +132,7 @@ module.exports = {
 	/**
 	 * Select/deselect a board.
 	 */
-	toggleBoard: async function (board, selected) {
+	async toggleBoard(board, selected) {
 		if (selected) {
 			!Player.threads.selectedBoards.includes(board) && Player.threads.selectedBoards.unshift(board);
 		} else {
@@ -145,7 +144,7 @@ module.exports = {
 	/**
 	 * Fetch the board list from the 4chan API.
 	 */
-	fetchBoards: async function (fetchThreads) {
+	async fetchBoards(fetchThreads) {
 		Player.threads.loading = true;
 		Player.threads.render();
 		Player.threads.boardList = (await get(boardsURL)).boards;
@@ -160,7 +159,7 @@ module.exports = {
 	/**
 	 * Fetch the catalog for each selected board and search for sounds in OPs.
 	 */
-	fetch: async function () {
+	async fetch() {
 		Player.threads.loading = true;
 		Player.threads.render();
 		if (!Player.threads.boardList) {
@@ -184,7 +183,7 @@ module.exports = {
 			}));
 
 			Player.threads.soundThreads = allThreads.filter(thread => {
-				const sounds = parseFileName(thread.filename, `https://i.4cdn.org/${thread.board}/${thread.tim}${thread.ext}`, thread.no, `https://i.4cdn.org/${thread.board}/${thread.tim}s${thread.ext}`, thread.md5, true);
+				const { sounds } = Player.posts.getSounds(thread.filename, `https://i.4cdn.org/${thread.board}/${thread.tim}${thread.ext}`, thread.no, `https://i.4cdn.org/${thread.board}/${thread.tim}s${thread.ext}`, thread.md5, true);
 				return sounds.length;
 			});
 		} catch (err) {
@@ -198,7 +197,7 @@ module.exports = {
 	/**
 	 * Apply the filter input to the already fetched threads.
 	 */
-	filter: function (search, skipRender) {
+	filter(search, skipRender) {
 		search = search.toLowerCase();
 		Player.threads.filterValue = search || '';
 		if (Player.threads.soundThreads === null) {

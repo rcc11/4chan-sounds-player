@@ -2,7 +2,7 @@ const selectors = require('../../selectors');
 
 /* eslint-disable max-statements-per-line, no-empty */
 module.exports = {
-	initialize: function () {
+	initialize() {
 		// Set the header offsets for use in templates.
 		const { top, bottom } = Player.position.getHeaderOffset();
 		Player.config.offsetTop = top + 'px';
@@ -57,7 +57,7 @@ module.exports = {
 	/**
 	 * Applies a max width to posts next to the player so they don't get hidden behind it.
 	 */
-	setPostWidths: function () {
+	setPostWidths() {
 		const offset = (document.documentElement.clientWidth - Player.container.offsetLeft) + 10;
 		const enabled = !Player.isHidden && Player.config.limitPostWidths;
 		const startY = Player.container.offsetTop;
@@ -74,7 +74,7 @@ module.exports = {
 	/**
 	 * Handle the user grabbing the expander.
 	 */
-	initResize: function (e) {
+	initResize(e) {
 		try { e.preventDefault(); } catch (e) { }
 		Player._startX = (e.touches && e.touches[0] || e).clientX;
 		Player._startY = (e.touches && e.touches[0] || e).clientY;
@@ -94,7 +94,7 @@ module.exports = {
 	/**
 	 * Handle the user dragging the expander.
 	 */
-	doResize: function (e) {
+	doResize(e) {
 		try { e.preventDefault(); } catch (e) { }
 
 		const xDelta = ((e.touches && e.touches[0] || e).clientX - Player._startX) * Player._resizeX;
@@ -112,7 +112,7 @@ module.exports = {
 	/**
 	 * Handle the user releasing the expander.
 	 */
-	stopResize: function (e) {
+	stopResize(e) {
 		try { e.preventDefault(); } catch (e) { }
 
 		const { width, height } = Player.container.getBoundingClientRect();
@@ -128,7 +128,7 @@ module.exports = {
 	/**
 	 * Resize the player.
 	 */
-	resize: function (width, height, allowOffscreen) {
+	resize(width, height, allowOffscreen) {
 		if (!Player.container || Player.config.viewStyle === 'fullscreen') {
 			return;
 		}
@@ -147,7 +147,7 @@ module.exports = {
 	/**
 	 * Handle the user grabbing the header.
 	 */
-	initMove: function (e) {
+	initMove(e) {
 		if (e.target.nodeName === 'A' || e.target.closest('a') || e.target.classList.contains(`${ns}-expander`)) {
 			return e.preventDrag = true;
 		}
@@ -167,7 +167,7 @@ module.exports = {
 	/**
 	 * Handle the user dragging the header.
 	 */
-	doMove: function (e) {
+	doMove(e) {
 		try { e.preventDefault(); } catch (e) { }
 		const clientX = (e.touches && e.touches[0] || e).clientX;
 		const clientY = (e.touches && e.touches[0] || e).clientY;
@@ -177,7 +177,7 @@ module.exports = {
 	/**
 	 * Handle the user releasing the heaer.
 	 */
-	stopMove: function (e) {
+	stopMove(e) {
 		try { e.preventDefault(); } catch (e) { }
 		Player.$(`.${ns}-header`).style.cursor = null;
 		GM.setValue('position', parseInt(Player.container.style.left, 10) + ':' + parseInt(Player.container.style.top, 10));
@@ -186,7 +186,7 @@ module.exports = {
 	/**
 	 * Move the player.
 	 */
-	move: function (x, y, allowOffscreen) {
+	move(x, y, allowOffscreen) {
 		if (!Player.container) {
 			return;
 		}
@@ -210,7 +210,7 @@ module.exports = {
 	/**
 	 * Get the offset from the top or bottom required for the 4chan X header.
 	 */
-	getHeaderOffset: function () {
+	getHeaderOffset() {
 		const docClasses = document.documentElement.classList;
 		const hasChanXHeader = docClasses.contains('fixed');
 		const headerHeight = hasChanXHeader ? document.querySelector('#header-bar').getBoundingClientRect().height : 0;
@@ -223,7 +223,7 @@ module.exports = {
 	/**
 	 * Position a fixed item with respect to an element or event.
 	 */
-	showRelativeTo: function (item, relative) {
+	showRelativeTo(item, relative) {
 		// Try and put the item aligned to the left under the relative.
 		const relRect = relative instanceof Node
 			? relative.getBoundingClientRect()

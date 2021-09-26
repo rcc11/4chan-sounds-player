@@ -11,7 +11,7 @@ module.exports = {
 		arrowdown: 'down'
 	},
 
-	initialize: function () {
+	initialize() {
 		Player.on('rendered', Player.hotkeys.apply);
 		Player.on('config:hotkeys', Player.hotkeys.apply);
 
@@ -107,7 +107,7 @@ module.exports = {
 	/**
 	 * Apply the selecting hotkeys option
 	 */
-	apply: function () {
+	apply() {
 		const type = Player.config.hotkeys;
 		Player.hotkeys.removeHandler();
 		Player.off('show', Player.hotkeys.addHandler);
@@ -130,7 +130,7 @@ module.exports = {
 	/**
 	 * Handle a keydown even on the body
 	 */
-	handle: function (e) {
+	handle(e) {
 		// Ignore events on inputs so you can still type.
 		const ignoreFor = [ 'INPUT', 'SELECT', 'TEXTAREA', 'INPUT' ];
 		if (ignoreFor.includes(e.target.nodeName) || Player.isHidden && (Player.config.hotkeys !== 'always' || !Player.sounds.length)) {
@@ -162,7 +162,7 @@ module.exports = {
 	/**
 	 * Turn a hotkey definition or key event into an input string.
 	 */
-	stringifyKey: function (key) {
+	stringifyKey(key) {
 		let k = key.key.toLowerCase();
 		Player.hotkeys._keyMap[k] && (k = Player.hotkeys._keyMap[k]);
 		return (key.ctrlKey ? 'Ctrl+' : '') + (key.shiftKey ? 'Shift+' : '') + (key.metaKey ? 'Meta+' : '') + k;
@@ -171,7 +171,7 @@ module.exports = {
 	/**
 	 * Turn an input string into a hotkey definition object.
 	 */
-	parseKey: function (str) {
+	parseKey(str) {
 		const keys = str.split('+');
 		let key = keys.pop();
 		Object.keys(Player.hotkeys._keyMap).find(k => Player.hotkeys._keyMap[k] === key && (key = k));

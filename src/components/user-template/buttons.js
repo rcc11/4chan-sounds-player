@@ -47,7 +47,7 @@ module.exports = [
 	},
 	{
 		tplName: 'reload',
-		action: 'playlist.refresh:prevent',
+		action: 'posts.refresh:prevent',
 		icon: Icons.reboot,
 		attrs: [ 'title="Reload the playlist"' ]
 	},
@@ -95,7 +95,7 @@ module.exports = [
 		requireSound: true,
 		action: 'playlist.scrollToPlaying("center"):prevent',
 		icon: Icons.musicNoteList,
-		attrs: [ 'title="Scroll the playlist currently playing sound."' ]
+		attrs: [ 'title="Scroll the playlist to the currently playing sound."' ]
 	},
 	{
 		tplName: 'post',

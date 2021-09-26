@@ -13,11 +13,12 @@ module.exports = {
 		expandedImage: isChanX ? '.full-image' : '.expanded-thumb, .expandedWebm',
 		hoverImage: isChanX ? '#ihover' : '#image-hover',
 		playLink: {
-			class: `${ns}-play-link`,
+			class: '',
 			text: Icons.playFill,
 			relative: '.fileText a',
 			position: 'afterend',
-			prependText: ' '
+			prependText: ' ',
+			unfilterText: Icons.filter
 		},
 		// Deliberately missing dots because this is used to set the class
 		styleFetcher: 'post reply style-fetcher',
@@ -33,10 +34,11 @@ module.exports = {
 		},
 		thumb: '.thread_image_link',
 		playLink: {
-			class: `${ns}-play-link btnr`,
+			class: 'btnr',
 			text: 'Play',
 			relative: '.post_controls',
-			position: 'beforeend'
+			position: 'beforeend',
+			unfilterText: 'Add'
 		},
 		styleFetcher: 'post_wrapper style-fetcher',
 		limitWidthOf: '.posts > article.post'
@@ -50,12 +52,13 @@ module.exports = {
 		filenameParser: v => v.split(', ').slice(2).join(', '),
 		thumb: '.thumb',
 		playLink: {
-			class: `${ns}-play-link`,
+			class: '',
 			text: 'play',
 			relative: 'br:nth-of-type(2)',
 			position: 'beforebegin',
 			prependText: ' [',
-			appendText: ']'
+			appendText: ']',
+			unfilterText: 'add'
 		},
 		styleFetcher: 'reply style-fetcher',
 		limitWidthOf: '.content > div, .content > table'

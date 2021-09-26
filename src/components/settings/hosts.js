@@ -18,7 +18,7 @@ module.exports = {
 		soundUrl: 'File URL Format'
 	},
 
-	parse: function (newValue, hosts, e) {
+	parse(newValue, hosts, e) {
 		hosts = { ...hosts };
 		const container = e.currentTarget.closest(`.${ns}-host-input`);
 		let name = container.getAttribute('data-host-name');
@@ -89,7 +89,7 @@ module.exports = {
 		return hosts;
 	},
 
-	add: function () {
+	add() {
 		let i,
 			name = 'New Host';
 		// eslint-disable-next-line curly
@@ -101,7 +101,7 @@ module.exports = {
 		Player.settings.set('uploadHosts', hosts, { bypassValidation: true, silent: true });
 	},
 
-	remove: function (e) {
+	remove(e) {
 		const hosts = Player.config.uploadHosts;
 		const container = e.currentTarget.closest(`.${ns}-host-input`);
 		const name = container.getAttribute('data-host-name');
@@ -115,7 +115,7 @@ module.exports = {
 		Player.settings.set('uploadHosts', hosts, { bypassValidation: true, bypassRender: true });
 	},
 
-	setDefault: function (_new, _current, e) {
+	setDefault(_new, _current, e) {
 		const selected = e.currentTarget.closest(`.${ns}-host-input`).getAttribute('data-host-name');
 		if (selected === Player.config.defaultUploadHost) {
 			return selected;
@@ -128,7 +128,7 @@ module.exports = {
 		return selected;
 	},
 
-	restoreDefaults: function () {
+	restoreDefaults() {
 		Object.assign(Player.config.uploadHosts, Player.settings.findDefault('uploadHosts').default);
 		Player.set('uploadHosts', Player.config.uploadHosts, { bypassValidation: true });
 	}

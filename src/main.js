@@ -6,18 +6,17 @@ async function doInit() {
 
 	// Require these here so every other require is sure of the 4chan X state.
 	const Player = require('./player');
-	const { parseFiles } = require('./file_parser');
 
 	await Player.initialize();
 
-	parseFiles(document.body, true);
+	Player.posts.addPosts(document.body, true);
 
 	const observer = new MutationObserver(function (mutations) {
 		mutations.forEach(function (mutation) {
 			if (mutation.type === 'childList') {
 				mutation.addedNodes.forEach(function (node) {
 					if (node.nodeType === Node.ELEMENT_NODE) {
-						parseFiles(node);
+						Player.posts.addPosts(node);
 					}
 				});
 			}

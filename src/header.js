@@ -28,6 +28,7 @@
 // @connect      catbox.moe
 // @connect      share.dmca.gripe
 // @connect      z.zz.ht
+// @connect      z.zz.fo
 // @connect      zz.ht
 // @connect      too.lewd.se
 // @connect      lewd.se

@@ -60,6 +60,13 @@ module.exports = [
 				}
 			},
 			{
+				property: 'expandedAllowFiltered',
+				title: 'Allow Filtered',
+				default: true,
+				description: 'Allow sounds that have been filtered to be played inline. '
+					+ 'Sounds from unknown hosts will not be played regardless of this setting.',
+			},
+			{
 				property: 'expandedRepeat',
 				title: 'Repeat',
 				default: 'all',

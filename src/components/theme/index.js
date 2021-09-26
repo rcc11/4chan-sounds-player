@@ -9,14 +9,14 @@ module.exports = {
 	savedThemesTemplate: require('./templates/saved_themes.tpl'),
 	themeKeybindsTemplate: require('./templates/theme_keybinds.tpl'),
 
-	initialize: async function () {
+	async initialize() {
 		// Create the user stylesheet and update it when dependent config values are changed.
 		Player.theme.render();
 		Player.userTemplate.maintain(Player.theme, 'customCSS');
 		Player.theme.validateOrder();
 	},
 
-	render: function () {
+	render() {
 		Player.userStylesheet = Player.userStylesheet || _.element('<style id="sound-player-user-css"></style>', document.head);
 		Player.userStylesheet.innerHTML = Player.userTemplate.build({
 			template: '/* Sounds Player User CSS */\n\n' + Player.config.customCSS,
@@ -28,7 +28,7 @@ module.exports = {
 		});
 	},
 
-	forceBoardTheme: function () {
+	forceBoardTheme() {
 		Player.theme.applyBoardTheme({ force: true });
 		Player.settings.save();
 	},
@@ -36,7 +36,7 @@ module.exports = {
 	/**
 	 * Get colors from the board theme.
 	 */
-	applyBoardTheme: function (opts = {}) {
+	applyBoardTheme(opts = {}) {
 		// Create a reply element to gather the style from
 		const div = _.element(`<div class="${selectors.styleFetcher}"></div>`, document.body);
 		const style = document.defaultView.getComputedStyle(div);
@@ -90,7 +90,7 @@ module.exports = {
 	/**
 	 * Switch to the next theme, wrapping round to the beginning.
 	 */
-	next: function () {
+	next() {
 		const order = [ 'Default' ].concat(Player.config.savedThemesOrder);
 		const cIndex = order.indexOf(Player.config.selectedTheme);
 		const next = order[(cIndex + order.length + 1) % order.length];
@@ -100,7 +100,7 @@ module.exports = {
 	/**
 	 * Switch to the previous theme, wrapping round to the end.
 	 */
-	previous: function () {
+	previous() {
 		const order = [ 'Default' ].concat(Player.config.savedThemesOrder);
 		const cIndex = order.indexOf(Player.config.selectedTheme);
 		const previous = order[(cIndex + order.length - 1) % order.length];
@@ -112,7 +112,7 @@ module.exports = {
 	 * @param {String} name The name of the theme to switch to.
 	 * @param {Object} opts Options passed to player.load
 	 */
-	switch: function (name) {
+	switch(name) {
 		if (name !== 'Default' && !Player.config.savedThemes[name]) {
 			return Player.logError(`Theme '${name}' does not exist.`, null, 'warning');
 		}
@@ -131,7 +131,7 @@ module.exports = {
 	/**
 	 * Make sure the saved themes order contains all and only the saved themes, without duplicates.
 	 */
-	validateOrder: function () {
+	validateOrder() {
 		const order = Player.config.savedThemesOrder;
 		let _i;
 		Player.config.savedThemesOrder = order
@@ -139,7 +139,7 @@ module.exports = {
 			.filter((name, i) => Player.config.savedThemes[name] && (_i = order.indexOf(name), _i === -1 || _i === i));
 	},
 
-	parseSwitch: function (newValue, bindings, e) {
+	parseSwitch(newValue, bindings, e) {
 		bindings = [ ...bindings ];
 		const themeName = e.currentTarget.parentNode.dataset.name;
 		if (themeName !== 'Default' && !Player.config.savedThemes[themeName]) {
@@ -156,13 +156,13 @@ module.exports = {
 		return bindings;
 	},
 
-	handleSwitch: function (e) {
+	handleSwitch(e) {
 		Player.theme.switch(e._binding.themeName);
 	},
 
 	moveUp: e => Player.theme._swapOrder(e, -1),
 	moveDown: e => Player.theme._swapOrder(e, 1),
-	_swapOrder: function (e, dir) {
+	_swapOrder(e, dir) {
 		const name = e.currentTarget.closest('[data-theme]').dataset.theme;
 		const order = Player.config.savedThemesOrder;
 		const i = order.indexOf(name);
@@ -174,7 +174,7 @@ module.exports = {
 		}
 	},
 
-	remove: function (e) {
+	remove(e) {
 		const themes = Player.config.savedThemes;
 		const row = e.currentTarget.closest('[data-theme]');
 		const name = row.dataset.theme;
@@ -199,13 +199,13 @@ module.exports = {
 		}
 	},
 
-	restoreDefaults: function () {
+	restoreDefaults() {
 		Object.assign(Player.config.savedThemes, Player.settings.findDefault('savedThemes').default);
 		Player.theme.validateOrder();
 		Player.set('savedThemes', Player.config.savedThemes, { bypassValidation: true });
 	},
 
-	showSaveOptions: function (e) {
+	showSaveOptions(e) {
 		const open = Player.$(`.${ns}-theme-save-options`);
 		if (open) {
 			return Player.container.removeChild(open);
@@ -215,16 +215,16 @@ module.exports = {
 		Player.$(`.${ns}-save-theme-name`).focus();
 	},
 
-	toggleSaveFields: function () {
+	toggleSaveFields() {
 		Player.$(`.${ns}-theme-save-options`).classList.toggle('fields-collapsed');
 		Player.position.showRelativeTo(Player.$(`.${ns}-theme-save-options`), Player.$('[\\@click^="theme.showSaveOptions"]'));
 	},
 
-	toggleSaveButtonText: function (e) {
+	toggleSaveButtonText(e) {
 		Player.$(`.${ns}-save-theme`).innerHTML = Player.config.savedThemes[e.currentTarget.value] ? 'Update' : 'Create';
 	},
 
-	save: function () {
+	save() {
 		const name = Player.$(`.${ns}-save-theme-name`).value;
 		if (!name) {
 			return Player.logError('A name is required to save a theme.', null, 'warning');

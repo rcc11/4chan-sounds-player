@@ -1,7 +1,7 @@
 module.exports = {
 	_showingPIP: false,
 
-	initialize: function () {
+	initialize() {
 		if (isChanX) {
 			Player.userTemplate.maintain(Player.minimised, 'chanXTemplate', [ 'chanXControls' ], [ 'show', 'hide', 'stop' ]);
 		}
@@ -12,7 +12,7 @@ module.exports = {
 		Player.on('playsound', Player.minimised.showPIP);
 	},
 
-	render: function () {
+	render() {
 		if (Player.container && isChanX) {
 			let container = document.querySelector(`.${ns}-chan-x-controls`);
 			// Create the element if it doesn't exist.
@@ -45,7 +45,7 @@ module.exports = {
 	/**
 	 * Move the image to a picture in picture like thumnail.
 	 */
-	showPIP: function () {
+	showPIP() {
 		if (!Player.isHidden || !Player.config.pip || !Player.playing || Player.minimised._showingPIP) {
 			return;
 		}
@@ -61,7 +61,7 @@ module.exports = {
 	/**
 	 * Move the image back to the player.
 	 */
-	hidePIP: function () {
+	hidePIP() {
 		Player.minimised._showingPIP = false;
 		const image = document.querySelector(`.${ns}-image-link`);
 		const controls = Player.$(`.${ns}-controls`);

@@ -27,7 +27,7 @@ module.exports = {
 		return groups;
 	}, {}),
 
-	initialize: async function () {
+	async initialize() {
 		Player.settings.view = 'Display';
 
 		// Apply the board theme as default.
@@ -61,13 +61,13 @@ module.exports = {
 		Player.on('rendered', Player.settings.setChangeListeners);
 	},
 
-	render: function () {
+	render() {
 		const settingsContainer = Player.$(`.${ns}-settings`);
 		_.elementHTML(settingsContainer, Player.settings.template());
 		Player.settings.setChangeListeners();
 	},
 
-	renderSetting: function (settingConfig) {
+	renderSetting(settingConfig) {
 		const settingEl = Player.$(`.${ns}-setting[data-property="${settingConfig.property}"]`);
 		const newEl = _.element(Player.settings.settingTemplate(settingConfig), settingEl, 'beforebegin');
 		settingEl.parentNode.removeChild(settingEl);
@@ -77,7 +77,7 @@ module.exports = {
 	/**
 	 * Update a setting.
 	 */
-	set: function (property, value, { bypassAll, bypassValidation, bypassSave, bypassRender, silent, bypassStylesheet, settingConfig } = {}) {
+	set(property, value, { bypassAll, bypassValidation, bypassSave, bypassRender, silent, bypassStylesheet, settingConfig } = {}) {
 		settingConfig = settingConfig || Player.settings.findDefault(property);
 		const previous = _.get(Player.config, property);
 
@@ -105,7 +105,7 @@ module.exports = {
 	/**
 	 * Reset a setting to the default value
 	 */
-	reset: function (property, opts) {
+	reset(property, opts) {
 		let settingConfig = Player.settings.findDefault(property);
 		Player.set(property, settingConfig.default, { ...opts, settingConfig });
 	},
@@ -116,7 +116,7 @@ module.exports = {
 	 * @param {Object} settings Config to load
 	 * @param {Object} opts Same as Player.set, and applyDefault to reset defaults instead mixing current values.
 	 */
-	load: async function (settings, opts = {}) {
+	async load(settings, opts = {}) {
 		if (typeof settings === 'string') {
 			settings = JSON.parse(settings);
 		}
@@ -159,7 +159,7 @@ module.exports = {
 	/**
 	 * Persist the player settings.
 	 */
-	save: function () {
+	save() {
 		try {
 			// Filter settings that haven't been modified from the default.
 			const settings = settingsConfig.reduce(function _handleSetting(settings, setting) {
@@ -200,7 +200,7 @@ module.exports = {
 	/**
 	 * Run migrations when the player is updated.
 	 */
-	migrate: async function (fromVersion) {
+	async migrate(fromVersion) {
 		// Fall out if the player hasn't updated.
 		if (!fromVersion || fromVersion === VERSION) {
 			return {};
@@ -225,7 +225,7 @@ module.exports = {
 	/**
 	 * Compare two semver strings.
 	 */
-	compareVersions: function (a, b) {
+	compareVersions(a, b) {
 		const [ aVer, aHash ] = a.split('-');
 		const [ bVer, bHash ] = b.split('-');
 		const aParts = aVer.split('.');
@@ -244,7 +244,7 @@ module.exports = {
 	/**
 	 * Find a setting in the default configuration.
 	 */
-	findDefault: function (property) {
+	findDefault(property) {
 		let settingConfig;
 		settingsConfig.find(function (setting) {
 			if (setting.property === property) {
@@ -269,7 +269,7 @@ module.exports = {
 	/**
 	 * Toggle whether the player or settings are displayed.
 	 */
-	toggle: function (group) {
+	toggle(group) {
 		// Blur anything focused so the change is applied.
 		let focused = Player.$(`.${ns}-settings :focus`);
 		focused && focused.blur();
@@ -288,7 +288,7 @@ module.exports = {
 		}
 	},
 
-	showGroup: function (group) {
+	showGroup(group) {
 		Player.settings.view = group;
 		const currentGroup = Player.$(`.${ns}-settings-group.active`);
 		const currentTab = Player.$(`.${ns}-settings-tab.active`);
@@ -298,7 +298,7 @@ module.exports = {
 		Player.$(`.${ns}-settings-tab[data-group="${group}"]`).classList.add('active');
 	},
 
-	import: async function () {
+	async import() {
 		const fileInput = _.element('<input type="file">');
 		const _import = async () => {
 			let config;
@@ -314,7 +314,7 @@ module.exports = {
 		fileInput.click();
 	},
 
-	export: async function (e) {
+	async export(e) {
 		// Use the saved settings to only export non-default user settings. Shift click exports everything for testing.
 		const settings = e && e.shiftKey ? JSON.stringify(Player.config, null, 4) : await GM.getValue('settings') || '{}';
 		const blob = new Blob([ settings ], { type: 'application/json' });
@@ -323,7 +323,7 @@ module.exports = {
 		URL.revokeObjectURL(a.href);
 	},
 
-	setChangeListeners: function (target) {
+	setChangeListeners(target) {
 		const settingsContainer = target || Player.$(`.${ns}-settings`);
 		settingsContainer.querySelectorAll(`.${ns}-settings input, .${ns}-settings textarea`).forEach(el => {
 			el.addEventListener('focusout', Player.settings.handleChange);
@@ -336,7 +336,7 @@ module.exports = {
 	/**
 	 * Handle the user making a change in the settings view.
 	 */
-	handleChange: function (e) {
+	handleChange(e) {
 		try {
 			const input = e.currentTarget;
 			const property = input.getAttribute('data-property');
@@ -366,7 +366,7 @@ module.exports = {
 	/**
 	 * Converts a key event in an input to a string representation set as the input value.
 	 */
-	handleKeyChange: function (e) {
+	handleKeyChange(e) {
 		e.preventDefault();
 		if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Meta') {
 			return;
