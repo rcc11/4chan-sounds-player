@@ -27,6 +27,7 @@ module.exports = [
 		actions: [ { title: 'Reset', handler: 'settings.reset("allow"):prevent' } ],
 		displayGroup: 'Filter',
 		displayMethod: 'textarea',
+		attrs: 'rows=10',
 		format: v => v.join('\n'),
 		parse: v => v.split('\n')
 	},
@@ -38,6 +39,7 @@ module.exports = [
 		actions: [ { title: 'Reset', handler: 'settings.reset("filters"):prevent' } ],
 		displayGroup: 'Filter',
 		displayMethod: 'textarea',
+		attrs: 'rows=10',
 		format: v => v.join('\n'),
 		parse: v => v.split('\n')
 	}

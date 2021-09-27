@@ -51,7 +51,7 @@ module.exports = [
 			+ `<div class="${ns}-expander" data-direction="se"></div>\n`,
 		displayGroup: 'Theme',
 		displayMethod: 'textarea',
-		attrs: 'style="height:9em;"',
+		attrs: 'rows="10"',
 		themeField: true
 	},
 	{
@@ -61,7 +61,7 @@ module.exports = [
 		actions: [ { title: 'Reset', handler: 'settings.reset("chanXTemplate"):prevent' } ],
 		displayGroup: 'Theme',
 		displayMethod: 'textarea',
-		attrs: 'style="height:9em;"',
+		attrs: 'rows="10"',
 		themeField: true
 	},
 	{
@@ -70,7 +70,7 @@ module.exports = [
 		default: '',
 		displayGroup: 'Theme',
 		displayMethod: 'textarea',
-		attrs: 'style="height:9em"',
+		attrs: 'rows="10"',
 		themeField: true
 	}
 ];

@@ -138,8 +138,11 @@ module.exports = {
 	 * @param {function} handler The handler function.
 	 */
 	on(evt, handler) {
-		Player.events._events[evt] || (Player.events._events[evt] = []);
-		Player.events._events[evt].push(handler);
+		const evts = Array.isArray(evt) ? evt : [ evt ];
+		evts.forEach(evt => {
+			Player.events._events[evt] || (Player.events._events[evt] = []);
+			Player.events._events[evt].push(handler);
+		});
 	},
 
 	/**

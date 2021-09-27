@@ -64,7 +64,8 @@ module.exports = {
 	handleAudioError(err) {
 		if (Player.playing) {
 			Player.logError(`Failed to play ${Player.playing.title}. Please check the console for details.`, err, 'warning');
-			Player.next();
+			Player.playing.error = err;
+			setTimeout(Player.next, 3000);
 		}
 	},
 

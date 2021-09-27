@@ -83,6 +83,12 @@ module.exports = {
 		// Resize the image when the config is changed (from other tabs)
 		Player.on('config:imageHeight', height => Player.$(`.${ns}-image-link`).style.height = height + 'px');
 
+		// Preload the next audio.
+		Player.on([ 'playsound', 'order' ], () => {
+			const next = Player.sounds[(Player.sounds.indexOf(Player.playing) + 1) % Player.sounds.length];
+			next && Player.playlist.preload(next);
+		});
+
 		// Maintain changes to the user templates it's dependent values
 		Player.userTemplate.maintain(Player.playlist, 'rowTemplate', [ 'shuffle' ]);
 	},
@@ -115,7 +121,7 @@ module.exports = {
 		const background = container.querySelector(`.${ns}-background-image`);
 		img.src = background.src = '';
 		img.src = background.src = sound.imageOrThumb;
-		Player.video.src = Player.isVideo ? sound.image : undefined;
+		Player.isVideo && (Player.video.src = sound.image);
 		if (Player.config.viewStyle !== 'fullscreen') {
 			container.href = sound.image;
 		}
@@ -593,5 +599,31 @@ module.exports = {
 	 */
 	expandImageClick(e) {
 		Player.config.viewStyle === 'playlist' && Player._imageResized && e.preventDefault();
+	},
+
+	/**
+	 * Preload a sound.
+	 */
+	async preload(sound) {
+		if (sound.preloading) {
+			return;
+		}
+		sound.preloading = true;
+		const video = sound.image.endsWith('.webm') || sound.type === 'video/webm';
+		await Promise.all([
+			!sound.standaloneVideo && new Promise(resolve => {
+				const audio = new Audio();
+				audio.addEventListener('canplaythrough', resolve);
+				audio.addEventListener('error', resolve);
+				audio.src = sound.src;
+			}),
+			video && new Promise(resolve => {
+				const video = document.createElement('video');
+				video.addEventListener('canplaythrough', resolve);
+				video.addEventListener('error', resolve);
+				video.src = sound.image;
+			})
+		]);
+		sound.preloading = false;
 	}
 };
