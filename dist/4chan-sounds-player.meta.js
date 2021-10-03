@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         4chan sounds player
-// @version      3.4.6
+// @version      3.4.7
 // @namespace    rccom
 // @description  A player designed for 4chan sounds threads.
 // @author       RCC
@@ -28,6 +28,7 @@
 // @connect      catbox.moe
 // @connect      share.dmca.gripe
 // @connect      z.zz.ht
+// @connect      z.zz.fo
 // @connect      zz.ht
 // @connect      too.lewd.se
 // @connect      lewd.se

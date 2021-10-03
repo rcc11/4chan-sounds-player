@@ -143,7 +143,6 @@ module.exports = {
 			const allFilters = Player.posts.getFilters(postId);
 			const hasFilter = allFilters.host.length || allFilters.image || allFilters.sound.length;
 			if (hasFilter) {
-				String(postId).includes('227730126') && console.log(allFilters);
 				postEl.classList.add('filtered-sound');
 				// There is a filtered sound for the post so create/update the add link,
 				const filtered = [ allFilters.image && 'image', allFilters.sound.length && 'sound' ].filter(Boolean).join(' and ');

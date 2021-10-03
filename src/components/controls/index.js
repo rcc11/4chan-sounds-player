@@ -65,7 +65,7 @@ module.exports = {
 		if (Player.playing) {
 			Player.logError(`Failed to play ${Player.playing.title}. Please check the console for details.`, err, 'warning');
 			Player.playing.error = err;
-			setTimeout(Player.next, 3000);
+			setTimeout(() => Player.next({ paused: true }), 3000);
 		}
 	},
 
