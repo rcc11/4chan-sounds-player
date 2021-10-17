@@ -202,7 +202,7 @@ module.exports = {
 
 	updateFullScreenDetails() {
 		const tags = Player.playing.tags || {};
-		Player.$('.fullscreen-details').innerHTML = [
+		document.querySelector('.fullscreen-details').innerHTML = [
 			Player.playing.name,
 			[ tags.title, tags.artist ].filter(Boolean).join(' - ')
 		].filter(Boolean).join(' • ') || Player.playing.title;

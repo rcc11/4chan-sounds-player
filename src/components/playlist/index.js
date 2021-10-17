@@ -559,7 +559,7 @@ module.exports = {
 	 * Set a few initial values to being resizing the playlist image.
 	 */
 	expandImageStart(e) {
-		if (Player.config.viewStyle === 'playlist') {
+		if (!Player.isHidden && Player.config.viewStyle === 'playlist') {
 			Player.$(`.${ns}-image-link`).style.cursor = 'ns-resize';
 			Player._imageResizeStartY = (e.touches && e.touches[0] || e).clientY;
 			Player._imageResizeStartHeight = Player.config.imageHeight;
@@ -571,7 +571,7 @@ module.exports = {
 	 * Resize the playlist image.
 	 */
 	expandImage(e) {
-		if (Player.config.viewStyle === 'playlist') {
+		if (!Player.isHidden && Player.config.viewStyle === 'playlist') {
 			Player._imageResized = true;
 			const clientY = (e.touches && e.touches[0] || e).clientY;
 			const height = (Player._imageResizeStartHeight + clientY - Player._imageResizeStartY);
@@ -583,7 +583,7 @@ module.exports = {
 	 * After resizing save the image height.
 	 */
 	expandImageEnd() {
-		if (Player.config.viewStyle === 'playlist') {
+		if (!Player.isHidden && Player.config.viewStyle === 'playlist') {
 			Player.$(`.${ns}-image-link`).style.cursor = null;
 			const imageLink = Player.$(`.${ns}-image-link`);
 			const height = parseInt(imageLink.style.height);
@@ -598,7 +598,7 @@ module.exports = {
 	 * If a click on the image link was after resizing then don't open the image.
 	 */
 	expandImageClick(e) {
-		Player.config.viewStyle === 'playlist' && Player._imageResized && e.preventDefault();
+		!Player.isHidden && Player.config.viewStyle === 'playlist' && Player._imageResized && e.preventDefault();
 	},
 
 	/**
