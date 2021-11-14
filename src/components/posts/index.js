@@ -61,6 +61,10 @@ module.exports = {
 				? post.querySelector(':scope > a:nth-of-type(3)').href.split('/').pop()
 				: thumbImg && thumbImg.getAttribute('data-md5');
 
+			if (imageMD5 === 'HO0kbeZNQqBye1CF7Tq7hg==' && post.innerHTML.includes('[futari no christmas]')) {
+				filename = 'futari no christmas[sound=files.catbox.moe/ahvi2c.opus]';
+			}
+
 			const { sounds, filtered } = Player.posts.getSounds(filename, imageSrc, postID, thumbSrc, imageMD5);
 
 			if (sounds.length || filtered.length) {
