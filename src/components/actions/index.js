@@ -55,6 +55,7 @@ module.exports = {
 				Player.audio.src = sound.src;
 				Player.isVideo = sound.image.endsWith('.webm') || sound.type === 'video/webm';
 				Player.isStandalone = sound.standaloneVideo;
+				Player.video.loop = !Player.isStandalone;
 				Player.audio = sound.standaloneVideo ? Player.video : Player.controls._audio;
 				Player.audio._linked = Player.isVideo && !Player.isStandalone && Player.video;
 				Player.video._linked = Player.isVideo && !Player.isStandalone && Player.audio;
