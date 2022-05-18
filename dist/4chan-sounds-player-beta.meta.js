@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         4chan sounds player
-// @version      3.4.8-748889d
+// @version      3.4.9-f478ee7
 // @namespace    rccom
 // @description  A player designed for 4chan sounds threads.
 // @author       RCC
