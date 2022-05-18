@@ -60,6 +60,7 @@
 		bottom: 0;
 		opacity: .7;
 		transition: opacity .3s ease;
+		z-index: 2
 	}
 	& .#{$ns}-list-container {
 		position: absolute;
@@ -75,10 +76,10 @@
 		text-align: left;
 		background: #{map-get($colors, controls_background)};
 		color: #{map-get($colors, controls_inactive)};
-		color: white;
 		padding: .5rem 1rem;
 		font-size: 1.5rem;
 		line-height: 1.5rem;
 		border-radius: .375rem;
+		z-index: 2
 	}
 }

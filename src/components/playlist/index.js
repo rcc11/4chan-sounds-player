@@ -91,6 +91,9 @@ module.exports = {
 
 		// Maintain changes to the user templates it's dependent values
 		Player.userTemplate.maintain(Player.playlist, 'rowTemplate', [ 'shuffle' ]);
+
+		// Resize observer to handle transparent images
+		Player.playlist.imageResizeObserver = new ResizeObserver(Player.playlist.resizeTransBG);
 	},
 
 	/**
@@ -102,7 +105,12 @@ module.exports = {
 	},
 
 	afterRender() {
+		Player.playlist.image = Player.$(`.${ns}-image`);
+		Player.playlist.transparentImageBG = Player.$(`.${ns}-image-transparent-bg`);
 		Player.playlist.hoverImage = Player.$(`.${ns}-hover-image`);
+		Player.playlist.imageResizeObserver.disconnect();
+		Player.playlist.imageResizeObserver.observe(Player.playlist.image);
+		Player.playlist.image.onload = Player.playlist.resizeTransBG;
 	},
 
 	/**
@@ -126,6 +134,17 @@ module.exports = {
 			container.href = sound.image;
 		}
 		container.classList[Player.isVideo ? 'add' : 'remove'](ns + '-show-video');
+	},
+
+	/**
+	 * Resize the background element that prevents transparent images display over themself.
+	 */
+	resizeTransBG() {
+		const contentBoxRatio = Player.playlist.image.width / Player.playlist.image.height;
+		const imageSizeRatio = Player.playlist.image.naturalWidth / Player.playlist.image.naturalHeight;
+		const bgEl = Player.playlist.transparentImageBG;
+		bgEl.style.width = Math.min(imageSizeRatio / contentBoxRatio * 100, 100) + '%';
+		bgEl.style.height = Math.min(contentBoxRatio / imageSizeRatio * 100, 100) + '%';
 	},
 
 	/**

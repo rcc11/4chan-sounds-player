@@ -27,6 +27,10 @@
 			max-width: #{$max-pip-size};
 			object-fit: contain;
 		}
+
+		.#{$ns}-image-transparent-bg, .#{$ns}-background-image {
+			display: none;
+		}
 	}
 
 	& .#{$ns}-video {
@@ -36,6 +40,7 @@
 		height: 100%;
 		width: 100%;
 		object-fit: contain;
+		z-index: 1;
 	}
 
 	& .#{$ns}-background-image {
@@ -56,6 +61,11 @@
 		}
 	}
 
+	.#{$ns}-image-transparent-bg {
+		background-color: #{map-get($colors, background)};
+		position: absolute;
+	}
+
 	.untz & {
 		transition: all .1s linear;
 	}
@@ -65,7 +75,7 @@
 	.#{$ns}-image-link {
 		background: black;
 	}
-	.#{$ns}-background-image {
+	.#{$ns}-background-image, .#{$ns}-image-transparent-bg {
 		display: none;
 	}
 }

@@ -10,6 +10,7 @@
 	<div class="fullscreen-details"></div>
 	<div class="image-color-overlay"></div>
 	<img class="${ns}-background-image"></img>
+	<div class="${ns}-image-transparent-bg"></div>
 	<img id="fcspImage" class="${ns}-image" src="data:image/svg+xml;base64,${btoa(Icons.fcSounds)}"></img>
 	<video class="${ns}-video" @play='controls.sync' @pause='controls.sync' loop="true"></video>
 </a>
