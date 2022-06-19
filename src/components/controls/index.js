@@ -56,6 +56,12 @@ module.exports = {
 			Player.controls.setHideOrder();
 			Player.controls.preventWrapping();
 		});
+		// Sync audio/video when the tab is focused.
+		document.addEventListener('visibilitychange', () => {
+			if (document.visibilityState === 'visible') {
+				Player.controls.sync(Player.audio);
+			}
+		});
 	},
 
 	/**
