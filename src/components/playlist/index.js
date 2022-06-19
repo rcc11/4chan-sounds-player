@@ -578,11 +578,12 @@ module.exports = {
 	 * Set a few initial values to being resizing the playlist image.
 	 */
 	expandImageStart(e) {
-		if (!Player.isHidden && Player.config.viewStyle === 'playlist') {
+		if (e.button === 0 && !Player.isHidden && Player.config.viewStyle === 'playlist') {
 			Player.$(`.${ns}-image-link`).style.cursor = 'ns-resize';
 			Player._imageResizeStartY = (e.touches && e.touches[0] || e).clientY;
 			Player._imageResizeStartHeight = Player.config.imageHeight;
 			Player._imageResized = false;
+			Player._imageReizeMaxHeight = Player.$(`.${ns}-player`).getBoundingClientRect().height - Player.$(`.${ns}-controls`).getBoundingClientRect().height;
 		}
 	},
 
@@ -594,19 +595,19 @@ module.exports = {
 			Player._imageResized = true;
 			const clientY = (e.touches && e.touches[0] || e).clientY;
 			const height = (Player._imageResizeStartHeight + clientY - Player._imageResizeStartY);
-			Player.$(`.${ns}-image-link`).style.height = Math.max(125, height) + 'px';
+			Player.$(`.${ns}-image-link`).style.height = Math.min(Math.max(125, height), Player._imageReizeMaxHeight) + 'px';
 		}
 	},
 
 	/**
-	 * After resizing save the image height.
+	 * Keep the image within the player.
 	 */
-	expandImageEnd() {
+	setImageHeight() {
 		if (!Player.isHidden && Player.config.viewStyle === 'playlist') {
 			Player.$(`.${ns}-image-link`).style.cursor = null;
 			const imageLink = Player.$(`.${ns}-image-link`);
 			const height = parseInt(imageLink.style.height);
-			const { height: maxHeight } = Player.$(`.${ns}-player`).getBoundingClientRect();
+			const maxHeight = Player.$(`.${ns}-player`).getBoundingClientRect().height - Player.$(`.${ns}-controls`).getBoundingClientRect().height;
 			const finalHeight = Math.max(125, Math.min(height, maxHeight));
 			imageLink.style.height = finalHeight + 'px';
 			Player.set('imageHeight', finalHeight);

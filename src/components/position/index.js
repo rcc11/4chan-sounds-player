@@ -140,6 +140,7 @@ module.exports = {
 		Player.container.style.width = width + 'px';
 		Player.container.style.height = height + 'px';
 		Player.controls.preventWrapping();
+		Player.playlist.setImageHeight();
 	},
 
 	/**

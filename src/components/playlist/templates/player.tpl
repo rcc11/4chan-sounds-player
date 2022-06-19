@@ -4,7 +4,7 @@
 	style="height: ${Player.config.imageHeight}px"
 	@pointdragstart="playlist.expandImageStart:prevent"
 	@pointdrag="playlist.expandImage:prevent:move"
-	@pointdragend="playlist.expandImageEnd:prevent"
+	@pointdragend="playlist.setImageHeight:prevent"
 	@click="playlist.expandImageClick"
 >
 	<div class="fullscreen-details"></div>

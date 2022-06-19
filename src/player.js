@@ -71,7 +71,7 @@ const Player = window.Player = module.exports = {
 				}
 			});
 		} catch (err) {
-			Player.logError('There was an error initialzing the sound player. Please check the console for details.', err);
+			Player.logError('There was an error initializing the sound player. Please check the console for details.', err);
 			// Can't recover so throw this error.
 			throw err;
 		}
