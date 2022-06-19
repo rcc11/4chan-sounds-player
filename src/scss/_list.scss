@@ -8,6 +8,7 @@
 		position: fixed;
 		max-height: 125px;
 		max-width: 125px;
+		z-index: 1;
 	}
 	&.#{$ns}-hide-hover-image .#{$ns}-hover-image {
 		display: none !important;
