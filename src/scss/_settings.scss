@@ -1,6 +1,6 @@
 .#{$ns}-settings {
 	& textarea {
-		border: solid 1px #{map-get($colors, border)};
+		border: solid 1px var(--fcsp-border);
 		min-width: 100%;
 		min-height: 4rem;
 		box-sizing: border-box;
@@ -53,7 +53,7 @@
 
 	& .#{$ns}-host-input {
 		margin: .5rem 0;
-		border-top: solid 1px #{map-get($colors, border)};
+		border-top: solid 1px var(--fcsp-border);
 
 		&.invalid {
 			border: solid 1px red;

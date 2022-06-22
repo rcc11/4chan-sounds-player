@@ -2,9 +2,9 @@
 	position: fixed;
 	display: flex;
 	flex-direction: column;
-	background: #{map-get($colors, background)};
-	color: #{map-get($colors, text)};
-	border: 1px solid #{map-get($colors, border)};
+	background: var(--fcsp-background);
+	color: var(--fcsp-text);
+	border: 1px solid var(--fcsp-border);
 	box-sizing: border-box;
 	min-width: 7rem;
 	line-height: 1rem;
@@ -22,7 +22,7 @@
 		box-sizing: border-box;
 		margin: 0;
 		border-radius: 0;
-		border: solid 1px #{map-get($colors, border)};
+		border: solid 1px var(--fcsp-border);
 		padding: 0 .25rem;
 	}
 
@@ -52,7 +52,7 @@
 	margin: .5rem 0;
 
 	&.lined {
-		border-bottom: solid 1px #{map-get($colors, border)};
+		border-bottom: solid 1px var(--fcsp-border);
 
 		& .#{$ns}-heading-action {
 			text-decoration: none;

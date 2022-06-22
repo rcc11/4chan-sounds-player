@@ -25,17 +25,17 @@
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		cursor: pointer;
-		background: #{map-get($colors, odd_row)};
+		background: var(--fcsp-odd-row);
 
 		overflow: hidden;
 		height: 1.3rem;
 
 		&:nth-child(2n) {
-			background: #{map-get($colors, even_row)};
+			background: var(--fcsp-even-row);
 		}
 		// nth-child of every child just so it overrides the above without !important
 		&:nth-child(n).playing {
-			background: #{map-get($colors, playing)};
+			background: var(--fcsp-playing);
 		}
 
 		& .#{$ns}-item-menu-button {
@@ -43,7 +43,7 @@
 		}
 
 		&.#{$ns}-dragging {
-			background: #{map-get($colors, dragging)}
+			background: var(--fcsp-dragging)
 		}
 	}
 }

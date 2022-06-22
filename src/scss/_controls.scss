@@ -2,7 +2,7 @@
 	align-items: center;
 	padding: .5rem 0;
 	position: relative;
-	background: #{map-get($colors, controls_background)};
+	background: var(--fcsp-controls-background);
 	justify-content: space-between;
 
 	& > div {
@@ -10,7 +10,7 @@
 	}
 
 	& .#{$ns}-current-time {
-		color: #{map-get($colors, controls_inactive)};
+		color: var(--fcsp-controls-inactive);
 	}
 
 	& .#{$ns}-media-control {
@@ -18,7 +18,7 @@
 		height: 1.5rem;
 		font-size: 1rem;
 
-		color: #{map-get($colors, controls_inactive)};
+		color: var(--fcsp-controls-inactive);
 
 		&.disabled {
 			cursor: inherit;
@@ -26,7 +26,7 @@
 		}
 
 		&:hover:not(.disabled) {
-			color: #{map-get($colors, controls_active)};
+			color: var(--fcsp-controls-active);
 		}
 	}
 }
@@ -96,14 +96,14 @@
 	align-items:center;
 
 	&:hover .#{$ns}-current-bar:after {
-		background: #{map-get($colors, controls_active)};
+		background: var(--fcsp-controls-active);
 	}
 }
 
 .#{$ns}-full-bar {
 	height: .3rem;
 	width: 100%;
-	background: #{map-get($colors, controls_empty_bar)};
+	background: var(--fcsp-controls-empty-bar);
 	border-radius: 1rem;
 	position: relative;
 
@@ -115,7 +115,7 @@
 	}
 
 	& .#{$ns}-loaded-bar {
-		background: #{map-get($colors, controls_loaded_bar)};
+		background: var(--fcsp-controls-loaded-bar);
 	}
 
 	& .#{$ns}-current-bar {
@@ -125,7 +125,7 @@
 
 		&:after {
 			content: '';
-			background: #{map-get($colors, controls_inactive)};
+			background: var(--fcsp-controls-inactive);
 			height: .8rem;
 			min-width: .8rem;
 			border-radius: 1rem;
@@ -136,10 +136,10 @@
 }
 
 .#{$ns}-seek-bar .#{$ns}-current-bar {
-	background: #{map-get($colors, controls_active)};
+	background: var(--fcsp-controls-active);
 }
 .#{$ns}-volume-bar .#{$ns}-current-bar {
-	background: #{map-get($colors, controls_inactive)};;
+	background: var(--fcsp-controls-inactive);;
 }
 
 .#{$ns}-chan-x-controls {

@@ -3,9 +3,9 @@
 // Styles to handle not having 4chan X.
 // Using html:not(.fourchan-x) makes the styles end up with higher specificity and clobber things.
 .dialog {
-	background: #{map-get($colors, background)};
-	background: #{map-get($colors, background)};
-	border-color: #{map-get($colors, border)};
+	background: var(--fcsp-background);
+	background: var(--fcsp-background);
+	border-color: var(--fcsp-border);
 	border-radius: 3px;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
 	border-radius: 3px;

@@ -1,0 +1,21 @@
+:root {
+    // Colors
+    --fcsp-text: ${Player.config.colors.text};
+    --fcsp-background: ${Player.config.colors.background};
+    --fcsp-border: ${Player.config.colors.border};
+    --fcsp-odd-row: ${Player.config.colors.odd_row};
+    --fcsp-even-row: ${Player.config.colors.even_row};
+    --fcsp-playing: ${Player.config.colors.playing};
+    --fcsp-dragging: ${Player.config.colors.dragging};
+
+    --fcsp-controls-background: ${Player.config.colors.controls_background};
+    --fcsp-controls-active: ${Player.config.colors.controls_active};
+    --fcsp-controls-inactive: ${Player.config.colors.controls_inactive};
+    --fcsp-controls-empty-bar: ${Player.config.colors.controls_empty_bar};
+    --fcsp-controls-loaded-bar: ${Player.config.colors.controls_loaded_bar};
+
+    --fcsp-muted: #909090;
+
+    // Max pip size set by user
+    --fcsp-max-pip-size: ${Player.config.maxPIPWidth};
+}

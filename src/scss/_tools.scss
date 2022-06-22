@@ -1,6 +1,6 @@
 .#{$ns}-download-all-status, .#{$ns}-create-sound-status {
 	margin-top: .5rem;
-	border: solid 1px #{map-get($colors, border)};
+	border: solid 1px var(--fcsp-border);
 	border-radius: 5px;
 	padding: .25rem;
 }
@@ -70,6 +70,6 @@
 	height: 5px;
 
 	& > div {
-		background: #{map-get($colors, border)};
+		background: var(--fcsp-border);
 	}
 }

@@ -74,8 +74,8 @@
 		top: .5rem;
 		left: .5rem;
 		text-align: left;
-		background: #{map-get($colors, controls_background)};
-		color: #{map-get($colors, controls_inactive)};
+		background: var(--fcsp-controls-background);
+		color: var(--fcsp-controls-inactive);
 		padding: .5rem 1rem;
 		font-size: 1.5rem;
 		line-height: 1.5rem;

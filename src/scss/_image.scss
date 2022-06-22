@@ -24,8 +24,8 @@
 		& .#{$ns}-image, .#{$ns}-video {
 			width: auto;
 			height: auto;
-			max-height: #{$max-pip-size};
-			max-width: #{$max-pip-size};
+			max-height: var(--fcsp-max-pip-size);
+			max-width: var(--fcsp-max-pip-size);
 			object-fit: contain;
 		}
 
@@ -63,7 +63,7 @@
 	}
 
 	.#{$ns}-image-transparent-bg {
-		background-color: #{map-get($colors, background)};
+		background-color: var(--fcsp-background);
 		position: absolute;
 	}
 

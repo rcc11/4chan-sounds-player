@@ -1,4 +1,5 @@
 const cssTemplate = require('../../scss/style.scss');
+const cssVarsTemplate = require('../../scss/root.scss');
 const css4chanXPolyfillTemplate = require('../../scss/4chan-x-polyfill.scss');
 
 const menus = {
@@ -82,7 +83,10 @@ module.exports = {
 			}
 
 			// Create the main stylesheet.
-			Player.display.updateStylesheet();
+			Player.stylesheet = Player.stylesheet || _.element('<style id="sound-player-css"></style>', document.head);
+			Player.stylesheet.innerHTML = (!isChanX ? '/* 4chanX Polyfill */\n\n' + css4chanXPolyfillTemplate() : '')
+				+ '\n\n/* Sounds Player CSS */\n\n' + cssTemplate();
+			Player.display.updateCSSVars();
 
 			// Create the main player. For native threads put it in the threads to get free quote previews.
 			const parent = Thread && !isChanX && document.body.querySelector('.board') || document.body;
@@ -96,11 +100,10 @@ module.exports = {
 		}
 	},
 
-	updateStylesheet() {
+	updateCSSVars() {
 		// Insert the stylesheet if it doesn't exist. 4chan X polyfill, sound player styling, and user styling.
-		Player.stylesheet = Player.stylesheet || _.element('<style id="sound-player-css"></style>', document.head);
-		Player.stylesheet.innerHTML = (!isChanX ? '/* 4chanX Polyfill */\n\n' + css4chanXPolyfillTemplate() : '')
-			+ '\n\n/* Sounds Player CSS */\n\n' + cssTemplate();
+		Player.varsCSS = Player.varsCSS || _.element('<style id="sound-player-css-vars"></style>', document.head);
+		Player.varsCSS.innerHTML = '\n\n/* Sounds Player CSS variables */\n\n' + cssVarsTemplate();
 	},
 
 	/**
