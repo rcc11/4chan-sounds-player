@@ -72,19 +72,17 @@
 	}
 }
 
-##{$ns}-container.playing-video {
-	&[data-view-style="fullscreen"] {
-		.#{$ns}-image-link {
-			background: black;
-		}
-		.#{$ns}-background-image {
-			display: none;
-		}
-	}
-
-	.#{$ns}-image-transparent-bg {
+##{$ns}-container[data-view-style="fullscreen"] {
+	&.playing-video .#{$ns}-background-image {
 		display: none;
 	}
+	&.playing-video .#{$ns}-image-link, .#{$ns}-image-transparent-bg {
+		background: black;
+	}
+}
+
+##{$ns}-container.playing-video .#{$ns}-image-transparent-bg {
+	display: none;
 }
 
 .image-color-overlay {
