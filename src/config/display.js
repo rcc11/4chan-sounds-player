@@ -77,7 +77,7 @@ module.exports = [
 				title: 'Max Width',
 				description: 'Maximum width for the thumbnail.',
 				default: '150px',
-				updateStylesheet: true
+				updateCSSVars: true
 			},
 			{
 				property: 'chanXControls',
@@ -134,16 +134,16 @@ module.exports = [
 		title: 'Colors',
 		displayGroup: 'Display',
 		property: 'colors',
-		updateStylesheet: true,
+		updateCSSVars: true,
 		allowInTheme: true,
 		class: `${ns}-colorpicker-input`,
-		attrs: '@focusout="colorpicker._updatePreview" @click="colorpicker.create:prevent:stop"',
+		attrs: '@focusout.stop.prevent="colorpicker._updatePreview" @click="colorpicker.create"',
 		displayMethod: ({ value, attrs }) => `<div class="${ns}-col">
 				<input type="text" ${attrs} value="${value}">
-				<div class="${ns}-cp-preview" style="background: ${value}" @click="colorpicker.create:prevent:stop"></div>
+				<div class="${ns}-cp-preview" style="background: ${value}" @click.stop.prevent="colorpicker.create"></div>
 			</div>`,
 		actions: [
-			{ title: 'Match Theme', handler: 'theme.forceBoardTheme:prevent' }
+			{ title: 'Match Theme', handler: 'theme.forceBoardTheme', mods: '.prevent' }
 		],
 		// These colors will be overriden with the theme defaults at initialization. They're set to yotsuba b here.
 		settings: [
@@ -187,35 +187,35 @@ module.exports = [
 				default: '#3f3f44',
 				title: 'Controls Background',
 				description: 'The controls container element background.',
-				actions: [ { title: 'Reset', handler: 'settings.reset("colors.controls_background"):prevent' } ],
+				actions: [ { title: 'Reset', handler: 'settings.reset("colors.controls_background")', mods: '.prevent' } ],
 			},
 			{
 				property: 'colors.controls_inactive',
 				default: '#FFFFFF',
 				title: 'Control Items',
 				description: 'The playback controls and played bar.',
-				actions: [ { title: 'Reset', handler: 'settings.reset("colors.controls_inactive"):prevent' } ],
+				actions: [ { title: 'Reset', handler: 'settings.reset("colors.controls_inactive")', mods: '.prevent' } ],
 			},
 			{
 				property: 'colors.controls_active',
 				default: '#00b6f0',
 				title: 'Focused Control Items',
 				description: 'The control items when hovered.',
-				actions: [ { title: 'Reset', handler: 'settings.reset("colors.controls_active"):prevent' } ],
+				actions: [ { title: 'Reset', handler: 'settings.reset("colors.controls_active")', mods: '.prevent' } ],
 			},
 			{
 				property: 'colors.controls_empty_bar',
 				default: '#131314',
 				title: 'Volume/Seek Bar Background',
 				decscription: 'The background of the volume and seek bars.',
-				actions: [ { title: 'Reset', handler: 'settings.reset("colors.controls_empty_bar"):prevent' } ],
+				actions: [ { title: 'Reset', handler: 'settings.reset("colors.controls_empty_bar")', mods: '.prevent' } ],
 			},
 			{
 				property: 'colors.controls_loaded_bar',
 				default: '#5a5a5b',
 				title: 'Loaded Bar Background',
 				description: 'The loaded bar within the seek bar.',
-				actions: [ { title: 'Reset', handler: 'settings.reset("colors.controls_loaded_bar"):prevent' } ],
+				actions: [ { title: 'Reset', handler: 'settings.reset("colors.controls_loaded_bar")', mods: '.prevent' } ],
 			},
 			// Not configurable but here for access in templates.
 			{

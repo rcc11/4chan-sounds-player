@@ -62,7 +62,7 @@ const createTool = module.exports = {
 		fileList && (_.elementHTML(fileList, files.length < 2 ? '' : files.map((file, i) =>
 			`<div class="${ns}-row">
 				<div class="${ns}-col ${ns}-truncate-text">${file.name}</div>
-				<a class="${ns}-col-auto" @click="tools.handleFileRemove:prevent" href="#" data-idx="${i}">${Icons.close}</a>
+				<a class="${ns}-col-auto" @click.prevent="tools.handleFileRemove" href="#" data-idx="${i}">${Icons.close}</a>
 			</div>`
 		).join('')));
 	},

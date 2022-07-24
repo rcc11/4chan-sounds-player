@@ -96,7 +96,7 @@ module.exports.elementHandler = function elementHandler(el) {
 	el.querySelectorAll(`.${ns}-expander`).forEach(el => {
 		el.classList.add('no-touch-action');
 		Player.events.set(el, 'pointdragstart', 'position.initResize');
-		Player.events.set(el, 'pointdrag', 'position.doResize:unbound');
+		Player.events.set(el, 'pointdrag.unbound', 'position.doResize');
 		Player.events.set(el, 'pointdragend', 'position.stopResize');
 	});
 	// Wire up popovers.

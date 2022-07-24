@@ -4,7 +4,7 @@
 		<label>
 			<input
 				type="checkbox"
-				@change='threads.toggleBoard("${board.board}", "evt.currentTarget.checked")'
+				@change='threads.toggleBoard("${board.board}", $event.currentTarget.checked)'
 				value="${board.board}"
 				${checked ? 'checked' : ''}
 			/>

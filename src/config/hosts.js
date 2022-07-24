@@ -8,8 +8,8 @@ module.exports = [
 		property: 'uploadHosts',
 		title: 'Hosts',
 		actions: [
-			{ title: 'Add', handler: 'settings.hosts.add:prevent' },
-			{ title: 'Restore Defaults', handler: 'settings.hosts.restoreDefaults:prevent' }
+			{ title: 'Add', handler: 'settings.hosts.add', mods: '.prevent' },
+			{ title: 'Restore Defaults', handler: 'settings.hosts.restoreDefaults', mods: '.prevent' }
 		],
 		displayGroup: 'Hosts',
 		displayMethod: 'settings.hosts.template',

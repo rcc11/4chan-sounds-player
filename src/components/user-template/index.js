@@ -60,7 +60,7 @@ module.exports = {
 			const attrs = [ ...(_confFuncOrText(buttonConf.attrs) || []) ];
 			attrs.some(attr => attr.startsWith('href')) || attrs.push('href="javascript:;"');
 			(buttonConf.class || outerClass) && attrs.push(`class="${buttonConf.class || ''} ${outerClass || ''}"`);
-			buttonConf.action && attrs.push(`@click='${_confFuncOrText(buttonConf.action)}'`);
+			buttonConf.action && attrs.push(`@click${buttonConf.actionMods || ''}='${_confFuncOrText(buttonConf.action)}'`);
 
 			// Replace spaces with non breaking spaces in user text to prevent collapsing.
 			return `<a ${attrs.join(' ')}>${text && text.replace(/ /g, ' ') || _confFuncOrText(buttonConf.icon) || _confFuncOrText(buttonConf.text)}</a>`;

@@ -6,7 +6,7 @@
 		<div class="position"></div>
 	</div>
 	<div class="${ns}-output" style="text-align: right;">
-		<a href="#" class="${ns}-close-colorpicker" @click="display.closeDialogs():prevent">${Icons.close}</a>
+		<a href="#" class="${ns}-close-colorpicker" @click.prevent="display.closeDialogs()">${Icons.close}</a>
 		<div class="output-color" style="background: rgb(${data.rgb[0]}, ${data.rgb[1]}, ${data.rgb[2]});"></div>
 
 		<table>
@@ -26,6 +26,6 @@
 			`).join('')}
 		</table>
 
-		<button @click="colorpicker.apply:prevent:stop">Apply</button><br>
+		<button @click.stop.prevent="colorpicker.apply">Apply</button><br>
 	</div>
 </div>`

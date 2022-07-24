@@ -32,9 +32,9 @@ module.exports = {
 				location: '4chan-X-controls',
 				sound: Player.playing,
 				replacements: {
-					'prev-button': `<a href="#" class="${ns}-media-control ${ns}-previous-button ${ns}-hover-fill" @click='previous({"force":true}):prevent'>${Icons.skipStart} ${Icons.skipStartFill}</a>`,
-					'play-button': `<a href="#" class="${ns}-media-control ${ns}-play-button ${ns}-hover-fill ${!Player.audio || Player.audio.paused ? `${ns}-play` : ''}" @click="togglePlay:prevent" data-audio="${audioId}">${Icons.play} ${Icons.pause} ${Icons.playFill} ${Icons.pauseFill}</a>`,
-					'next-button': `<a href="#" class="${ns}-media-control ${ns}-next-button ${ns}-hover-fill" @click='next({"force":true}):prevent'>${Icons.skipEnd} ${Icons.skipEndFill} </a>`,
+					'prev-button': `<a href="#" class="${ns}-media-control ${ns}-previous-button ${ns}-hover-fill" @click.prevent='previous({"force":true})'>${Icons.skipStart} ${Icons.skipStartFill}</a>`,
+					'play-button': `<a href="#" class="${ns}-media-control ${ns}-play-button ${ns}-hover-fill ${!Player.audio || Player.audio.paused ? `${ns}-play` : ''}" @click.prevent="togglePlay" data-audio="${audioId}">${Icons.play} ${Icons.pause} ${Icons.playFill} ${Icons.pauseFill}</a>`,
+					'next-button': `<a href="#" class="${ns}-media-control ${ns}-next-button ${ns}-hover-fill" @click.prevent='next({"force":true})'>${Icons.skipEnd} ${Icons.skipEndFill} </a>`,
 					'sound-current-time': `<span class="${ns}-current-time" data-audio="${audioId}">0:00</span>`,
 					'sound-duration': `<span class="${ns}-duration" data-audio="${audioId}">0:00</span>`
 				}

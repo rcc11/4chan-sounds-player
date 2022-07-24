@@ -81,7 +81,7 @@ module.exports = {
 
 		if (!opts.bypassRender) {
 			// Updated the stylesheet.
-			Player.display.updateStylesheet();
+			Player.display.updateCSSVars();
 			// Re-render the settings.
 			Player.settings.render();
 		}
@@ -122,7 +122,7 @@ module.exports = {
 				Player.settings.reset(prop, { bypassRender: true, bypassStylesheet: true });
 			});
 			Player.settings.render();
-			Player.display.updateStylesheet();
+			Player.display.updateCSSVars();
 		} else {
 			Player.settings.load(Player.config.savedThemes[name]);
 		}

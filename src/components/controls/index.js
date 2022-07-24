@@ -9,7 +9,7 @@ module.exports = {
 		waiting: 'controls.handleMediaEvent',
 		ratechange: 'controls.handleMediaEvent',
 		timeupdate: 'controls.updateDuration',
-		loadedmetadata: [ 'controls.updateDuration', 'controls.preventWrapping' ],
+		loadedmetadata: [ 'controls.updateDuration', 'controls' ],
 		durationchange: 'controls.updateDuration',
 		volumechange: 'controls.updateVolume',
 		loadstart: 'controls.pollForLoading',
@@ -17,12 +17,12 @@ module.exports = {
 	},
 
 	actions: {
-		previous: 'previous({ "force": true })',
+		previous: 'previous({ force: true })',
 		playPause: 'togglePlay',
-		next: 'next({ "force": true })',
-		seek: 'controls.handleSeek("evt", "main"):prevent',
+		next: 'next({ force: true })',
+		seek: 'controls.handleSeek($event, "main")',
 		mute: 'toggleMute',
-		volume: 'controls.handleVolume("evt", "main"):prevent',
+		volume: 'controls.handleVolume($event, "main")',
 		fullscreen: 'display.toggleFullScreen'
 	},
 

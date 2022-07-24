@@ -2,15 +2,15 @@
 	<div
 		class="${ns}-list-item ${ns}-row ${sound.playing ? 'playing' : ''} ${ns}-align-center ${ns}-hover-trigger"
 		@click="playlist.handleSelect"
-		@dragstart="playlist.handleDragStart:passive"
-		@dragenter="playlist.handleDragEnter:prevent"
-		@dragend="playlist.handleDragEnd:prevent"
-		@dragover=":prevent"
-		@drop=":prevent"
-		@contextmenu='playlist.handleItemMenu("evt", "${sound.id}"):prevent:stop'
+		@dragstart.passive="playlist.handleDragStart"
+		@dragenter.prevent="playlist.handleDragEnter"
+		@dragend.prevent="playlist.handleDragEnd"
+		@dragover.prevent=""
+		@drop.prevent=""
+		@contextmenu.stop.prevent='playlist.handleItemMenu($event, "${sound.id}")'
 		@mouseenter="playlist.updateHoverImage"
 		@mouseleave="playlist.removeHoverImage"
-		@mousemove="playlist.positionHoverImage:passive"
+		@mousemove.passive="playlist.positionHoverImage"
 		data-id="${sound.id}"
 		${!Player.playlist.matchesSearch(sound) ? '__style="display: none"' : ''}
 		draggable="true"

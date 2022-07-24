@@ -151,12 +151,12 @@ module.exports = {
 						audioId: aId,
 						inline: true,
 						actions: {
-							previous: `inline.previous("${aId}"):disabled`,
+							previous: `inline.previous("${aId}")`,
 							playPause: `inline.playPause("${aId}")`,
-							next: `inline.next("${aId}"):disabled`,
-							seek: `controls.handleSeek("evt", "${aId}"):prevent`,
+							next: `inline.next("${aId}")`,
+							seek: `controls.handleSeek($event, "${aId}")`,
 							mute: `inline.mute("${aId}")`,
-							volume: `controls.handleVolume("evt", "${aId}"):prevent`
+							volume: `controls.handleVolume($event, "${aId}")`
 						}
 					}), node.parentNode);
 					// Don't want to close the expanded image or open the image when the controls are clicked.

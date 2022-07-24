@@ -12,7 +12,7 @@ Object.entries(Player.config.uploadHosts).map(([ name, host ]) => `
 				</label>
 			</div>
 			<div class="${ns}-col-auto">
-				<a href="#" class="${ns}-heading-action" @click="settings.hosts.remove:prevent">
+				<a href="#" class="${ns}-heading-action" @click.prevent="settings.hosts.remove">
 					Remove
 				</a>
 			</div>

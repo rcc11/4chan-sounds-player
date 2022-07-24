@@ -7,7 +7,7 @@ data.displayMethod === null ? '' : `
 		</span>
 		${!data.actions || !data.actions.length ? '' : `<div style="display: inline-block; margin: 0 .25rem">
 			${(data.actions || []).map(action => `
-				<a href="#" class="${ns}-heading-action" @click='${action.handler}'>${action.title}</a>
+				<a href="#" class="${ns}-heading-action" @click${action.mods || ''}='${action.handler}'>${action.title}</a>
 			`).join(' ')}
 		</div>`}
 	</div>
@@ -19,7 +19,7 @@ data.displayMethod === null ? '' : `
 				data.dismissRestoreText,
 				`<div data-dismiss-id="${data.dismissTextId}">
 					${data.text}
-					<a href="#" @click='display.dismiss("${data.dismissTextId}"):prevent' style="display:block; margin-top:.25rem">
+					<a href="#" @click.prevent='display.dismiss("${data.dismissTextId}")' style="display:block; margin-top:.25rem">
 						Dismiss
 					</a>
 				</div>`

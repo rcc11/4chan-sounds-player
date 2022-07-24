@@ -1,6 +1,6 @@
 `<div class="${ns}-heading lined">
 	Active Threads
-	${!Player.threads.loading ? `- <a class="${ns}-heading-action" @click="threads.fetch:prevent" href="#">Update</a>` : ''}
+	${!Player.threads.loading ? `- <a class="${ns}-heading-action" @click.prevent="threads.fetch" href="#">Update</a>` : ''}
 </div>
 
 <div style="margin: 0 .25rem; display: ${Player.threads.loading ? 'block' : 'none'}">Loading</div>
@@ -12,13 +12,13 @@
 	<input
 		type="text"
 		class="${ns}-threads-filter"
-		@keyup='threads.filter("evt.target.value")'
+		@keyup='threads.filter($event.target.value)'
 		value="${Player.threads.filterValue || ''}"
 	/>
 
 	<div class="${ns}-heading">
 		Boards -
-		<a class="${ns}-all-boards-link ${ns}-heading-action" @click="threads.toggleBoardList:prevent" href="#">
+		<a class="${ns}-all-boards-link ${ns}-heading-action" @click.prevent="threads.toggleBoardList" href="#">
 			${Player.threads.showAllBoards ? 'Selected Only' : 'Show All'}
 		</a>
 	</div>
@@ -30,11 +30,11 @@
 		? ''
 		: `<div class="${ns}-heading" style="text-align: center">
 			${Player.config.threadsViewStyle !== 'table'
-				? `<a class="${ns}-heading-action" @click='set("threadsViewStyle","table"):prevent' href="#">Table</a>`
+				? `<a class="${ns}-heading-action" @click.prevent='set("threadsViewStyle","table")' href="#">Table</a>`
 				: `<span>Table</span>`}
 			|
 			${Player.config.threadsViewStyle !== 'board'
-				? `<a class="${ns}-heading-action" @click='set("threadsViewStyle","board"):prevent' href="#">Board</a>`
+				? `<a class="${ns}-heading-action" @click.prevent='set("threadsViewStyle","board")' href="#">Board</a>`
 				: `<span>Board</span>`}
 		</div>`
 	}

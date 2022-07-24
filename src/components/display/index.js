@@ -56,17 +56,17 @@ module.exports = {
 		} else if (Site === 'Fuuka') {
 			const br = document.querySelector('body > div > br');
 			br.parentNode.insertBefore(document.createTextNode('['), br);
-			_.element('<a href="#" @click="display.toggle:prevent">Sounds</a>', br, 'beforebegin');
+			_.element('<a href="#" @click.prevent="display.toggle">Sounds</a>', br, 'beforebegin');
 			br.parentNode.insertBefore(document.createTextNode(']'), br);
 		} else if (isChanX) {
 			// Add a button in the header for 4chan X.
 			_.element(`<span id="shortcut-sounds" class="shortcut brackets-wrap" data-index="0">
-				<a href="#" @click="display.toggle:prevent" title="Sounds" class="fa fa-play-circle">Sounds</a>
+				<a href="#" @click.prevent="display.toggle" title="Sounds" class="fa fa-play-circle">Sounds</a>
 			</span>`, document.getElementById('shortcut-settings'), 'beforebegin');
 		} else {
 			// Add a [Sounds] link in the top and bottom nav for native 4chan.
 			document.querySelectorAll('#settingsWindowLink, #settingsWindowLinkBot').forEach(function (link) {
-				_.element('<a href="#" @click="display.toggle:prevent">Sounds</a>', link, 'beforebegin');
+				_.element('<a href="#" @click.prevent="display.toggle">Sounds</a>', link, 'beforebegin');
 				link.parentNode.insertBefore(document.createTextNode('] ['), link);
 			});
 		}
@@ -243,7 +243,7 @@ module.exports = {
 		if (dismiss && !Player.display.dismissed.includes(dismiss)) {
 			Player.display.dismissed.push(dismiss);
 			Player.$all(`[data-dismiss-id="${dismiss}"]`).forEach(el => {
-				_.element(`<a href="#" @click='display.restore("${dismiss}"):prevent'>${dismissedRestoreCache[dismiss]}</a>`, el, 'beforebegin');
+				_.element(`<a href="#" @click.prevent='display.restore("${dismiss}")'>${dismissedRestoreCache[dismiss]}</a>`, el, 'beforebegin');
 				el.parentNode.removeChild(el);
 			});
 			await GM.setValue('dismissed', Player.display.dismissed.join(','));
@@ -254,7 +254,7 @@ module.exports = {
 		dismissedContentCache[name] = text;
 		dismissedRestoreCache[name] = restore;
 		return Player.display.dismissed.includes(name)
-			? `<a href="#" @click='display.restore("${name}"):prevent'>${restore}</a>`
+			? `<a href="#" @click.prevent='display.restore("${name}")'>${restore}</a>`
 			: text;
 	},
 

@@ -2,9 +2,9 @@
 	class="${ns}-image-link"
 	target="_blank"
 	style="height: ${Player.config.imageHeight}px"
-	@pointdragstart="playlist.expandImageStart:prevent"
-	@pointdrag="playlist.expandImage:prevent:move"
-	@pointdragend="playlist.setImageHeight:prevent"
+	@pointdragstart.prevent="playlist.expandImageStart"
+	@pointdrag.move.prevent="playlist.expandImage"
+	@pointdragend.prevent="playlist.setImageHeight"
 	@click="playlist.expandImageClick"
 >
 	<div class="fullscreen-details"></div>

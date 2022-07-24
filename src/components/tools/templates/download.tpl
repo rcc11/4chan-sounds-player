@@ -36,11 +36,11 @@
 	</div>
 	<div class="${ns}-download-all-status" style="display: none;"></div>
 	<div class="${ns}-row mt-4 ${ns}-align-center">
-		<button @click="tools._handleDownload:prevent" class="${ns}-download-all-start">Download</button>
-		<button @click="tools._handleDownloadCancel:prevent" class="${ns}-download-all-cancel">Cancel</button>
-		<button @click="tools.saveThreadDownload:prevent" class="${ns}-download-all-save ml-2 ${ns}-popover" @click="tools.saveThreadDownload:prevent" data-content="Save the last download.">Save</button>
+		<button @click.prevent="tools._handleDownload" class="${ns}-download-all-start">Download</button>
+		<button @click.prevent="tools._handleDownloadCancel" class="${ns}-download-all-cancel">Cancel</button>
+		<button @click.prevent="tools.saveThreadDownload" class="${ns}-download-all-save ml-2 ${ns}-popover" @click="tools.saveThreadDownload" data-content="Save the last download.">Save</button>
 		<div class="${ns}-download-all-clear ml-2">
-			<a href="#" @click="tools.clearDownloadBlob:prevent">Clear</a><i class="${ns}-info-circle ${ns}-popover ml-1" data-content="Clear the last download to free memory.">${Icons.infoCircle}</i>
+			<a href="#" @click.prevent="tools.clearDownloadBlob">Clear</a><i class="${ns}-info-circle ${ns}-popover ml-1" data-content="Clear the last download to free memory.">${Icons.infoCircle}</i>
 		</div>
 	</div>
 </div>`

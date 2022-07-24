@@ -4,7 +4,8 @@ module.exports = [
 	{
 		property: 'repeat',
 		tplName: 'repeat',
-		action: 'playlist.toggleRepeat:prevent',
+		action: 'playlist.toggleRepeat',
+		actionMods: '.prevent',
 		values: {
 			all: { attrs: [ 'title="Repeat All"' ], icon: Icons.arrowRepeat },
 			one: { attrs: [ 'title="Repeat One"' ], icon: Icons.arrowClockwise },
@@ -14,7 +15,8 @@ module.exports = [
 	{
 		property: 'shuffle',
 		tplName: 'shuffle',
-		action: 'playlist.toggleShuffle:prevent',
+		action: 'playlist.toggleShuffle',
+		actionMods: '.prevent',
 		values: {
 			true: { attrs: [ 'title="Shuffled"' ], icon: Icons.shuffle },
 			false: { attrs: [ 'title="Ordered"' ], class: 'muted', icon: Icons.shuffle }
@@ -41,20 +43,23 @@ module.exports = [
 	},
 	{
 		tplName: 'add',
-		action: 'playlist.selectLocalFiles:prevent',
+		action: 'playlist.selectLocalFiles',
+		actionMods: '.prevent',
 		icon: Icons.plus,
 		attrs: [ 'title="Add local files"' ]
 	},
 	{
 		tplName: 'reload',
-		action: 'posts.refresh:prevent',
+		action: 'posts.refresh',
+		actionMods: '.prevent',
 		icon: Icons.reboot,
 		attrs: [ 'title="Reload the playlist"' ]
 	},
 	{
 		property: 'viewStyle',
 		tplName: 'settings',
-		action: 'settings.toggle():prevent',
+		action: 'settings.toggle()',
+		actionMods: '.prevent',
 		icon: Icons.gear,
 		attrs: [ 'title="Settings"' ],
 		values: {
@@ -65,7 +70,8 @@ module.exports = [
 	{
 		property: 'viewStyle',
 		tplName: 'threads',
-		action: 'threads.toggle:prevent',
+		action: 'threads.toggle',
+		actionMods: '.prevent',
 		icon: Icons.search,
 		attrs: [ 'title="Threads"' ],
 		values: {
@@ -76,7 +82,8 @@ module.exports = [
 	{
 		property: 'viewStyle',
 		tplName: 'tools',
-		action: 'tools.toggle:prevent',
+		action: 'tools.toggle',
+		actionMods: '.prevent',
 		icon: Icons.tools,
 		attrs: [ 'title="Tools"' ],
 		values: {
@@ -86,14 +93,16 @@ module.exports = [
 	},
 	{
 		tplName: 'close',
-		action: 'hide:prevent',
+		action: 'hide',
+		actionMods: '.prevent',
 		icon: Icons.close,
 		attrs: [ 'title="Hide the player"' ]
 	},
 	{
 		tplName: 'playing',
 		requireSound: true,
-		action: 'playlist.scrollToPlaying("center"):prevent',
+		action: 'playlist.scrollToPlaying("center")',
+		actionMods: '.prevent',
 		icon: Icons.musicNoteList,
 		attrs: [ 'title="Scroll the playlist to the currently playing sound."' ]
 	},
@@ -133,8 +142,9 @@ module.exports = [
 		action: data => {
 			const src = data.sound[data.tplNameMatch[1] === 'image' ? 'image' : 'src'];
 			const name = data.sound[data.tplNameMatch[1] === 'image' ? 'filename' : 'name'] || '';
-			return `tools.download("${_.escAttr(src, true)}", "${_.escAttr(name, true)}"):prevent`;
+			return `tools.download("${_.escAttr(src, true)}", "${_.escAttr(name, true)}")`;
 		},
+		actionMods: '.prevent',
 		icon: data => data.tplNameMatch[1] === 'image'
 			? Icons.fileEarmarkImage
 			: Icons.fileEarmarkMusic,
@@ -145,7 +155,8 @@ module.exports = [
 	{
 		tplName: /filter-(image|sound)/,
 		requireSound: true,
-		action: data => `playlist.addFilter("${data.tplNameMatch[1] === 'image' ? data.sound.imageMD5 : data.sound.src.replace(/^(https?:)?\/\//, '')}"):prevent`,
+		action: data => `playlist.addFilter("${data.tplNameMatch[1] === 'image' ? data.sound.imageMD5 : data.sound.src.replace(/^(https?:)?\/\//, '')}")`,
+		actionMods: '.prevent',
 		icon: Icons.filter,
 		showIf: data => data.tplNameMatch[1] === 'sound' || data.sound.imageMD5,
 		attrs: data => [
@@ -166,18 +177,21 @@ module.exports = [
 		tplName: 'menu',
 		requireSound: true,
 		class: `${ns}-item-menu-button`,
-		action: data => `playlist.handleItemMenu("evt", "${data.sound.id}"):prevent:stop`,
+		action: data => `playlist.handleItemMenu($event, "${data.sound.id}")`,
+		actionMods: '.prevent.stop',
 		icon: Icons.chevronDown
 	},
 	{
 		tplName: 'view-menu',
-		action: 'display.showMenu("evt.currentTarget", "views"):prevent:stop',
+		action: 'display.showMenu($event.currentTarget, "views")',
+		actionMods: '.prevent.stop',
 		icon: Icons.chevronDown,
 		attrs: [ 'title="Switch View"' ]
 	},
 	{
 		tplName: 'theme-menu',
-		action: 'display.showMenu("evt.currentTarget", "themes"):prevent:stop',
+		action: 'display.showMenu($event.currentTarget, "themes")',
+		actionMods: '.prevent.stop',
 		icon: Icons.layoutTextWindow,
 		attrs: [ 'title="Switch Theme"' ]
 	},

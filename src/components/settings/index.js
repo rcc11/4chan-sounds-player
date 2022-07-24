@@ -91,7 +91,7 @@ module.exports = {
 
 		// Trigger events, unless they are disabled in opts.
 		if (!bypassAll) {
-			!bypassStylesheet && settingConfig && settingConfig.updateStylesheet && Player.display.updateStylesheet();
+			!bypassStylesheet && settingConfig && settingConfig.updateCSSVars && Player.display.updateCSSVars();
 			!silent && Player.trigger('config', property, value, previous);
 			!silent && Player.trigger('config:' + property, value, previous);
 			!bypassSave && Player.settings.save();
@@ -146,7 +146,7 @@ module.exports = {
 		});
 		// Finally, trigger events.
 		if (!opts.bypassAll) {
-			!opts.bypassStylesheet && Player.display.updateStylesheet();
+			!opts.bypassStylesheet && Player.display.updateCSSVars();
 			!opts.silent && Object.entries(changes).forEach(([ prop, [ previous, current ] ]) => {
 				Player.trigger('config', prop, current, previous);
 				Player.trigger('config:' + prop, current, previous);
