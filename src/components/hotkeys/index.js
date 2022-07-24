@@ -132,15 +132,15 @@ module.exports = {
 	 */
 	handle(e) {
 		// Ignore events on inputs so you can still type.
-		const ignoreFor = [ 'INPUT', 'SELECT', 'TEXTAREA', 'INPUT' ];
-		if (ignoreFor.includes(e.target.nodeName) || Player.isHidden && (Player.config.hotkeys !== 'always' || !Player.sounds.length)) {
+		if (Player.isHidden && (Player.config.hotkeys !== 'always' || !Player.sounds.length)) {
 			return;
 		}
+		const inputFocused = [ 'INPUT', 'SELECT', 'TEXTAREA', 'INPUT' ].includes(e.target.nodeName)
 		const k = e.key.toLowerCase();
 		const bindings = Player.config.hotkey_bindings || {};
 
 		// Look for a matching hotkey binding
-		Object.entries(bindings).find(function checkBinding([ name, keyDef ]) {
+		Object.entries(bindings).forEach(function checkBinding([ name, keyDef ]) {
 			if (Array.isArray(keyDef)) {
 				return keyDef.find(_def => checkBinding([ name, _def ]));
 			}
@@ -149,13 +149,11 @@ module.exports = {
 				&& (!keyDef.ignoreRepeat || !e.repeat)
 				&& keyConfigs[name];
 
-			if (bindingConfig) {
+			if (bindingConfig && (!inputFocused || bindingConfig.allowFocusedInput)) {
 				e.preventDefault();
 				e._binding = keyDef;
 				Player.getHandler(bindingConfig.keyHandler)(e);
-				return true;
 			}
-			return false;
 		});
 	},
 

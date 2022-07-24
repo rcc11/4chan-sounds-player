@@ -121,7 +121,8 @@ module.exports = [
 				property: 'hotkey_bindings.toggleFullscreen',
 				title: 'Toggle Fullscreen',
 				keyHandler: 'display.toggleFullScreen',
-				default: { key: '' }
+				default: { key: '' },
+				allowFocusedInput: true
 			},
 			{
 				property: 'hotkey_bindings.togglePlaylist',
@@ -133,7 +134,8 @@ module.exports = [
 				property: 'hotkey_bindings.toggleSearch',
 				title: 'Toggle Playlist Search',
 				keyHandler: () => Player.set('showPlaylistSearch', !Player.config.showPlaylistSearch),
-				default: { key: '' }
+				default: { key: '' },
+				allowFocusedInput: true
 			},
 			{
 				property: 'hotkey_bindings.scrollToPlaying',
