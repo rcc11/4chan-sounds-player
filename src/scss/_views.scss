@@ -19,7 +19,7 @@
 }
 
 ##{$ns}-container[data-view-style="image"] {
-	& .#{$ns}-list-container, & .#{$ns}-playlist-search {
+	& .#{$ns}-under-image {
 		display: none;
 	}
 	& .#{$ns}-image-link {
@@ -30,6 +30,7 @@
 ##{$ns}-container[data-view-style="playlist"] {
 	& .#{$ns}-image-link {
 		flex-shrink: 0;
+		flex-grow: 0;
 	}
 }
 
@@ -62,7 +63,7 @@
 		transition: opacity .3s ease;
 		z-index: 2
 	}
-	& .#{$ns}-fullscreen-offscreen-contents {
+	& .#{$ns}-under-image {
 		position: absolute;
 		top: 100%;
 		width: 100%;

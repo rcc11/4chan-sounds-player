@@ -400,7 +400,8 @@ module.exports = {
 		Player.playlist.setHoverImageVisibility();
 		e.currentTarget.classList.add(`${ns}-dragging`);
 		const img = document.createElement('img');
-		img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+		img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
+		img.opacity = 0;
 		e.dataTransfer.setDragImage(img, 0, 0);
 		e.dataTransfer.dropEffect = 'move';
 		e.dataTransfer.setData('text/plain', e.currentTarget.getAttribute('data-id'));
@@ -425,7 +426,7 @@ module.exports = {
 		// If the item is being moved down it needs inserting before the node after the one it's dropped on.
 		const position = moving.compareDocumentPosition(before);
 		if (position & 0x04) {
-			before = before.nextSibling;
+			before = before.nextElementSibling;
 		}
 
 		// Move the element and sound.
@@ -510,14 +511,6 @@ module.exports = {
 			return;
 		}
 		Player.playlist.render();
-		return;
-		if (!v) {
-			return Player.$all(`.${ns}-list-item`).forEach(el => el.style.display = null);
-		}
-		Player.sounds.forEach(sound => {
-			const row = Player.$(`.${ns}-list-item[data-id="${sound.id}"]`);
-			row && (row.style.display = Player.playlist.matchesSearch(sound) ? null : 'none');
-		});
 	},
 
 	matchesSearch(sound) {

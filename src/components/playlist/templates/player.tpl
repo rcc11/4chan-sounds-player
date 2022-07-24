@@ -19,7 +19,7 @@ ${Player.controls.template({
 	audioId: Player.audio.dataset.id,
 	actions: Player.controls.actions
 })}
-<div class="${ns}-fullscreen-offscreen-contents">
+<div class="${ns}-under-image">
 	<input
 		type="input"
 		class="${ns}-playlist-search"

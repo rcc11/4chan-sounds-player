@@ -72,11 +72,17 @@
 	}
 }
 
-##{$ns}-container[data-view-style="fullscreen"].playing-video {
-	.#{$ns}-image-link {
-		background: black;
+##{$ns}-container.playing-video {
+	&[data-view-style="fullscreen"] {
+		.#{$ns}-image-link {
+			background: black;
+		}
+		.#{$ns}-background-image {
+			display: none;
+		}
 	}
-	.#{$ns}-background-image, .#{$ns}-image-transparent-bg {
+
+	.#{$ns}-image-transparent-bg {
 		display: none;
 	}
 }

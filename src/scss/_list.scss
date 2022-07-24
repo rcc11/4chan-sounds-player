@@ -15,36 +15,36 @@
 	}
 }
 
-.#{$ns}-list-container {
+.#{$ns}-under-image {
 	flex-grow: 1;
 	overflow: auto;
+}
 
-	& .#{$ns}-list-item {
-		list-style-type: none;
-		padding: 0.15rem 0.25rem;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		cursor: pointer;
-		background: var(--fcsp-odd-row);
+.#{$ns}-list-item {
+	list-style-type: none;
+	padding: 0.15rem 0.25rem;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	cursor: pointer;
+	background: var(--fcsp-odd-row);
 
-		overflow: hidden;
-		height: 1.3rem;
+	overflow: hidden;
+	height: 1.3rem;
 
-		&:nth-child(2n) {
-			background: var(--fcsp-even-row);
-		}
-		// nth-child of every child just so it overrides the above without !important
-		&:nth-child(n).playing {
-			background: var(--fcsp-playing);
-		}
+	&:nth-child(2n) {
+		background: var(--fcsp-even-row);
+	}
+	// nth-child of every child just so it overrides the above without !important
+	&:nth-child(n).playing {
+		background: var(--fcsp-playing);
+	}
 
-		& .#{$ns}-item-menu-button {
-			right: .25rem;
-		}
+	& .#{$ns}-item-menu-button {
+		right: .25rem;
+	}
 
-		&.#{$ns}-dragging {
-			background: var(--fcsp-dragging)
-		}
+	&.#{$ns}-dragging {
+		background: var(--fcsp-dragging);
 	}
 }
 
