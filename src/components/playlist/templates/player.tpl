@@ -19,7 +19,16 @@ ${Player.controls.template({
 	audioId: Player.audio.dataset.id,
 	actions: Player.controls.actions
 })}
-<div class="${ns}-list-container">
-	${Player.playlist.listTemplate({ search: true })}
+<div class="${ns}-fullscreen-offscreen-contents">
+	<input
+		type="input"
+		class="${ns}-playlist-search"
+		@keyup="playlist._handleSearch"
+		style="min-width: 100%; box-sizing: border-box; ${!Player.config.showPlaylistSearch ? 'display: none;' : ''}"
+		placeholder="Search"
+	/>
+	<div class="${ns}-list-container">
+		${Player.playlist.listTemplate()}
+	</div>
 </div>
 <img class="${ns}-hover-image">`

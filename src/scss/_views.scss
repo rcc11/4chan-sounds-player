@@ -62,7 +62,7 @@
 		transition: opacity .3s ease;
 		z-index: 2
 	}
-	& .#{$ns}-list-container {
+	& .#{$ns}-fullscreen-offscreen-contents {
 		position: absolute;
 		top: 100%;
 		width: 100%;

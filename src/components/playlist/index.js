@@ -100,7 +100,7 @@ module.exports = {
 	 * Render the playlist.
 	 */
 	render() {
-		_.elementHTML(Player.$(`.${ns}-list-container`), Player.playlist.listTemplate({ search: true }));
+		_.elementHTML(Player.$(`.${ns}-list-container`), Player.playlist.listTemplate());
 		Player.playlist.afterRender();
 	},
 
@@ -509,6 +509,8 @@ module.exports = {
 		if (v === lastSearch) {
 			return;
 		}
+		Player.playlist.render();
+		return;
 		if (!v) {
 			return Player.$all(`.${ns}-list-item`).forEach(el => el.style.display = null);
 		}
