@@ -61,7 +61,7 @@ module.exports = {
 		listeners[evt] && el.removeEventListener(evt, listeners[evt]);
 
 		// eslint-disable-next-line no-new-func
-		const handler = action && (Player.getHandler(action.trim()) || Function('$event', 'Player', `with (Player) { return ${action}; }`));
+		const handler = action && (Player.getHandler(action.trim()) || Function('$event', 'Player', `with (Player) { ${action} }`));
 		const listener = function (evt) {
 			if (mods.prevent) {
 				evt.preventDefault();

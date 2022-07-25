@@ -10,7 +10,7 @@ const soundTitleRE = /sound-title/g;
 const soundTitleMarqueeRE = /sound-title-marquee/g;
 const soundIndexRE = /sound-index/g;
 const soundCountRE = /sound-count/g;
-const soundPropRE = /sound-(src|id|name|post|imageOrThumb|image|thumb|filename|imageMD5)/g;
+const soundPropRE = /sound-(src|id|name|post|imageOrThumb|image|thumb|filename|imageMD5)(-esc)?/g;
 const soundFilterCountRE = /filtered-count/g;
 const configRE = /\$config\[([^\]]+)\]/g;
 
@@ -69,7 +69,7 @@ module.exports = {
 			.replace(soundTitleMarqueeRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem; text-overflow: clip;"><span title="${name}" class="${ns}-title-marquee" data-location="${data.location || ''}">${name}</span></div>` : '')
 			.replace(soundTitleRE, name ? `<div class="${ns}-col ${ns}-truncate-text" style="margin: 0 .5rem"><span title="${name}">${name}</span></div>` : ''));
 		!data.ignoreSoundProperties && (html = html
-			.replace(soundPropRE, (...args) => data.sound ? data.sound[args[1]] : '')
+			.replace(soundPropRE, (...args) => data.sound ? (args[2] ? _.escAttr(data.sound[args[1]], true) : data.sound[args[1]]) : '')
 			.replace(soundIndexRE, data.sound ? Player.sounds.indexOf(data.sound) + 1 : 0)
 			.replace(soundCountRE, Player.sounds.length)
 			.replace(soundFilterCountRE, Player.filteredSounds.length));
