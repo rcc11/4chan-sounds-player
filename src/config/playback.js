@@ -31,6 +31,14 @@ module.exports = [
 		default: true
 	},
 	{
+		property: 'restartSeconds',
+		title: 'Restart After',
+		displayGroup: 'Playback',
+		description: 'How long into a track until selecting previous restarts the track instead. Set to 0 to disable.',
+		default: 3,
+		parse: v => +v >= 0 && +v < Infinity ? +v : 0
+	},
+	{
 		title: 'Inline Player',
 		displayGroup: 'Playback',
 		settings: [

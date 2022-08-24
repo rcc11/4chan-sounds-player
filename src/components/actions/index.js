@@ -126,7 +126,8 @@ module.exports = {
 	 */
 	previous(opts) {
 		// Over three seconds into a sound restarts it instead.
-		if (Player.audio.currentTime > 3) {
+		const restartSeconds = typeof Player.config.restartSeconds == 'number' && Player.config.restartSeconds;
+		if (restartSeconds && Player.audio.currentTime > restartSeconds) {
 			Player.audio.currentTime = 0;
 		} else {
 			Player.actions._movePlaying(-1, opts);
