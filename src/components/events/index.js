@@ -50,6 +50,7 @@ module.exports = {
 	},
 
 	set(el, attr, action) {
+		action = action.trim();
 		const [ evt, ...modsArr ] = attr.split('.');
 		const mods = modsArr.reduce((m, n) => {
 			m[n] = true;
@@ -60,8 +61,15 @@ module.exports = {
 		const listeners = el._eventListeners || (el._eventListeners = {});
 		listeners[evt] && el.removeEventListener(evt, listeners[evt]);
 
-		// eslint-disable-next-line no-new-func
-		const handler = action && (Player.getHandler(action.trim()) || Function('$event', 'Player', `with (Player) { ${action} }`));
+		// If the action is JS lazily create a script element to get the handler. Avoids CSP blocking new Function.
+		let handler = action && (Player.getHandler(action) || function ($event) {
+			const script = document.createElement('script');
+			script.innerText = `window.${ns}Handler = function(Player, $event) { with (Player) { ${action} } };`;
+			document.head.appendChild(script);
+			handler = unsafeWindow[`${ns}Handler`].bind(null, Player);
+			delete unsafeWindow[`${ns}Handler`];
+			handler($event);
+		});
 		const listener = function (evt) {
 			if (mods.prevent) {
 				evt.preventDefault();
